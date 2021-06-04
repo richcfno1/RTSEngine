@@ -100,7 +100,8 @@ public class SelectControlScript : MonoBehaviour
                     (position2D.x <= mouseStartPosition.x && position2D.x >= mouseEndPosition.x && position2D.y >= mouseStartPosition.y && position2D.y <= mouseEndPosition.y) ||
                     (position2D.x <= mouseStartPosition.x && position2D.x >= mouseEndPosition.x && position2D.y <= mouseStartPosition.y && position2D.y >= mouseEndPosition.y))
                 {
-                    if (selfIndex == allSelectableGameObjects[i].GetComponent<GameObjectBaseScript>().BelongTo)
+                    if (allSelectableGameObjects[i].GetComponent<ShipBaseScript>() != null && 
+                        selfIndex == allSelectableGameObjects[i].GetComponent<ShipBaseScript>().BelongTo)
                     {
                         AddGameObject(allSelectableGameObjects[i]);
                         SelectedOwnGameObjects = true;

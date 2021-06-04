@@ -77,16 +77,6 @@ public class GameManager : MonoBehaviour
                 {
                     unitTypeName = "StandardFrigate",
                     shipTypeName = "Frigate1",
-                    // Move
-                    //public float agentMoveSpeed;
-                    //public float agentRotateSpeed;
-                    //public float agentAccelerateLimit;
-
-                    //// Search
-                    //public float agentRadius;
-                    //public float searchStepDistance;
-                    //public float searchStepMaxDistance;
-                    //public int searchMaxRandomNumber;
                     properties = new Dictionary<string, float>()
                     {
                         { "MoveSpeed", 20 },
@@ -114,6 +104,13 @@ public class GameManager : MonoBehaviour
                     type = "StandardFrigate",
                     belongTo = 0,
                     position = new Vector3(),
+                    rotation = new Quaternion()
+                },
+                new UnitData()
+                {
+                    type = "StandardFrigate",
+                    belongTo = 0,
+                    position = new Vector3(30, 0, 0),
                     rotation = new Quaternion()
                 }
             }
@@ -180,7 +177,7 @@ public class GameManager : MonoBehaviour
         abilityLibrary.Add("Move", "MoveAbilityScript");
         UnitLibraryData libraryData = unitLibrary[unitType];
 
-        GameObject result = Instantiate(Resources.Load<GameObject>(shipLibrary[libraryData.shipTypeName]), GameObject.Find("GameObject").transform);
+        GameObject result = Instantiate(Resources.Load<GameObject>(shipLibrary[libraryData.shipTypeName]), position, rotation, parent);
         ShipBaseScript shipScript = result.GetComponent<ShipBaseScript>();
         shipScript.PropertyDictionary = libraryData.properties;
         foreach (ShipBaseScript.AnchorData anchorData in shipScript.subsyetemAnchors)

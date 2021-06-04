@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class MoveControlScript : MonoBehaviour
@@ -63,12 +64,18 @@ public class MoveControlScript : MonoBehaviour
                 // If exist and get end key, move
                 if (Input.GetKeyDown(InputManager.HotKeys.MoveUnit))
                 {
+                    List<MoveAbilityScript> allAgents = new List<MoveAbilityScript>();
                     foreach (GameObject i in SelectControlScript.SelectionControlInstance.GetAllGameObjects())
                     {
                         if (i.GetComponent<MoveAbilityScript>() != null)
                         {
-                            i.GetComponent<MoveAbilityScript>().UseAbility(destinationHorizontalPosition + new Vector3(0, destinationVerticalDistance, 0));
+                            allAgents.Add(i.GetComponent<MoveAbilityScript>());
                         }
+                    }
+                    Vector3 destination = destinationHorizontalPosition + new Vector3(0, destinationVerticalDistance, 0);
+                    foreach (KeyValuePair<MoveAbilityScript, Vector3> i in FindDestination(allAgents, destination, destination - SelectControlScript.SelectionControlInstance.FindCenter()))
+                    {
+                        i.Key.UseAbility(i.Value);
                     }
                     ClearNavigationUI();
                 }
@@ -163,5 +170,30 @@ public class MoveControlScript : MonoBehaviour
         }
 
         Cursor.visible = true;
+    }
+
+    private Dictionary<MoveAbilityScript, Vector3> FindDestination(List<MoveAbilityScript> allAgents, Vector3 destination, Vector3 forwardDirection)
+    {
+        Dictionary<MoveAbilityScript, Vector3> temp = new Dictionary<MoveAbilityScript, Vector3>();
+        Vector3 newDestination = destination;
+        Vector3 right = Vector3.Cross(Vector3.up, forwardDirection).normalized;
+        foreach (MoveAbilityScript agent in allAgents)
+        {
+            newDestination += right * agent.agentRadius;
+            temp.Add(agent, newDestination);
+            newDestination += right * agent.agentRadius;
+        }
+        Vector3 newDestinationCenter = new Vector3();
+        foreach (Vector3 i in temp.Values)
+        {
+            newDestinationCenter += i;
+        }
+        Vector3 offset = destination - newDestinationCenter / temp.Count;
+        Dictionary<MoveAbilityScript, Vector3> result = new Dictionary<MoveAbilityScript, Vector3>();
+        foreach (KeyValuePair<MoveAbilityScript, Vector3> i in temp)
+        {
+            result.Add(i.Key, i.Value + offset);
+        }
+        return result;
     }
 }

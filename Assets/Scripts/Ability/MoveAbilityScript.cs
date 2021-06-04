@@ -10,7 +10,7 @@ public class MoveAbilityScript : ContinuousAbilityBaseScript
     private float agentAccelerateLimit;
 
     // Search
-    private float agentRadius;
+    public float agentRadius;
     private float searchStepDistance;
     private float searchStepMaxDistance;
     private float searchMaxRandomNumber;
