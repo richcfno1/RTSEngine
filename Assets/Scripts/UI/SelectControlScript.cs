@@ -8,6 +8,7 @@ public class SelectControlScript : MonoBehaviour
     public static SelectControlScript SelectionControlInstance { get; private set; }
 
     public int selfIndex;
+    public GameObject SelectionBoxPrefab;
 
     public Dictionary<string, List<GameObject>> SelectedGameObjects { get; private set; } = new Dictionary<string, List<GameObject>>();
     public bool SelectedOwnGameObjects { get; private set; } = false;
@@ -20,7 +21,7 @@ public class SelectControlScript : MonoBehaviour
     private List<Vector3> gameObjectWorldPosition = new List<Vector3>();
     private List<Vector3> gameObjectScreenPosition = new List<Vector3>();
 
-    private LineRenderer line;
+    private GameObject SelectionBox = null;
 
     void Awake()
     {
@@ -31,8 +32,6 @@ public class SelectControlScript : MonoBehaviour
     void Start()
     {
         mouseStartPosition = Input.mousePosition;
-        line = GetComponent<LineRenderer>();
-        line.positionCount = 5;
     }
 
     // Update is called once per frame
@@ -51,20 +50,21 @@ public class SelectControlScript : MonoBehaviour
             }
 
             // Draw box
-            line.startColor = Color.white;
-            line.endColor = Color.white;
-            line.enabled = true;
-            line.SetPosition(0, Camera.main.ScreenToWorldPoint(new Vector3(mouseStartPosition.x, mouseStartPosition.y, 1)));
-            line.SetPosition(1, Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, mouseStartPosition.y, 1)));
-            line.SetPosition(2, Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 1)));
-            line.SetPosition(3, Camera.main.ScreenToWorldPoint(new Vector3(mouseStartPosition.x, Input.mousePosition.y, 1)));
-            line.SetPosition(4, Camera.main.ScreenToWorldPoint(new Vector3(mouseStartPosition.x, mouseStartPosition.y, 1)));
+            Vector3 boxPosition = (Input.mousePosition + mouseStartPosition) / 2;
+            float boxSizeX = Mathf.Abs(Input.mousePosition.x - mouseStartPosition.x);
+            float boxSizeY = Mathf.Abs(Input.mousePosition.y - mouseStartPosition.y);
+            if (SelectionBox == null)
+            {
+                SelectionBox = Instantiate(SelectionBoxPrefab, transform);
+            }
+            SelectionBox.transform.position = boxPosition;
+            SelectionBox.transform.localScale = new Vector3(boxSizeX, boxSizeY);
         }
         if (mouseLeftUp)
         {
             mouseLeftUp = false;
             Judge();
-            line.enabled = false;
+            Destroy(SelectionBox);
         }
 
         // Remove destroyed object
