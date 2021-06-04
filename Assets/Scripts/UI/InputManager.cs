@@ -75,16 +75,18 @@ public class InputManager : MonoBehaviour
         switch (CurrentState)
         {
             case State.NoAction:
-            case State.Selecting:
                 // Select
                 if (Input.GetKeyDown(HotKeys.SelectUnit) && canSelect)
                 {
                     SelectControlScript.SelectionControlInstance.StartSelect();
                     CurrentState = State.Selecting;
                 }
-                else if (Input.GetKeyUp(HotKeys.SelectUnit))
+                break;
+            case State.Selecting:
+                if (Input.GetKeyUp(HotKeys.SelectUnit))
                 {
                     SelectControlScript.SelectionControlInstance.EndSelect();
+                    CurrentState = State.NoAction;
                 }
                 break;
         }
