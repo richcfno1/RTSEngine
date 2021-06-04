@@ -7,6 +7,7 @@ public class RapidPathFinder : MonoBehaviour
     // Move
     public float agentMoveSpeed;
     public float agentRotateSpeed;
+    public float agentAccelerateLimit;
 
     // Search
     public float agentRadius;
@@ -16,6 +17,8 @@ public class RapidPathFinder : MonoBehaviour
 
     private Vector3 destination;
     private List<Vector3> moveBeacons = new List<Vector3>();
+    private float lastFrameSpeedAdjust = 0;
+    private Vector3 lastFrameMoveDirection = new Vector3();
 
     // Start is called before the first frame update
     void Start()
@@ -41,22 +44,28 @@ public class RapidPathFinder : MonoBehaviour
                     return;
                 }
 
-                Vector3 moveDirection = moveBeacons[0] - transform.position;
-                Vector3 rotateDirection = moveDirection.normalized;
+                Vector3 moveVector = moveBeacons[0] - transform.position;
+                Vector3 rotateDirection = moveVector.normalized;
                 rotateDirection.y = 0;
                 transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(rotateDirection), Time.deltaTime * agentRotateSpeed);
 
                 float moveSpeedAdjust = Mathf.Cos(Mathf.Deg2Rad * Quaternion.Angle(transform.rotation, Quaternion.LookRotation(rotateDirection)));
                 moveSpeedAdjust = (moveSpeedAdjust + 1) / 2;
+                lastFrameSpeedAdjust = Mathf.Cos(Mathf.Deg2Rad * Quaternion.Angle(transform.rotation, Quaternion.LookRotation(lastFrameMoveDirection)));
+                moveSpeedAdjust = Mathf.Clamp(moveSpeedAdjust, lastFrameSpeedAdjust - agentAccelerateLimit, lastFrameSpeedAdjust + agentAccelerateLimit);
                 float moveDistance = agentMoveSpeed * Time.deltaTime * moveSpeedAdjust;
-                if (moveDirection.magnitude <= moveDistance)
+
+                lastFrameSpeedAdjust = moveSpeedAdjust;
+                lastFrameMoveDirection = moveVector.normalized;
+
+                if (moveVector.magnitude <= moveDistance)
                 {
                     transform.position = moveBeacons[0];
                     moveBeacons.RemoveAt(0);
                 }
                 else
                 {
-                    transform.position += moveDirection.normalized * moveDistance;
+                    transform.position += moveVector.normalized * moveDistance;
                 }
             }
             else

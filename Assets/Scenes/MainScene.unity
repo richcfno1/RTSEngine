@@ -1230,6 +1230,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Frigate1
       objectReference: {fileID: 0}
+    - target: {fileID: 1744818895602806648, guid: 7df60a24262bb5d44b4b0e7d1d78e936, type: 3}
+      propertyPath: agentAccelerateLimit
+      value: 0.5
+      objectReference: {fileID: 0}
     - target: {fileID: 2286824722152163487, guid: 7df60a24262bb5d44b4b0e7d1d78e936, type: 3}
       propertyPath: m_RootOrder
       value: 4
