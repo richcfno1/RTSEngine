@@ -4,9 +4,11 @@ using UnityEngine;
 
 public class GameObjectBaseScript : MonoBehaviour
 {
+    // Set by editor
     public string typeID;
     public float maxHP;
 
+    // Set when instantiate
     public int Index { get; set; }
     public int BelongTo { get; set; }
     public float HP { get; set; }
@@ -16,23 +18,32 @@ public class GameObjectBaseScript : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        HP = maxHP;
-        GameManager.GameManagerInstance.OnGameObjectCreated(gameObject);
+        OnCreatedAction();
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        if (HP <= 0)
+        {
+            OnDestroyedAction();
+        }
     }
 
-    void OnDestroy()
+    public virtual void OnCreatedAction()
+    {
+        HP = maxHP;
+        GameManager.GameManagerInstance.OnGameObjectCreated(gameObject);
+    }
+
+    public virtual void OnDestroyedAction()
     {
         GameManager.GameManagerInstance.OnGameObjectDestroyed(gameObject, lastDamagedBy);
     }
 
-    public virtual void Damage()
+    public virtual void CreateDamage(float amount, GameObject from)
     {
-
+        HP = Mathf.Clamp(HP - amount, 0, maxHP);
+        lastDamagedBy = from;
     }
 }

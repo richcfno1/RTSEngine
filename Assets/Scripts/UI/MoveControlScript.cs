@@ -65,9 +65,9 @@ public class MoveControlScript : MonoBehaviour
                 {
                     foreach (GameObject i in SelectControlScript.SelectionControlInstance.GetAllGameObjects())
                     {
-                        if (i.GetComponent<RapidPathFinder>() != null)
+                        if (i.GetComponent<MoveAbilityScript>() != null)
                         {
-                            i.GetComponent<RapidPathFinder>().Move(destinationHorizontalPosition + new Vector3(0, destinationVerticalDistance, 0));
+                            i.GetComponent<MoveAbilityScript>().UseAbility(destinationHorizontalPosition + new Vector3(0, destinationVerticalDistance, 0));
                         }
                     }
                     ClearNavigationUI();
@@ -84,9 +84,9 @@ public class MoveControlScript : MonoBehaviour
             {
                 foreach (GameObject i in SelectControlScript.SelectionControlInstance.GetAllGameObjects())
                 {
-                    if (i.GetComponent<RapidPathFinder>() != null)
+                    if (i.GetComponent<MoveAbilityScript>() != null)
                     {
-                        i.GetComponent<RapidPathFinder>().Stop();
+                        i.GetComponent<MoveAbilityScript>().UseAbility(i.transform.position);
                     }
                 }
                 return;

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Neo.IronLua;
 using System;
+using System.Linq;
 
 public class GameManager : MonoBehaviour
 {
@@ -12,18 +13,30 @@ public class GameManager : MonoBehaviour
         public string name;
     }
 
-    public struct GameObjectData
+    public struct UnitLibraryData
     {
-        public int index;
-        public string typeName;
+        public string unitTypeName;
+        public string shipTypeName;
+        public Dictionary<string, float> properties;
+        // string1 = anchor name, string2 = subsystem type
+        public Dictionary<string, string> subsystems;
+        // string = ability type, List<string> = supported by which anchor (or use shipTypeName to indicate supported by ship)
+        public Dictionary<string, List<string>> abilities;
+    }
+
+    public struct UnitData
+    {
+        public string type;
         public int belongTo;
-        Vector3 position;
+        public Vector3 position;
+        public Quaternion rotation;
     }
 
     public struct GameInitData
     {
-        public List<PlayerData> initAllPlayers;
-        public List<GameObject> initAllGameObjects;
+        public List<PlayerData> initPlayerData;
+        public List<UnitLibraryData> initUnitLibraryData;
+        public List<UnitData> initUnitData;
     }
 
     private class Player
@@ -37,6 +50,7 @@ public class GameManager : MonoBehaviour
     private int gameObjectIndexCounter = 0;
     private Dictionary<int, Player> allPlayers = new Dictionary<int, Player>();
     private Dictionary<int, GameObject> allGameObjects = new Dictionary<int, GameObject>();
+    private Dictionary<string, UnitLibraryData> unitLibrary = new Dictionary<string, UnitLibraryData>();
     Lua gameLua = new Lua();
 
     void Awake()
@@ -44,7 +58,7 @@ public class GameManager : MonoBehaviour
         GameManagerInstance = this; 
         InitFromInitData(new GameInitData()
         {
-            initAllPlayers = new List<PlayerData>()
+            initPlayerData = new List<PlayerData>()
             {
                 new PlayerData()
                 {
@@ -55,6 +69,52 @@ public class GameManager : MonoBehaviour
                 {
                     index = 1,
                     name = "RC"
+                }
+            },
+            initUnitLibraryData = new List<UnitLibraryData>()
+            {
+                new UnitLibraryData()
+                {
+                    unitTypeName = "StandardFrigate",
+                    shipTypeName = "Frigate1",
+                    // Move
+                    //public float agentMoveSpeed;
+                    //public float agentRotateSpeed;
+                    //public float agentAccelerateLimit;
+
+                    //// Search
+                    //public float agentRadius;
+                    //public float searchStepDistance;
+                    //public float searchStepMaxDistance;
+                    //public int searchMaxRandomNumber;
+                    properties = new Dictionary<string, float>()
+                    {
+                        { "MoveSpeed", 20 },
+                        { "RotateSpeed", 20 },
+                        { "AccelerateLimit", 0.5f },
+                        { "MoveAgentRadius", 15 },
+                        { "MoveSearchStepDistance", 5 },
+                        { "MoveSearchStepLimit", 100 },
+                        { "MoveSearchRandomNumber", 20 }
+                    },
+                    subsystems = new Dictionary<string, string>()
+                    {
+                        { "TurretAnchor1", "Turret1"}
+                    },
+                    abilities = new Dictionary<string, List<string>>()
+                    {
+                        { "Move", new List<string>(){ "Frigate1" } }
+                    }
+                }
+            },
+            initUnitData = new List<UnitData>()
+            {
+                new UnitData()
+                {
+                    type = "StandardFrigate",
+                    belongTo = 0,
+                    position = new Vector3(),
+                    rotation = new Quaternion()
                 }
             }
         });
@@ -74,7 +134,8 @@ public class GameManager : MonoBehaviour
 
     private void InitFromInitData(GameInitData data)
     {
-        foreach (PlayerData i in data.initAllPlayers)
+        // Player
+        foreach (PlayerData i in data.initPlayerData)
         {
             allPlayers.Add(i.index, new Player()
             {
@@ -82,7 +143,86 @@ public class GameManager : MonoBehaviour
                 playerGameObjects = new List<int>()
             });
         }
-        // TODO: init gameobjects
+
+        // UnitLibary
+        foreach (UnitLibraryData i in data.initUnitLibraryData)
+        {
+            unitLibrary.Add(i.unitTypeName, i);
+        }
+
+        // Instantiate units
+        foreach (UnitData i in data.initUnitData)
+        {
+            if (unitLibrary.ContainsKey(i.type))
+            {
+                InstantiateUnit(i.type, i.position, i.rotation, GameObject.Find("GameObject").transform, i.belongTo);
+            }
+            else
+            {
+                Debug.Log("Cannot find unit type" + i.type);
+            }
+        }
+    }
+
+    public void InstantiateUnit(string unitType, Vector3 position, Quaternion rotation, Transform parent, int belongTo)
+    {
+        if (!unitLibrary.ContainsKey(unitType))
+        {
+            Debug.LogError("No such unit: " + unitType);
+            return;
+        }
+
+        Dictionary<string, string> shipLibrary = new Dictionary<string, string>();
+        shipLibrary.Add("Frigate1", "GameObject/Ship/Frigate1");
+        Dictionary<string, string> subsystemLibrary = new Dictionary<string, string>();
+        subsystemLibrary.Add("Turret1", "GameObject/Subsystem/Turret1");
+        Dictionary<string, string> abilityLibrary = new Dictionary<string, string>();
+        abilityLibrary.Add("Move", "MoveAbilityScript");
+        UnitLibraryData libraryData = unitLibrary[unitType];
+
+        GameObject result = Instantiate(Resources.Load<GameObject>(shipLibrary[libraryData.shipTypeName]), GameObject.Find("GameObject").transform);
+        ShipBaseScript shipScript = result.GetComponent<ShipBaseScript>();
+        shipScript.PropertyDictionary = libraryData.properties;
+        foreach (ShipBaseScript.AnchorData anchorData in shipScript.subsyetemAnchors)
+        {
+            if (libraryData.subsystems.ContainsKey(anchorData.anchorName))
+            {
+                string subsystemTypeName = libraryData.subsystems[anchorData.anchorName];
+                GameObject temp = Instantiate(Resources.Load<GameObject>(subsystemLibrary[subsystemTypeName]), anchorData.anchor.transform);
+                SubsystemBaseScript subsystemScript = temp.GetComponent<SubsystemBaseScript>();
+                if (anchorData.subsystemScale != subsystemScript.scale)
+                {
+                    Debug.Log("Subsystem mismatch with anchor type: " + anchorData.subsystemScale + " and " + subsystemScript.scale);
+                }
+                else
+                {
+                    shipScript.SubsystemDictionary.Add(temp, anchorData.anchor);
+                    subsystemScript.Parent = shipScript;
+                }
+            }
+        }
+        foreach (KeyValuePair<string, List<string>> ability in libraryData.abilities)
+        {
+            Type abilityType = Type.GetType(abilityLibrary[ability.Key] + ",Assembly-CSharp");
+            AbilityBaseScript abilityScript = (AbilityBaseScript)result.AddComponent(abilityType);
+            foreach (string supportedSubsystemAnchor in ability.Value)
+            {
+                if (supportedSubsystemAnchor != libraryData.shipTypeName)
+                {
+                    GameObject temp = shipScript.SubsystemDictionary.FirstOrDefault(x => x.Value.name == supportedSubsystemAnchor).Key;
+                    abilityScript.SupportedBy.Add(temp.GetComponent<SubsystemBaseScript>());
+                }
+            }
+            abilityScript.Parent = shipScript;
+            shipScript.AbilityDictionary.Add(ability.Key, abilityScript);
+        }
+
+        // Set belonging
+        result.GetComponent<GameObjectBaseScript>().BelongTo = belongTo;
+        foreach (GameObjectBaseScript i in result.GetComponentsInChildren<GameObjectBaseScript>())
+        {
+            i.BelongTo = belongTo;
+        }
     }
 
     public void OnGameObjectCreated(GameObject self)

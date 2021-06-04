@@ -24,7 +24,7 @@ public class BulletBaseScript : MonoBehaviour
         RaycastHit hit;
         if (Physics.Raycast(other.ClosestPoint(transform.position), moveDirection, out hit, other.bounds.size.sqrMagnitude))
         {
-            if (hit.collider != other && hit.collider.GetComponent<SubsystemScript>() != null)
+            if (hit.collider != other && hit.collider.GetComponent<SubsystemBaseScript>() != null)
             {
                 Debug.Log("Hit subsystem: " + hit.collider.name);
             }

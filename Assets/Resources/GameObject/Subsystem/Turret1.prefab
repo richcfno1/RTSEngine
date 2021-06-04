@@ -11,8 +11,8 @@ GameObject:
   - component: {fileID: 2205171174663513300}
   - component: {fileID: 4913215118944951551}
   - component: {fileID: 4694795449301177890}
-  - component: {fileID: 8457065095819395221}
   - component: {fileID: 4214506854405117475}
+  - component: {fileID: -2381551228161342181}
   m_Layer: 0
   m_Name: Turret1
   m_TagString: Untagged
@@ -84,20 +84,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &8457065095819395221
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4214506854405117474}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 414751f3408b88d42b1f5ba39eaf68da, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  typeID: Turret1
-  maxHP: 100
 --- !u!65 &4214506854405117475
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -111,6 +97,23 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 2, y: 1, z: 2}
   m_Center: {x: 0, y: 0.3, z: 0}
+--- !u!114 &-2381551228161342181
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4214506854405117474}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1998b078496bb9546a5afd4775730765, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  typeID: Turret1
+  maxHP: 100
+  scale: 1
+  repairPercentRequired: 0.5
+  supportedAbilityType: []
 --- !u!1 &6191144526801389372
 GameObject:
   m_ObjectHideFlags: 0
