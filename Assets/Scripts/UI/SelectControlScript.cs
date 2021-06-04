@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using cakeslice;
 
 public class SelectControlScript : MonoBehaviour
 {
@@ -67,7 +68,7 @@ public class SelectControlScript : MonoBehaviour
             Destroy(SelectionBox);
         }
 
-        // Remove destroyed object
+        // Remove destroyed object and add highlighted outline to others
         foreach (KeyValuePair<string, List<GameObject>> i in SelectedGameObjects)
         {
             // Check objects with same type
@@ -86,27 +87,9 @@ public class SelectControlScript : MonoBehaviour
         //Debug.Log(SelectedGameObjects.Count);
     }
 
-    private void AddGameObject(GameObject obj)
-    {
-        if (obj == null || obj.GetComponent<GameObjectBaseScript>() == null)
-        {
-            return;
-        }
-        string type = obj.GetComponent<GameObjectBaseScript>().typeID;
-        if (SelectedGameObjects.ContainsKey(type))
-        {
-            SelectedGameObjects[type].Add(obj);
-        }
-        else
-        {
-            SelectedGameObjects[type] = new List<GameObject>() { obj };
-        }
-    }
-
     private void Judge()
     {
-        SelectedGameObjects.Clear();
-        SelectedOwnGameObjects = false;
+        ClearSelectedGameObjects();
         if (mouseStartPosition != mouseEndPosition)
         {
             for (int i = 0; i < allSelectableGameObjects.Count; i++)
@@ -154,6 +137,41 @@ public class SelectControlScript : MonoBehaviour
             }
         }
         return result;
+    }
+
+    public void AddGameObject(GameObject obj)
+    {
+        if (obj == null || obj.GetComponent<GameObjectBaseScript>() == null)
+        {
+            return;
+        }
+        string type = obj.GetComponent<GameObjectBaseScript>().typeID;
+        if (SelectedGameObjects.ContainsKey(type))
+        {
+            SelectedGameObjects[type].Add(obj);
+        }
+        else
+        {
+            SelectedGameObjects[type] = new List<GameObject>() { obj };
+        }
+        obj.AddComponent<cakeslice.Outline>();
+    }
+
+    private void ClearSelectedGameObjects()
+    {
+        foreach (KeyValuePair<string, List<GameObject>> i in SelectedGameObjects)
+        {
+            // Check objects with same type
+            foreach (GameObject j in i.Value)
+            {
+                if (j.GetComponent<cakeslice.Outline>() != null)
+                {
+                    Destroy(j.GetComponent<cakeslice.Outline>());
+                }
+            }
+        }
+        SelectedGameObjects.Clear();
+        SelectedOwnGameObjects = false;
     }
 
     public Vector3 FindCenter()

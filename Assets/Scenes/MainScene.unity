@@ -1062,6 +1062,7 @@ GameObject:
   - component: {fileID: 2125966568}
   - component: {fileID: 2125966567}
   - component: {fileID: 2125966570}
+  - component: {fileID: 2125966571}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -1149,6 +1150,39 @@ MonoBehaviour:
   shiftSpeed: 100
   zoomSpeed: 1000
   rotateSpeed: 500
+--- !u!114 &2125966571
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2125966566}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a78da3f00f3328541b4526c0b0b5ec5c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  lineThickness: 1.25
+  lineIntensity: 0.5
+  fillAmount: 0.1
+  lineColor0: {r: 0, g: 0.5589409, b: 1, a: 1}
+  lineColor1: {r: 0, g: 1, b: 0, a: 1}
+  lineColor2: {r: 0, g: 0, b: 1, a: 1}
+  additiveRendering: 0
+  backfaceCulling: 1
+  fillColor: {r: 0, g: 0, b: 1, a: 1}
+  useFillColor: 0
+  cornerOutlines: 0
+  addLinesBetweenColors: 0
+  scaleWithScreenSize: 1
+  alphaCutoff: 0.5
+  flipY: 0
+  sourceCamera: {fileID: 0}
+  autoEnableOutlines: 0
+  outlineCamera: {fileID: 0}
+  outlineShaderMaterial: {fileID: 0}
+  renderTexture: {fileID: 0}
+  extraRenderTexture: {fileID: 0}
 --- !u!4 &543450653438004334 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2286824722152163487, guid: 7df60a24262bb5d44b4b0e7d1d78e936, type: 3}
@@ -1182,12 +1216,12 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1150460983734039536, guid: 7df60a24262bb5d44b4b0e7d1d78e936, type: 3}
       propertyPath: m_Materials.Array.size
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1150460983734039536, guid: 7df60a24262bb5d44b4b0e7d1d78e936, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: 778d3ae32ebbdba4ca3cb758621c7df0, type: 2}
+      objectReference: {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
     - target: {fileID: 1150460983734039536, guid: 7df60a24262bb5d44b4b0e7d1d78e936, type: 3}
       propertyPath: m_Materials.Array.data[1]
       value: 
