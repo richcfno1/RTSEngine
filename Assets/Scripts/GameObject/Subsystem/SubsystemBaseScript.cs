@@ -14,11 +14,13 @@ public class SubsystemBaseScript : GameObjectBaseScript
     // Set by editor
     public SubsystemScale scale;
     public float repairPercentRequired;
-    public List<string> supportedAbilityType;
+    public List<string> supportedAbility;  // This will be used in future
 
     // Set when instantiate
     public ShipBaseScript Parent { get; set; }
     public bool Active { get; private set; }
+
+    protected List<object> subsystemTarget = new List<object>();
 
     // Start is called before the first frame update
     void Start()
@@ -35,13 +37,8 @@ public class SubsystemBaseScript : GameObjectBaseScript
         }
         if (Active)
         {
-            Action();
+            // Do something here
         }
-    }
-
-    void OnDestroy()
-    {
-        OnDestroyedAction();
     }
 
     public override void OnCreatedAction()
@@ -60,8 +57,17 @@ public class SubsystemBaseScript : GameObjectBaseScript
         Active = true;
     }
 
-    public virtual void Action()
+    public virtual void SetTarget(List<object> target)
     {
+        subsystemTarget = target;
+    }
 
+    public override void CreateDamage(float amount, GameObject from)
+    {
+        base.CreateDamage(amount, from);
+        if (HP <= 0)
+        {
+            OnDestroyedAction();
+        }
     }
 }

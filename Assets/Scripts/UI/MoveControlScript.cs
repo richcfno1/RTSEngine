@@ -93,7 +93,7 @@ public class MoveControlScript : MonoBehaviour
                 {
                     if (i.GetComponent<MoveAbilityScript>() != null)
                     {
-                        i.GetComponent<MoveAbilityScript>().UseAbility(new List<object>() { 0, new Vector3() });
+                        i.GetComponent<MoveAbilityScript>().PauseAbility();
                     }
                 }
                 return;

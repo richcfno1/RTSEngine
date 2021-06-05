@@ -98,7 +98,19 @@ public class GameManager : MonoBehaviour
                     },
                     abilities = new Dictionary<string, List<string>>()
                     {
-                        { "Move", new List<string>(){ "Frigate1" } }
+                        { "Move", new List<string>(){ "Frigate1" } },
+                        {
+                            "Attack", 
+                            new List<string>()
+                            { 
+                                "TurretAnchor1",
+                                "TurretAnchor2",
+                                "TurretAnchor3",
+                                "TurretAnchor4",
+                                "TurretAnchor5",
+                                "TurretAnchor6"
+                            } 
+                        }
                     }
                 }
             },
@@ -180,6 +192,7 @@ public class GameManager : MonoBehaviour
         subsystemLibrary.Add("Turret1", "GameObject/Subsystem/Turret1");
         Dictionary<string, string> abilityLibrary = new Dictionary<string, string>();
         abilityLibrary.Add("Move", "MoveAbilityScript");
+        abilityLibrary.Add("Attack", "AttackAbilityScript");
         UnitLibraryData libraryData = unitLibrary[unitType];
 
         GameObject result = Instantiate(Resources.Load<GameObject>(shipLibrary[libraryData.shipTypeName]), position, rotation, parent);
@@ -212,7 +225,14 @@ public class GameManager : MonoBehaviour
                 if (supportedSubsystemAnchor != libraryData.shipTypeName)
                 {
                     GameObject temp = shipScript.SubsystemDictionary.FirstOrDefault(x => x.Value.name == supportedSubsystemAnchor).Key;
-                    abilityScript.SupportedBy.Add(temp.GetComponent<SubsystemBaseScript>());
+                    if (temp.GetComponent<SubsystemBaseScript>().supportedAbility.Contains(ability.Key))
+                    {
+                        abilityScript.SupportedBy.Add(temp.GetComponent<SubsystemBaseScript>());
+                    }
+                    else
+                    {
+                        Debug.LogError("Subsystem cannot support ability: " + ability.Key);
+                    }
                 }
             }
             abilityScript.Parent = shipScript;

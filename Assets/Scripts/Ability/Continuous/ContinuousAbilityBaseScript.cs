@@ -5,7 +5,6 @@ using UnityEngine;
 public class ContinuousAbilityBaseScript : AbilityBaseScript
 {
     protected bool isUsing;
-    protected List<object> abilityTarget = new List<object>();
     // Start is called before the first frame update
     void Start()
     {
@@ -47,7 +46,7 @@ public class ContinuousAbilityBaseScript : AbilityBaseScript
         isUsing = false;
     }
 
-    public virtual void ContinuousAction()
+    protected virtual void ContinuousAction()
     {
 
     }

@@ -58,7 +58,6 @@ public class MoveAbilityScript : ContinuousAbilityBaseScript
                 if (i.collider.gameObject != gameObject)
                 {
                     hitDistance += (i.collider.ClosestPoint(from) - from).magnitude;
-                    Debug.Log(hitDistance);
                     hitCount++;
                 }
             }
@@ -99,7 +98,6 @@ public class MoveAbilityScript : ContinuousAbilityBaseScript
         }
         result.Add(to);
         float obstacleDistance = TestObstacle(from, to);
-        Debug.Log(obstacleDistance);
         if (obstacleDistance != 0)
         {
             Vector3 direction = (to - from).normalized;
@@ -152,7 +150,7 @@ public class MoveAbilityScript : ContinuousAbilityBaseScript
         base.PauseAbility();
     }
 
-    public override void ContinuousAction()
+    protected override void ContinuousAction()
     {
         // Decode and set action from abilityTarget
         if ((int)abilityTarget[0] == 0)
