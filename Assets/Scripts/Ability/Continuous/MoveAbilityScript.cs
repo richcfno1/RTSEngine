@@ -41,24 +41,24 @@ public class MoveAbilityScript : ContinuousAbilityBaseScript
 
         if (isUsing)
         {
-            ContinuousAction(abilityTarget);
+            ContinuousAction();
         }
     }
 
     private float TestObstacle(Vector3 from, Vector3 to)
     {
         Vector3 direction = (to - from).normalized;
-        float length = (to - from).magnitude;
         int hitCount = 0;
         float hitDistance = 0;
-        for (int i = 0; i < searchMaxRandomNumber; i++)
+        RaycastHit[] hits = Physics.CapsuleCastAll(from, to, agentRadius, direction);
+        foreach (RaycastHit i in hits)
         {
-            RaycastHit hit;
-            if (Physics.Raycast(from + agentRadius * new Vector3(Random.value * 2 - 1, Random.value * 2 - 1, Random.value * 2 - 1).normalized, direction, out hit, length))
+            if (i.collider.GetComponent<GameObjectBaseScript>() != null && i.collider.GetComponent<SubsystemBaseScript>() == null)
             {
-                if (hit.transform.gameObject != gameObject)
+                if (i.collider.gameObject != gameObject)
                 {
-                    hitDistance += hit.distance;
+                    hitDistance += (i.collider.ClosestPoint(from) - from).magnitude;
+                    Debug.Log(hitDistance);
                     hitCount++;
                 }
             }
@@ -99,6 +99,7 @@ public class MoveAbilityScript : ContinuousAbilityBaseScript
         }
         result.Add(to);
         float obstacleDistance = TestObstacle(from, to);
+        Debug.Log(obstacleDistance);
         if (obstacleDistance != 0)
         {
             Vector3 direction = (to - from).normalized;
@@ -133,14 +134,16 @@ public class MoveAbilityScript : ContinuousAbilityBaseScript
         return result;
     }
 
-    public override bool UseAbility(object target)
+    // For MoveAbility target size should be 2
+    // target[0] = int where 0 = stop, 1 = moveTo
+    // target[1] = Vector3, which is destination
+    public override bool UseAbility(List<object> target)
     {
-        if (target.GetType() != typeof(Vector3))
+        if (target.Count != 2 || target[1].GetType() != typeof(Vector3))
         {
             abilityTarget = null;
             return isUsing = false;
         }
-        abilityTarget = target;
         return base.UseAbility(target);
     }
 
@@ -149,13 +152,17 @@ public class MoveAbilityScript : ContinuousAbilityBaseScript
         base.PauseAbility();
     }
 
-    public override void ContinuousAction(object target)
+    public override void ContinuousAction()
     {
-        if (target.GetType() != typeof(Vector3))
+        // Decode and set action from abilityTarget
+        if ((int)abilityTarget[0] == 0)
         {
-            return;
+            destination = transform.position;
         }
-        destination = (Vector3)target;
+        else if ((int)abilityTarget[0] == 1)
+        {
+            destination = (Vector3)abilityTarget[1];
+        }
         if (transform.position != destination)
         {
             if (TestObstacle(transform.position, destination) == 0)

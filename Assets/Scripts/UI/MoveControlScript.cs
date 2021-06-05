@@ -75,7 +75,7 @@ public class MoveControlScript : MonoBehaviour
                     Vector3 destination = destinationHorizontalPosition + new Vector3(0, destinationVerticalDistance, 0);
                     foreach (KeyValuePair<MoveAbilityScript, Vector3> i in FindDestination(allAgents, destination, destination - SelectControlScript.SelectionControlInstance.FindCenter()))
                     {
-                        i.Key.UseAbility(i.Value);
+                        i.Key.UseAbility(new List<object>(){ 1, i.Value });
                     }
                     ClearNavigationUI();
                 }
@@ -93,7 +93,7 @@ public class MoveControlScript : MonoBehaviour
                 {
                     if (i.GetComponent<MoveAbilityScript>() != null)
                     {
-                        i.GetComponent<MoveAbilityScript>().UseAbility(i.transform.position);
+                        i.GetComponent<MoveAbilityScript>().UseAbility(new List<object>() { 0, new Vector3() });
                     }
                 }
                 return;

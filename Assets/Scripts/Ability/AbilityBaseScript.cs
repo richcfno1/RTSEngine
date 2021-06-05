@@ -8,7 +8,7 @@ public class AbilityBaseScript : MonoBehaviour
     public ShipBaseScript Parent { get; set; }
     public List<SubsystemBaseScript> SupportedBy { get; set; } = new List<SubsystemBaseScript>();
 
-    public virtual bool UseAbility(object target)
+    public virtual bool UseAbility(List<object> target)
     {
         // This only happened when supported by ship
         if (SupportedBy.Count == 0)

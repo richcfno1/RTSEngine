@@ -35,7 +35,7 @@ public class ShipBaseScript : GameObjectBaseScript
         }
     }
 
-    public bool Command(string commandType, object target)
+    public bool Command(string commandType, List<object> target)
     {
         if (AbilityDictionary.ContainsKey(commandType))
         {

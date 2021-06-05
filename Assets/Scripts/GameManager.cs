@@ -82,14 +82,19 @@ public class GameManager : MonoBehaviour
                         { "MoveSpeed", 20 },
                         { "RotateSpeed", 20 },
                         { "AccelerateLimit", 0.5f },
-                        { "MoveAgentRadius", 15 },
+                        { "MoveAgentRadius", 20 },
                         { "MoveSearchStepDistance", 5 },
                         { "MoveSearchStepLimit", 100 },
                         { "MoveSearchRandomNumber", 20 }
                     },
                     subsystems = new Dictionary<string, string>()
                     {
-                        { "TurretAnchor1", "Turret1"}
+                        { "TurretAnchor1", "Turret1"},
+                        { "TurretAnchor2", "Turret1"},
+                        { "TurretAnchor3", "Turret1"},
+                        { "TurretAnchor4", "Turret1"},
+                        { "TurretAnchor5", "Turret1"},
+                        { "TurretAnchor6", "Turret1"}
                     },
                     abilities = new Dictionary<string, List<string>>()
                     {
@@ -110,7 +115,7 @@ public class GameManager : MonoBehaviour
                 {
                     type = "StandardFrigate",
                     belongTo = 0,
-                    position = new Vector3(30, 0, 0),
+                    position = new Vector3(50, 0, 0),
                     rotation = new Quaternion()
                 }
             }

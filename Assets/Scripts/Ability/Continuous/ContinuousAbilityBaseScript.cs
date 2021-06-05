@@ -5,7 +5,7 @@ using UnityEngine;
 public class ContinuousAbilityBaseScript : AbilityBaseScript
 {
     protected bool isUsing;
-    protected object abilityTarget;
+    protected List<object> abilityTarget = new List<object>();
     // Start is called before the first frame update
     void Start()
     {
@@ -17,15 +17,16 @@ public class ContinuousAbilityBaseScript : AbilityBaseScript
     {
         if (isUsing)
         {
-            ContinuousAction(abilityTarget);
+            ContinuousAction();
         }
     }
 
-    public override bool UseAbility(object target)
+    public override bool UseAbility(List<object> target)
     {
         // This only happened when supported by ship
         if (SupportedBy.Count == 0)
         {
+            abilityTarget = target;
             return isUsing = true;
         }
         foreach (SubsystemBaseScript i in SupportedBy)
@@ -46,7 +47,7 @@ public class ContinuousAbilityBaseScript : AbilityBaseScript
         isUsing = false;
     }
 
-    public virtual void ContinuousAction(object target)
+    public virtual void ContinuousAction()
     {
 
     }
