@@ -61,6 +61,7 @@ public class BulletBaseScript : MonoBehaviour
         }
         else
         {
+            Debug.Log(other.name);
             Debug.LogWarning("Should be impossible to hit something without GameObjectBaseScript and is not a aim collider");
         }
         Destroy(gameObject);
