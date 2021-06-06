@@ -59,11 +59,7 @@ public class BulletBaseScript : MonoBehaviour
         {
             other.GetComponentInParent<GameObjectBaseScript>().CreateDamage(damage, createdBy);
         }
-        else
-        {
-            Debug.Log(other.name);
-            Debug.LogWarning("Should be impossible to hit something without GameObjectBaseScript and is not a aim collider");
-        }
+        // Well... in fact, there is still a case that bullet collide with bullet...
         Destroy(gameObject);
     }
 }

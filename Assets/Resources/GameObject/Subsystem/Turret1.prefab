@@ -126,7 +126,7 @@ MonoBehaviour:
   limitTraverse: 0
   leftTraverse: 60
   rightTraverse: 60
-  elevation: 60
+  elevation: 90
   depression: 5
   showArcs: 1
   showDebugRay: 1

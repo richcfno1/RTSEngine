@@ -54,16 +54,6 @@ public class RailgunTurretScript : AttackSubsystemBaseScript
     // Update is called once per frame
     void FixedUpdate()
     {
-        if (subsystemTarget.Count != 0)
-        {
-            fireTarget = (GameObject)subsystemTarget[0];
-            SetAimpoint(fireTarget.transform.position);
-        }
-        else
-        {
-            fireTarget = null;
-            SetIdle(true);
-        }
         if (HP <= 0)
         {
             OnDestroyedAction();
@@ -86,18 +76,27 @@ public class RailgunTurretScript : AttackSubsystemBaseScript
                         if (hit.collider.tag != "AimCollider" && (hit.collider.GetComponent<GameObjectBaseScript>() == null || hit.collider.GetComponent<GameObjectBaseScript>().BelongTo != BelongTo))
                         {
                             Fire();
+                            timer = 0;
                         }
                     }
-                    timer = 0;
                 }
+                DetermineFireTarget();
             }
             else
             {
                 timer += Time.deltaTime;
             }
+            if (fireTarget == null)
+            {
+                SetIdle(true);
+            }
+            else
+            {
+                SetAimpoint(fireTarget.transform.position);
+            }
             RotateTurret();
         }
-        if (showDebugRay)
+        if (showDebugRay && Active)
         {
             DrawDebugRay();
         }
@@ -116,25 +115,68 @@ public class RailgunTurretScript : AttackSubsystemBaseScript
         }
     }
 
-    public override void SetTarget(List<object> target)
+    // Try to find a target by the order, compare angleY first, then check obstacles
+    private void DetermineFireTarget()
     {
-        base.SetTarget(target);
+        fireTarget = null;
+        foreach (object i in subsystemTarget)
+        {
+            GameObject temp = (GameObject)i;
+            if (temp == null)
+            {
+                continue;
+            }
+            Vector3 localTargetPos = turretBase.InverseTransformPoint(temp.transform.position);
+            float angleY = Mathf.Asin(Mathf.Abs(localTargetPos.y) / localTargetPos.magnitude);
+            if (localTargetPos.y >= 0.0f)
+            {
+                if ((temp.transform.position - transform.position).magnitude <= lockRange && angleY <= elevation)
+                {
+                    RaycastHit hit;
+                    Vector3 rayPosition = transform.position;
+                    Vector3 rayDirection = (temp.transform.position - transform.position).normalized;
+                    if (Physics.Raycast(rayPosition, rayDirection, out hit, (temp.transform.position - transform.position).magnitude))
+                    {
+                        if (hit.collider.tag != "AimCollider" && (hit.collider.GetComponent<GameObjectBaseScript>() == null || hit.collider.GetComponent<GameObjectBaseScript>().BelongTo != BelongTo))
+                        {
+                            fireTarget = temp;
+                            break;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                if ((temp.transform.position - transform.position).magnitude <= lockRange && angleY <= depression)
+                {
+                    RaycastHit hit;
+                    Vector3 rayPosition = transform.position;
+                    Vector3 rayDirection = (temp.transform.position - transform.position).normalized;
+                    if (Physics.Raycast(rayPosition, rayDirection, out hit, (temp.transform.position - transform.position).magnitude))
+                    {
+                        if (hit.collider.tag != "AimCollider" && (hit.collider.GetComponent<GameObjectBaseScript>() == null || hit.collider.GetComponent<GameObjectBaseScript>().BelongTo != BelongTo))
+                        {
+                            fireTarget = temp;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        if (fireTarget == null && subsystemTarget.Count != 0 && (((GameObject)subsystemTarget[0]).transform.position - transform.position).magnitude <= lockRange)
+        {
+            fireTarget = (GameObject)subsystemTarget[0];
+        }
     }
-
-    /// <summary>
-    /// Give the turret a position to aim at. If not idle, it will rotate to aim at this point.
-    /// </summary>
-    public void SetAimpoint(Vector3 position)
+    private void SetAimpoint(Vector3 position)
     {
         aiming = true;
         aimPoint = position;
         atRest = false;
     }
 
-    /// <summary>
-    /// When idle, turret returns to resting position, will not track an aimpoint, and rotations stop updating.
-    /// </summary>
-    public void SetIdle(bool idle)
+
+    private void SetIdle(bool idle)
     {
         aiming = !idle;
 

@@ -8,9 +8,4 @@ public class AttackSubsystemBaseScript : SubsystemBaseScript
     public float lockRange;
 
     protected float timer = 0;
-
-    public override void SetTarget(List<object> target)
-    {
-        base.SetTarget(target);
-    }
 }

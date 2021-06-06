@@ -12,8 +12,7 @@ public class AttackAbilityScript : ContinuousAbilityBaseScript
     // Start is called before the first frame update
     void Start()
     {
-        // DEBUG
-        UseAbility(new List<object>() { 1, null });
+        UseAbility(new List<object>() { UseType.Auto, null });
     }
 
     // Update is called once per frame
@@ -54,14 +53,19 @@ public class AttackAbilityScript : ContinuousAbilityBaseScript
         {
             foreach (AttackSubsystemBaseScript i in SupportedBy)
             {
-                i.SetTarget(new List<object>() { GameObject.Find("TestAimPoint") });
+                List<GameObject> temp = GameManager.GameManagerInstance.GetAllGameObjects().FindAll(x => x.GetComponent<GameObjectBaseScript>().BelongTo != Parent.BelongTo);
+                temp.Sort((x, y) => (x.transform.position - transform.position).magnitude.CompareTo((y.transform.position - transform.position).magnitude));
+                i.SetTarget(new List<object>(temp));
             }
         }
         else if ((UseType)abilityTarget[0] == UseType.Specific)
         {
             foreach (AttackSubsystemBaseScript i in SupportedBy)
             {
-                i.SetTarget(new List<object>() { GameObject.Find("TestAimPoint") });
+                List<GameObject> temp = GameManager.GameManagerInstance.GetAllGameObjects().FindAll(x => x.GetComponent<GameObjectBaseScript>().BelongTo != Parent.BelongTo);
+                temp.Sort((x, y) => (x.transform.position - transform.position).magnitude.CompareTo((y.transform.position - transform.position).magnitude));
+                temp.Insert(0, (GameObject)abilityTarget[1]);
+                i.SetTarget(new List<object>(temp));
             }
         }
     }
