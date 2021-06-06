@@ -5,20 +5,6 @@ using UnityEngine;
 public class ContinuousAbilityBaseScript : AbilityBaseScript
 {
     protected bool isUsing;
-    // Start is called before the first frame update
-    void Start()
-    {
-        isUsing = false;
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        if (isUsing)
-        {
-            ContinuousAction();
-        }
-    }
 
     public override bool UseAbility(List<object> target)
     {

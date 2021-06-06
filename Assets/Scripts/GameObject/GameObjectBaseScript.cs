@@ -30,15 +30,16 @@ public class GameObjectBaseScript : MonoBehaviour
         }
     }
 
-    public virtual void OnCreatedAction()
+    protected virtual void OnCreatedAction()
     {
         HP = maxHP;
         GameManager.GameManagerInstance.OnGameObjectCreated(gameObject);
     }
 
-    public virtual void OnDestroyedAction()
+    protected virtual void OnDestroyedAction()
     {
         GameManager.GameManagerInstance.OnGameObjectDestroyed(gameObject, lastDamagedBy);
+        Destroy(gameObject);
     }
 
     public virtual void CreateDamage(float amount, GameObject from)

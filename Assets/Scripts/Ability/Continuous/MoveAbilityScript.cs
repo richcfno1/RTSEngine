@@ -27,7 +27,7 @@ public class MoveAbilityScript : ContinuousAbilityBaseScript
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         // Set from parent's property dict
         agentMoveSpeed = Parent.PropertyDictionary["MoveSpeed"];
@@ -179,13 +179,13 @@ public class MoveAbilityScript : ContinuousAbilityBaseScript
                 Vector3 moveVector = moveBeacons[0] - transform.position;
                 Vector3 rotateDirection = moveVector.normalized;
                 rotateDirection.y = 0;
-                transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(rotateDirection), Time.deltaTime * agentRotateSpeed);
+                transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(rotateDirection), Time.fixedDeltaTime * agentRotateSpeed);
 
                 float moveSpeedAdjust = Mathf.Cos(Mathf.Deg2Rad * Quaternion.Angle(transform.rotation, Quaternion.LookRotation(rotateDirection)));
                 moveSpeedAdjust = (moveSpeedAdjust + 1) / 2;
                 lastFrameSpeedAdjust = Mathf.Cos(Mathf.Deg2Rad * Quaternion.Angle(transform.rotation, Quaternion.LookRotation(lastFrameMoveDirection)));
                 moveSpeedAdjust = Mathf.Clamp(moveSpeedAdjust, lastFrameSpeedAdjust - agentAccelerateLimit, lastFrameSpeedAdjust + agentAccelerateLimit);
-                float moveDistance = agentMoveSpeed * Time.deltaTime * moveSpeedAdjust;
+                float moveDistance = agentMoveSpeed * Time.fixedDeltaTime * moveSpeedAdjust;
 
                 lastFrameSpeedAdjust = moveSpeedAdjust;
                 lastFrameMoveDirection = moveVector.normalized;

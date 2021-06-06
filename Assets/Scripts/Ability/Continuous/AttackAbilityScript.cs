@@ -4,14 +4,20 @@ using UnityEngine;
 
 public class AttackAbilityScript : ContinuousAbilityBaseScript
 {
+    public enum UseType
+    {
+        Auto,
+        Specific
+    }
     // Start is called before the first frame update
     void Start()
     {
+        // DEBUG
         UseAbility(new List<object>() { 1, null });
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         if (isUsing)
         {
@@ -20,7 +26,7 @@ public class AttackAbilityScript : ContinuousAbilityBaseScript
     }
 
     // For MoveAbility target size should be 2
-    // target[0] = int where 0 = stop, 1 = auto attack, 2 = attack specific target;
+    // target[0] = int where 0 = auto attack, 1 = attack specific target;
     // target[1] = game object to attack
     public override bool UseAbility(List<object> target)
     {
@@ -35,17 +41,28 @@ public class AttackAbilityScript : ContinuousAbilityBaseScript
     public override void PauseAbility()
     {
         base.PauseAbility();
+        foreach (AttackSubsystemBaseScript i in SupportedBy)
+        {
+            i.SetTarget(new List<object>());
+        }
     }
 
     protected override void ContinuousAction()
     {
-        if ((int)abilityTarget[0] == 1)
+        // DEBUG
+        if ((UseType)abilityTarget[0] == UseType.Auto)
         {
-            foreach (SubsystemBaseScript i in SupportedBy)
+            foreach (AttackSubsystemBaseScript i in SupportedBy)
             {
-                i.SetTarget(new List<object>() { GameObject.Find("GameObject") });
+                i.SetTarget(new List<object>() { GameObject.Find("TestAimPoint") });
             }
         }
-        
+        else if ((UseType)abilityTarget[0] == UseType.Specific)
+        {
+            foreach (AttackSubsystemBaseScript i in SupportedBy)
+            {
+                i.SetTarget(new List<object>() { GameObject.Find("TestAimPoint") });
+            }
+        }
     }
 }

@@ -27,7 +27,7 @@ public class ShipBaseScript : GameObjectBaseScript
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         if (HP <= 0)
         {

@@ -4,6 +4,13 @@ using UnityEngine;
 
 public class AbilityBaseScript : MonoBehaviour
 {
+    public enum AbilityType
+    {
+        None,
+        Move,
+        Attack
+    }
+
     // Set when instantiate
     public ShipBaseScript Parent { get; set; }
     public List<SubsystemBaseScript> SupportedBy { get; set; } = new List<SubsystemBaseScript>();

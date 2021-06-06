@@ -83,7 +83,7 @@ public class GameManager : MonoBehaviour
                         { "RotateSpeed", 20 },
                         { "AccelerateLimit", 0.5f },
                         { "MoveAgentRadius", 20 },
-                        { "MoveSearchStepDistance", 5 },
+                        { "MoveSearchStepDistance", 10 },
                         { "MoveSearchStepLimit", 100 },
                         { "MoveSearchRandomNumber", 20 }
                     },
@@ -120,14 +120,42 @@ public class GameManager : MonoBehaviour
                 {
                     type = "StandardFrigate",
                     belongTo = 0,
-                    position = new Vector3(),
+                    position = new Vector3(0, 0, 0),
                     rotation = new Quaternion()
                 },
                 new UnitData()
                 {
                     type = "StandardFrigate",
                     belongTo = 0,
-                    position = new Vector3(50, 0, 0),
+                    position = new Vector3(0, 50, 0),
+                    rotation = new Quaternion()
+                },
+                new UnitData()
+                {
+                    type = "StandardFrigate",
+                    belongTo = 0,
+                    position = new Vector3(0, -50, 0),
+                    rotation = new Quaternion()
+                },
+                new UnitData()
+                {
+                    type = "StandardFrigate",
+                    belongTo = 0,
+                    position = new Vector3(0, 0, 50),
+                    rotation = new Quaternion()
+                },
+                new UnitData()
+                {
+                    type = "StandardFrigate",
+                    belongTo = 0,
+                    position = new Vector3(0, 0, -50),
+                    rotation = new Quaternion()
+                },
+                new UnitData()
+                {
+                    type = "StandardFrigate",
+                    belongTo = 1,
+                    position = new Vector3(-50, 0, 0),
                     rotation = new Quaternion()
                 }
             }
@@ -225,7 +253,7 @@ public class GameManager : MonoBehaviour
                 if (supportedSubsystemAnchor != libraryData.shipTypeName)
                 {
                     GameObject temp = shipScript.SubsystemDictionary.FirstOrDefault(x => x.Value.name == supportedSubsystemAnchor).Key;
-                    if (temp.GetComponent<SubsystemBaseScript>().supportedAbility.Contains(ability.Key))
+                    if (temp.GetComponent<SubsystemBaseScript>().supportedAbility.Contains((AbilityBaseScript.AbilityType)Enum.Parse(typeof(AbilityBaseScript.AbilityType), ability.Key)))
                     {
                         abilityScript.SupportedBy.Add(temp.GetComponent<SubsystemBaseScript>());
                     }

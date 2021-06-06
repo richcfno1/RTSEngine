@@ -14,7 +14,7 @@ public class SubsystemBaseScript : GameObjectBaseScript
     // Set by editor
     public SubsystemScale scale;
     public float repairPercentRequired;
-    public List<string> supportedAbility;  // This will be used in future
+    public List<AbilityBaseScript.AbilityType> supportedAbility;
 
     // Set when instantiate
     public ShipBaseScript Parent { get; set; }
@@ -22,37 +22,19 @@ public class SubsystemBaseScript : GameObjectBaseScript
 
     protected List<object> subsystemTarget = new List<object>();
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        OnCreatedAction();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        if (!Active && HP / maxHP > repairPercentRequired)
-        {
-            OnSubsystemRepairedAction();
-        }
-        if (Active)
-        {
-            // Do something here
-        }
-    }
-
-    public override void OnCreatedAction()
+    protected override void OnCreatedAction()
     {
         base.OnCreatedAction();
         Active = true;
     }
 
-    public override void OnDestroyedAction()
+    protected override void OnDestroyedAction()
     {
         Active = false;
+        Destroy(gameObject);
     }
 
-    public virtual void OnSubsystemRepairedAction()
+    protected virtual void OnSubsystemRepairedAction()
     {
         Active = true;
     }
