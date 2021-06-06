@@ -13,7 +13,7 @@ public class GameObjectBaseScript : MonoBehaviour
     public int BelongTo { get; set; }
     public float HP { get; set; }
 
-    private GameObject lastDamagedBy = null;
+    protected GameObject lastDamagedBy = null;
 
     // Start is called before the first frame update
     void Start()

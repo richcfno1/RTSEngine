@@ -46,8 +46,11 @@ public class SelectControlScript : MonoBehaviour
             gameObjectScreenPosition.Clear();
             foreach (GameObject i in allSelectableGameObjects)
             {
-                gameObjectWorldPosition.Add(i.transform.position);
-                gameObjectScreenPosition.Add(Camera.main.WorldToScreenPoint(i.transform.position));
+                if (i != null)
+                {
+                    gameObjectWorldPosition.Add(i.transform.position);
+                    gameObjectScreenPosition.Add(Camera.main.WorldToScreenPoint(i.transform.position));
+                }
             }
 
             // Draw box

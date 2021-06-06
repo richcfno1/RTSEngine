@@ -31,7 +31,6 @@ public class SubsystemBaseScript : GameObjectBaseScript
     protected override void OnDestroyedAction()
     {
         Active = false;
-        Destroy(gameObject);
     }
 
     protected virtual void OnSubsystemRepairedAction()
