@@ -178,7 +178,7 @@ public class MoveAbilityScript : ContinuousAbilityBaseScript
                 rotateDirection.y = 0;  // Consider to allow rotation in y?
                 transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(rotateDirection), Time.fixedDeltaTime * agentRotateSpeed);
 
-                Debug.Log(Quaternion.Angle(transform.rotation, Quaternion.LookRotation(rotateDirection)));
+                float moveSpeedAdjust = Mathf.Cos(Mathf.Deg2Rad * Quaternion.Angle(transform.rotation, Quaternion.LookRotation(rotateDirection)));
                 moveSpeedAdjust = (moveSpeedAdjust + 1) / 2;
                 lastFrameSpeedAdjust = Mathf.Cos(Mathf.Deg2Rad * Quaternion.Angle(transform.rotation, Quaternion.LookRotation(lastFrameMoveDirection)));
                 moveSpeedAdjust = Mathf.Clamp(moveSpeedAdjust, lastFrameSpeedAdjust - agentAccelerateLimit, lastFrameSpeedAdjust + agentAccelerateLimit);
