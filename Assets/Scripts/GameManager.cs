@@ -148,9 +148,64 @@ public class GameManager : MonoBehaviour
                 },
                 new UnitData()
                 {
+                    type = "StandardFrigate",
+                    belongTo = 1,
+                    position = new Vector3(50, 0, 0),
+                    rotation = new Quaternion()
+                },
+                new UnitData()
+                {
+                    type = "StandardFrigate",
+                    belongTo = 1,
+                    position = new Vector3(-50, 0, 0),
+                    rotation = new Quaternion()
+                },
+                new UnitData()
+                {
+                    type = "StandardFrigate",
+                    belongTo = 1,
+                    position = new Vector3(0, 50, 0),
+                    rotation = new Quaternion()
+                },
+                new UnitData()
+                {
+                    type = "StandardFrigate",
+                    belongTo = 1,
+                    position = new Vector3(0, -50, 0),
+                    rotation = new Quaternion()
+                },
+                new UnitData()
+                {
+                    type = "StandardFrigate",
+                    belongTo = 1,
+                    position = new Vector3(0, 0, 50),
+                    rotation = new Quaternion()
+                },new UnitData()
+                {
+                    type = "StandardFrigate",
+                    belongTo = 1,
+                    position = new Vector3(0, 0, -50),
+                    rotation = new Quaternion()
+                },
+                new UnitData()
+                {
                     type = "ScopeDrone",
                     belongTo = 0,
-                    position = new Vector3(50, 0, 0),
+                    position = new Vector3(50, 0, 50),
+                    rotation = new Quaternion()
+                },
+                new UnitData()
+                {
+                    type = "ScopeDrone",
+                    belongTo = 0,
+                    position = new Vector3(50, 5, 50),
+                    rotation = new Quaternion()
+                },
+                new UnitData()
+                {
+                    type = "ScopeDrone",
+                    belongTo = 0,
+                    position = new Vector3(50, -5, 50),
                     rotation = new Quaternion()
                 }
             }

@@ -33,6 +33,10 @@ public class RailgunTurretScript : AttackSubsystemBaseScript
     [Range(0.0f, 90.0f)]
     public float depression = 5.0f;
 
+    [Header("Random")]
+    [Tooltip("How bullet randomly deviation when shooting")]
+    public float allowedRandomAngle = 0.05f;
+
     [Header("Utilities")]
     [Tooltip("Show the arcs that the turret can aim through.\n\nRed: Left/Right Traverse\nGreen: Elevation\nBlue: Depression")]
     public bool showArcs = false;
@@ -41,6 +45,7 @@ public class RailgunTurretScript : AttackSubsystemBaseScript
 
     private GameObject fireTarget;
     private Vector3 aimPoint;
+    private int bulletCount;
 
     private bool aiming = false;
     private bool atRest = false;
@@ -49,6 +54,7 @@ public class RailgunTurretScript : AttackSubsystemBaseScript
     void Start()
     {
         OnCreatedAction();
+        bulletCount = 0;
     }
 
     // Update is called once per frame
@@ -64,7 +70,7 @@ public class RailgunTurretScript : AttackSubsystemBaseScript
         }
         if (Active)
         {
-            if (timer >= coolDown)
+            if (timer >= coolDown / bulletStartPosition.Count)
             {
                 if (fireTarget != null && (transform.position - fireTarget.transform.position).magnitude <= lockRange)
                 {
@@ -75,7 +81,12 @@ public class RailgunTurretScript : AttackSubsystemBaseScript
                     {
                         if (hit.collider.tag != "AimCollider" && (hit.collider.GetComponent<GameObjectBaseScript>() == null || hit.collider.GetComponent<GameObjectBaseScript>().BelongTo != BelongTo))
                         {
-                            Fire();
+                            Fire(bulletCount);
+                            bulletCount++;
+                            if (bulletCount == bulletStartPosition.Count)
+                            {
+                                bulletCount = 0;
+                            }
                             timer = 0;
                         }
                     }
@@ -102,17 +113,15 @@ public class RailgunTurretScript : AttackSubsystemBaseScript
         }
     }
 
-    protected virtual void Fire()
+    protected virtual void Fire(int bulletIndex)
     {
-        foreach (Transform i in bulletStartPosition)
-        {
-            GameObject temp = Instantiate(bullet, i.position, turretBarrels.rotation);
-            BulletBaseScript tempScript = temp.GetComponent<BulletBaseScript>();
-            tempScript.moveDirection = turretBarrels.forward;
-            tempScript.toIgnore.Add(GetComponent<Collider>());
-            tempScript.toIgnore.Add(Parent.GetComponent<Collider>());
-            tempScript.createdBy = Parent.gameObject;
-        }
+        GameObject temp = Instantiate(bullet, bulletStartPosition[bulletIndex].position, turretBarrels.rotation);
+        BulletBaseScript tempScript = temp.GetComponent<BulletBaseScript>();
+        tempScript.moveDirection = turretBarrels.forward + turretBarrels.right * Random.Range(-allowedRandomAngle, allowedRandomAngle) +
+            turretBarrels.up * Random.Range(-allowedRandomAngle, allowedRandomAngle);
+        tempScript.toIgnore.Add(GetComponent<Collider>());
+        tempScript.toIgnore.Add(Parent.GetComponent<Collider>());
+        tempScript.createdBy = Parent.gameObject;
     }
 
     // Try to find a target by the order, compare angleY first, then check obstacles

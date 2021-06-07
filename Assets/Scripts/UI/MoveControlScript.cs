@@ -122,6 +122,12 @@ public class MoveControlScript : MonoBehaviour
     {
         Vector3 center = SelectControlScript.SelectionControlInstance.FindCenter();
 
+        if (center.x == Mathf.Infinity)
+        {
+            ClearNavigationUI();
+            return;
+        }
+
         navigationUIBase.transform.position = center;
         navigationUIBase.transform.localScale = Vector3.one * destinationHorizontalDistance * 2;
 
