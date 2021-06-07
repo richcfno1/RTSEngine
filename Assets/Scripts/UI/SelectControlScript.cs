@@ -72,20 +72,30 @@ public class SelectControlScript : MonoBehaviour
         }
 
         // Remove destroyed object and add highlighted outline to others
+        List<string> toRemoveKey = new List<string>();
         foreach (KeyValuePair<string, List<GameObject>> i in SelectedGameObjects)
         {
+            List<GameObject> toRemoveValue = new List<GameObject>();
             // Check objects with same type
             foreach (GameObject j in i.Value)
             {
                 if (j == null)
                 {
-                    i.Value.Remove(j);
+                    toRemoveValue.Add(j);
                 }
+            }
+            foreach (GameObject j in toRemoveValue)
+            {
+                i.Value.Remove(j);
             }
             if (i.Value.Count == 0)
             {
-                SelectedGameObjects.Remove(i.Key);
+                toRemoveKey.Add(i.Key);
             }
+        }
+        foreach (string i in toRemoveKey)
+        {
+            SelectedGameObjects.Remove(i);
         }
         //Debug.Log(SelectedGameObjects.Count);
     }

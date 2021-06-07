@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,7 +6,7 @@ public class MoveAbilityScript : ContinuousAbilityBaseScript
     // Move
     private float agentMoveSpeed;
     private float agentRotateSpeed;
-    private float agentAccelerateLimit;
+    private float agentAccelerateLimit;  // Set this to 0 to enable "forward only" mode.
 
     // Search
     public float agentRadius;
@@ -51,17 +50,13 @@ public class MoveAbilityScript : ContinuousAbilityBaseScript
         int hitCount = 0;
         float hitDistance = 0;
         List<Collider> toIgnore = new List<Collider>(Physics.OverlapSphere(from, agentRadius));
-        RaycastHit[] hits = Physics.CapsuleCastAll(from, to, agentRadius, direction);
+        RaycastHit[] hits = Physics.CapsuleCastAll(from, to, agentRadius, direction, direction.magnitude);
         foreach (RaycastHit i in hits)
         {
-            GameObjectBaseScript parentScript = i.collider.GetComponentInParent<GameObjectBaseScript>();
-            if (parentScript != null && i.collider.GetComponent<SubsystemBaseScript>() == null)
+            if (!toIgnore.Contains(i.collider))
             {
-                if (parentScript.gameObject != gameObject && !toIgnore.Contains(i.collider))
-                {
-                    hitDistance += (i.collider.ClosestPoint(from) - from).magnitude;
-                    hitCount++;
-                }
+                hitDistance += (i.collider.ClosestPoint(from) - from).magnitude;
+                hitCount++;
             }
         }
         if (hitDistance == 0)
@@ -173,38 +168,69 @@ public class MoveAbilityScript : ContinuousAbilityBaseScript
             }
             if (moveBeacons.Count != 0)
             {
-                Vector3 moveVector = moveBeacons[0] - transform.position;
-                Vector3 rotateDirection = moveVector.normalized;
-                rotateDirection.y = 0;  // Consider to allow rotation in y?
-                transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(rotateDirection), Time.fixedDeltaTime * agentRotateSpeed);
-
-                float moveSpeedAdjust = Mathf.Cos(Mathf.Deg2Rad * Quaternion.Angle(transform.rotation, Quaternion.LookRotation(rotateDirection)));
-                moveSpeedAdjust = (moveSpeedAdjust + 1) / 2;
-                lastFrameSpeedAdjust = Mathf.Cos(Mathf.Deg2Rad * Quaternion.Angle(transform.rotation, Quaternion.LookRotation(lastFrameMoveDirection)));
-                moveSpeedAdjust = Mathf.Clamp(moveSpeedAdjust, lastFrameSpeedAdjust - agentAccelerateLimit, lastFrameSpeedAdjust + agentAccelerateLimit);
-                float moveDistance = agentMoveSpeed * Time.fixedDeltaTime * moveSpeedAdjust;
-
-                lastFrameSpeedAdjust = moveSpeedAdjust;
-                lastFrameMoveDirection = moveVector.normalized;
-
-                if (moveVector.magnitude <= moveDistance)
+                // There are two kinds of move:
+                // First one for drone which can only accelerate forward
+                // Second for ship which should be able to rotate without move 
+                if (agentAccelerateLimit == 0)
                 {
-                    if (TestObstacle(transform.position, moveBeacons[0]) != 0)
+                    Vector3 moveVector = moveBeacons[0] - transform.position;
+                    Vector3 rotateDirection = moveVector.normalized;
+                    transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(rotateDirection), Time.fixedDeltaTime * agentRotateSpeed);
+                    float moveDistance = agentMoveSpeed * Time.fixedDeltaTime;
+                    if (moveVector.magnitude <= moveDistance)
                     {
-                        moveBeacons = FindPath(transform.position, destination);
-                        return;
+                        if (TestObstacle(transform.position, moveBeacons[0]) != 0)
+                        {
+                            moveBeacons = FindPath(transform.position, destination);
+                            return;
+                        }
+                        transform.position = moveBeacons[0];
+                        moveBeacons.RemoveAt(0);
                     }
-                    transform.position = moveBeacons[0];
-                    moveBeacons.RemoveAt(0);
+                    else
+                    {
+                        if (TestObstacle(transform.position, transform.position + transform.forward * moveDistance) != 0)
+                        {
+                            TestObstacle(transform.position, transform.position + transform.forward * moveDistance);
+                            moveBeacons = FindPath(transform.position, destination);
+                            return;
+                        }
+                        transform.position += transform.forward * moveDistance;
+                    }
                 }
                 else
                 {
-                    if (TestObstacle(transform.position, transform.position + moveVector.normalized * moveDistance) != 0)
+                    Vector3 moveVector = moveBeacons[0] - transform.position;
+                    Vector3 rotateDirection = moveVector.normalized;
+                    rotateDirection.y = 0;  // Consider to allow rotation in y?
+                    transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(rotateDirection), Time.fixedDeltaTime * agentRotateSpeed);
+                    float moveSpeedAdjust = Mathf.Cos(Mathf.Deg2Rad * Quaternion.Angle(transform.rotation, Quaternion.LookRotation(rotateDirection)));
+                    moveSpeedAdjust = (moveSpeedAdjust + 1) / 2;
+                    lastFrameSpeedAdjust = Mathf.Cos(Mathf.Deg2Rad * Quaternion.Angle(transform.rotation, Quaternion.LookRotation(lastFrameMoveDirection)));
+                    moveSpeedAdjust = Mathf.Clamp(moveSpeedAdjust, lastFrameSpeedAdjust - agentAccelerateLimit, lastFrameSpeedAdjust + agentAccelerateLimit);
+                    float moveDistance = agentMoveSpeed * Time.fixedDeltaTime * moveSpeedAdjust;
+
+                    lastFrameSpeedAdjust = moveSpeedAdjust;
+                    lastFrameMoveDirection = moveVector.normalized;
+                    if (moveVector.magnitude <= moveDistance)
                     {
-                        moveBeacons = FindPath(transform.position, destination);
-                        return;
+                        if (TestObstacle(transform.position, moveBeacons[0]) != 0)
+                        {
+                            moveBeacons = FindPath(transform.position, destination);
+                            return;
+                        }
+                        transform.position = moveBeacons[0];
+                        moveBeacons.RemoveAt(0);
                     }
-                    transform.position += moveVector.normalized * moveDistance;
+                    else
+                    {
+                        if (TestObstacle(transform.position, transform.position + moveVector.normalized * moveDistance) != 0)
+                        {
+                            moveBeacons = FindPath(transform.position, destination);
+                            return;
+                        }
+                        transform.position += moveVector.normalized * moveDistance;
+                    }
                 }
             }
             else

@@ -79,7 +79,7 @@ public class GameManager : MonoBehaviour
                     shipTypeName = "Frigate1",
                     properties = new Dictionary<string, float>()
                     {
-                        { "MoveSpeed", 20 },
+                        { "MoveSpeed", 10 },
                         { "RotateSpeed", 20 },
                         { "AccelerateLimit", 0.5f },
                         { "MoveAgentRadius", 20 },
@@ -112,6 +112,29 @@ public class GameManager : MonoBehaviour
                             } 
                         }
                     }
+                },
+                new UnitLibraryData()
+                {
+                    unitTypeName = "ScopeDrone",
+                    shipTypeName = "Drone1",
+                    properties = new Dictionary<string, float>()
+                    {
+                        { "MoveSpeed", 20 },
+                        { "RotateSpeed", 90 },
+                        { "AccelerateLimit", 0 },
+                        { "MoveAgentRadius", 3 },
+                        { "MoveSearchStepDistance", 10 },
+                        { "MoveSearchStepLimit", 100 },
+                        { "MoveSearchRandomNumber", 20 }
+                    },
+                    subsystems = new Dictionary<string, string>()
+                    {
+
+                    },
+                    abilities = new Dictionary<string, List<string>>()
+                    {
+                        { "Move", new List<string>(){ "Drone1" } }
+                    }
                 }
             },
             initUnitData = new List<UnitData>()
@@ -119,52 +142,17 @@ public class GameManager : MonoBehaviour
                 new UnitData()
                 {
                     type = "StandardFrigate",
-                    belongTo = 0,
+                    belongTo = 1,
                     position = new Vector3(0, 0, 0),
                     rotation = new Quaternion()
                 },
                 new UnitData()
                 {
-                    type = "StandardFrigate",
+                    type = "ScopeDrone",
                     belongTo = 0,
-                    position = new Vector3(0, 50, 0),
-                    rotation = new Quaternion()
-                },
-                new UnitData()
-                {
-                    type = "StandardFrigate",
-                    belongTo = 0,
-                    position = new Vector3(0, -50, 0),
-                    rotation = new Quaternion()
-                },
-                new UnitData()
-                {
-                    type = "StandardFrigate",
-                    belongTo = 0,
-                    position = new Vector3(0, 0, 50),
-                    rotation = new Quaternion()
-                },
-                new UnitData()
-                {
-                    type = "StandardFrigate",
-                    belongTo = 0,
-                    position = new Vector3(0, 0, 0),
+                    position = new Vector3(50, 0, 0),
                     rotation = new Quaternion()
                 }
-                //new UnitData()
-                //{
-                //    type = "StandardFrigate",
-                //    belongTo = 1,
-                //    position = new Vector3(-50, 0, 20),
-                //    rotation = new Quaternion()
-                //},
-                //new UnitData()
-                //{
-                //    type = "StandardFrigate",
-                //    belongTo = 1,
-                //    position = new Vector3(50, 0, 20),
-                //    rotation = new Quaternion()
-                //}
             }
         });
     }
@@ -224,6 +212,7 @@ public class GameManager : MonoBehaviour
         // These will be created into a json file
         Dictionary<string, string> shipLibrary = new Dictionary<string, string>();
         shipLibrary.Add("Frigate1", "GameObject/Ship/Frigate1");
+        shipLibrary.Add("Drone1", "GameObject/Ship/Drone1");
         Dictionary<string, string> subsystemLibrary = new Dictionary<string, string>();
         subsystemLibrary.Add("Turret1", "GameObject/Subsystem/Turret1");
         Dictionary<string, string> abilityLibrary = new Dictionary<string, string>();

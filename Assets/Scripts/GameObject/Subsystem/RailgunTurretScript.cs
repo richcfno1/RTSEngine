@@ -163,7 +163,8 @@ public class RailgunTurretScript : AttackSubsystemBaseScript
                 }
             }
         }
-        if (fireTarget == null && subsystemTarget.Count != 0 && (((GameObject)subsystemTarget[0]).transform.position - transform.position).magnitude <= lockRange)
+        if (fireTarget == null && subsystemTarget.Count != 0 && (GameObject)subsystemTarget[0] != null && 
+            (((GameObject)subsystemTarget[0]).transform.position - transform.position).magnitude <= lockRange)
         {
             fireTarget = (GameObject)subsystemTarget[0];
         }

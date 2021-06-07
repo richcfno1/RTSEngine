@@ -15,17 +15,18 @@ public class BulletBaseScript : MonoBehaviour
     public GameObject createdBy;
 
     private float timer;
+    private Rigidbody thisRigidbody;
 
     // Start is called before the first frame update
     void Start()
     {
-
+        thisRigidbody = GetComponent<Rigidbody>();
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
-        transform.position += moveDirection * Time.fixedDeltaTime *  moveSpeed;
+        thisRigidbody.MovePosition(thisRigidbody.position + moveDirection * Time.fixedDeltaTime * moveSpeed);
         timer += Time.fixedDeltaTime;
         if (timer > maxTime)
         {
