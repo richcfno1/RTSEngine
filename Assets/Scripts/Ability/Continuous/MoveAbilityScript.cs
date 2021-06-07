@@ -50,12 +50,14 @@ public class MoveAbilityScript : ContinuousAbilityBaseScript
         Vector3 direction = (to - from).normalized;
         int hitCount = 0;
         float hitDistance = 0;
+        List<Collider> toIgnore = new List<Collider>(Physics.OverlapSphere(from, agentRadius));
         RaycastHit[] hits = Physics.CapsuleCastAll(from, to, agentRadius, direction);
         foreach (RaycastHit i in hits)
         {
-            if (i.collider.GetComponent<GameObjectBaseScript>() != null && i.collider.GetComponent<SubsystemBaseScript>() == null)
+            GameObjectBaseScript parentScript = i.collider.GetComponentInParent<GameObjectBaseScript>();
+            if (parentScript != null && i.collider.GetComponent<SubsystemBaseScript>() == null)
             {
-                if (i.collider.gameObject != gameObject)
+                if (parentScript.gameObject != gameObject && !toIgnore.Contains(i.collider))
                 {
                     hitDistance += (i.collider.ClosestPoint(from) - from).magnitude;
                     hitCount++;
@@ -139,9 +141,10 @@ public class MoveAbilityScript : ContinuousAbilityBaseScript
     {
         if (target.Count != 2 || target[1].GetType() != typeof(Vector3))
         {
-            abilityTarget = null;
+            abilityTarget = new List<object>();
             return isUsing = false;
         }
+        moveBeacons.Clear();
         return base.UseAbility(target);
     }
 
@@ -170,18 +173,12 @@ public class MoveAbilityScript : ContinuousAbilityBaseScript
             }
             if (moveBeacons.Count != 0)
             {
-                if (TestObstacle(transform.position, moveBeacons[0]) != 0)
-                {
-                    moveBeacons = FindPath(transform.position, destination);
-                    return;
-                }
-
                 Vector3 moveVector = moveBeacons[0] - transform.position;
                 Vector3 rotateDirection = moveVector.normalized;
-                rotateDirection.y = 0;
+                rotateDirection.y = 0;  // Consider to allow rotation in y?
                 transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(rotateDirection), Time.fixedDeltaTime * agentRotateSpeed);
 
-                float moveSpeedAdjust = Mathf.Cos(Mathf.Deg2Rad * Quaternion.Angle(transform.rotation, Quaternion.LookRotation(rotateDirection)));
+                Debug.Log(Quaternion.Angle(transform.rotation, Quaternion.LookRotation(rotateDirection)));
                 moveSpeedAdjust = (moveSpeedAdjust + 1) / 2;
                 lastFrameSpeedAdjust = Mathf.Cos(Mathf.Deg2Rad * Quaternion.Angle(transform.rotation, Quaternion.LookRotation(lastFrameMoveDirection)));
                 moveSpeedAdjust = Mathf.Clamp(moveSpeedAdjust, lastFrameSpeedAdjust - agentAccelerateLimit, lastFrameSpeedAdjust + agentAccelerateLimit);
@@ -192,11 +189,21 @@ public class MoveAbilityScript : ContinuousAbilityBaseScript
 
                 if (moveVector.magnitude <= moveDistance)
                 {
+                    if (TestObstacle(transform.position, moveBeacons[0]) != 0)
+                    {
+                        moveBeacons = FindPath(transform.position, destination);
+                        return;
+                    }
                     transform.position = moveBeacons[0];
                     moveBeacons.RemoveAt(0);
                 }
                 else
                 {
+                    if (TestObstacle(transform.position, transform.position + moveVector.normalized * moveDistance) != 0)
+                    {
+                        moveBeacons = FindPath(transform.position, destination);
+                        return;
+                    }
                     transform.position += moveVector.normalized * moveDistance;
                 }
             }

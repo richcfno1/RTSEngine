@@ -148,23 +148,23 @@ public class GameManager : MonoBehaviour
                 {
                     type = "StandardFrigate",
                     belongTo = 0,
-                    position = new Vector3(0, 0, -50),
-                    rotation = new Quaternion()
-                },
-                new UnitData()
-                {
-                    type = "StandardFrigate",
-                    belongTo = 1,
-                    position = new Vector3(-50, 0, 20),
-                    rotation = new Quaternion()
-                },
-                new UnitData()
-                {
-                    type = "StandardFrigate",
-                    belongTo = 1,
-                    position = new Vector3(50, 0, 20),
+                    position = new Vector3(0, 0, 0),
                     rotation = new Quaternion()
                 }
+                //new UnitData()
+                //{
+                //    type = "StandardFrigate",
+                //    belongTo = 1,
+                //    position = new Vector3(-50, 0, 20),
+                //    rotation = new Quaternion()
+                //},
+                //new UnitData()
+                //{
+                //    type = "StandardFrigate",
+                //    belongTo = 1,
+                //    position = new Vector3(50, 0, 20),
+                //    rotation = new Quaternion()
+                //}
             }
         });
     }
