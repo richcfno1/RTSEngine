@@ -325,8 +325,8 @@ public class GameManager : MonoBehaviour
         }
 
         // Set belonging
-        result.GetComponent<GameObjectBaseScript>().BelongTo = belongTo;
-        foreach (GameObjectBaseScript i in result.GetComponentsInChildren<GameObjectBaseScript>())
+        result.GetComponent<RTSGameObjectBaseScript>().BelongTo = belongTo;
+        foreach (RTSGameObjectBaseScript i in result.GetComponentsInChildren<RTSGameObjectBaseScript>())
         {
             i.BelongTo = belongTo;
         }
@@ -337,11 +337,11 @@ public class GameManager : MonoBehaviour
         // TODO: LUA
 
         // Index
-        self.GetComponent<GameObjectBaseScript>().Index = gameObjectIndexCounter;
+        self.GetComponent<RTSGameObjectBaseScript>().Index = gameObjectIndexCounter;
         allGameObjects.Add(gameObjectIndexCounter, self);
 
         // Player
-        int playerIndex = self.GetComponent<GameObjectBaseScript>().BelongTo;
+        int playerIndex = self.GetComponent<RTSGameObjectBaseScript>().BelongTo;
         allPlayers[playerIndex].playerGameObjects.Add(gameObjectIndexCounter);
 
         gameObjectIndexCounter++;
@@ -358,11 +358,11 @@ public class GameManager : MonoBehaviour
         // TODO: LUA
 
         // Index
-        int gameObjectIndex = self.GetComponent<GameObjectBaseScript>().Index;
+        int gameObjectIndex = self.GetComponent<RTSGameObjectBaseScript>().Index;
         allGameObjects.Remove(gameObjectIndex);
 
         // Player
-        int playerIndex = self.GetComponent<GameObjectBaseScript>().BelongTo;
+        int playerIndex = self.GetComponent<RTSGameObjectBaseScript>().BelongTo;
         allPlayers[playerIndex].playerGameObjects.Remove(gameObjectIndex);
     }
 

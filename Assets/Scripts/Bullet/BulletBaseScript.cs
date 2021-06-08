@@ -51,14 +51,14 @@ public class BulletBaseScript : MonoBehaviour
                 return;
             }
         }
-        if (other.GetComponent<GameObjectBaseScript>() != null)
+        if (other.GetComponent<RTSGameObjectBaseScript>() != null)
         {
-            other.GetComponent<GameObjectBaseScript>().CreateDamage(damage, createdBy);
+            other.GetComponent<RTSGameObjectBaseScript>().CreateDamage(damage, createdBy);
         }
         // Or it may be a aim collider, we need to find its parents
-        else if (other.tag == "AimCollider" && other.GetComponentInParent<GameObjectBaseScript>() != null)
+        else if (other.tag == "AimCollider" && other.GetComponentInParent<RTSGameObjectBaseScript>() != null)
         {
-            other.GetComponentInParent<GameObjectBaseScript>().CreateDamage(damage, createdBy);
+            other.GetComponentInParent<RTSGameObjectBaseScript>().CreateDamage(damage, createdBy);
         }
         // Well... in fact, there is still a case that bullet collide with bullet...
         Destroy(gameObject);

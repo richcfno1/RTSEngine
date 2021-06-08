@@ -130,10 +130,10 @@ public class SelectControlScript : MonoBehaviour
             if (Physics.Raycast(ray, out hit))
             {
                 // Do not check belonging because single selection can select game object which is not belong to "self"
-                if (hit.collider.gameObject.GetComponent<GameObjectBaseScript>() != null)
+                if (hit.collider.gameObject.GetComponent<RTSGameObjectBaseScript>() != null)
                 {
                     AddGameObject(hit.collider.gameObject);
-                    SelectedOwnGameObjects = hit.collider.gameObject.GetComponent<GameObjectBaseScript>().BelongTo == selfIndex;
+                    SelectedOwnGameObjects = hit.collider.gameObject.GetComponent<RTSGameObjectBaseScript>().BelongTo == selfIndex;
                 }
             }
         }
@@ -155,11 +155,11 @@ public class SelectControlScript : MonoBehaviour
 
     public void AddGameObject(GameObject obj)
     {
-        if (obj == null || obj.GetComponent<GameObjectBaseScript>() == null)
+        if (obj == null || obj.GetComponent<RTSGameObjectBaseScript>() == null)
         {
             return;
         }
-        string type = obj.GetComponent<GameObjectBaseScript>().typeID;
+        string type = obj.GetComponent<RTSGameObjectBaseScript>().typeID;
         if (SelectedGameObjects.ContainsKey(type))
         {
             SelectedGameObjects[type].Add(obj);

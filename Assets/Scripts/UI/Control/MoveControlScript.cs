@@ -2,9 +2,23 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using System.Runtime.InteropServices;
+using System.Windows;
 
 public class MoveControlScript : MonoBehaviour
 {
+    [StructLayout(LayoutKind.Sequential)]
+    public struct POINT
+    {
+        public int X;
+        public int Y;
+    }
+
+    [DllImport("user32.dll")]
+    static extern bool GetCursorPos(out POINT lpPoint);
+    [DllImport("user32.dll")]
+    static extern bool SetCursorPos(int X, int Y);
+
     public float verticalSensitive;
 
     public GameObject navigationUIBasePrefab;
@@ -14,13 +28,15 @@ public class MoveControlScript : MonoBehaviour
     private float destinationHorizontalDistance = 0;
     private float destinationVerticalDistance = 0;
     private Vector3 destinationHorizontalPosition = new Vector3();
-    private Vector3 destinationHorizontalPositionOffset = new Vector3();
 
     private GameObject navigationUIBase = null;
     private GameObject navigationUISelfCircle = null;
     private GameObject navigationUIHorizontalCircle = null;
     private GameObject navigationUIVerticalCircle = null;
     private GameObject navigationUILine = null;
+
+    private int mousePositionX = 0;
+    private int mousePositionY = 0;
 
     // Start is called before the first frame update
     void Start()
@@ -35,17 +51,27 @@ public class MoveControlScript : MonoBehaviour
         {
             if (navigationUIBase != null)
             {
+                if (Input.GetKeyDown(InputManager.HotKeys.SetUnitMoveHeight))
+                {
+                    POINT p;
+                    GetCursorPos(out p);
+                    mousePositionX = p.X;
+                    mousePositionY = p.Y;
+                }
+                else if (Input.GetKeyUp(InputManager.HotKeys.SetUnitMoveHeight))
+                {
+                    SetCursorPos(mousePositionX, mousePositionY);
+                }
                 // If exist and get set key, set height
                 if (Input.GetKey(InputManager.HotKeys.SetUnitMoveHeight))
                 {
-                    destinationVerticalDistance += Input.GetAxis("Mouse Y") * verticalSensitive;
                     Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
                     Vector3 center = SelectControlScript.SelectionControlInstance.FindCenter();
-                    Plane hPlane = new Plane(Vector3.up, center);
+                    Plane hPlane = new Plane(Vector3.right, destinationHorizontalPosition);
                     float distance;
                     if (hPlane.Raycast(ray, out distance))
                     {
-                        destinationHorizontalPositionOffset = ray.GetPoint(distance) - destinationHorizontalPosition;
+                        destinationVerticalDistance = (ray.GetPoint(distance) - destinationHorizontalPosition).y;
                     }
                 }
                 // Or move in horizontal plane
@@ -57,7 +83,7 @@ public class MoveControlScript : MonoBehaviour
                     float distance;
                     if (hPlane.Raycast(ray, out distance))
                     {
-                        destinationHorizontalPosition = ray.GetPoint(distance) - destinationHorizontalPositionOffset;
+                        destinationHorizontalPosition = ray.GetPoint(distance);
                         destinationHorizontalDistance = (destinationHorizontalPosition - center).magnitude;
                     }
                 }
@@ -115,7 +141,7 @@ public class MoveControlScript : MonoBehaviour
 
         navigationUILine = Instantiate(navigationUILinePrefab, Vector3.zero, new Quaternion(), GameObject.Find("UI").transform);
 
-        Cursor.visible = false;
+        //Cursor.visible = false;
     }
 
     private void UpdateNavigationUI()
@@ -152,7 +178,6 @@ public class MoveControlScript : MonoBehaviour
         destinationHorizontalDistance = 0;
         destinationVerticalDistance = 0;
         destinationHorizontalPosition = new Vector3();
-        destinationHorizontalPositionOffset = new Vector3();
 
         if (navigationUIBase != null)
         {
@@ -174,8 +199,7 @@ public class MoveControlScript : MonoBehaviour
         {
             Destroy(navigationUILine);
         }
-
-        Cursor.visible = true;
+        //Cursor.visible = true;
     }
 
     private Dictionary<MoveAbilityScript, Vector3> FindDestination(List<MoveAbilityScript> allAgents, Vector3 destination, Vector3 forwardDirection)

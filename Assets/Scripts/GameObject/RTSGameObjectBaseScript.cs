@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GameObjectBaseScript : MonoBehaviour
+public class RTSGameObjectBaseScript : MonoBehaviour
 {
     // Set by editor
     public string typeID;

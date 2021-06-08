@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SubsystemBaseScript : GameObjectBaseScript
+public class SubsystemBaseScript : RTSGameObjectBaseScript
 {
     public enum SubsystemScale
     {

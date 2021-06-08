@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ShipBaseScript : GameObjectBaseScript
+public class ShipBaseScript : RTSGameObjectBaseScript
 {
     [Serializable]
     public class AnchorData

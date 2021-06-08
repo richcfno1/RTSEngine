@@ -79,7 +79,7 @@ public class RailgunTurretScript : AttackSubsystemBaseScript
                     Vector3 rayDirection = turretBarrels.forward;
                     if (Physics.Raycast(rayPosition, rayDirection, out hit, (aimPoint - rayPosition).magnitude))
                     {
-                        if (hit.collider.tag != "AimCollider" && (hit.collider.GetComponent<GameObjectBaseScript>() == null || hit.collider.GetComponent<GameObjectBaseScript>().BelongTo != BelongTo))
+                        if (hit.collider.tag != "AimCollider" && (hit.collider.GetComponent<RTSGameObjectBaseScript>() == null || hit.collider.GetComponent<RTSGameObjectBaseScript>().BelongTo != BelongTo))
                         {
                             Fire(bulletCount);
                             bulletCount++;
@@ -146,7 +146,7 @@ public class RailgunTurretScript : AttackSubsystemBaseScript
                     Vector3 rayDirection = (temp.transform.position - transform.position).normalized;
                     if (Physics.Raycast(rayPosition, rayDirection, out hit, (temp.transform.position - transform.position).magnitude))
                     {
-                        if (hit.collider.tag != "AimCollider" && (hit.collider.GetComponent<GameObjectBaseScript>() == null || hit.collider.GetComponent<GameObjectBaseScript>().BelongTo != BelongTo))
+                        if (hit.collider.tag != "AimCollider" && (hit.collider.GetComponent<RTSGameObjectBaseScript>() == null || hit.collider.GetComponent<RTSGameObjectBaseScript>().BelongTo != BelongTo))
                         {
                             fireTarget = temp;
                             break;
@@ -163,7 +163,7 @@ public class RailgunTurretScript : AttackSubsystemBaseScript
                     Vector3 rayDirection = (temp.transform.position - transform.position).normalized;
                     if (Physics.Raycast(rayPosition, rayDirection, out hit, (temp.transform.position - transform.position).magnitude))
                     {
-                        if (hit.collider.tag != "AimCollider" && (hit.collider.GetComponent<GameObjectBaseScript>() == null || hit.collider.GetComponent<GameObjectBaseScript>().BelongTo != BelongTo))
+                        if (hit.collider.tag != "AimCollider" && (hit.collider.GetComponent<RTSGameObjectBaseScript>() == null || hit.collider.GetComponent<RTSGameObjectBaseScript>().BelongTo != BelongTo))
                         {
                             fireTarget = temp;
                             break;
@@ -301,7 +301,7 @@ public class RailgunTurretScript : AttackSubsystemBaseScript
         Vector3 rayDirection = turretBarrels.forward;
         if (Physics.Raycast(rayPosition, rayDirection, out hit, (aimPoint - rayPosition).magnitude))
         {
-            if (hit.collider.tag != "AimCollider" && (hit.collider.GetComponent<GameObjectBaseScript>() == null || hit.collider.GetComponent<GameObjectBaseScript>().BelongTo != BelongTo))
+            if (hit.collider.tag != "AimCollider" && (hit.collider.GetComponent<RTSGameObjectBaseScript>() == null || hit.collider.GetComponent<RTSGameObjectBaseScript>().BelongTo != BelongTo))
             {
                 Debug.DrawRay(turretBarrels.position, turretBarrels.forward * lockRange, Color.green);
             }
