@@ -6,6 +6,7 @@ TagManager:
   tags:
   - AimCollider
   - GameObject
+  - Bullet
   layers:
   - Default
   - TransparentFX

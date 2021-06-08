@@ -128,7 +128,7 @@ MonoBehaviour:
   rightTraverse: 60
   elevation: 90
   depression: 5
-  allowedRandomAngle: 0.1
+  allowedRandomAngle: 0.05
   showArcs: 1
   showDebugRay: 1
 --- !u!1 &5964766674836517162

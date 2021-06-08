@@ -53,7 +53,7 @@ public class MoveAbilityScript : ContinuousAbilityBaseScript
         RaycastHit[] hits = Physics.CapsuleCastAll(from, to, agentRadius, direction, direction.magnitude);
         foreach (RaycastHit i in hits)
         {
-            if (!toIgnore.Contains(i.collider))
+            if (!toIgnore.Contains(i.collider) && !i.collider.CompareTag("Bullet"))
             {
                 hitDistance += (i.collider.ClosestPoint(from) - from).magnitude;
                 hitCount++;
@@ -72,18 +72,20 @@ public class MoveAbilityScript : ContinuousAbilityBaseScript
     private List<Vector3> FindPath(Vector3 from, Vector3 to)
     {
         List<Vector3> result = new List<Vector3>();
-        Collider[] intersectObjects = Physics.OverlapSphere(to, agentRadius);
+        List<Collider> intersectObjects = new List<Collider>(Physics.OverlapSphere(to, agentRadius));
+        intersectObjects.RemoveAll(x => x.CompareTag("Bullet"));
         float nextStepDistance = searchStepDistance;
         bool find = false;
-        if (intersectObjects.Length != 0)
+        if (intersectObjects.Count != 0)
         {
             while (nextStepDistance <= searchStepMaxDistance && !find)
             {
                 for (int i = 0; i < searchMaxRandomNumber; i++)
                 {
                     Vector3 newDestination = to + nextStepDistance * new Vector3(Random.value * 2 - 1, Random.value * 2 - 1, Random.value * 2 - 1).normalized;
-                    intersectObjects = Physics.OverlapSphere(newDestination, agentRadius);
-                    if (intersectObjects.Length == 0)
+                    intersectObjects = new List<Collider>(Physics.OverlapSphere(newDestination, agentRadius));
+                    intersectObjects.RemoveAll(x => x.CompareTag("Bullet"));
+                    if (intersectObjects.Count == 0)
                     {
                         to = newDestination;
                         find = true;
@@ -107,8 +109,9 @@ public class MoveAbilityScript : ContinuousAbilityBaseScript
                 for (int i = 0; i < searchMaxRandomNumber; i++)
                 {
                     middle = obstaclePosition + nextStepDistance * new Vector3(Random.value * 2 - 1, Random.value * 2 - 1, Random.value * 2 - 1).normalized;
-                    intersectObjects = Physics.OverlapSphere(middle, agentRadius);
-                    if (intersectObjects.Length == 0 && TestObstacle(middle, to) == 0 && TestObstacle(from, middle) == 0)
+                    intersectObjects = new List<Collider>(Physics.OverlapSphere(middle, agentRadius));
+                    intersectObjects.RemoveAll(x => x.CompareTag("Bullet"));
+                    if (intersectObjects.Count == 0 && TestObstacle(middle, to) == 0 && TestObstacle(from, middle) == 0)
                     {
                         find = true;
                         break;

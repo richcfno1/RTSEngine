@@ -142,14 +142,21 @@ public class GameManager : MonoBehaviour
                 new UnitData()
                 {
                     type = "StandardFrigate",
-                    belongTo = 1,
+                    belongTo = 0,
+                    position = new Vector3(-50, 0, 0),
+                    rotation = new Quaternion()
+                },
+                new UnitData()
+                {
+                    type = "StandardFrigate",
+                    belongTo = 0,
                     position = new Vector3(0, 0, 0),
                     rotation = new Quaternion()
                 },
                 new UnitData()
                 {
                     type = "StandardFrigate",
-                    belongTo = 1,
+                    belongTo = 0,
                     position = new Vector3(50, 0, 0),
                     rotation = new Quaternion()
                 },
@@ -157,55 +164,42 @@ public class GameManager : MonoBehaviour
                 {
                     type = "StandardFrigate",
                     belongTo = 1,
-                    position = new Vector3(-50, 0, 0),
-                    rotation = new Quaternion()
+                    position = new Vector3(0, 0, 300),
+                    rotation = Quaternion.Euler(180, 0, 0)
                 },
                 new UnitData()
                 {
                     type = "StandardFrigate",
                     belongTo = 1,
-                    position = new Vector3(0, 50, 0),
-                    rotation = new Quaternion()
+                    position = new Vector3(50, 0, 300),
+                    rotation = Quaternion.Euler(180, 0, 0)
                 },
                 new UnitData()
                 {
                     type = "StandardFrigate",
                     belongTo = 1,
-                    position = new Vector3(0, -50, 0),
-                    rotation = new Quaternion()
+                    position = new Vector3(-50, 0, 300),
+                    rotation = Quaternion.Euler(180, 0, 0)
                 },
                 new UnitData()
                 {
-                    type = "StandardFrigate",
-                    belongTo = 1,
+                    type = "ScopeDrone",
+                    belongTo = 0,
                     position = new Vector3(0, 0, 50),
                     rotation = new Quaternion()
-                },new UnitData()
+                },
+                new UnitData()
                 {
-                    type = "StandardFrigate",
-                    belongTo = 1,
-                    position = new Vector3(0, 0, -50),
+                    type = "ScopeDrone",
+                    belongTo = 0,
+                    position = new Vector3(0, 5, 50),
                     rotation = new Quaternion()
                 },
                 new UnitData()
                 {
                     type = "ScopeDrone",
                     belongTo = 0,
-                    position = new Vector3(50, 0, 50),
-                    rotation = new Quaternion()
-                },
-                new UnitData()
-                {
-                    type = "ScopeDrone",
-                    belongTo = 0,
-                    position = new Vector3(50, 5, 50),
-                    rotation = new Quaternion()
-                },
-                new UnitData()
-                {
-                    type = "ScopeDrone",
-                    belongTo = 0,
-                    position = new Vector3(50, -5, 50),
+                    position = new Vector3(0, -5, 50),
                     rotation = new Quaternion()
                 }
             }
