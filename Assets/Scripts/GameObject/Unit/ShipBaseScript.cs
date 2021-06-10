@@ -29,9 +29,9 @@ public class ShipBaseScript : UnitBaseScript
         {
             OnDestroyedAction();
         }
-        AttackPower += recoverAttackPower * Time.fixedDeltaTime;
-        DefencePower += recoverDefencePower * Time.fixedDeltaTime;
-        MovePower += recoverMovePower * Time.fixedDeltaTime;
+        AttackPower = Mathf.Clamp01(AttackPower + recoverAttackPower * Time.fixedDeltaTime);
+        DefencePower = Mathf.Clamp01(DefencePower + recoverDefencePower * Time.fixedDeltaTime);
+        MovePower = Mathf.Clamp01(MovePower + recoverMovePower * Time.fixedDeltaTime);
     }
 
     protected override void OnCreatedAction()

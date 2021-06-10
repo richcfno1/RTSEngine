@@ -1,0 +1,371 @@
+{
+  "initPlayerData": [
+    {
+      "index": 0,
+      "name": "Nature"
+    },
+    {
+      "index": 1,
+      "name": "RC"
+    }
+  ],
+  "initUnitLibraryData": [
+    {
+      "unitTypeName": "StandardFrigate",
+      "shipTypeName": "Frigate1",
+      "properties": {
+        "MoveSpeed": 10.0,
+        "RotateSpeed": 20.0,
+        "AccelerateLimit": 0.5,
+        "MoveAgentRadius": 20.0,
+        "MoveSearchStepDistance": 10.0,
+        "MoveSearchStepLimit": 100.0,
+        "MoveSearchRandomNumber": 20.0
+      },
+      "subsystems": {
+        "TurretAnchor1": "Turret1",
+        "TurretAnchor2": "Turret1",
+        "TurretAnchor3": "Turret1",
+        "TurretAnchor4": "Turret1",
+        "TurretAnchor5": "Turret1",
+        "TurretAnchor6": "Turret1"
+      },
+      "abilities": {
+        "ShipMove": [ "Frigate1" ],
+        "Attack": [ "TurretAnchor1", "TurretAnchor2", "TurretAnchor3", "TurretAnchor4", "TurretAnchor5", "TurretAnchor6" ]
+      }
+    },
+    {
+      "unitTypeName": "ScopeDrone",
+      "shipTypeName": "Drone1",
+      "properties": {
+        "MoveSpeed": 20.0,
+        "RotateSpeed": 90.0,
+        "AccelerateLimit": 0.0,
+        "MoveAgentRadius": 3.0,
+        "MoveSearchStepDistance": 10.0,
+        "MoveSearchStepLimit": 100.0,
+        "MoveSearchRandomNumber": 20.0
+      },
+      "subsystems": {},
+      "abilities": { "FighterMove": [ "Drone1" ] }
+    }
+  ],
+  "initUnitData": [
+    {
+      "type": "StandardFrigate",
+      "belongTo": 0,
+      "position": {
+        "x": -50.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "rotation": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "w": 0.0
+      }
+    },
+    {
+      "type": "StandardFrigate",
+      "belongTo": 0,
+      "position": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "rotation": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "w": 0.0
+      }
+    },
+    {
+      "type": "StandardFrigate",
+      "belongTo": 0,
+      "position": {
+        "x": 50.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "rotation": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "w": 0.0
+      }
+    },
+    {
+      "type": "StandardFrigate",
+      "belongTo": 0,
+      "position": {
+        "x": -50.0,
+        "y": 50.0,
+        "z": 0.0
+      },
+      "rotation": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "w": 0.0
+      }
+    },
+    {
+      "type": "StandardFrigate",
+      "belongTo": 0,
+      "position": {
+        "x": 0.0,
+        "y": 50.0,
+        "z": 0.0
+      },
+      "rotation": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "w": 0.0
+      }
+    },
+    {
+      "type": "StandardFrigate",
+      "belongTo": 0,
+      "position": {
+        "x": 50.0,
+        "y": 50.0,
+        "z": 0.0
+      },
+      "rotation": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "w": 0.0
+      }
+    },
+    {
+      "type": "StandardFrigate",
+      "belongTo": 0,
+      "position": {
+        "x": -50.0,
+        "y": -50.0,
+        "z": 0.0
+      },
+      "rotation": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "w": 0.0
+      }
+    },
+    {
+      "type": "StandardFrigate",
+      "belongTo": 0,
+      "position": {
+        "x": 0.0,
+        "y": -50.0,
+        "z": 0.0
+      },
+      "rotation": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "w": 0.0
+      }
+    },
+    {
+      "type": "StandardFrigate",
+      "belongTo": 0,
+      "position": {
+        "x": 50.0,
+        "y": -50.0,
+        "z": 0.0
+      },
+      "rotation": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "w": 0.0
+      }
+    },
+    {
+      "type": "StandardFrigate",
+      "belongTo": 1,
+      "position": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 300.0
+      },
+      "rotation": {
+        "x": 0.0,
+        "y": 1.0,
+        "z": 0.0,
+        "w": -4.371139E-08
+      }
+    },
+    {
+      "type": "StandardFrigate",
+      "belongTo": 1,
+      "position": {
+        "x": 50.0,
+        "y": 0.0,
+        "z": 300.0
+      },
+      "rotation": {
+        "x": 0.0,
+        "y": 1.0,
+        "z": 0.0,
+        "w": -4.371139E-08
+      }
+    },
+    {
+      "type": "StandardFrigate",
+      "belongTo": 1,
+      "position": {
+        "x": -50.0,
+        "y": 0.0,
+        "z": 300.0
+      },
+      "rotation": {
+        "x": 0.0,
+        "y": 1.0,
+        "z": 0.0,
+        "w": -4.371139E-08
+      }
+    },
+    {
+      "type": "StandardFrigate",
+      "belongTo": 1,
+      "position": {
+        "x": 0.0,
+        "y": 50.0,
+        "z": 300.0
+      },
+      "rotation": {
+        "x": 0.0,
+        "y": 1.0,
+        "z": 0.0,
+        "w": -4.371139E-08
+      }
+    },
+    {
+      "type": "StandardFrigate",
+      "belongTo": 1,
+      "position": {
+        "x": 50.0,
+        "y": 50.0,
+        "z": 300.0
+      },
+      "rotation": {
+        "x": 0.0,
+        "y": 1.0,
+        "z": 0.0,
+        "w": -4.371139E-08
+      }
+    },
+    {
+      "type": "StandardFrigate",
+      "belongTo": 1,
+      "position": {
+        "x": -50.0,
+        "y": 50.0,
+        "z": 300.0
+      },
+      "rotation": {
+        "x": 0.0,
+        "y": 1.0,
+        "z": 0.0,
+        "w": -4.371139E-08
+      }
+    },
+    {
+      "type": "StandardFrigate",
+      "belongTo": 1,
+      "position": {
+        "x": 0.0,
+        "y": -50.0,
+        "z": 300.0
+      },
+      "rotation": {
+        "x": 0.0,
+        "y": 1.0,
+        "z": 0.0,
+        "w": -4.371139E-08
+      }
+    },
+    {
+      "type": "StandardFrigate",
+      "belongTo": 1,
+      "position": {
+        "x": 50.0,
+        "y": -50.0,
+        "z": 300.0
+      },
+      "rotation": {
+        "x": 0.0,
+        "y": 1.0,
+        "z": 0.0,
+        "w": -4.371139E-08
+      }
+    },
+    {
+      "type": "StandardFrigate",
+      "belongTo": 1,
+      "position": {
+        "x": -50.0,
+        "y": -50.0,
+        "z": 300.0
+      },
+      "rotation": {
+        "x": 0.0,
+        "y": 1.0,
+        "z": 0.0,
+        "w": -4.371139E-08
+      }
+    },
+    {
+      "type": "ScopeDrone",
+      "belongTo": 0,
+      "position": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 50.0
+      },
+      "rotation": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "w": 0.0
+      }
+    },
+    {
+      "type": "ScopeDrone",
+      "belongTo": 0,
+      "position": {
+        "x": 0.0,
+        "y": 5.0,
+        "z": 50.0
+      },
+      "rotation": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "w": 0.0
+      }
+    },
+    {
+      "type": "ScopeDrone",
+      "belongTo": 0,
+      "position": {
+        "x": 0.0,
+        "y": -5.0,
+        "z": 50.0
+      },
+      "rotation": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "w": 0.0
+      }
+    }
+  ]
+}

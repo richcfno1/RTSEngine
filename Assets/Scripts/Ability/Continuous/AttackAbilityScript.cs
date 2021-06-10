@@ -53,19 +53,14 @@ public class AttackAbilityScript : ContinuousAbilityBaseScript
         {
             foreach (AttackSubsystemBaseScript i in SupportedBy)
             {
-                List<GameObject> temp = GameManager.GameManagerInstance.GetAllGameObjects().FindAll(x => x.GetComponent<RTSGameObjectBaseScript>().BelongTo != Parent.BelongTo);
-                temp.Sort((x, y) => (x.transform.position - transform.position).magnitude.CompareTo((y.transform.position - transform.position).magnitude));
-                i.SetTarget(new List<object>(temp));
+                i.SetTarget(new List<object>());
             }
         }
         else if ((UseType)abilityTarget[0] == UseType.Specific)
         {
             foreach (AttackSubsystemBaseScript i in SupportedBy)
             {
-                List<GameObject> temp = GameManager.GameManagerInstance.GetAllGameObjects().FindAll(x => x.GetComponent<RTSGameObjectBaseScript>().BelongTo != Parent.BelongTo);
-                temp.Sort((x, y) => (x.transform.position - transform.position).magnitude.CompareTo((y.transform.position - transform.position).magnitude));
-                temp.Insert(0, (GameObject)abilityTarget[1]);
-                i.SetTarget(new List<object>(temp));
+                i.SetTarget(new List<object>() { abilityTarget[1] });
             }
         }
     }

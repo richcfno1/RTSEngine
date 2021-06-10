@@ -113,7 +113,7 @@ MonoBehaviour:
   damage: 5
   attackPowerReduce: 0
   defencePowerReduce: 0
-  movePowerReduce: 5
+  movePowerReduce: 10
   moveSpeed: 200
   maxTime: 5
   hitEffect: {fileID: 5274955551422557383, guid: d15feefb61d4eb94992900187da6874e, type: 3}

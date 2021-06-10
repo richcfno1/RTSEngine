@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 // Rotation code is written by another author: https://github.com/brihernandez/GunTurrets
 public class RailgunTurretScript : AttackSubsystemBaseScript
@@ -91,7 +92,10 @@ public class RailgunTurretScript : AttackSubsystemBaseScript
                         }
                     }
                 }
-                DetermineFireTarget();
+                else
+                {
+                    DetermineFireTarget();
+                }
             }
             else
             {
@@ -127,56 +131,40 @@ public class RailgunTurretScript : AttackSubsystemBaseScript
     // Try to find a target by the order, compare angleY first, then check obstacles
     private void DetermineFireTarget()
     {
+        if (subsystemTarget == null)
+        {
+            return;
+        }
+        if (subsystemTarget.Count == 1)
+        {
+            GameObject target = (GameObject)subsystemTarget[0];
+            RaycastHit hit;
+            if (Physics.Raycast(transform.position, (target.transform.position - transform.position).normalized, out hit, (target.transform.position - transform.position).magnitude))
+            {
+                if (hit.collider.tag != "AimCollider" && (hit.collider.GetComponent<RTSGameObjectBaseScript>() == null || hit.collider.GetComponent<RTSGameObjectBaseScript>().BelongTo != BelongTo))
+                {
+                    fireTarget = target;
+                    return;
+                }
+            }
+        }
+        List<Collider> allPossibleTargets = new List<Collider>(Physics.OverlapSphere(transform.position, lockRange));
+        foreach (Collider i in allPossibleTargets)
+        {
+            if (i.CompareTag("Unit") && i.GetComponent<RTSGameObjectBaseScript>().BelongTo != Parent.BelongTo)
+            {
+                RaycastHit hit;
+                if (Physics.Raycast(transform.position, (i.transform.position - transform.position).normalized, out hit, (i.transform.position - transform.position).magnitude))
+                {
+                    if (hit.collider.tag != "AimCollider" && (hit.collider.GetComponent<RTSGameObjectBaseScript>() == null || hit.collider.GetComponent<RTSGameObjectBaseScript>().BelongTo != BelongTo))
+                    {
+                        fireTarget = i.gameObject;
+                        return;
+                    }
+                }
+            }
+        }
         fireTarget = null;
-        foreach (object i in subsystemTarget)
-        {
-            GameObject temp = (GameObject)i;
-            if (temp == null)
-            {
-                continue;
-            }
-            Vector3 localTargetPos = turretBase.InverseTransformPoint(temp.transform.position);
-            float angleY = Mathf.Asin(Mathf.Abs(localTargetPos.y) / localTargetPos.magnitude);
-            if (localTargetPos.y >= 0.0f)
-            {
-                if ((temp.transform.position - transform.position).magnitude <= lockRange && angleY <= elevation)
-                {
-                    RaycastHit hit;
-                    Vector3 rayPosition = transform.position;
-                    Vector3 rayDirection = (temp.transform.position - transform.position).normalized;
-                    if (Physics.Raycast(rayPosition, rayDirection, out hit, (temp.transform.position - transform.position).magnitude))
-                    {
-                        if (hit.collider.tag != "AimCollider" && (hit.collider.GetComponent<RTSGameObjectBaseScript>() == null || hit.collider.GetComponent<RTSGameObjectBaseScript>().BelongTo != BelongTo))
-                        {
-                            fireTarget = temp;
-                            break;
-                        }
-                    }
-                }
-            }
-            else
-            {
-                if ((temp.transform.position - transform.position).magnitude <= lockRange && angleY <= depression)
-                {
-                    RaycastHit hit;
-                    Vector3 rayPosition = transform.position;
-                    Vector3 rayDirection = (temp.transform.position - transform.position).normalized;
-                    if (Physics.Raycast(rayPosition, rayDirection, out hit, (temp.transform.position - transform.position).magnitude))
-                    {
-                        if (hit.collider.tag != "AimCollider" && (hit.collider.GetComponent<RTSGameObjectBaseScript>() == null || hit.collider.GetComponent<RTSGameObjectBaseScript>().BelongTo != BelongTo))
-                        {
-                            fireTarget = temp;
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-        if (fireTarget == null && subsystemTarget.Count != 0 && (GameObject)subsystemTarget[0] != null && 
-            (((GameObject)subsystemTarget[0]).transform.position - transform.position).magnitude <= lockRange)
-        {
-            fireTarget = (GameObject)subsystemTarget[0];
-        }
     }
     private void SetAimpoint(Vector3 position)
     {

@@ -29,8 +29,8 @@ public class GameManager : MonoBehaviour
     {
         public string type;
         public int belongTo;
-        public Vector3 position;
-        public Quaternion rotation;
+        public SerializableVector3 position;
+        public SerializableQuaternion rotation;
     }
 
     public struct GameInitData
@@ -48,6 +48,9 @@ public class GameManager : MonoBehaviour
 
     public static GameManager GameManagerInstance { get; private set; }
 
+    public TextAsset debugInitDataAsset;
+    public GameInitData debugInitData = new GameInitData();
+
     public TextAsset gameObjectLibraryAsset;
     public TextAsset abilityLibraryAsset;
     public Dictionary<string, string> gameObjectLibrary = new Dictionary<string, string>();
@@ -55,7 +58,8 @@ public class GameManager : MonoBehaviour
 
     private int gameObjectIndexCounter = 0;
     private Dictionary<int, Player> allPlayers = new Dictionary<int, Player>();
-    private Dictionary<int, GameObject> allGameObjects = new Dictionary<int, GameObject>();
+    private Dictionary<int, GameObject> allGameObjectsDict = new Dictionary<int, GameObject>();
+    private List<GameObject> allGameObjectsList = new List<GameObject>();
     private Dictionary<string, UnitLibraryData> unitLibrary = new Dictionary<string, UnitLibraryData>();
     Lua gameLua = new Lua();
 
@@ -65,154 +69,11 @@ public class GameManager : MonoBehaviour
         gameObjectLibrary = JsonConvert.DeserializeObject<Dictionary<string, string>>(gameObjectLibraryAsset.text);
         abilityLibrary = JsonConvert.DeserializeObject<Dictionary<string, string>>(abilityLibraryAsset.text);
 
-        InitFromInitData(new GameInitData()
+        if (debugInitDataAsset != null)
         {
-            initPlayerData = new List<PlayerData>()
-            {
-                new PlayerData()
-                {
-                    index = 0,
-                    name = "Nature"
-                },
-                new PlayerData()
-                {
-                    index = 1,
-                    name = "RC"
-                }
-            },
-            initUnitLibraryData = new List<UnitLibraryData>()
-            {
-                new UnitLibraryData()
-                {
-                    unitTypeName = "StandardFrigate",
-                    shipTypeName = "Frigate1",
-                    properties = new Dictionary<string, float>()
-                    {
-                        { "MoveSpeed", 10 },
-                        { "RotateSpeed", 20 },
-                        { "AccelerateLimit", 0.5f },
-                        { "MoveAgentRadius", 20 },
-                        { "MoveSearchStepDistance", 10 },
-                        { "MoveSearchStepLimit", 100 },
-                        { "MoveSearchRandomNumber", 20 }
-                    },
-                    subsystems = new Dictionary<string, string>()
-                    {
-                        { "TurretAnchor1", "Turret1"},
-                        { "TurretAnchor2", "Turret1"},
-                        { "TurretAnchor3", "Turret1"},
-                        { "TurretAnchor4", "Turret1"},
-                        { "TurretAnchor5", "Turret1"},
-                        { "TurretAnchor6", "Turret1"}
-                    },
-                    abilities = new Dictionary<string, List<string>>()
-                    {
-                        { "ShipMove", new List<string>(){ "Frigate1" } },
-                        {
-                            "Attack", 
-                            new List<string>()
-                            { 
-                                "TurretAnchor1",
-                                "TurretAnchor2",
-                                "TurretAnchor3",
-                                "TurretAnchor4",
-                                "TurretAnchor5",
-                                "TurretAnchor6"
-                            } 
-                        }
-                    }
-                },
-                new UnitLibraryData()
-                {
-                    unitTypeName = "ScopeDrone",
-                    shipTypeName = "Drone1",
-                    properties = new Dictionary<string, float>()
-                    {
-                        { "MoveSpeed", 20 },
-                        { "RotateSpeed", 90 },
-                        { "AccelerateLimit", 0 },
-                        { "MoveAgentRadius", 3 },
-                        { "MoveSearchStepDistance", 10 },
-                        { "MoveSearchStepLimit", 100 },
-                        { "MoveSearchRandomNumber", 20 }
-                    },
-                    subsystems = new Dictionary<string, string>()
-                    {
-
-                    },
-                    abilities = new Dictionary<string, List<string>>()
-                    {
-                        { "FighterMove", new List<string>(){ "Drone1" } }
-                    }
-                }
-            },
-            initUnitData = new List<UnitData>()
-            {
-                new UnitData()
-                {
-                    type = "StandardFrigate",
-                    belongTo = 0,
-                    position = new Vector3(-50, 0, 0),
-                    rotation = new Quaternion()
-                },
-                new UnitData()
-                {
-                    type = "StandardFrigate",
-                    belongTo = 0,
-                    position = new Vector3(0, 0, 0),
-                    rotation = new Quaternion()
-                },
-                new UnitData()
-                {
-                    type = "StandardFrigate",
-                    belongTo = 0,
-                    position = new Vector3(50, 0, 0),
-                    rotation = new Quaternion()
-                },
-                new UnitData()
-                {
-                    type = "StandardFrigate",
-                    belongTo = 1,
-                    position = new Vector3(0, 0, 300),
-                    rotation = Quaternion.Euler(0, 180, 0)
-                },
-                new UnitData()
-                {
-                    type = "StandardFrigate",
-                    belongTo = 1,
-                    position = new Vector3(50, 0, 300),
-                    rotation = Quaternion.Euler(0, 180, 0)
-                },
-                new UnitData()
-                {
-                    type = "StandardFrigate",
-                    belongTo = 1,
-                    position = new Vector3(-50, 0, 300),
-                    rotation = Quaternion.Euler(0, 180, 0)
-                },
-                new UnitData()
-                {
-                    type = "ScopeDrone",
-                    belongTo = 0,
-                    position = new Vector3(0, 0, 50),
-                    rotation = new Quaternion()
-                },
-                new UnitData()
-                {
-                    type = "ScopeDrone",
-                    belongTo = 0,
-                    position = new Vector3(0, 5, 50),
-                    rotation = new Quaternion()
-                },
-                new UnitData()
-                {
-                    type = "ScopeDrone",
-                    belongTo = 0,
-                    position = new Vector3(0, -5, 50),
-                    rotation = new Quaternion()
-                }
-            }
-        });
+            GameInitData initData = JsonConvert.DeserializeObject<GameInitData>(debugInitDataAsset.text);
+            InitFromInitData(initData);
+        }
     }
 
     // Start is called before the first frame update
@@ -357,7 +218,8 @@ public class GameManager : MonoBehaviour
 
         // Index
         self.GetComponent<RTSGameObjectBaseScript>().Index = gameObjectIndexCounter;
-        allGameObjects.Add(gameObjectIndexCounter, self);
+        allGameObjectsDict.Add(gameObjectIndexCounter, self);
+        allGameObjectsList.Add(self);
 
         // Player
         int playerIndex = self.GetComponent<RTSGameObjectBaseScript>().BelongTo;
@@ -378,15 +240,16 @@ public class GameManager : MonoBehaviour
 
         // Index
         int gameObjectIndex = self.GetComponent<RTSGameObjectBaseScript>().Index;
-        allGameObjects.Remove(gameObjectIndex);
+        allGameObjectsDict.Remove(gameObjectIndex);
+        allGameObjectsList.Remove(self);
 
         // Player
         int playerIndex = self.GetComponent<RTSGameObjectBaseScript>().BelongTo;
         allPlayers[playerIndex].playerGameObjects.Remove(gameObjectIndex);
     }
 
-    public List<GameObject> GetAllGameObjects()
+    public ref List<GameObject> GetAllGameObjects()
     {
-        return new List<GameObject>(allGameObjects.Values);
+        return ref allGameObjectsList;
     }
 }

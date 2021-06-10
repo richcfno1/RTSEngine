@@ -17,6 +17,9 @@ public class FighterBaseScript : UnitBaseScript
         {
             OnDestroyedAction();
         }
+        AttackPower = Mathf.Clamp01(AttackPower + recoverAttackPower * Time.fixedDeltaTime);
+        DefencePower = Mathf.Clamp01(DefencePower + recoverDefencePower * Time.fixedDeltaTime);
+        MovePower = Mathf.Clamp01(MovePower + recoverMovePower * Time.fixedDeltaTime);
     }
 
     protected override void OnCreatedAction()

@@ -96,7 +96,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   typeID: Drone1
-  maxHP: 50
+  maxHP: 100
   onDestroyedEffect: {fileID: 5508734696245866625, guid: 1b6e346305eb28a4fa9a6e2453c446d6, type: 3}
   maxAttackPower: 50
   maxDefencePower: 50

@@ -15,9 +15,9 @@ public class UnitBaseScript : RTSGameObjectBaseScript
 
     // Set when instantiate
     // Three basic value which indicate the performance of ability
-    public float AttackPower { get { return curAttackPower / maxAttackPower; } set { curAttackPower = Mathf.Clamp01(value) * maxAttackPower; } }
-    public float DefencePower { get { return curDefencePower / maxDefencePower; } set { curDefencePower = Mathf.Clamp01(value) * maxDefencePower; } }
-    public float MovePower { get { return curMovePower / maxMovePower; } set { curMovePower = Mathf.Clamp01(value) * maxMovePower; } }
+    public float AttackPower { get { return curAttackPower / maxAttackPower; } set { curAttackPower = value * maxAttackPower; } }
+    public float DefencePower { get { return curDefencePower / maxDefencePower; } set { curDefencePower = value * maxDefencePower; } }
+    public float MovePower { get { return curMovePower / maxMovePower; } set { curMovePower = value * maxMovePower; } }
     public Dictionary<string, float> PropertyDictionary { get; set; } = new Dictionary<string, float>();
     public Dictionary<string, AbilityBaseScript> AbilityDictionary { get; private set; } = new Dictionary<string, AbilityBaseScript>();
 
