@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: -383760423639579931}
   m_Layer: 0
   m_Name: Drone1
-  m_TagString: Untagged
+  m_TagString: Unit
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -97,6 +97,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   typeID: Drone1
   maxHP: 50
+  maxAttackPower: 50
+  maxDefencePower: 50
+  maxMovePower: 50
   subsyetemAnchors: []
 --- !u!64 &-383760423639579931
 MeshCollider:

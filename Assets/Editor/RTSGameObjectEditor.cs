@@ -8,41 +8,40 @@ using UnityEngine;
 public class RTSGameObjectEditor : Editor
 {
     [MenuItem("RTSEngine/RTSGameObject/Add to Json")]
-    static void AddRTSGameObjectToJson()
+    static void AddRTSGameObjectDataToJson()
     {
-        if (Selection.activeGameObject == null || !PrefabUtility.IsPartOfPrefabAsset(Selection.activeGameObject) ||
-            Selection.activeGameObject.GetComponent<RTSGameObjectBaseScript>() == null)
+        if (Selection.activeObject == null || Selection.activeObject.GetType() != typeof(RTSGameObjectData))
         {
-            Debug.LogError("Please select a RTS Game Object prefab object");
+            Debug.LogError("Please select a RTSGameObjectData asset");
             return;
         }
-        string path = AssetDatabase.GetAssetPath(Selection.activeGameObject);
-        if (path.StartsWith("Assets/Resources/") && path.EndsWith(".prefab"))
+        string path = AssetDatabase.GetAssetPath(Selection.activeObject);
+        RTSGameObjectData data = (RTSGameObjectData)Selection.activeObject;
+        if (path.StartsWith("Assets/Resources/") && path.EndsWith(".asset"))
         {
-            path = path.Substring("Assets/Resources/".Length, path.Length - ".prefab".Length - "Assets/Resources/".Length);
-            TextAsset json = Resources.Load<TextAsset>("ItemLibrary/ItemLibrary");
-            Dictionary<int, string> items = JsonConvert.DeserializeObject<Dictionary<int, string>>(json.text);
-            foreach (string temp in items.Values)
+            path = path.Substring("Assets/Resources/".Length, path.Length - ".asset".Length - "Assets/Resources/".Length);
+            TextAsset json = Resources.Load<TextAsset>("Library/GameObjectLibrary");
+            SortedDictionary<string, string> library = new SortedDictionary<string, string>();
+            if (json != null)
             {
-                if (path == temp)
-                {
-                    Debug.LogError("Please select a new (non used before) RTS Game Object object");
-                    return;
-                }
+                library = JsonConvert.DeserializeObject<SortedDictionary<string, string>>(json.text);
             }
-            int i = 1;
-            while (items.ContainsKey(i))
+            else
             {
-                i++;
+                Debug.Log("Create new library.");
             }
-            items.Add(i, path);
-            File.WriteAllText(Application.dataPath + "/Resources/ItemLibrary/ItemLibrary.json",
-                JsonConvert.SerializeObject(items));
-            Debug.Log("Success with index: " + i);
+            string newKey = data.prefab.GetComponent<RTSGameObjectBaseScript>().typeID;
+            if (!library.ContainsKey(newKey) && !library.ContainsKey(path))
+            {
+                library.Add(newKey, path);
+            }
+            File.WriteAllText(Application.dataPath + "/Resources/Library/GameObjectLibrary.json",
+                JsonConvert.SerializeObject(library));
+            Debug.Log("Success");
         }
         else
         {
-            Debug.LogError("Cannot find it as a prefab or in Assets/Resources");
+            Debug.LogError("Cannot find it as an asset or in Assets/Resources");
             return;
         }
     }

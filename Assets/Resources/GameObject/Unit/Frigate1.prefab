@@ -59,7 +59,7 @@ GameObject:
   - component: {fileID: -7958528129588623642}
   m_Layer: 0
   m_Name: Frigate1
-  m_TagString: GameObject
+  m_TagString: Unit
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -148,25 +148,34 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   typeID: Frigate1
   maxHP: 1000
+  maxAttackPower: 1000
+  maxDefencePower: 1000
+  maxMovePower: 1000
   subsyetemAnchors:
   - anchorName: TurretAnchor1
     anchor: {fileID: 4384353230819908595}
     subsystemScale: 1
+    subsystem: {fileID: 0}
   - anchorName: TurretAnchor2
     anchor: {fileID: 4384353231945584760}
     subsystemScale: 1
+    subsystem: {fileID: 0}
   - anchorName: TurretAnchor3
     anchor: {fileID: 4384353231395828450}
     subsystemScale: 1
+    subsystem: {fileID: 0}
   - anchorName: TurretAnchor4
     anchor: {fileID: 4384353231723149315}
     subsystemScale: 1
+    subsystem: {fileID: 0}
   - anchorName: TurretAnchor5
     anchor: {fileID: 4384353230030489637}
     subsystemScale: 1
+    subsystem: {fileID: 0}
   - anchorName: TurretAnchor6
     anchor: {fileID: 4384353229854127420}
     subsystemScale: 1
+    subsystem: {fileID: 0}
 --- !u!64 &-7958528129588623642
 MeshCollider:
   m_ObjectHideFlags: 0

@@ -411,6 +411,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f994e19ebfa1fbb43ab2c26fbbf82789, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gameObjectLibraryAsset: {fileID: 4900000, guid: 5ec89fe72628a7c40a36c1707bbc0df1, type: 3}
+  abilityLibraryAsset: {fileID: 4900000, guid: 6249921438c19bb42a9ff1900a265da1, type: 3}
 --- !u!1 &1472051161
 GameObject:
   m_ObjectHideFlags: 0

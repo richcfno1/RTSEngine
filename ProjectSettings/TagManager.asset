@@ -5,8 +5,11 @@ TagManager:
   serializedVersion: 2
   tags:
   - AimCollider
-  - GameObject
   - Bullet
+  - Subsystem
+  - Unit
+  - Obstacle
+  - GameObject
   layers:
   - Default
   - TransparentFX

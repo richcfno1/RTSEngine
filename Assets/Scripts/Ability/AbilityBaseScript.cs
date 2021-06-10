@@ -12,14 +12,14 @@ public class AbilityBaseScript : MonoBehaviour
     }
 
     // Set when instantiate
-    public ShipBaseScript Parent { get; set; }
+    public UnitBaseScript Parent { get; set; }
     public List<SubsystemBaseScript> SupportedBy { get; set; } = new List<SubsystemBaseScript>();
 
     protected List<object> abilityTarget = new List<object>();
 
     public virtual bool UseAbility(List<object> target)
     {
-        // This only happened when supported by ship
+        // This only happened when supported by unit
         if (SupportedBy.Count == 0)
         {
             return true;

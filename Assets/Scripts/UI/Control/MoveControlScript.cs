@@ -209,9 +209,9 @@ public class MoveControlScript : MonoBehaviour
         Vector3 right = Vector3.Cross(Vector3.up, forwardDirection).normalized;
         foreach (MoveAbilityScript agent in allAgents)
         {
-            newDestination += right * agent.agentRadius;
+            newDestination += right * agent.AgentRadius;
             temp.Add(agent, newDestination);
-            newDestination += right * agent.agentRadius;
+            newDestination += right * agent.AgentRadius;
         }
         Vector3 newDestinationCenter = new Vector3();
         foreach (Vector3 i in temp.Values)

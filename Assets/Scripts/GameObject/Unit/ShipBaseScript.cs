@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ShipBaseScript : RTSGameObjectBaseScript
+public class ShipBaseScript : UnitBaseScript
 {
     [Serializable]
     public class AnchorData
@@ -15,10 +15,6 @@ public class ShipBaseScript : RTSGameObjectBaseScript
     }
     // Set by editor
     public List<AnchorData> subsyetemAnchors;
-
-    // Set when instantiate
-    public Dictionary<string, float> PropertyDictionary { get; set; } = new Dictionary<string, float>();
-    public Dictionary<string, AbilityBaseScript> AbilityDictionary { get; private set; } = new Dictionary<string, AbilityBaseScript>();
 
     // Start is called before the first frame update
     void Start()
@@ -35,6 +31,14 @@ public class ShipBaseScript : RTSGameObjectBaseScript
         }
     }
 
+    protected override void OnCreatedAction()
+    {
+        base.OnCreatedAction();
+        AttackPower = 1;
+        DefencePower = 1;
+        MovePower = 1;
+    }
+
     protected override void OnDestroyedAction()
     {
         base.OnDestroyedAction();
@@ -42,15 +46,5 @@ public class ShipBaseScript : RTSGameObjectBaseScript
         {
             GameManager.GameManagerInstance.OnGameObjectDestroyed(i.subsystem, lastDamagedBy);
         }
-    }
-
-    public bool Command(string commandType, List<object> target)
-    {
-        if (AbilityDictionary.ContainsKey(commandType))
-        {
-            AbilityDictionary[commandType].UseAbility(target);
-            return false;
-        }
-        return true;
     }
 }
