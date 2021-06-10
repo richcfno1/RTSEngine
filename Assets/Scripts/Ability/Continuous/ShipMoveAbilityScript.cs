@@ -53,7 +53,7 @@ public class ShipMoveAbilityScript : MoveAbilityScript
         }
     }
 
-    private List<Vector3> FindPath(Vector3 from, Vector3 to)
+    private void FindPath(Vector3 from, Vector3 to)
     {
         List<Vector3> result = new List<Vector3>();
         List<Collider> intersectObjects = new List<Collider>(Physics.OverlapSphere(to, agentRadius));
@@ -106,14 +106,14 @@ public class ShipMoveAbilityScript : MoveAbilityScript
             if (nextStepDistance > searchStepMaxDistance)
             {
                 Debug.Log("Out of search limitation");
-                return new List<Vector3>();
+                moveBeacons.Clear();
             }
             else
             {
                 result.Insert(0, middle);
             }
         }
-        return result;
+        moveBeacons = result;
     }
 
     // For MoveAbility target size should be 2
@@ -168,7 +168,7 @@ public class ShipMoveAbilityScript : MoveAbilityScript
                     {
                         if (TestObstacle(transform.position, moveBeacons[0]) != 0)
                         {
-                            moveBeacons = FindPath(transform.position, destination);
+                            FindPath(transform.position, destination);
                             return;
                         }
                         transform.position = moveBeacons[0];
@@ -179,7 +179,7 @@ public class ShipMoveAbilityScript : MoveAbilityScript
                         if (TestObstacle(transform.position, transform.position + transform.forward * moveDistance) != 0)
                         {
                             TestObstacle(transform.position, transform.position + transform.forward * moveDistance);
-                            moveBeacons = FindPath(transform.position, destination);
+                            FindPath(transform.position, destination);
                             return;
                         }
                         transform.position += transform.forward * moveDistance;
@@ -203,7 +203,7 @@ public class ShipMoveAbilityScript : MoveAbilityScript
                     {
                         if (TestObstacle(transform.position, moveBeacons[0]) != 0)
                         {
-                            moveBeacons = FindPath(transform.position, destination);
+                            FindPath(transform.position, destination);
                             return;
                         }
                         transform.position = moveBeacons[0];
@@ -213,7 +213,7 @@ public class ShipMoveAbilityScript : MoveAbilityScript
                     {
                         if (TestObstacle(transform.position, transform.position + moveVector.normalized * moveDistance) != 0)
                         {
-                            moveBeacons = FindPath(transform.position, destination);
+                            FindPath(transform.position, destination);
                             return;
                         }
                         transform.position += moveVector.normalized * moveDistance;
@@ -222,7 +222,7 @@ public class ShipMoveAbilityScript : MoveAbilityScript
             }
             else
             {
-                moveBeacons = FindPath(transform.position, destination);
+                FindPath(transform.position, destination);
             }
         }
     }
