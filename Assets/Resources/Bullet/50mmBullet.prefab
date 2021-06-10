@@ -111,6 +111,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 5
+  attackPowerReduce: 0
+  defencePowerReduce: 0
+  movePowerReduce: 5
   moveSpeed: 200
   maxTime: 5
   moveDirection: {x: 0, y: 0, z: 0}

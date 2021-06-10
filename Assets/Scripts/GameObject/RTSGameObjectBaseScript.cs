@@ -42,9 +42,9 @@ public class RTSGameObjectBaseScript : MonoBehaviour
         Destroy(gameObject);
     }
 
-    public virtual void CreateDamage(float amount, GameObject from)
+    public virtual void CreateDamage(float damage, float attackPowerReduce, float defencePowerReduce, float movePowerReduce, GameObject from)
     {
-        HP = Mathf.Clamp(HP - amount, 0, maxHP);
+        HP = Mathf.Clamp(HP - damage, 0, maxHP);
         lastDamagedBy = from;
     }
 }

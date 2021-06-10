@@ -163,7 +163,7 @@ public class FighterMoveAbilityScript : MoveAbilityScript
                     Vector3 moveVector = moveBeacons[0] - transform.position;
                     Vector3 rotateDirection = moveVector.normalized;
                     transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(rotateDirection), Time.fixedDeltaTime * agentRotateSpeed);
-                    float moveDistance = agentMoveSpeed * Time.fixedDeltaTime;
+                    float moveDistance = agentMoveSpeed * Time.fixedDeltaTime * Parent.MovePower;
                     if (moveVector.magnitude <= moveDistance)
                     {
                         if (TestObstacle(transform.position, moveBeacons[0]) != 0)

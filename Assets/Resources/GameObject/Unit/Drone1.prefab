@@ -100,6 +100,9 @@ MonoBehaviour:
   maxAttackPower: 50
   maxDefencePower: 50
   maxMovePower: 50
+  recoverAttackPower: 0.1
+  recoverDefencePower: 0.1
+  recoverMovePower: 0.1
   subsyetemAnchors: []
 --- !u!64 &-383760423639579931
 MeshCollider:

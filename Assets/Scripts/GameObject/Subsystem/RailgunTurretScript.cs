@@ -70,7 +70,7 @@ public class RailgunTurretScript : AttackSubsystemBaseScript
         }
         if (Active)
         {
-            if (timer >= coolDown / bulletStartPosition.Count)
+            if (timer >= coolDown / bulletStartPosition.Count / Parent.AttackPower)
             {
                 if (fireTarget != null && (transform.position - fireTarget.transform.position).magnitude <= lockRange)
                 {

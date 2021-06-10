@@ -195,7 +195,7 @@ public class ShipMoveAbilityScript : MoveAbilityScript
                     moveSpeedAdjust = (moveSpeedAdjust + 1) / 2;
                     lastFrameSpeedAdjust = Mathf.Cos(Mathf.Deg2Rad * Quaternion.Angle(transform.rotation, Quaternion.LookRotation(lastFrameMoveDirection)));
                     moveSpeedAdjust = Mathf.Clamp(moveSpeedAdjust, lastFrameSpeedAdjust - agentAccelerateLimit, lastFrameSpeedAdjust + agentAccelerateLimit);
-                    float moveDistance = agentMoveSpeed * Time.fixedDeltaTime * moveSpeedAdjust;
+                    float moveDistance = agentMoveSpeed * Time.fixedDeltaTime * moveSpeedAdjust * Parent.MovePower;
 
                     lastFrameSpeedAdjust = moveSpeedAdjust;
                     lastFrameMoveDirection = moveVector.normalized;

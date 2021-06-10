@@ -151,6 +151,9 @@ MonoBehaviour:
   maxAttackPower: 1000
   maxDefencePower: 1000
   maxMovePower: 1000
+  recoverAttackPower: 10
+  recoverDefencePower: 10
+  recoverMovePower: 10
   subsyetemAnchors:
   - anchorName: TurretAnchor1
     anchor: {fileID: 4384353230819908595}

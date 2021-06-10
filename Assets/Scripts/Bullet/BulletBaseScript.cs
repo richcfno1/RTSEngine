@@ -5,6 +5,9 @@ using UnityEngine;
 public class BulletBaseScript : MonoBehaviour
 {
     public float damage;
+    public float attackPowerReduce;
+    public float defencePowerReduce;
+    public float movePowerReduce;
     public float moveSpeed;
     public float maxTime;
     [HideInInspector]
@@ -36,31 +39,36 @@ public class BulletBaseScript : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
+        if (other.CompareTag("AimCollider") || other.CompareTag("Bullet"))
+        {
+            return;
+        }
         if (toIgnore.Contains(other))
         {
             return;
         }
-        // If there is a subsystem gameobject in front of the bullet, hit it instead of the ship
-        RaycastHit hit;
-        if (Physics.Raycast(other.ClosestPoint(transform.position), moveDirection, out hit, other.bounds.size.sqrMagnitude))
+        if (other.CompareTag("Unit"))
         {
-            if (hit.collider != other && hit.collider.GetComponent<SubsystemBaseScript>() != null)
+            // If there is a subsystem gameobject in front of the bullet, hit it instead of the ship
+            RaycastHit hit;
+            if (Physics.Raycast(other.ClosestPoint(transform.position), moveDirection, out hit, other.bounds.size.sqrMagnitude))
             {
-                hit.collider.GetComponent<SubsystemBaseScript>().CreateDamage(damage, createdBy);
-                Destroy(gameObject);
-                return;
+                if (hit.collider != other && hit.collider.GetComponent<SubsystemBaseScript>() != null)
+                {
+                    hit.collider.GetComponent<SubsystemBaseScript>().CreateDamage(damage, attackPowerReduce, defencePowerReduce, movePowerReduce, createdBy);
+                    Destroy(gameObject);
+                    return;
+                }
+            }
+            else
+            {
+                other.GetComponent<RTSGameObjectBaseScript>().CreateDamage(damage, attackPowerReduce, defencePowerReduce, movePowerReduce, createdBy);
             }
         }
-        if (other.GetComponent<RTSGameObjectBaseScript>() != null)
+        else if (other.CompareTag("Subsystem"))
         {
-            other.GetComponent<RTSGameObjectBaseScript>().CreateDamage(damage, createdBy);
+            other.GetComponent<RTSGameObjectBaseScript>().CreateDamage(damage, attackPowerReduce, defencePowerReduce, movePowerReduce, createdBy);
         }
-        // Or it may be a aim collider, we need to find its parents
-        else if (other.tag == "AimCollider" && other.GetComponentInParent<RTSGameObjectBaseScript>() != null)
-        {
-            other.GetComponentInParent<RTSGameObjectBaseScript>().CreateDamage(damage, createdBy);
-        }
-        // Well... in fact, there is still a case that bullet collide with bullet...
         Destroy(gameObject);
     }
 }
