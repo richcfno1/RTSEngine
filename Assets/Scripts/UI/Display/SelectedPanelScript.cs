@@ -16,10 +16,6 @@ public class SelectedPanelScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        // These will be created into a json file
-        Dictionary<string, string> iconLibrary = new Dictionary<string, string>();
-        iconLibrary.Add("Frigate1", "GameObject/Ship/Frigate1Icon");
-        iconLibrary.Add("Drone1", "GameObject/Ship/Drone1Icon");
         List<GameObject> allSelected = SelectControlScript.SelectionControlInstance.GetAllGameObjects();
         List<int> allIndex = new List<int>();
         foreach (GameObject i in allSelected)
@@ -34,8 +30,9 @@ public class SelectedPanelScript : MonoBehaviour
             }
             else
             {
+                RTSGameObjectData data = Resources.Load<RTSGameObjectData>(GameManager.GameManagerInstance.gameObjectLibrary[tempScript.typeID]);
                 InfoGridScript newGridScript = Instantiate(gridPrefab, transform).GetComponent<InfoGridScript>();
-                newGridScript.icon.sprite = Resources.Load<Sprite>(iconLibrary[tempScript.typeID]);
+                newGridScript.icon.sprite = data.icon;
                 newGridScript.hpdata.value = tempScript.HP / tempScript.maxHP;
                 newGridScript.otherData.text = "What should I display?";
                 allGrids.Add(tempIndex, newGridScript);

@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: Drone1
   m_EditorClassIdentifier: 
   prefab: {fileID: 5127304676431414407, guid: 1d09ab5014734cd47ae28ea604d92490, type: 3}
-  Icon: {fileID: 21300000, guid: 35d8135e46b50be4fb8935f804439926, type: 3}
+  icon: {fileID: 21300000, guid: 35d8135e46b50be4fb8935f804439926, type: 3}

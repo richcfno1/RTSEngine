@@ -50,8 +50,8 @@ public class GameManager : MonoBehaviour
 
     public TextAsset gameObjectLibraryAsset;
     public TextAsset abilityLibraryAsset;
-    private Dictionary<string, string> gameObjectLibrary = new Dictionary<string, string>();
-    private Dictionary<string, string> abilityLibrary = new Dictionary<string, string>();
+    public Dictionary<string, string> gameObjectLibrary = new Dictionary<string, string>();
+    public Dictionary<string, string> abilityLibrary = new Dictionary<string, string>();
 
     private int gameObjectIndexCounter = 0;
     private Dictionary<int, Player> allPlayers = new Dictionary<int, Player>();

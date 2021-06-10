@@ -6,5 +6,5 @@ using UnityEngine;
 public class RTSGameObjectData : ScriptableObject
 {
     public GameObject prefab;
-    public Sprite Icon;
+    public Sprite icon;
 }

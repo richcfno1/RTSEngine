@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: Frigate1
   m_EditorClassIdentifier: 
   prefab: {fileID: 3465858396673310855, guid: 689b219cb466fb74cb13168079edba53, type: 3}
-  Icon: {fileID: 21300000, guid: e4fc0649ef2bff5439567a54499499e6, type: 3}
+  icon: {fileID: 21300000, guid: e4fc0649ef2bff5439567a54499499e6, type: 3}
