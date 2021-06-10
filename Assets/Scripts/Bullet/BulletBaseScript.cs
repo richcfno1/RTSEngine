@@ -10,6 +10,9 @@ public class BulletBaseScript : MonoBehaviour
     public float movePowerReduce;
     public float moveSpeed;
     public float maxTime;
+
+    public GameObject hitEffect;
+
     [HideInInspector]
     public Vector3 moveDirection;
     [HideInInspector]
@@ -69,6 +72,7 @@ public class BulletBaseScript : MonoBehaviour
         {
             other.GetComponent<RTSGameObjectBaseScript>().CreateDamage(damage, attackPowerReduce, defencePowerReduce, movePowerReduce, createdBy);
         }
+        Instantiate(hitEffect, transform.position, new Quaternion());
         Destroy(gameObject);
     }
 }

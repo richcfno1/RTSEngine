@@ -148,6 +148,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   typeID: Frigate1
   maxHP: 1000
+  onDestroyedEffect: {fileID: 2654098538732379622, guid: 7031f650af359d8479bd111557859629, type: 3}
   maxAttackPower: 1000
   maxDefencePower: 1000
   maxMovePower: 1000

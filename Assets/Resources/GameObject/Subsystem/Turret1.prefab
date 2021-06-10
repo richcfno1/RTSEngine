@@ -111,6 +111,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   typeID: Turret1
   maxHP: 100
+  onDestroyedEffect: {fileID: 0}
   scale: 1
   repairPercentRequired: 0.5
   supportedAbility: 02000000
@@ -128,7 +129,7 @@ MonoBehaviour:
   rightTraverse: 60
   elevation: 90
   depression: 5
-  allowedRandomAngle: 0.05
+  allowedRandomAngle: 0.01
   showArcs: 1
   showDebugRay: 1
 --- !u!1 &5964766674836517162

@@ -45,7 +45,7 @@ public class SubsystemBaseScript : RTSGameObjectBaseScript
 
     public override void CreateDamage(float damage, float attackPowerReduce, float defencePowerReduce, float powerPowerReduce, GameObject from)
     {
-        Parent.CreateDamage(0, attackPowerReduce, defencePowerReduce, powerPowerReduce, from);
+        Parent.CreateDamage(HP == 0 ? damage : 0, attackPowerReduce, defencePowerReduce, powerPowerReduce, from);
         base.CreateDamage(damage / Parent.DefencePower, attackPowerReduce, defencePowerReduce, powerPowerReduce, from);
     }
 }

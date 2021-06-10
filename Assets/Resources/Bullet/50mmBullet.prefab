@@ -116,6 +116,7 @@ MonoBehaviour:
   movePowerReduce: 5
   moveSpeed: 200
   maxTime: 5
+  hitEffect: {fileID: 5274955551422557383, guid: d15feefb61d4eb94992900187da6874e, type: 3}
   moveDirection: {x: 0, y: 0, z: 0}
   toIgnore: []
   createdBy: {fileID: 0}

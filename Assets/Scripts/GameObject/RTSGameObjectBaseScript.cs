@@ -7,6 +7,7 @@ public class RTSGameObjectBaseScript : MonoBehaviour
     // Set by editor
     public string typeID;
     public float maxHP;
+    public GameObject onDestroyedEffect;
 
     // Set when instantiate
     public int Index { get; set; }
@@ -40,6 +41,7 @@ public class RTSGameObjectBaseScript : MonoBehaviour
     {
         GameManager.GameManagerInstance.OnGameObjectDestroyed(gameObject, lastDamagedBy);
         Destroy(gameObject);
+        Instantiate(onDestroyedEffect, transform.position, new Quaternion());
     }
 
     public virtual void CreateDamage(float damage, float attackPowerReduce, float defencePowerReduce, float movePowerReduce, GameObject from)
