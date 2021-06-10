@@ -18,9 +18,9 @@
         "RotateSpeed": 20.0,
         "AccelerateLimit": 0.5,
         "MoveAgentRadius": 20.0,
-        "MoveSearchStepDistance": 10.0,
+        "MoveSearchStepDistance": 20.0,
         "MoveSearchStepLimit": 100.0,
-        "MoveSearchRandomNumber": 20.0
+        "MoveSearchRandomNumber": 10.0
       },
       "subsystems": {
         "TurretAnchor1": "Turret1",
@@ -43,9 +43,9 @@
         "RotateSpeed": 90.0,
         "AccelerateLimit": 0.0,
         "MoveAgentRadius": 3.0,
-        "MoveSearchStepDistance": 10.0,
+        "MoveSearchStepDistance": 20.0,
         "MoveSearchStepLimit": 100.0,
-        "MoveSearchRandomNumber": 20.0
+        "MoveSearchRandomNumber": 10.0
       },
       "subsystems": {},
       "abilities": { "FighterMove": [ "Drone1" ] }

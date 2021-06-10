@@ -85,7 +85,11 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        // Debug use
+        if (Input.GetKeyDown(KeyCode.O))
+        {
+            InstantiateUnit("StandardFrigate", new Vector3(), new Quaternion(), GameObject.Find("GameObject").transform, 0);
+        }
     }
 
     private void InitFromInitData(GameInitData data)

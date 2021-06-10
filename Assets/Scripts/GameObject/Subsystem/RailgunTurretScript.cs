@@ -95,6 +95,7 @@ public class RailgunTurretScript : AttackSubsystemBaseScript
                 else
                 {
                     DetermineFireTarget();
+                    timer = 0;
                 }
             }
             else
