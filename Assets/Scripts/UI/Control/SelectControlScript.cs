@@ -12,7 +12,7 @@ public class SelectControlScript : MonoBehaviour
     public GameObject SelectionBoxPrefab;
 
     public Dictionary<string, List<GameObject>> SelectedGameObjects { get; private set; } = new Dictionary<string, List<GameObject>>();
-    public bool SelectedOwnGameObjects { get; private set; } = false;
+    public bool SelectedOwnUnits { get; private set; } = false;
 
     private Vector3 mouseStartPosition;
     private Vector3 mouseEndPosition;
@@ -113,11 +113,11 @@ public class SelectControlScript : MonoBehaviour
                     (position2D.x <= mouseStartPosition.x && position2D.x >= mouseEndPosition.x && position2D.y >= mouseStartPosition.y && position2D.y <= mouseEndPosition.y) ||
                     (position2D.x <= mouseStartPosition.x && position2D.x >= mouseEndPosition.x && position2D.y <= mouseStartPosition.y && position2D.y >= mouseEndPosition.y))
                 {
-                    if (allSelectableGameObjects[i].GetComponent<ShipBaseScript>() != null && 
-                        selfIndex == allSelectableGameObjects[i].GetComponent<ShipBaseScript>().BelongTo)
+                    if (allSelectableGameObjects[i].GetComponent<UnitBaseScript>() != null && 
+                        selfIndex == allSelectableGameObjects[i].GetComponent<UnitBaseScript>().BelongTo)
                     {
                         AddGameObject(allSelectableGameObjects[i]);
-                        SelectedOwnGameObjects = true;
+                        SelectedOwnUnits = true;
                     }
                 }
             }
@@ -133,7 +133,8 @@ public class SelectControlScript : MonoBehaviour
                 if (hit.collider.gameObject.GetComponent<RTSGameObjectBaseScript>() != null)
                 {
                     AddGameObject(hit.collider.gameObject);
-                    SelectedOwnGameObjects = hit.collider.gameObject.GetComponent<RTSGameObjectBaseScript>().BelongTo == selfIndex;
+                    SelectedOwnUnits = hit.collider.GetComponent<RTSGameObjectBaseScript>().BelongTo == selfIndex
+                        && hit.collider.GetComponent<UnitBaseScript>() != null;
                 }
             }
         }
@@ -185,7 +186,7 @@ public class SelectControlScript : MonoBehaviour
             }
         }
         SelectedGameObjects.Clear();
-        SelectedOwnGameObjects = false;
+        SelectedOwnUnits = false;
     }
 
     public Vector3 FindCenter()

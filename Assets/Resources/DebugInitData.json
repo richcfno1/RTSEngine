@@ -48,8 +48,8 @@
         "MoveSearchRandomNumber": 10.0
       },
       "subsystems": {
-        "TurretAnchor9": "Turret1",
-        "TurretAnchor10": "Turret1",
+        "TurretAnchor9": "FixedMissileLauncher1",
+        "TurretAnchor10": "FixedMissileLauncher1",
         "TurretAnchor11": "Turret1",
         "TurretAnchor12": "Turret1",
         "TurretAnchor13": "Turret1",

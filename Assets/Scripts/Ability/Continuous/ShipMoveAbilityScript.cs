@@ -146,7 +146,7 @@ public class ShipMoveAbilityScript : MoveAbilityScript
             if (moveBeacons.Count != 0)
             {
                 // There are two kinds of move:
-                // First one for drone which can only accelerate forward
+                // First one for fighter which can only accelerate forward
                 // Second for ship which should be able to rotate without move 
                 if (agentAccelerateLimit == 0)
                 {

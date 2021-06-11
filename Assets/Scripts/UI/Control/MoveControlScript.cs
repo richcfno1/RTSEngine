@@ -47,7 +47,7 @@ public class MoveControlScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (SelectControlScript.SelectionControlInstance.SelectedOwnGameObjects)
+        if (SelectControlScript.SelectionControlInstance.SelectedOwnUnits)
         {
             if (navigationUIBase != null)
             {

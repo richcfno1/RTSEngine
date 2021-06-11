@@ -6,7 +6,7 @@ public class FighterMoveAbilityScript : MoveAbilityScript
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
@@ -16,7 +16,7 @@ public class FighterMoveAbilityScript : MoveAbilityScript
         agentMoveSpeed = Parent.PropertyDictionary["MoveSpeed"];
         agentRotateSpeed = Parent.PropertyDictionary["RotateSpeed"];
         agentAccelerateLimit = Parent.PropertyDictionary["AccelerateLimit"];
-        
+
         agentRadius = Parent.PropertyDictionary["MoveAgentRadius"];
         searchStepDistance = Parent.PropertyDictionary["MoveSearchStepDistance"];
         searchStepMaxDistance = Parent.PropertyDictionary["MoveSearchStepLimit"];
@@ -146,14 +146,14 @@ public class FighterMoveAbilityScript : MoveAbilityScript
             if (moveBeacons.Count != 0)
             {
                 // There are two kinds of move:
-                // First one for drone which can only accelerate forward
+                // First one for fighter which can only accelerate forward
                 // Second for ship which should be able to rotate without move 
                 if (agentAccelerateLimit == 0)
                 {
                     Vector3 moveVector = moveBeacons[0] - transform.position;
                     Vector3 rotateDirection = moveVector.normalized;
                     transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(rotateDirection), Time.fixedDeltaTime * agentRotateSpeed);
-                    float moveDistance = agentMoveSpeed * Time.fixedDeltaTime * Parent.MovePower;
+                    float moveDistance = agentMoveSpeed * Time.fixedDeltaTime;
                     if (moveVector.magnitude <= moveDistance)
                     {
                         if (TestObstacle(transform.position, moveBeacons[0]) != 0)
@@ -185,7 +185,7 @@ public class FighterMoveAbilityScript : MoveAbilityScript
                     moveSpeedAdjust = (moveSpeedAdjust + 1) / 2;
                     lastFrameSpeedAdjust = Mathf.Cos(Mathf.Deg2Rad * Quaternion.Angle(transform.rotation, Quaternion.LookRotation(lastFrameMoveDirection)));
                     moveSpeedAdjust = Mathf.Clamp(moveSpeedAdjust, lastFrameSpeedAdjust - agentAccelerateLimit, lastFrameSpeedAdjust + agentAccelerateLimit);
-                    float moveDistance = agentMoveSpeed * Time.fixedDeltaTime * moveSpeedAdjust;
+                    float moveDistance = agentMoveSpeed * Time.fixedDeltaTime * moveSpeedAdjust * Parent.MovePower;
 
                     lastFrameSpeedAdjust = moveSpeedAdjust;
                     lastFrameMoveDirection = moveVector.normalized;
