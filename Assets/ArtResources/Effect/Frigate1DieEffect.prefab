@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 2654098538732379608}
   - component: {fileID: 2654098538732379609}
   m_Layer: 0
-  m_Name: FrigateDieEffect
+  m_Name: Frigate1DieEffect
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4920,7 +4920,7 @@ ParticleSystem:
     startLifetime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 1
+      scalar: 2
       minScalar: 5
       maxCurve:
         serializedVersion: 2
