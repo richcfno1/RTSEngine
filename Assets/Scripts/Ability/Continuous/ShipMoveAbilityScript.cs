@@ -31,26 +31,16 @@ public class ShipMoveAbilityScript : MoveAbilityScript
     private float TestObstacle(Vector3 from, Vector3 to)
     {
         Vector3 direction = (to - from).normalized;
-        int hitCount = 0;
-        float hitDistance = 0;
         List<Collider> toIgnore = new List<Collider>(Physics.OverlapSphere(from, agentRadius));
-        RaycastHit[] hits = Physics.CapsuleCastAll(from, to, agentRadius, direction, direction.magnitude);
+        RaycastHit[] hits = Physics.CapsuleCastAll(from, from + direction * agentRadius * 5, agentRadius, direction, direction.magnitude);
         foreach (RaycastHit i in hits)
         {
             if (!toIgnore.Contains(i.collider) && !i.collider.CompareTag("Bullet"))
             {
-                hitDistance += (i.collider.ClosestPoint(from) - from).magnitude;
-                hitCount++;
+                return (i.collider.ClosestPoint(from) - from).magnitude;
             }
         }
-        if (hitDistance == 0)
-        {
-            return 0;
-        }
-        else
-        {
-            return hitDistance / hitCount;
-        }
+        return 0;
     }
 
     private void FindPath(Vector3 from, Vector3 to)

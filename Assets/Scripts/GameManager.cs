@@ -5,6 +5,7 @@ using Neo.IronLua;
 using System;
 using System.Linq;
 using Newtonsoft.Json;
+using System.Threading;
 
 public class GameManager : MonoBehaviour
 {
@@ -77,11 +78,12 @@ public class GameManager : MonoBehaviour
     }
 
     private float recordData = 0;
+    private float recordData2 = 0;
 
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
@@ -90,13 +92,14 @@ public class GameManager : MonoBehaviour
         // Debug use
         if (Input.GetKeyDown(KeyCode.O))
         {
-            InstantiateUnit("StandardFrigate", new Vector3(recordData, 0, recordData), new Quaternion(), GameObject.Find("GameObject").transform, 0);
+            InstantiateUnit("StandardFrigate", new Vector3(recordData, 0, recordData + recordData2), new Quaternion(), GameObject.Find("GameObject").transform, 0);
             recordData -= 25;
             Debug.Log(recordData / 25);
         }
         if (Input.GetKeyDown(KeyCode.P))
         {
             recordData = 0;
+            recordData2 = -25;
         }
     }
 
