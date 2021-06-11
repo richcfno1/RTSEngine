@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc471de06aad7274886f8fb3ad2218f4, type: 3}
   m_Name: Drone1
   m_EditorClassIdentifier: 
-  prefab: {fileID: 5127304676431414407, guid: 1d09ab5014734cd47ae28ea604d92490, type: 3}
+  prefab: {fileID: 7274105634280561773, guid: 1d09ab5014734cd47ae28ea604d92490, type: 3}
   icon: {fileID: 21300000, guid: 35d8135e46b50be4fb8935f804439926, type: 3}
