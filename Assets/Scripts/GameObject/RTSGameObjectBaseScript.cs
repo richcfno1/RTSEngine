@@ -16,21 +16,6 @@ public class RTSGameObjectBaseScript : MonoBehaviour
 
     protected GameObject lastDamagedBy = null;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        OnCreatedAction();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        if (HP <= 0)
-        {
-            OnDestroyedAction();
-        }
-    }
-
     protected virtual void OnCreatedAction()
     {
         HP = maxHP;

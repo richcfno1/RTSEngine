@@ -45,7 +45,7 @@ GameObject:
   - component: {fileID: 1346170924753124619}
   m_Layer: 0
   m_Name: Cruiser1
-  m_TagString: Untagged
+  m_TagString: Unit
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -143,7 +143,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   typeID: Cruiser1
   maxHP: 3000
-  onDestroyedEffect: {fileID: 0}
+  onDestroyedEffect: {fileID: 1066807000801938636, guid: 81d16fdabfe449f4a8245b498a0d5180, type: 3}
   maxAttackPower: 3000
   maxDefencePower: 3000
   maxMovePower: 3000
@@ -352,7 +352,7 @@ GameObject:
   - component: {fileID: 5239549200730192497}
   m_Layer: 0
   m_Name: Collider
-  m_TagString: Untagged
+  m_TagString: AimCollider
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

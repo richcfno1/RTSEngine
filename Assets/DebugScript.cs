@@ -14,13 +14,6 @@ public class DebugScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.O))
-        {
-            test.SetBool("IsMoving", true);
-        }
-        if (Input.GetKeyDown(KeyCode.P))
-        {
-            test.SetBool("IsMoving", false);
-        }
+        Debug.Log(GetComponent<RTSGameObjectBaseScript>().HP);
     }
 }

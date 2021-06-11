@@ -44,10 +44,13 @@ public class ShipBaseScript : UnitBaseScript
 
     protected override void OnDestroyedAction()
     {
-        base.OnDestroyedAction();
         foreach (AnchorData i in subsyetemAnchors)
         {
-            GameManager.GameManagerInstance.OnGameObjectDestroyed(i.subsystem, lastDamagedBy);
+            if (i.subsystem != null)
+            {
+                GameManager.GameManagerInstance.OnGameObjectDestroyed(i.subsystem, lastDamagedBy);
+            }
         }
+        base.OnDestroyedAction();
     }
 }
