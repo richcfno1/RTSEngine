@@ -114,7 +114,7 @@ MonoBehaviour:
   attackPowerReduce: 0
   defencePowerReduce: 0
   movePowerReduce: 0
-  moveSpeed: 100
+  moveSpeed: 300
   maxTime: 10
   hitEffect: {fileID: 2369021655912796706, guid: 0643096084fbfb940bd8ab33ba76f553, type: 3}
   moveDirection: {x: 0, y: 0, z: 0}

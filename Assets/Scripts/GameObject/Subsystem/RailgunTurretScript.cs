@@ -150,9 +150,12 @@ public class RailgunTurretScript : AttackSubsystemBaseScript
             }
         }
         List<Collider> allPossibleTargets = new List<Collider>(Physics.OverlapSphere(transform.position, lockRange));
+        allPossibleTargets = allPossibleTargets.Where(x => x.CompareTag("Unit")).ToList();
+        allPossibleTargets.Sort((x, y) => Comparer.Default.Compare(
+            (x.transform.position - transform.position).sqrMagnitude, (y.transform.position - transform.position).sqrMagnitude));
         foreach (Collider i in allPossibleTargets)
         {
-            if (i.CompareTag("Unit") && i.GetComponent<RTSGameObjectBaseScript>().BelongTo != Parent.BelongTo)
+            if (i.GetComponent<RTSGameObjectBaseScript>().BelongTo != Parent.BelongTo)
             {
                 RaycastHit hit;
                 if (Physics.Raycast(transform.position, (i.transform.position - transform.position).normalized, out hit, (i.transform.position - transform.position).magnitude))
