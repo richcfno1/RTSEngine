@@ -88,7 +88,6 @@ public class MissileBaseScript : RTSGameObjectBaseScript
         }
         else
         {
-            Debug.Log("Boom");
             Collider[] allHits = Physics.OverlapSphere(transform.position, damageRadius);
             foreach (Collider i in allHits)
             {
@@ -106,6 +105,7 @@ public class MissileBaseScript : RTSGameObjectBaseScript
     {
         Vector3 direction = (to - from).normalized;
         List<Collider> toIgnore = new List<Collider>(Physics.OverlapSphere(from, agentRadius));
+        toIgnore.AddRange(target.GetComponentsInChildren<Collider>());
         RaycastHit[] hits = Physics.CapsuleCastAll(from, from + direction * agentRadius * 5, agentRadius, direction, direction.magnitude);
         foreach (RaycastHit i in hits)
         {

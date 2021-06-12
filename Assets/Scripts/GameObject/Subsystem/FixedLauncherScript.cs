@@ -45,13 +45,12 @@ public class FixedLauncherScript : AttackSubsystemBaseScript
                     {
                         bulletCount = 0;
                     }
-                    timer = 0;
                 }
                 else
                 {
                     DetermineFireTarget();
-                    timer = 0;
                 }
+                timer = 0;
             }
             else
             {
@@ -62,8 +61,9 @@ public class FixedLauncherScript : AttackSubsystemBaseScript
 
     protected virtual void Fire(int missileIndex)
     {
-        GameObject temp = Instantiate(missile, missileStartPosition[missileIndex].position, transform.rotation);
-        temp.transform.position += temp.transform.up * missileUpwardFlyDistance;
+        GameObject temp = Instantiate(missile, missileStartPosition[missileIndex].position, new Quaternion());
+        temp.transform.LookAt(temp.transform.position + transform.up * missileUpwardFlyDistance, temp.transform.up);
+        temp.transform.position += transform.up * missileUpwardFlyDistance;
         MissileBaseScript tempScript = temp.GetComponent<MissileBaseScript>();
         tempScript.target = fireTarget;
         tempScript.from = Parent.gameObject;
@@ -71,7 +71,7 @@ public class FixedLauncherScript : AttackSubsystemBaseScript
     }
 
     // Try to find a target by the order, compare angleY first, then check obstacles
-    private void DetermineFireTarget()
+    protected override void DetermineFireTarget()
     {
         if (subsystemTarget == null)
         {

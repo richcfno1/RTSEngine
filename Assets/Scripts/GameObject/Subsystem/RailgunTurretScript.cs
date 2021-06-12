@@ -88,15 +88,14 @@ public class RailgunTurretScript : AttackSubsystemBaseScript
                             {
                                 bulletCount = 0;
                             }
-                            timer = 0;
                         }
                     }
                 }
                 else
                 {
                     DetermineFireTarget();
-                    timer = 0;
                 }
+                timer = 0;
             }
             else
             {
@@ -130,7 +129,7 @@ public class RailgunTurretScript : AttackSubsystemBaseScript
     }
 
     // Try to find a target by the order, compare angleY first, then check obstacles
-    private void DetermineFireTarget()
+    protected override void DetermineFireTarget()
     {
         if (subsystemTarget == null)
         {

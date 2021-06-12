@@ -145,7 +145,7 @@ MonoBehaviour:
   scale: 1
   repairPercentRequired: 0.5
   supportedAbility: 02000000
-  coolDown: 3
+  coolDown: 20
   lockRange: 500
   missile: {fileID: 5777247254999762963, guid: d6e47521cfabad243a1a9c523b1024d4, type: 3}
   missileStartPosition:

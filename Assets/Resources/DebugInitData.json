@@ -39,8 +39,8 @@
       "unitTypeName": "StandardCruiser",
       "shipTypeName": "Cruiser1",
       "properties": {
-        "MoveSpeed": 10.0,
-        "RotateSpeed": 15.0,
+        "MoveSpeed": 5.0,
+        "RotateSpeed": 10.0,
         "AccelerateLimit": 0.5,
         "MoveAgentRadius": 40.0,
         "MoveSearchStepDistance": 40.0,
@@ -83,7 +83,7 @@
       "position": {
         "x": 0.0,
         "y": 0.0,
-        "z": 100.0
+        "z": 0.0
       },
       "rotation": {
         "x": 0.0,
@@ -113,7 +113,7 @@
       "position": {
         "x": 0.0,
         "y": 0.0,
-        "z": 0.0
+        "z": -50.0
       },
       "rotation": {
         "x": 0.0,
@@ -188,7 +188,7 @@
       "position": {
         "x": 0.0,
         "y": 0.0,
-        "z": -50.0
+        "z": 50.0
       },
       "rotation": {
         "x": 0.0,
@@ -203,7 +203,7 @@
       "position": {
         "x": 0.0,
         "y": 5.0,
-        "z": -50.0
+        "z": 50.0
       },
       "rotation": {
         "x": 0.0,
@@ -218,7 +218,7 @@
       "position": {
         "x": 0.0,
         "y": -5.0,
-        "z": -50.0
+        "z": 50.0
       },
       "rotation": {
         "x": 0.0,

@@ -58,7 +58,6 @@ public class BulletBaseScript : MonoBehaviour
             {
                 if (hit.collider != other && hit.collider.GetComponent<SubsystemBaseScript>() != null)
                 {
-                    Debug.Log(hit.collider.name);
                     hit.collider.GetComponent<SubsystemBaseScript>().CreateDamage(damage, attackPowerReduce, defencePowerReduce, movePowerReduce, createdBy);
                     Instantiate(hitEffect, transform.position, new Quaternion());
                     Destroy(gameObject);

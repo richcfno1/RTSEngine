@@ -9,6 +9,7 @@ public class AttackAbilityScript : ContinuousAbilityBaseScript
         Auto,
         Specific
     }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -34,7 +35,25 @@ public class AttackAbilityScript : ContinuousAbilityBaseScript
             abilityTarget = null;
             return isUsing = false;
         }
-        return base.UseAbility(target);
+        if (base.UseAbility(target))
+        {
+            if ((UseType)abilityTarget[0] == UseType.Auto)
+            {
+                foreach (AttackSubsystemBaseScript i in SupportedBy)
+                {
+                    i.SetTarget(new List<object>());
+                }
+            }
+            else if ((UseType)abilityTarget[0] == UseType.Specific)
+            {
+                foreach (AttackSubsystemBaseScript i in SupportedBy)
+                {
+                    i.SetTarget(new List<object>() { abilityTarget[1] });
+                }
+            }
+            return true;
+        }
+        return false;
     }
 
     public override void PauseAbility()
@@ -48,20 +67,6 @@ public class AttackAbilityScript : ContinuousAbilityBaseScript
 
     protected override void ContinuousAction()
     {
-        // DEBUG
-        if ((UseType)abilityTarget[0] == UseType.Auto)
-        {
-            foreach (AttackSubsystemBaseScript i in SupportedBy)
-            {
-                i.SetTarget(new List<object>());
-            }
-        }
-        else if ((UseType)abilityTarget[0] == UseType.Specific)
-        {
-            foreach (AttackSubsystemBaseScript i in SupportedBy)
-            {
-                i.SetTarget(new List<object>() { abilityTarget[1] });
-            }
-        }
+        
     }
 }
