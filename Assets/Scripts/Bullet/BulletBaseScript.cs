@@ -50,7 +50,7 @@ public class BulletBaseScript : MonoBehaviour
         {
             return;
         }
-        if (other.CompareTag("Unit"))
+        if (other.CompareTag("Ship"))
         {
             // If there is a subsystem gameobject in front of the bullet, hit it instead of the ship
             RaycastHit hit;
@@ -67,6 +67,10 @@ public class BulletBaseScript : MonoBehaviour
             other.GetComponent<RTSGameObjectBaseScript>().CreateDamage(damage, attackPowerReduce, defencePowerReduce, movePowerReduce, createdBy);
         }
         else if (other.CompareTag("Subsystem"))
+        {
+            other.GetComponent<RTSGameObjectBaseScript>().CreateDamage(damage, attackPowerReduce, defencePowerReduce, movePowerReduce, createdBy);
+        }
+        else if (other.CompareTag("Fighter"))
         {
             other.GetComponent<RTSGameObjectBaseScript>().CreateDamage(damage, attackPowerReduce, defencePowerReduce, movePowerReduce, createdBy);
         }

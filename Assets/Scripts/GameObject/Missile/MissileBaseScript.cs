@@ -95,6 +95,7 @@ public class MissileBaseScript : RTSGameObjectBaseScript
         }
         else
         {
+            Boom();
         }
     }
 

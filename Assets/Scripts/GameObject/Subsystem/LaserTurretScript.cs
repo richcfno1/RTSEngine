@@ -73,6 +73,15 @@ public class LaserTurretScript : AttackSubsystemBaseScript
         }
         if (Active)
         {
+            if (fireTarget == null)
+            {
+                SetIdle(true);
+            }
+            else
+            {
+                SetAimpoint(fireTarget.transform.position);
+            }
+            RotateTurret();
             if (timer >= coolDown / laserStartPosition.Count / Parent.AttackPower)
             {
                 if (fireTarget != null && (transform.position - fireTarget.transform.position).magnitude <= lockRange)
@@ -80,7 +89,7 @@ public class LaserTurretScript : AttackSubsystemBaseScript
                     RaycastHit hit;
                     Vector3 rayPosition = turretBarrels.position;
                     Vector3 rayDirection = turretBarrels.forward;
-                    if (Physics.Raycast(rayPosition, rayDirection, out hit, (aimPoint - rayPosition).magnitude))
+                    if (Physics.Raycast(rayPosition, rayDirection, out hit, lockRange))
                     {
                         if (hit.collider.tag != "AimCollider" && (hit.collider.GetComponent<RTSGameObjectBaseScript>() == null || hit.collider.GetComponent<RTSGameObjectBaseScript>().BelongTo != BelongTo))
                         {
@@ -94,12 +103,8 @@ public class LaserTurretScript : AttackSubsystemBaseScript
                     }
                     else
                     {
-                        //Fire(laserCount, fireTarget);
-                        //laserCount++;
-                        //if (laserCount == laserStartPosition.Count)
-                        //{
-                        //    laserCount = 0;
-                        //}
+
+
                     }
                 }
                 DetermineFireTarget();
@@ -109,15 +114,6 @@ public class LaserTurretScript : AttackSubsystemBaseScript
             {
                 timer += Time.deltaTime;
             }
-            if (fireTarget == null)
-            {
-                SetIdle(true);
-            }
-            else
-            {
-                SetAimpoint(fireTarget.transform.position);
-            }
-            RotateTurret();
         }
         if (showDebugRay && Active)
         {
@@ -303,7 +299,7 @@ public class LaserTurretScript : AttackSubsystemBaseScript
         RaycastHit hit;
         Vector3 rayPosition = turretBarrels.position;
         Vector3 rayDirection = turretBarrels.forward;
-        if (Physics.Raycast(rayPosition, rayDirection, out hit, (aimPoint - rayPosition).magnitude))
+        if (Physics.Raycast(rayPosition, rayDirection, out hit, lockRange))
         {
             if (hit.collider.tag != "AimCollider" && (hit.collider.GetComponent<RTSGameObjectBaseScript>() == null || hit.collider.GetComponent<RTSGameObjectBaseScript>().BelongTo != BelongTo))
             {
