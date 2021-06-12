@@ -1,8 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
-using cakeslice;
 
 public class SelectControlScript : MonoBehaviour
 {
@@ -100,6 +97,29 @@ public class SelectControlScript : MonoBehaviour
         //Debug.Log(SelectedGameObjects.Count);
     }
 
+    private GameObject SingleSelectionHelper()
+    {
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        List<RaycastHit> hits = new List<RaycastHit>(Physics.RaycastAll(ray));
+        hits.RemoveAll(x => x.collider.GetComponent<RTSGameObjectBaseScript>() == null);
+        if (hits.Count == 0)
+        {
+            return null;
+        }
+        else if (hits.Count == 1 || !hits[0].collider.CompareTag("Ship"))
+        {
+            return hits[0].collider.gameObject;
+        }
+        else
+        {
+            if (hits[1].collider.CompareTag("Subsystem"))
+            {
+                return hits[1].collider.gameObject;
+            }
+            return hits[0].collider.gameObject;
+        }
+    }
+
     private void Judge()
     {
         ClearSelectedGameObjects();
@@ -125,17 +145,12 @@ public class SelectControlScript : MonoBehaviour
         // Single selection
         else
         {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
-            if (Physics.Raycast(ray, out hit))
+            GameObject selected = SingleSelectionHelper();
+            if (selected != null)
             {
-                // Do not check belonging because single selection can select game object which is not belong to "self"
-                if (hit.collider.gameObject.GetComponent<RTSGameObjectBaseScript>() != null)
-                {
-                    AddGameObject(hit.collider.gameObject);
-                    SelectedOwnUnits = hit.collider.GetComponent<RTSGameObjectBaseScript>().BelongTo == selfIndex
-                        && hit.collider.GetComponent<UnitBaseScript>() != null;
-                }
+                AddGameObject(selected);
+                SelectedOwnUnits = selected.GetComponent<RTSGameObjectBaseScript>().BelongTo == selfIndex
+                    && selected.GetComponent<UnitBaseScript>() != null;
             }
         }
     }

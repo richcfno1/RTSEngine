@@ -123,10 +123,10 @@ public class LaserTurretScript : AttackSubsystemBaseScript
 
     protected virtual void Fire(int laserIndex, GameObject hit)
     {
-        StopAllCoroutines();
         laserRenderer.enabled = true;
         laserRenderer.SetPositions(new Vector3[] { laserStartPosition[laserIndex].position, hit.transform.position });
         hit.GetComponent<RTSGameObjectBaseScript>().CreateDamage(damage, attackPowerReduce, defencePowerReduce, movePowerReduce, Parent.gameObject);
+        StopAllCoroutines();
         StartCoroutine(WaitAndPrint(laserAppearTime));
     }
     private IEnumerator WaitAndPrint(float waitTime)
