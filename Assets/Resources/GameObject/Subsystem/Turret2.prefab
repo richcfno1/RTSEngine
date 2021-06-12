@@ -104,6 +104,8 @@ MonoBehaviour:
   supportedAbility: 02000000
   coolDown: 3
   lockRange: 400
+  possibleTargetTags:
+  - Ship
   bullet: {fileID: 8668021796344179376, guid: aab41ae67710d174f8990ac66437216c, type: 3}
   bulletStartPosition:
   - {fileID: 7921085107502865375}

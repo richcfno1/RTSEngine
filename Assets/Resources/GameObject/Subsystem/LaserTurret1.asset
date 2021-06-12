@@ -1,0 +1,16 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fc471de06aad7274886f8fb3ad2218f4, type: 3}
+  m_Name: LaserTurret1
+  m_EditorClassIdentifier: 
+  prefab: {fileID: 6850181043838696389, guid: 0671ad6b336dd9e4fad45c423d116bb2, type: 3}
+  icon: {fileID: 21300000, guid: f45591d82c6b3e0439e83c23ba9b8557, type: 3}

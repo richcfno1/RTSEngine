@@ -46,10 +46,7 @@ public class FixedLauncherScript : AttackSubsystemBaseScript
                         bulletCount = 0;
                     }
                 }
-                else
-                {
-                    DetermineFireTarget();
-                }
+                DetermineFireTarget();
                 timer = 0;
             }
             else
@@ -77,18 +74,23 @@ public class FixedLauncherScript : AttackSubsystemBaseScript
         {
             return;
         }
-        if (subsystemTarget.Count == 1)
+        if (subsystemTarget.Count == 1 && possibleTargetTags.Contains(((GameObject)subsystemTarget[0]).tag))
         {
             fireTarget = (GameObject)subsystemTarget[0];
         }
         List<Collider> allPossibleTargets = new List<Collider>(Physics.OverlapSphere(transform.position, lockRange));
-        // Only select ship, may extend in future
-        allPossibleTargets = allPossibleTargets.Where(x => x.CompareTag("Unit")).Where(x => x.GetComponent<ShipBaseScript>() != null && x.GetComponent<ShipBaseScript>().BelongTo != BelongTo).ToList();
-        allPossibleTargets.Sort((x, y) => Comparer.Default.Compare(
-            (x.transform.position - transform.position).sqrMagnitude, (y.transform.position - transform.position).sqrMagnitude));
-        if (allPossibleTargets.Count != 0)
+        List<Collider> filteredPossibleTargets = new List<Collider>();
+        foreach (string i in possibleTargetTags)
         {
-            fireTarget = allPossibleTargets[0].gameObject;
+            filteredPossibleTargets.AddRange(allPossibleTargets.Where(x => x.CompareTag(i)));
+        }
+        filteredPossibleTargets = filteredPossibleTargets.Where(x => x.GetComponent<RTSGameObjectBaseScript>() != null &&
+            x.GetComponent<RTSGameObjectBaseScript>().BelongTo != BelongTo).ToList();
+        filteredPossibleTargets.Sort((x, y) => Comparer.Default.Compare(
+            (x.transform.position - transform.position).sqrMagnitude, (y.transform.position - transform.position).sqrMagnitude));
+        if (filteredPossibleTargets.Count != 0)
+        {
+            fireTarget = filteredPossibleTargets[0].gameObject;
         }
         else
         {

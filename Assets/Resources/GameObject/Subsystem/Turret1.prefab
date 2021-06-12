@@ -117,6 +117,9 @@ MonoBehaviour:
   supportedAbility: 02000000
   coolDown: 2
   lockRange: 200
+  possibleTargetTags:
+  - Ship
+  - Fighter
   bullet: {fileID: 200688503556163643, guid: 18c4861f8f235184ba3004c333b41113, type: 3}
   bulletStartPosition:
   - {fileID: 5170811280945999704}

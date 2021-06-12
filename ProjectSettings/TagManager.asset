@@ -7,9 +7,11 @@ TagManager:
   - AimCollider
   - Bullet
   - Subsystem
-  - Unit
   - Obstacle
-  - GameObject
+  - Ship
+  - Fighter
+  - Unit
+  - Missile
   layers:
   - Default
   - TransparentFX

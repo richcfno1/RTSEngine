@@ -1,16 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using System.Linq;
+using UnityEngine;
 
-// Rotation code is written by another author: https://github.com/brihernandez/GunTurrets
-public class RailgunTurretScript : AttackSubsystemBaseScript
+public class LaserTurretScript : AttackSubsystemBaseScript
 {
     [Header("Objects")]
-    [Tooltip("GameObject used to shoot from the turret")]
-    public GameObject bullet;
+    [Tooltip("LineRenderer of laser")]
+    public LineRenderer laserRenderer;
     [Tooltip("Where should the bullet instantiate")]
-    public List<Transform> bulletStartPosition;
+    public List<Transform> laserStartPosition;
     [Tooltip("Transform used to provide the horizontal rotation of the turret.")]
     public Transform turretBase;
     [Tooltip("Transform used to provide the vertical rotation of the barrels. Must be a child of the TurretBase.")]
@@ -34,19 +33,21 @@ public class RailgunTurretScript : AttackSubsystemBaseScript
     [Range(0.0f, 90.0f)]
     public float depression = 5.0f;
 
-    [Header("Random")]
-    [Tooltip("How bullet randomly deviation when shooting")]
-    public float allowedRandomAngle = 0.05f;
-
     [Header("Utilities")]
     [Tooltip("Show the arcs that the turret can aim through.\n\nRed: Left/Right Traverse\nGreen: Elevation\nBlue: Depression")]
     public bool showArcs = false;
     [Tooltip("When game is running in editor, draws a debug ray to show where the turret is aiming.")]
     public bool showDebugRay = true;
 
+    public float laserAppearTime;
+    public float damage;
+    public float attackPowerReduce;
+    public float defencePowerReduce;
+    public float movePowerReduce;
+
     private GameObject fireTarget;
     private Vector3 aimPoint;
-    private int bulletCount;
+    private int laserCount;
 
     private bool aiming = false;
     private bool atRest = false;
@@ -55,7 +56,8 @@ public class RailgunTurretScript : AttackSubsystemBaseScript
     void Start()
     {
         OnCreatedAction();
-        bulletCount = 0;
+        laserCount = 0;
+        laserRenderer.enabled = false;
     }
 
     // Update is called once per frame
@@ -71,7 +73,7 @@ public class RailgunTurretScript : AttackSubsystemBaseScript
         }
         if (Active)
         {
-            if (timer >= coolDown / bulletStartPosition.Count / Parent.AttackPower)
+            if (timer >= coolDown / laserStartPosition.Count / Parent.AttackPower)
             {
                 if (fireTarget != null && (transform.position - fireTarget.transform.position).magnitude <= lockRange)
                 {
@@ -82,13 +84,22 @@ public class RailgunTurretScript : AttackSubsystemBaseScript
                     {
                         if (hit.collider.tag != "AimCollider" && (hit.collider.GetComponent<RTSGameObjectBaseScript>() == null || hit.collider.GetComponent<RTSGameObjectBaseScript>().BelongTo != BelongTo))
                         {
-                            Fire(bulletCount);
-                            bulletCount++;
-                            if (bulletCount == bulletStartPosition.Count)
+                            Fire(laserCount, hit.collider.gameObject);
+                            laserCount++;
+                            if (laserCount == laserStartPosition.Count)
                             {
-                                bulletCount = 0;
+                                laserCount = 0;
                             }
                         }
+                    }
+                    else
+                    {
+                        //Fire(laserCount, fireTarget);
+                        //laserCount++;
+                        //if (laserCount == laserStartPosition.Count)
+                        //{
+                        //    laserCount = 0;
+                        //}
                     }
                 }
                 DetermineFireTarget();
@@ -114,15 +125,18 @@ public class RailgunTurretScript : AttackSubsystemBaseScript
         }
     }
 
-    protected virtual void Fire(int bulletIndex)
+    protected virtual void Fire(int laserIndex, GameObject hit)
     {
-        GameObject temp = Instantiate(bullet, bulletStartPosition[bulletIndex].position, turretBarrels.rotation);
-        BulletBaseScript tempScript = temp.GetComponent<BulletBaseScript>();
-        tempScript.moveDirection = turretBarrels.forward + turretBarrels.right * Random.Range(-allowedRandomAngle, allowedRandomAngle) +
-            turretBarrels.up * Random.Range(-allowedRandomAngle, allowedRandomAngle);
-        tempScript.toIgnore.Add(GetComponent<Collider>());
-        tempScript.toIgnore.Add(Parent.GetComponent<Collider>());
-        tempScript.createdBy = Parent.gameObject;
+        StopAllCoroutines();
+        laserRenderer.enabled = true;
+        laserRenderer.SetPositions(new Vector3[] { laserStartPosition[laserIndex].position, hit.transform.position });
+        hit.GetComponent<RTSGameObjectBaseScript>().CreateDamage(damage, attackPowerReduce, defencePowerReduce, movePowerReduce, Parent.gameObject);
+        StartCoroutine(WaitAndPrint(laserAppearTime));
+    }
+    private IEnumerator WaitAndPrint(float waitTime)
+    {
+        yield return new WaitForSeconds(waitTime);
+        laserRenderer.enabled = false;
     }
 
     // Try to find a target by the order, compare angleY first, then check obstacles

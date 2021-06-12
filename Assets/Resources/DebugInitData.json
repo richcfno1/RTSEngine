@@ -25,10 +25,10 @@
       "subsystems": {
         "TurretAnchor1": "Turret1",
         "TurretAnchor2": "Turret1",
-        "TurretAnchor3": "Turret2",
+        "TurretAnchor3": "LaserTurret1",
         "TurretAnchor4": "Turret1",
         "TurretAnchor5": "Turret1",
-        "TurretAnchor6": "Turret2"
+        "TurretAnchor6": "LaserTurret1"
       },
       "abilities": {
         "ShipMove": [ "Frigate1" ],

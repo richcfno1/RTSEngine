@@ -9655,7 +9655,7 @@ GameObject:
   - component: {fileID: -4437769941124110438}
   m_Layer: 0
   m_Name: Drone1
-  m_TagString: Unit
+  m_TagString: Fighter
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

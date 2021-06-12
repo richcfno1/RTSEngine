@@ -147,6 +147,8 @@ MonoBehaviour:
   supportedAbility: 02000000
   coolDown: 20
   lockRange: 500
+  possibleTargetTags:
+  - Ship
   missile: {fileID: 5777247254999762963, guid: d6e47521cfabad243a1a9c523b1024d4, type: 3}
   missileStartPosition:
   - {fileID: 8340461374730998132}

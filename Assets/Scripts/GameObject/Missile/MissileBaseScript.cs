@@ -41,9 +41,16 @@ public class MissileBaseScript : RTSGameObjectBaseScript
     void FixedUpdate()
     {
         timer += Time.fixedDeltaTime;
-        if (timer > maxTime || HP <= 0 || target == null)
+        // Run out of time or lose target
+        if (timer >= maxTime || target == null)
         {
             OnDestroyedAction();
+            return;
+        }
+        // Been damaged, then boom immediately
+        if (HP <= 0)
+        {
+            Boom();
             return;
         }
         destination = target.GetComponent<Collider>().ClosestPoint(transform.position);
@@ -88,17 +95,21 @@ public class MissileBaseScript : RTSGameObjectBaseScript
         }
         else
         {
-            Collider[] allHits = Physics.OverlapSphere(transform.position, damageRadius);
-            foreach (Collider i in allHits)
-            {
-                if (i.GetComponent<RTSGameObjectBaseScript>() != null)
-                {
-                    i.GetComponent<RTSGameObjectBaseScript>().CreateDamage(damage, attackPowerReduce, defencePowerReduce, movePowerReduce, from);
-                }
-            }
-            HP = 0;
-            Instantiate(boomEffect, transform.position, new Quaternion());
         }
+    }
+
+    private void Boom()
+    {
+        Collider[] allHits = Physics.OverlapSphere(transform.position, damageRadius);
+        foreach (Collider i in allHits)
+        {
+            if (i.GetComponent<RTSGameObjectBaseScript>() != null)
+            {
+                i.GetComponent<RTSGameObjectBaseScript>().CreateDamage(damage, attackPowerReduce, defencePowerReduce, movePowerReduce, from);
+            }
+        }
+        timer = maxTime;
+        Instantiate(boomEffect, transform.position, new Quaternion());
     }
 
     private float TestObstacle(Vector3 from, Vector3 to)
