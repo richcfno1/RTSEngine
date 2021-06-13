@@ -141,7 +141,7 @@ public class MoveControlScript : MonoBehaviour
 
         navigationUILine = Instantiate(navigationUILinePrefab, Vector3.zero, new Quaternion(), GameObject.Find("UI").transform);
 
-        //Cursor.visible = false;
+        Cursor.visible = false;
     }
 
     private void UpdateNavigationUI()
@@ -199,7 +199,7 @@ public class MoveControlScript : MonoBehaviour
         {
             Destroy(navigationUILine);
         }
-        //Cursor.visible = true;
+        Cursor.visible = true;
     }
 
     private Dictionary<MoveAbilityScript, Vector3> FindDestination(List<MoveAbilityScript> allAgents, Vector3 destination, Vector3 forwardDirection)

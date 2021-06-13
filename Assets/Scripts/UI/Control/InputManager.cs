@@ -23,6 +23,8 @@ public class InputManager : MonoBehaviour
         public static KeyCode TrackSelectedUnits = KeyCode.V;
     }
 
+    public Texture2D cursorTexture;
+
     public List<GameObject> notSelectUI;  // A list of UI component when mouse click on them, selection will not be called
     private GraphicRaycaster raycaster;
     private PointerEventData pointerEventData;
@@ -39,6 +41,7 @@ public class InputManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        Cursor.SetCursor(cursorTexture, Vector2.zero , CursorMode.Auto);
         CurrentState = State.NoAction;
 
         raycaster = GetComponent<GraphicRaycaster>();

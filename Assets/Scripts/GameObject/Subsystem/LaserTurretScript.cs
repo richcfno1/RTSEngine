@@ -91,9 +91,9 @@ public class LaserTurretScript : AttackSubsystemBaseScript
                     Vector3 rayDirection = turretBarrels.forward;
                     if (Physics.Raycast(rayPosition, rayDirection, out hit, lockRange))
                     {
-                        if (hit.collider.tag != "AimCollider" && (hit.collider.GetComponent<RTSGameObjectBaseScript>() == null || hit.collider.GetComponent<RTSGameObjectBaseScript>().BelongTo != BelongTo))
+                        if (hit.collider.gameObject == fireTarget)
                         {
-                            Fire(laserCount, hit.collider.gameObject);
+                            Fire(laserCount, fireTarget);
                             laserCount++;
                             if (laserCount == laserStartPosition.Count)
                             {
