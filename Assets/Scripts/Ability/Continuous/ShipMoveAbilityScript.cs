@@ -31,16 +31,49 @@ public class ShipMoveAbilityScript : MoveAbilityScript
     private float TestObstacle(Vector3 from, Vector3 to)
     {
         Vector3 direction = (to - from).normalized;
-        List<Collider> toIgnore = new List<Collider>(Physics.OverlapSphere(from, agentRadius));
+        //List<Collider> toIgnore = new List<Collider>(Physics.OverlapSphere(from, agentRadius));
+        List<Collider> toIgnore = new List<Collider>(GetComponentsInChildren<Collider>());
         RaycastHit[] hits = Physics.CapsuleCastAll(from, from + direction * agentRadius * 5, agentRadius, direction, direction.magnitude);
         foreach (RaycastHit i in hits)
         {
-            if (!toIgnore.Contains(i.collider) && !i.collider.CompareTag("Bullet"))
+            if (!toIgnore.Contains(i.collider) && (i.collider.CompareTag("Ship") || i.collider.CompareTag("Fighter")))
             {
-                return (i.collider.ClosestPoint(from) - from).magnitude;
+                if (Parent.objectScale <= i.collider.GetComponent<UnitBaseScript>().objectScale)
+                {
+                    return (i.collider.ClosestPoint(from) - from).magnitude;
+                }
             }
         }
         return 0;
+    }
+
+    private bool TestObstacleAndPush(Vector3 from, Vector3 to)
+    {
+        Vector3 direction = (to - from);
+        //List<Collider> toIgnore = new List<Collider>(Physics.OverlapSphere(from, agentRadius));
+        List<Collider> toIgnore = new List<Collider>(GetComponentsInChildren<Collider>());
+        RaycastHit[] hits = Physics.CapsuleCastAll(from, to, agentRadius, direction, direction.magnitude);
+        List<RaycastHit> avoidInfo = new List<RaycastHit>();
+        foreach (RaycastHit i in hits)
+        {
+            if (!toIgnore.Contains(i.collider) && (i.collider.CompareTag("Ship") || i.collider.CompareTag("Fighter")))
+            {
+                if (Parent.objectScale <= i.collider.GetComponent<UnitBaseScript>().objectScale)
+                {
+                    return false;
+                }
+                else
+                {
+                    avoidInfo.Add(i);
+                }
+            }
+        }
+        foreach (RaycastHit i in avoidInfo)
+        {
+            Vector3 avoidDirection = i.transform.position - transform.position;
+            i.transform.position += avoidDirection.normalized * direction.magnitude;
+        }
+        return true;
     }
 
     private void FindPath(Vector3 from, Vector3 to)
@@ -145,69 +178,36 @@ public class ShipMoveAbilityScript : MoveAbilityScript
             }
             if (moveBeacons.Count != 0)
             {
-                // There are two kinds of move:
-                // First one for fighter which can only accelerate forward
-                // Second for ship which should be able to rotate without move 
-                if (agentAccelerateLimit == 0)
+                Vector3 moveVector = moveBeacons[0] - transform.position;
+                Vector3 rotateDirection = moveVector.normalized;
+                rotateDirection.y = 0;  // Consider to allow rotation in y?
+                transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(rotateDirection), Time.fixedDeltaTime * agentRotateSpeed);
+                float moveSpeedAdjust = Mathf.Cos(Mathf.Deg2Rad * Quaternion.Angle(transform.rotation, Quaternion.LookRotation(rotateDirection)));
+                moveSpeedAdjust = (moveSpeedAdjust + 1) / 2;
+                lastFrameSpeedAdjust = Mathf.Cos(Mathf.Deg2Rad * Quaternion.Angle(transform.rotation, Quaternion.LookRotation(lastFrameMoveDirection)));
+                moveSpeedAdjust = Mathf.Clamp(moveSpeedAdjust, lastFrameSpeedAdjust - agentAccelerateLimit, lastFrameSpeedAdjust + agentAccelerateLimit);
+                float moveDistance = agentMoveSpeed * Time.fixedDeltaTime * moveSpeedAdjust * Parent.MovePower;
+
+                lastFrameSpeedAdjust = moveSpeedAdjust;
+                lastFrameMoveDirection = moveVector.normalized;
+                if (moveVector.magnitude <= moveDistance)
                 {
-                    Vector3 moveVector = moveBeacons[0] - transform.position;
-                    Vector3 rotateDirection = moveVector.normalized;
-                    transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(rotateDirection), Time.fixedDeltaTime * agentRotateSpeed);
-                    float moveDistance = agentMoveSpeed * Time.fixedDeltaTime;
-                    if (moveVector.magnitude <= moveDistance)
+                    if (!TestObstacleAndPush(transform.position, moveBeacons[0]))
                     {
-                        if (TestObstacle(transform.position, moveBeacons[0]) != 0)
-                        {
-                            FindPath(transform.position, destination);
-                            return;
-                        }
-                        transform.position = moveBeacons[0];
-                        moveBeacons.RemoveAt(0);
+                        FindPath(transform.position, destination);
+                        return;
                     }
-                    else
-                    {
-                        if (TestObstacle(transform.position, transform.position + transform.forward * moveDistance) != 0)
-                        {
-                            TestObstacle(transform.position, transform.position + transform.forward * moveDistance);
-                            FindPath(transform.position, destination);
-                            return;
-                        }
-                        transform.position += transform.forward * moveDistance;
-                    }
+                    transform.position = moveBeacons[0];
+                    moveBeacons.RemoveAt(0);
                 }
                 else
                 {
-                    Vector3 moveVector = moveBeacons[0] - transform.position;
-                    Vector3 rotateDirection = moveVector.normalized;
-                    rotateDirection.y = 0;  // Consider to allow rotation in y?
-                    transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(rotateDirection), Time.fixedDeltaTime * agentRotateSpeed);
-                    float moveSpeedAdjust = Mathf.Cos(Mathf.Deg2Rad * Quaternion.Angle(transform.rotation, Quaternion.LookRotation(rotateDirection)));
-                    moveSpeedAdjust = (moveSpeedAdjust + 1) / 2;
-                    lastFrameSpeedAdjust = Mathf.Cos(Mathf.Deg2Rad * Quaternion.Angle(transform.rotation, Quaternion.LookRotation(lastFrameMoveDirection)));
-                    moveSpeedAdjust = Mathf.Clamp(moveSpeedAdjust, lastFrameSpeedAdjust - agentAccelerateLimit, lastFrameSpeedAdjust + agentAccelerateLimit);
-                    float moveDistance = agentMoveSpeed * Time.fixedDeltaTime * moveSpeedAdjust * Parent.MovePower;
-
-                    lastFrameSpeedAdjust = moveSpeedAdjust;
-                    lastFrameMoveDirection = moveVector.normalized;
-                    if (moveVector.magnitude <= moveDistance)
+                    if (!TestObstacleAndPush(transform.position, transform.position + moveVector.normalized * moveDistance))
                     {
-                        if (TestObstacle(transform.position, moveBeacons[0]) != 0)
-                        {
-                            FindPath(transform.position, destination);
-                            return;
-                        }
-                        transform.position = moveBeacons[0];
-                        moveBeacons.RemoveAt(0);
+                        FindPath(transform.position, destination);
+                        return;
                     }
-                    else
-                    {
-                        if (TestObstacle(transform.position, transform.position + moveVector.normalized * moveDistance) != 0)
-                        {
-                            FindPath(transform.position, destination);
-                            return;
-                        }
-                        transform.position += moveVector.normalized * moveDistance;
-                    }
+                    transform.position += moveVector.normalized * moveDistance;
                 }
             }
             else

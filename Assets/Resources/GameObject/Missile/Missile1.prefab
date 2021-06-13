@@ -4902,6 +4902,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   typeID: Missile1
   maxHP: 50
+  objectScale: 4
   onDestroyedEffect: {fileID: 4429858986618900989, guid: 2b55776db2996b2429d6fa98d550f3f4, type: 3}
   agentMoveSpeed: 100
   agentRotateSpeed: 180

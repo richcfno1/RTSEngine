@@ -65,7 +65,7 @@
       "shipTypeName": "Drone1",
       "properties": {
         "MoveSpeed": 20.0,
-        "RotateSpeed": 90.0,
+        "RotateSpeed": 180.0,
         "AccelerateLimit": 0.0,
         "MoveAgentRadius": 3.0,
         "MoveSearchStepDistance": 20.0,
@@ -113,7 +113,7 @@
       "position": {
         "x": 0.0,
         "y": 0.0,
-        "z": -50.0
+        "z": -100.0
       },
       "rotation": {
         "x": 0.0,
