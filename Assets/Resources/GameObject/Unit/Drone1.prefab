@@ -9796,7 +9796,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c5712a9b2f24ba545a370bd0c86518e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  objectScale: 0
+  objectScale: 1
   typeID: Drone1
   maxHP: 100
   NavigationCollider: {fileID: 8460801701357751187}

@@ -9752,17 +9752,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bffff8a6aac03644db43c4a7936a0611, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  objectScale: 1
+  objectScale: 2
   typeID: Frigate1
   maxHP: 1000
   NavigationCollider: {fileID: 8837834912701449260}
   onDestroyedEffect: {fileID: 2654098538732379622, guid: 7031f650af359d8479bd111557859629, type: 3}
-  maxAttackPower: 1000
-  maxDefencePower: 1000
-  maxMovePower: 1000
-  recoverAttackPower: 10
-  recoverDefencePower: 10
-  recoverMovePower: 10
+  maxAttackPower: 100
+  maxDefencePower: 100
+  maxMovePower: 100
+  recoverAttackPower: 1
+  recoverDefencePower: 1
+  recoverMovePower: 1
   subsyetemAnchors:
   - anchorName: TurretAnchor1
     anchor: {fileID: 4384353230819908595}

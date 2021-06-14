@@ -26,6 +26,67 @@ public class SelectedPanelScript : MonoBehaviour
             if (allGrids.ContainsKey(tempIndex))
             {
                 allGrids[tempIndex].hpdata.value = tempScript.HP / tempScript.maxHP;
+                UnitBaseScript tempUnitScript = tempScript.GetComponent<UnitBaseScript>();
+                if (tempUnitScript != null)
+                {
+                    // Attack
+                    if (tempUnitScript.AttackPower > 1)
+                    {
+                        allGrids[tempIndex].AttackUp.color = new Color(1, 1, 1, Mathf.Clamp01(tempUnitScript.AttackPower - 1 + 0.5f));
+                        allGrids[tempIndex].AttackDown.color = new Color(1, 1, 1, 0);
+                    }
+                    else if (tempUnitScript.AttackPower < 1)
+                    {
+                        allGrids[tempIndex].AttackUp.color = new Color(1, 1, 1, 0);
+                        allGrids[tempIndex].AttackDown.color = new Color(1, 1, 1, Mathf.Clamp01(1 - tempUnitScript.AttackPower + 0.5f));
+                    }
+                    else
+                    {
+                        allGrids[tempIndex].AttackUp.color = new Color(1, 1, 1, 0);
+                        allGrids[tempIndex].AttackDown.color = new Color(1, 1, 1, 0);
+                    }
+                    // Defence
+                    if (tempUnitScript.DefencePower > 1)
+                    {
+                        allGrids[tempIndex].DefenceUp.color = new Color(1, 1, 1, Mathf.Clamp01(tempUnitScript.DefencePower - 1 + 0.5f));
+                        allGrids[tempIndex].DefenceDown.color = new Color(1, 1, 1, 0);
+                    }
+                    else if (tempUnitScript.DefencePower < 1)
+                    {
+                        allGrids[tempIndex].DefenceUp.color = new Color(1, 1, 1, 0);
+                        allGrids[tempIndex].DefenceDown.color = new Color(1, 1, 1, Mathf.Clamp01(1 - tempUnitScript.DefencePower + 0.5f));
+                    }
+                    else
+                    {
+                        allGrids[tempIndex].DefenceUp.color = new Color(1, 1, 1, 0);
+                        allGrids[tempIndex].DefenceDown.color = new Color(1, 1, 1, 0);
+                    }
+                    // Move
+                    if (tempUnitScript.MovePower > 1)
+                    {
+                        allGrids[tempIndex].MoveUp.color = new Color(1, 1, 1, Mathf.Clamp01(tempUnitScript.MovePower - 1 + 0.5f));
+                        allGrids[tempIndex].MoveDown.color = new Color(1, 1, 1, 0);
+                    }
+                    else if (tempUnitScript.MovePower < 1)
+                    {
+                        allGrids[tempIndex].MoveUp.color = new Color(1, 1, 1, 0);
+                        allGrids[tempIndex].MoveDown.color = new Color(1, 1, 1, Mathf.Clamp01(1 - tempUnitScript.MovePower + 0.5f));
+                    }
+                    else
+                    {
+                        allGrids[tempIndex].MoveUp.color = new Color(1, 1, 1, 0);
+                        allGrids[tempIndex].MoveDown.color = new Color(1, 1, 1, 0);
+                    }
+                }
+                else
+                {
+                    allGrids[tempIndex].AttackUp.color = new Color(1, 1, 1, 0);
+                    allGrids[tempIndex].AttackDown.color = new Color(1, 1, 1, 0);
+                    allGrids[tempIndex].DefenceUp.color = new Color(1, 1, 1, 0);
+                    allGrids[tempIndex].DefenceDown.color = new Color(1, 1, 1, 0);
+                    allGrids[tempIndex].MoveUp.color = new Color(1, 1, 1, 0);
+                    allGrids[tempIndex].MoveDown.color = new Color(1, 1, 1, 0);
+                }
                 allGrids[tempIndex].otherData.text = "What should I display?";
             }
             else
