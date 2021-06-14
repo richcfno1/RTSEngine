@@ -47,8 +47,14 @@ public class MoveControlScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (InputManager.InputManagerInstance.CurrentState != InputManager.State.NoAction &&
+            InputManager.InputManagerInstance.CurrentState != InputManager.State.Moving)
+        {
+            return;
+        }
         if (SelectControlScript.SelectionControlInstance.SelectedOwnUnits)
         {
+            // This must be run first, or at the init time, set destination will also be called due to same keydown
             if (navigationUIBase != null)
             {
                 if (Input.GetKeyDown(InputManager.HotKeys.SetUnitMoveHeight))
@@ -62,7 +68,7 @@ public class MoveControlScript : MonoBehaviour
                 {
                     SetCursorPos(mousePositionX, mousePositionY);
                 }
-                // If exist and get set key, set height
+                // If exist and get set height key, set height
                 if (Input.GetKey(InputManager.HotKeys.SetUnitMoveHeight))
                 {
                     Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -107,12 +113,14 @@ public class MoveControlScript : MonoBehaviour
                 }
                 UpdateNavigationUI();
             }
-            // If not exist, create
-            else if (navigationUIBase == null && Input.GetKeyDown(InputManager.HotKeys.MoveUnit))
+            // If not exist, create, this is the first time of move control, so test where the cursor is and if it is able to do such action
+            else if (navigationUIBase == null && Input.GetKeyDown(InputManager.HotKeys.MoveUnit) && 
+                InputManager.InputManagerInstance.EnableAction && SingleSelectionHelper() == null)
             {
                 CreateNavigationUI();
             }
-            // If exist and get stop key, stop
+
+            // If exist and get stop key, stop (this does not require navigation UI)
             if (Input.GetKeyDown(InputManager.HotKeys.StopUnit))
             {
                 foreach (GameObject i in SelectControlScript.SelectionControlInstance.GetAllGameObjects())
@@ -142,6 +150,7 @@ public class MoveControlScript : MonoBehaviour
         navigationUILine = Instantiate(navigationUILinePrefab, Vector3.zero, new Quaternion(), GameObject.Find("UI").transform);
 
         Cursor.visible = false;
+        InputManager.InputManagerInstance.CurrentState = InputManager.State.Moving;
     }
 
     private void UpdateNavigationUI()
@@ -200,6 +209,7 @@ public class MoveControlScript : MonoBehaviour
             Destroy(navigationUILine);
         }
         Cursor.visible = true;
+        InputManager.InputManagerInstance.CurrentState = InputManager.State.NoAction;
     }
 
     private Dictionary<MoveAbilityScript, Vector3> FindDestination(List<MoveAbilityScript> allAgents, Vector3 destination, Vector3 forwardDirection)
@@ -225,5 +235,28 @@ public class MoveControlScript : MonoBehaviour
             result.Add(i.Key, i.Value + offset);
         }
         return result;
+    }
+
+    private GameObject SingleSelectionHelper()
+    {
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        List<RaycastHit> hits = new List<RaycastHit>(Physics.RaycastAll(ray));
+        hits.RemoveAll(x => x.collider.GetComponent<RTSGameObjectBaseScript>() == null);
+        if (hits.Count == 0)
+        {
+            return null;
+        }
+        else if (hits.Count == 1 || !hits[0].collider.CompareTag("Ship"))
+        {
+            return hits[0].collider.gameObject;
+        }
+        else
+        {
+            if (hits[1].collider.CompareTag("Subsystem"))
+            {
+                return hits[1].collider.gameObject;
+            }
+            return hits[0].collider.gameObject;
+        }
     }
 }

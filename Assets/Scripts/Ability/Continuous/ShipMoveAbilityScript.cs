@@ -7,13 +7,13 @@ public class ShipMoveAbilityScript : MoveAbilityScript
     void Start()
     {
         // Set from parent's property dict
-        agentRadius = Parent.NavigationCollider.radius;
-        agentMoveSpeed = Parent.PropertyDictionary["MoveSpeed"];
-        agentRotateSpeed = Parent.PropertyDictionary["RotateSpeed"];
-        agentAccelerateLimit = Parent.PropertyDictionary["AccelerateLimit"];
-        searchStepDistance = Parent.PropertyDictionary["MoveSearchStepDistance"];
-        searchStepMaxDistance = Parent.PropertyDictionary["MoveSearchStepLimit"];
-        searchMaxRandomNumber = Parent.PropertyDictionary["MoveSearchRandomNumber"];
+        agentRadius = Host.NavigationCollider.radius;
+        agentMoveSpeed = Host.PropertyDictionary["MoveSpeed"];
+        agentRotateSpeed = Host.PropertyDictionary["RotateSpeed"];
+        agentAccelerateLimit = Host.PropertyDictionary["AccelerateLimit"];
+        searchStepDistance = Host.PropertyDictionary["MoveSearchStepDistance"];
+        searchStepMaxDistance = Host.PropertyDictionary["MoveSearchStepLimit"];
+        searchMaxRandomNumber = Host.PropertyDictionary["MoveSearchRandomNumber"];
         UseAbility(new List<object>() { 0, transform.position });
     }
 
@@ -35,7 +35,7 @@ public class ShipMoveAbilityScript : MoveAbilityScript
         {
             if (!toIgnore.Contains(i.collider))
             {
-                if (Parent.objectScale <= i.collider.GetComponentInParent<RTSGameObjectBaseScript>().objectScale)
+                if (Host.objectScale <= i.collider.GetComponentInParent<RTSGameObjectBaseScript>().objectScale)
                 {
                     return (i.collider.ClosestPoint(from) - from).magnitude;
                 }
@@ -54,7 +54,7 @@ public class ShipMoveAbilityScript : MoveAbilityScript
         {
             if (!toIgnore.Contains(i.collider))
             {
-                if (Parent.objectScale <= i.collider.GetComponentInParent<RTSGameObjectBaseScript>().objectScale)
+                if (Host.objectScale <= i.collider.GetComponentInParent<RTSGameObjectBaseScript>().objectScale)
                 {
                     return false;
                 }
@@ -183,7 +183,7 @@ public class ShipMoveAbilityScript : MoveAbilityScript
                 moveSpeedAdjust = (moveSpeedAdjust + 1) / 2;
                 lastFrameSpeedAdjust = Mathf.Cos(Mathf.Deg2Rad * Quaternion.Angle(transform.rotation, Quaternion.LookRotation(lastFrameMoveDirection)));
                 moveSpeedAdjust = Mathf.Clamp(moveSpeedAdjust, lastFrameSpeedAdjust - agentAccelerateLimit, lastFrameSpeedAdjust + agentAccelerateLimit);
-                float moveDistance = agentMoveSpeed * Time.fixedDeltaTime * moveSpeedAdjust * Parent.MovePower;
+                float moveDistance = agentMoveSpeed * Time.fixedDeltaTime * moveSpeedAdjust * Host.MovePower;
 
                 lastFrameSpeedAdjust = moveSpeedAdjust;
                 lastFrameMoveDirection = moveVector.normalized;

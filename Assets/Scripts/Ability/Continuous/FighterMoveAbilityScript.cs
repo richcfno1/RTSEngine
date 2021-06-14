@@ -7,13 +7,13 @@ public class FighterMoveAbilityScript : MoveAbilityScript
     void Start()
     {
         // Set from parent's property dict
-        agentRadius = Parent.NavigationCollider.GetComponent<SphereCollider>().radius;
-        agentMoveSpeed = Parent.PropertyDictionary["MoveSpeed"];
-        agentRotateSpeed = Parent.PropertyDictionary["RotateSpeed"];
-        agentAccelerateLimit = Parent.PropertyDictionary["AccelerateLimit"];
-        searchStepDistance = Parent.PropertyDictionary["MoveSearchStepDistance"];
-        searchStepMaxDistance = Parent.PropertyDictionary["MoveSearchStepLimit"];
-        searchMaxRandomNumber = Parent.PropertyDictionary["MoveSearchRandomNumber"];
+        agentRadius = Host.NavigationCollider.GetComponent<SphereCollider>().radius;
+        agentMoveSpeed = Host.PropertyDictionary["MoveSpeed"];
+        agentRotateSpeed = Host.PropertyDictionary["RotateSpeed"];
+        agentAccelerateLimit = Host.PropertyDictionary["AccelerateLimit"];
+        searchStepDistance = Host.PropertyDictionary["MoveSearchStepDistance"];
+        searchStepMaxDistance = Host.PropertyDictionary["MoveSearchStepLimit"];
+        searchMaxRandomNumber = Host.PropertyDictionary["MoveSearchRandomNumber"];
     }
 
     // Update is called once per frame

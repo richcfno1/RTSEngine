@@ -8,8 +8,9 @@ public class InputManager : MonoBehaviour
     public static InputManager InputManagerInstance { get; private set; }
     public enum State
     {
-        NoAction,  // NoAction is actually select nothing.
-        Selecting
+        NoAction,
+        Selecting,
+        Moving
     }
     public static class HotKeys
     {
@@ -17,6 +18,7 @@ public class InputManager : MonoBehaviour
         public static KeyCode SetUnitMoveHeight = KeyCode.LeftShift;
         public static KeyCode MoveUnit = KeyCode.Mouse1;
         public static KeyCode StopUnit = KeyCode.S;
+        public static KeyCode AttackUnit = KeyCode.Mouse1;
 
         public static KeyCode RotateCamera = KeyCode.Mouse2;
         public static KeyCode ResetCamera = KeyCode.B;
@@ -29,9 +31,9 @@ public class InputManager : MonoBehaviour
     private GraphicRaycaster raycaster;
     private PointerEventData pointerEventData;
     private EventSystem eventSystem;
-    private bool canSelect = true;
 
     public State CurrentState { get; set; }
+    public bool EnableAction { get; private set; }
 
     void Awake()
     {
@@ -55,46 +57,25 @@ public class InputManager : MonoBehaviour
         {
             Application.Quit();
         }
-        if (Input.GetKeyDown(HotKeys.SelectUnit))
+        EnableAction = true;
+        //Set up the new Pointer Event
+        pointerEventData = new PointerEventData(eventSystem);
+        //Set the Pointer Event Position to that of the mouse position
+        pointerEventData.position = Input.mousePosition;
+
+        //Create a list of Raycast Results
+        List<RaycastResult> results = new List<RaycastResult>();
+
+        //Raycast using the Graphics Raycaster and mouse click position
+        raycaster.Raycast(pointerEventData, results);
+
+        //For every result returned, output the name of the GameObject on the Canvas hit by the Ray
+        foreach (RaycastResult result in results)
         {
-            canSelect = true;
-            //Set up the new Pointer Event
-            pointerEventData = new PointerEventData(eventSystem);
-            //Set the Pointer Event Position to that of the mouse position
-            pointerEventData.position = Input.mousePosition;
-
-            //Create a list of Raycast Results
-            List<RaycastResult> results = new List<RaycastResult>();
-
-            //Raycast using the Graphics Raycaster and mouse click position
-            raycaster.Raycast(pointerEventData, results);
-
-            //For every result returned, output the name of the GameObject on the Canvas hit by the Ray
-            foreach (RaycastResult result in results)
+            if (notSelectUI.Contains(result.gameObject))
             {
-                if (notSelectUI.Contains(result.gameObject))
-                {
-                    canSelect = false;
-                }
+                EnableAction = false;
             }
-        }
-        switch (CurrentState)
-        {
-            case State.NoAction:
-                // Select
-                if (Input.GetKeyDown(HotKeys.SelectUnit) && canSelect)
-                {
-                    SelectControlScript.SelectionControlInstance.StartSelect();
-                    CurrentState = State.Selecting;
-                }
-                break;
-            case State.Selecting:
-                if (Input.GetKeyUp(HotKeys.SelectUnit))
-                {
-                    SelectControlScript.SelectionControlInstance.EndSelect();
-                    CurrentState = State.NoAction;
-                }
-                break;
         }
     }
 }

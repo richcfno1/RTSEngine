@@ -2,10 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AttackAbilityScript : ContinuousAbilityBaseScript
+public class AttackAbilityScript : InstantAbilityBaseScript
 {
     public enum UseType
     {
+        Pause,
         Auto,
         Specific
     }
@@ -19,10 +20,7 @@ public class AttackAbilityScript : ContinuousAbilityBaseScript
     // Update is called once per frame
     void FixedUpdate()
     {
-        if (isUsing)
-        {
-            ContinuousAction();
-        }
+
     }
 
     // For MoveAbility target size should be 2
@@ -30,14 +28,21 @@ public class AttackAbilityScript : ContinuousAbilityBaseScript
     // target[1] = game object to attack
     public override bool UseAbility(List<object> target)
     {
+        // Invalid request
         if (target.Count != 2)
         {
-            abilityTarget = null;
-            return isUsing = false;
+            return false;
         }
         if (base.UseAbility(target))
         {
-            if ((UseType)abilityTarget[0] == UseType.Auto)
+            if ((UseType)abilityTarget[0] == UseType.Pause)
+            {
+                foreach (AttackSubsystemBaseScript i in SupportedBy)
+                {
+                    i.SetTarget(null);
+                }
+            }
+            else if ((UseType)abilityTarget[0] == UseType.Auto)
             {
                 foreach (AttackSubsystemBaseScript i in SupportedBy)
                 {
@@ -54,19 +59,5 @@ public class AttackAbilityScript : ContinuousAbilityBaseScript
             return true;
         }
         return false;
-    }
-
-    public override void PauseAbility()
-    {
-        base.PauseAbility();
-        foreach (AttackSubsystemBaseScript i in SupportedBy)
-        {
-            i.SetTarget(new List<object>());
-        }
-    }
-
-    protected override void ContinuousAction()
-    {
-        
     }
 }

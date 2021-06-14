@@ -82,7 +82,7 @@ public class LaserTurretScript : AttackSubsystemBaseScript
                 SetAimpoint(fireTarget.transform.position);
             }
             RotateTurret();
-            if (timer >= coolDown / laserStartPosition.Count / Parent.AttackPower)
+            if (timer >= coolDown / laserStartPosition.Count / Host.AttackPower)
             {
                 if (fireTarget != null && (transform.position - fireTarget.transform.position).magnitude <= lockRange)
                 {
@@ -120,7 +120,7 @@ public class LaserTurretScript : AttackSubsystemBaseScript
     {
         laserRenderer.enabled = true;
         laserRenderer.SetPositions(new Vector3[] { laserStartPosition[laserIndex].position, hit.transform.position });
-        hit.GetComponent<RTSGameObjectBaseScript>().CreateDamage(damage, attackPowerReduce, defencePowerReduce, movePowerReduce, Parent.gameObject);
+        hit.GetComponent<RTSGameObjectBaseScript>().CreateDamage(damage, attackPowerReduce, defencePowerReduce, movePowerReduce, Host.gameObject);
         StopAllCoroutines();
         StartCoroutine(HideLaser(laserAppearTime));
     }
@@ -135,9 +135,10 @@ public class LaserTurretScript : AttackSubsystemBaseScript
     {
         if (subsystemTarget == null)
         {
+            fireTarget = null;
             return;
         }
-        if (subsystemTarget.Count == 1 && possibleTargetTags.Contains(((GameObject)subsystemTarget[0]).tag))
+        if (subsystemTarget.Count == 1 && (GameObject)subsystemTarget[0] != null && possibleTargetTags.Contains(((GameObject)subsystemTarget[0]).tag))
         {
             GameObject target = (GameObject)subsystemTarget[0];
             RaycastHit hit;

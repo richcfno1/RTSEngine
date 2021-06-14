@@ -35,7 +35,7 @@ public class FixedLauncherScript : AttackSubsystemBaseScript
         }
         if (Active)
         {
-            if (timer >= coolDown / missileStartPosition.Count / Parent.AttackPower)
+            if (timer >= coolDown / missileStartPosition.Count / Host.AttackPower)
             {
                 if (fireTarget != null && (transform.position - fireTarget.transform.position).magnitude <= lockRange)
                 {
@@ -63,7 +63,7 @@ public class FixedLauncherScript : AttackSubsystemBaseScript
         temp.transform.position += transform.up * missileUpwardFlyDistance;
         MissileBaseScript tempScript = temp.GetComponent<MissileBaseScript>();
         tempScript.target = fireTarget;
-        tempScript.from = Parent.gameObject;
+        tempScript.from = Host.gameObject;
         tempScript.BelongTo = BelongTo;
     }
 
@@ -72,9 +72,10 @@ public class FixedLauncherScript : AttackSubsystemBaseScript
     {
         if (subsystemTarget == null)
         {
+            fireTarget = null;
             return;
         }
-        if (subsystemTarget.Count == 1 && possibleTargetTags.Contains(((GameObject)subsystemTarget[0]).tag))
+        if (subsystemTarget.Count == 1 && (GameObject)subsystemTarget[0] != null && possibleTargetTags.Contains(((GameObject)subsystemTarget[0]).tag))
         {
             fireTarget = (GameObject)subsystemTarget[0];
         }

@@ -109,8 +109,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 882ef886950e14e478204afe6b69c4a8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  objectScale: 0
   typeID: Turret1
   maxHP: 100
+  NavigationCollider: {fileID: 0}
   onDestroyedEffect: {fileID: 0}
   scale: 1
   repairPercentRequired: 0.5
@@ -120,6 +122,7 @@ MonoBehaviour:
   possibleTargetTags:
   - Ship
   - Fighter
+  - Subsystem
   bullet: {fileID: 200688503556163643, guid: 18c4861f8f235184ba3004c333b41113, type: 3}
   bulletStartPosition:
   - {fileID: 5170811280945999704}

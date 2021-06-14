@@ -36,6 +36,20 @@ public class SelectControlScript : MonoBehaviour
     void Update()
     {
         allSelectableGameObjects = GameManager.GameManagerInstance.GetAllGameObjects();
+        if (Input.GetKeyDown(InputManager.HotKeys.SelectUnit) && InputManager.InputManagerInstance.EnableAction)
+        {
+            mouseStartPosition = Input.mousePosition;
+            mouseLeftUp = false;
+            mouseLeftDown = true;
+            InputManager.InputManagerInstance.CurrentState = InputManager.State.Selecting;
+        }
+        else if (Input.GetKeyUp(InputManager.HotKeys.SelectUnit) && InputManager.InputManagerInstance.CurrentState == InputManager.State.Selecting)
+        {
+            mouseEndPosition = Input.mousePosition;
+            mouseLeftUp = true;
+            mouseLeftDown = false;
+            InputManager.InputManagerInstance.CurrentState = InputManager.State.NoAction;
+        }
         if (mouseLeftDown)
         {
             // Preparation for select
@@ -226,19 +240,5 @@ public class SelectControlScript : MonoBehaviour
         {
             return result / count;
         }
-    }
-
-    public void StartSelect()
-    {
-        mouseStartPosition = Input.mousePosition;
-        mouseLeftUp = false;
-        mouseLeftDown = true;
-    }
-
-    public void EndSelect()
-    {
-        mouseEndPosition = Input.mousePosition;
-        mouseLeftUp = true;
-        mouseLeftDown = false;
     }
 }

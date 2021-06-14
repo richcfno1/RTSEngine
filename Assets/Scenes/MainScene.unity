@@ -237,6 +237,7 @@ GameObject:
   - component: {fileID: 837343069}
   - component: {fileID: 837343068}
   - component: {fileID: 837343074}
+  - component: {fileID: 837343070}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -292,6 +293,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cursorTexture: {fileID: 2800000, guid: c7e04bbc1b942c74b833930dc6c20593, type: 3}
   notSelectUI: []
+--- !u!114 &837343070
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 837343066}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 455f29aac9966dd4b80376caeb6caced, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  displayTime: 2
+  attackUICirclePrefab: {fileID: 2100809017602535252, guid: e16be0b6d085dce458831d8b40fae8e2, type: 3}
+  attackUILinePrefab: {fileID: 4119383822706373772, guid: 7a7ca23ca6785c74bb9261c3b51aed6e, type: 3}
 --- !u!114 &837343071
 MonoBehaviour:
   m_ObjectHideFlags: 0

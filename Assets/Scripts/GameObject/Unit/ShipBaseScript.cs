@@ -13,8 +13,17 @@ public class ShipBaseScript : UnitBaseScript
         public SubsystemBaseScript.SubsystemScale subsystemScale;
         public GameObject subsystem;
     }
+
+    [Serializable]
+    public class ProductionDeployData
+    {
+        public string deployPointName;
+        public GameObject deployPoint;
+        public List<Vector3> deployPath;
+    }
     // Set by editor
     public List<AnchorData> subsyetemAnchors;
+    public List<ProductionDeployData> deployPoints;
 
     // Start is called before the first frame update
     void Start()

@@ -80,7 +80,7 @@ public class RailgunTurretScript : AttackSubsystemBaseScript
                 SetAimpoint(fireTarget.transform.position);
             }
             RotateTurret();
-            if (timer >= coolDown / bulletStartPosition.Count / Parent.AttackPower)
+            if (timer >= coolDown / bulletStartPosition.Count / Host.AttackPower)
             {
                 if (fireTarget != null && (transform.position - fireTarget.transform.position).magnitude <= lockRange)
                 {
@@ -121,8 +121,8 @@ public class RailgunTurretScript : AttackSubsystemBaseScript
         tempScript.moveDirection = turretBarrels.forward + turretBarrels.right * Random.Range(-allowedRandomAngle, allowedRandomAngle) +
             turretBarrels.up * Random.Range(-allowedRandomAngle, allowedRandomAngle);
         tempScript.toIgnore.Add(GetComponent<Collider>());
-        tempScript.toIgnore.Add(Parent.GetComponent<Collider>());
-        tempScript.createdBy = Parent.gameObject;
+        tempScript.toIgnore.Add(Host.GetComponent<Collider>());
+        tempScript.createdBy = Host.gameObject;
     }
 
     // Try to find a target by the order, compare angleY first, then check obstacles
@@ -130,13 +130,14 @@ public class RailgunTurretScript : AttackSubsystemBaseScript
     {
         if (subsystemTarget == null)
         {
+            fireTarget = null;
             return;
         }
-        if (subsystemTarget.Count == 1 && possibleTargetTags.Contains(((GameObject)subsystemTarget[0]).tag))
+        if (subsystemTarget.Count == 1 && (GameObject)subsystemTarget[0] != null && possibleTargetTags.Contains(((GameObject)subsystemTarget[0]).tag))
         {
             GameObject target = (GameObject)subsystemTarget[0];
             RaycastHit hit;
-            if (Physics.Raycast(transform.position, (target.transform.position - transform.position).normalized, out hit, (target.transform.position - transform.position).magnitude, ~pathfinderLayerMask))
+            if (Physics.Raycast(transform.position, (target.transform.position - transform.position).normalized, out hit, lockRange, ~pathfinderLayerMask))
             {
                 if (hit.collider.tag != "AimCollider" && (hit.collider.GetComponent<RTSGameObjectBaseScript>() == null || hit.collider.GetComponent<RTSGameObjectBaseScript>().BelongTo != BelongTo))
                 {
@@ -158,7 +159,7 @@ public class RailgunTurretScript : AttackSubsystemBaseScript
         foreach (Collider i in filteredPossibleTargets)
         {
             RaycastHit hit;
-            if (Physics.Raycast(transform.position, (i.transform.position - transform.position).normalized, out hit, (i.transform.position - transform.position).magnitude, ~pathfinderLayerMask))
+            if (Physics.Raycast(transform.position, (i.transform.position - transform.position).normalized, out hit, lockRange, ~pathfinderLayerMask))
             {
                 if (hit.collider.tag != "AimCollider" && (hit.collider.GetComponent<RTSGameObjectBaseScript>() == null || hit.collider.GetComponent<RTSGameObjectBaseScript>().BelongTo != BelongTo))
                 {

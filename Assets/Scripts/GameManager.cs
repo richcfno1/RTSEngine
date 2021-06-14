@@ -166,7 +166,7 @@ public class GameManager : MonoBehaviour
                     else
                     {
                         anchorData.subsystem = temp;
-                        subsystemScript.Parent = shipScript;
+                        subsystemScript.Host = shipScript;
                     }
                 }
             }
@@ -191,7 +191,7 @@ public class GameManager : MonoBehaviour
                         }
                     }
                 }
-                abilityScript.Parent = shipScript;
+                abilityScript.Host = shipScript;
                 shipScript.AbilityDictionary.Add(ability.Key, abilityScript);
             }
         }
@@ -214,7 +214,7 @@ public class GameManager : MonoBehaviour
                         Debug.LogError("Fighter does not have any subsystem: " + supportedSubsystemAnchor);
                     }
                 }
-                abilityScript.Parent = fighterScript;
+                abilityScript.Host = fighterScript;
                 fighterScript.AbilityDictionary.Add(ability.Key, abilityScript);
             }
         }

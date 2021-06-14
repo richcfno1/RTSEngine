@@ -8,6 +8,10 @@ public class UnitBaseScript : RTSGameObjectBaseScript
     public float maxAttackPower;
     public float maxDefencePower;
     public float maxMovePower;
+
+    public float buildProce;
+    public float buildTime;
+
     // These should be value between 0 and 1 for revover per second;
     public float recoverAttackPower;
     public float recoverDefencePower;
