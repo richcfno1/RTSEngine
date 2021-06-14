@@ -6,22 +6,19 @@ public class FighterMoveAbilityScript : MoveAbilityScript
     // Start is called before the first frame update
     void Start()
     {
-
+        // Set from parent's property dict
+        agentRadius = Parent.NavigationCollider.GetComponent<SphereCollider>().radius;
+        agentMoveSpeed = Parent.PropertyDictionary["MoveSpeed"];
+        agentRotateSpeed = Parent.PropertyDictionary["RotateSpeed"];
+        agentAccelerateLimit = Parent.PropertyDictionary["AccelerateLimit"];
+        searchStepDistance = Parent.PropertyDictionary["MoveSearchStepDistance"];
+        searchStepMaxDistance = Parent.PropertyDictionary["MoveSearchStepLimit"];
+        searchMaxRandomNumber = Parent.PropertyDictionary["MoveSearchRandomNumber"];
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
-        // Set from parent's property dict
-        agentMoveSpeed = Parent.PropertyDictionary["MoveSpeed"];
-        agentRotateSpeed = Parent.PropertyDictionary["RotateSpeed"];
-        agentAccelerateLimit = Parent.PropertyDictionary["AccelerateLimit"];
-
-        agentRadius = Parent.PropertyDictionary["MoveAgentRadius"];
-        searchStepDistance = Parent.PropertyDictionary["MoveSearchStepDistance"];
-        searchStepMaxDistance = Parent.PropertyDictionary["MoveSearchStepLimit"];
-        searchMaxRandomNumber = Parent.PropertyDictionary["MoveSearchRandomNumber"];
-
         if (isUsing)
         {
             ContinuousAction();
@@ -32,7 +29,7 @@ public class FighterMoveAbilityScript : MoveAbilityScript
     {
         Vector3 direction = (to - from).normalized;
         List<Collider> toIgnore = new List<Collider>(Physics.OverlapSphere(from, agentRadius));
-        RaycastHit[] hits = Physics.CapsuleCastAll(from, from + direction * agentRadius * 5, agentRadius, direction, direction.magnitude);
+        RaycastHit[] hits = Physics.CapsuleCastAll(from, from + direction * agentRadius * 5, agentRadius, direction, direction.magnitude, ~pathfinderLayerMask);
         foreach (RaycastHit i in hits)
         {
             if (!toIgnore.Contains(i.collider) && !i.collider.CompareTag("Bullet"))
@@ -46,7 +43,7 @@ public class FighterMoveAbilityScript : MoveAbilityScript
     private void FindPath(Vector3 from, Vector3 to)
     {
         List<Vector3> result = new List<Vector3>();
-        List<Collider> intersectObjects = new List<Collider>(Physics.OverlapSphere(to, agentRadius));
+        List<Collider> intersectObjects = new List<Collider>(Physics.OverlapSphere(to, agentRadius, ~pathfinderLayerMask));
         intersectObjects.RemoveAll(x => x.CompareTag("Bullet"));
         float nextStepDistance = searchStepDistance;
         bool find = false;
@@ -57,7 +54,7 @@ public class FighterMoveAbilityScript : MoveAbilityScript
                 for (int i = 0; i < searchMaxRandomNumber; i++)
                 {
                     Vector3 newDestination = to + nextStepDistance * new Vector3(Random.value * 2 - 1, Random.value * 2 - 1, Random.value * 2 - 1).normalized;
-                    intersectObjects = new List<Collider>(Physics.OverlapSphere(newDestination, agentRadius));
+                    intersectObjects = new List<Collider>(Physics.OverlapSphere(newDestination, agentRadius, ~pathfinderLayerMask));
                     intersectObjects.RemoveAll(x => x.CompareTag("Bullet"));
                     if (intersectObjects.Count == 0)
                     {
@@ -83,7 +80,7 @@ public class FighterMoveAbilityScript : MoveAbilityScript
                 for (int i = 0; i < searchMaxRandomNumber; i++)
                 {
                     middle = obstaclePosition + nextStepDistance * new Vector3(Random.value * 2 - 1, Random.value * 2 - 1, Random.value * 2 - 1).normalized;
-                    intersectObjects = new List<Collider>(Physics.OverlapSphere(middle, agentRadius));
+                    intersectObjects = new List<Collider>(Physics.OverlapSphere(middle, agentRadius, ~pathfinderLayerMask));
                     intersectObjects.RemoveAll(x => x.CompareTag("Bullet"));
                     if (intersectObjects.Count == 0 && TestObstacle(middle, to) == 0 && TestObstacle(from, middle) == 0)
                     {
@@ -127,6 +124,8 @@ public class FighterMoveAbilityScript : MoveAbilityScript
 
     protected override void ContinuousAction()
     {
+        GetComponent<Rigidbody>().velocity = Vector3.zero;
+        GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
         // Decode and set action from abilityTarget
         if ((int)abilityTarget[0] == 0)
         {
@@ -163,7 +162,6 @@ public class FighterMoveAbilityScript : MoveAbilityScript
                 {
                     if (TestObstacle(transform.position, transform.position + transform.forward * moveDistance) != 0)
                     {
-                        TestObstacle(transform.position, transform.position + transform.forward * moveDistance);
                         FindPath(transform.position, destination);
                         return;
                     }

@@ -6,22 +6,20 @@ public class ShipMoveAbilityScript : MoveAbilityScript
     // Start is called before the first frame update
     void Start()
     {
-        
+        // Set from parent's property dict
+        agentRadius = Parent.NavigationCollider.radius;
+        agentMoveSpeed = Parent.PropertyDictionary["MoveSpeed"];
+        agentRotateSpeed = Parent.PropertyDictionary["RotateSpeed"];
+        agentAccelerateLimit = Parent.PropertyDictionary["AccelerateLimit"];
+        searchStepDistance = Parent.PropertyDictionary["MoveSearchStepDistance"];
+        searchStepMaxDistance = Parent.PropertyDictionary["MoveSearchStepLimit"];
+        searchMaxRandomNumber = Parent.PropertyDictionary["MoveSearchRandomNumber"];
+        UseAbility(new List<object>() { 0, transform.position });
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
-        // Set from parent's property dict
-        agentMoveSpeed = Parent.PropertyDictionary["MoveSpeed"];
-        agentRotateSpeed = Parent.PropertyDictionary["RotateSpeed"];
-        agentAccelerateLimit = Parent.PropertyDictionary["AccelerateLimit"];
-        
-        agentRadius = Parent.PropertyDictionary["MoveAgentRadius"];
-        searchStepDistance = Parent.PropertyDictionary["MoveSearchStepDistance"];
-        searchStepMaxDistance = Parent.PropertyDictionary["MoveSearchStepLimit"];
-        searchMaxRandomNumber = Parent.PropertyDictionary["MoveSearchRandomNumber"];
-
         if (isUsing)
         {
             ContinuousAction();
@@ -31,14 +29,13 @@ public class ShipMoveAbilityScript : MoveAbilityScript
     private float TestObstacle(Vector3 from, Vector3 to)
     {
         Vector3 direction = (to - from).normalized;
-        //List<Collider> toIgnore = new List<Collider>(Physics.OverlapSphere(from, agentRadius));
-        List<Collider> toIgnore = new List<Collider>(GetComponentsInChildren<Collider>());
-        RaycastHit[] hits = Physics.CapsuleCastAll(from, from + direction * agentRadius * 5, agentRadius, direction, direction.magnitude);
+        List<Collider> toIgnore = new List<Collider>(Physics.OverlapSphere(from, agentRadius));
+        RaycastHit[] hits = Physics.CapsuleCastAll(from, from + direction * agentRadius * 5, agentRadius, direction, direction.magnitude, pathfinderLayerMask);
         foreach (RaycastHit i in hits)
         {
-            if (!toIgnore.Contains(i.collider) && (i.collider.CompareTag("Ship") || i.collider.CompareTag("Fighter")))
+            if (!toIgnore.Contains(i.collider))
             {
-                if (Parent.objectScale <= i.collider.GetComponent<UnitBaseScript>().objectScale)
+                if (Parent.objectScale <= i.collider.GetComponentInParent<RTSGameObjectBaseScript>().objectScale)
                 {
                     return (i.collider.ClosestPoint(from) - from).magnitude;
                 }
@@ -50,25 +47,24 @@ public class ShipMoveAbilityScript : MoveAbilityScript
     private bool TestObstacleAndPush(Vector3 from, Vector3 to)
     {
         Vector3 direction = (to - from);
-        //List<Collider> toIgnore = new List<Collider>(Physics.OverlapSphere(from, agentRadius));
-        List<Collider> toIgnore = new List<Collider>(GetComponentsInChildren<Collider>());
-        RaycastHit[] hits = Physics.CapsuleCastAll(from, to, agentRadius, direction, direction.magnitude);
-        List<RaycastHit> avoidInfo = new List<RaycastHit>();
+        List<Collider> toIgnore = new List<Collider>(Physics.OverlapSphere(from, agentRadius));
+        RaycastHit[] hits = Physics.CapsuleCastAll(from, to, agentRadius, direction, direction.magnitude, pathfinderLayerMask);
+        List<RTSGameObjectBaseScript> avoidInfo = new List<RTSGameObjectBaseScript>();
         foreach (RaycastHit i in hits)
         {
-            if (!toIgnore.Contains(i.collider) && (i.collider.CompareTag("Ship") || i.collider.CompareTag("Fighter")))
+            if (!toIgnore.Contains(i.collider))
             {
-                if (Parent.objectScale <= i.collider.GetComponent<UnitBaseScript>().objectScale)
+                if (Parent.objectScale <= i.collider.GetComponentInParent<RTSGameObjectBaseScript>().objectScale)
                 {
                     return false;
                 }
                 else
                 {
-                    avoidInfo.Add(i);
+                    avoidInfo.Add(i.collider.GetComponentInParent<RTSGameObjectBaseScript>());
                 }
             }
         }
-        foreach (RaycastHit i in avoidInfo)
+        foreach (RTSGameObjectBaseScript i in avoidInfo)
         {
             Vector3 avoidDirection = i.transform.position - transform.position;
             i.transform.position += avoidDirection.normalized * direction.magnitude;
@@ -79,8 +75,7 @@ public class ShipMoveAbilityScript : MoveAbilityScript
     private void FindPath(Vector3 from, Vector3 to)
     {
         List<Vector3> result = new List<Vector3>();
-        List<Collider> intersectObjects = new List<Collider>(Physics.OverlapSphere(to, agentRadius));
-        intersectObjects.RemoveAll(x => x.CompareTag("Bullet"));
+        List<Collider> intersectObjects = new List<Collider>(Physics.OverlapSphere(to, agentRadius, pathfinderLayerMask));
         float nextStepDistance = searchStepDistance;
         bool find = false;
         if (intersectObjects.Count != 0)
@@ -90,7 +85,7 @@ public class ShipMoveAbilityScript : MoveAbilityScript
                 for (int i = 0; i < searchMaxRandomNumber; i++)
                 {
                     Vector3 newDestination = to + nextStepDistance * new Vector3(Random.value * 2 - 1, Random.value * 2 - 1, Random.value * 2 - 1).normalized;
-                    intersectObjects = new List<Collider>(Physics.OverlapSphere(newDestination, agentRadius));
+                    intersectObjects = new List<Collider>(Physics.OverlapSphere(newDestination, agentRadius, pathfinderLayerMask));
                     intersectObjects.RemoveAll(x => x.CompareTag("Bullet"));
                     if (intersectObjects.Count == 0)
                     {
@@ -116,7 +111,7 @@ public class ShipMoveAbilityScript : MoveAbilityScript
                 for (int i = 0; i < searchMaxRandomNumber; i++)
                 {
                     middle = obstaclePosition + nextStepDistance * new Vector3(Random.value * 2 - 1, Random.value * 2 - 1, Random.value * 2 - 1).normalized;
-                    intersectObjects = new List<Collider>(Physics.OverlapSphere(middle, agentRadius));
+                    intersectObjects = new List<Collider>(Physics.OverlapSphere(middle, agentRadius, pathfinderLayerMask));
                     intersectObjects.RemoveAll(x => x.CompareTag("Bullet"));
                     if (intersectObjects.Count == 0 && TestObstacle(middle, to) == 0 && TestObstacle(from, middle) == 0)
                     {
@@ -141,7 +136,7 @@ public class ShipMoveAbilityScript : MoveAbilityScript
 
     // For MoveAbility target size should be 2
     // target[0] = int where 0 = stop, 1 = moveTo
-    // target[1] = Vector3, which is destination
+    // 1. target[1] = Vector3, which is destination
     public override bool UseAbility(List<object> target)
     {
         if (target.Count != 2 || target[1].GetType() != typeof(Vector3))
@@ -160,6 +155,8 @@ public class ShipMoveAbilityScript : MoveAbilityScript
 
     protected override void ContinuousAction()
     {
+        GetComponent<Rigidbody>().velocity = Vector3.zero;
+        GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
         // Decode and set action from abilityTarget
         if ((int)abilityTarget[0] == 0)
         {

@@ -12,6 +12,7 @@ TagManager:
   - Fighter
   - Unit
   - Missile
+  - NavigationCollider
   layers:
   - Default
   - TransparentFX
@@ -24,7 +25,7 @@ TagManager:
   - 
   - 
   - 
-  - 
+  - NavigationCollider
   - 
   - 
   - 

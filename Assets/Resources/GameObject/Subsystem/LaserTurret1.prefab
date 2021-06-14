@@ -306,7 +306,7 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 2, y: 1, z: 2}
+  m_Size: {x: 2, y: 1.5, z: 2}
   m_Center: {x: 0, y: 0.5, z: 0}
 --- !u!114 &6039840075914905232
 MonoBehaviour:
@@ -320,8 +320,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d1df53416ee29344a2256a409c63d3e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  objectScale: 0
   typeID: LaserTurret1
   maxHP: 100
+  NavigationCollider: {fileID: 0}
   onDestroyedEffect: {fileID: 0}
   scale: 1
   repairPercentRequired: 0.5
@@ -336,7 +338,7 @@ MonoBehaviour:
   - {fileID: 6039840074901208092}
   turretBase: {fileID: 500694939855110566}
   turretBarrels: {fileID: 6037872329675554032}
-  turnRate: 120
+  turnRate: 90
   limitTraverse: 0
   leftTraverse: 60
   rightTraverse: 60

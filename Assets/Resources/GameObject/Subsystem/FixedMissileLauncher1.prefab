@@ -139,8 +139,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 74085fad134ad4f47a3e17f3d115382f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  objectScale: 0
   typeID: FixedMissileLauncher1
   maxHP: 200
+  NavigationCollider: {fileID: 0}
   onDestroyedEffect: {fileID: 0}
   scale: 1
   repairPercentRequired: 0.5
@@ -152,4 +154,4 @@ MonoBehaviour:
   missile: {fileID: 5777247254999762963, guid: d6e47521cfabad243a1a9c523b1024d4, type: 3}
   missileStartPosition:
   - {fileID: 8340461374730998132}
-  missileUpwardFlyDistance: 5
+  missileUpwardFlyDistance: 2

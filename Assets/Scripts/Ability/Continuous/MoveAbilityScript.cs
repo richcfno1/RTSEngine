@@ -21,6 +21,8 @@ public class MoveAbilityScript : ContinuousAbilityBaseScript
     protected float lastFrameSpeedAdjust = 0;
     protected Vector3 lastFrameMoveDirection = new Vector3();
 
+    protected int pathfinderLayerMask = 1 << 11;
+
     public float AgentRadius { get { return agentRadius; } }
 
     public override bool UseAbility(List<object> target)

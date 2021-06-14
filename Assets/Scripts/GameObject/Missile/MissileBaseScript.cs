@@ -7,6 +7,7 @@ public class MissileBaseScript : RTSGameObjectBaseScript
     // Move
     public float agentMoveSpeed;
     public float agentRotateSpeed;
+    public float timeBeforeEnableCollider;
 
     // Search
     public float agentRadius;
@@ -22,7 +23,9 @@ public class MissileBaseScript : RTSGameObjectBaseScript
     public float damageRadius;
     public float damageTriggerRadius;
     public float maxTime;
-    public GameObject boomEffect;
+
+    public GameObject interruptEffect;
+    public GameObject explosionEffect;
 
     public GameObject target;
     public GameObject from;
@@ -35,6 +38,13 @@ public class MissileBaseScript : RTSGameObjectBaseScript
     void Start()
     {
         OnCreatedAction();
+        GetComponent<Collider>().enabled = false;
+        StartCoroutine(HideLaser(timeBeforeEnableCollider));
+    }
+    private IEnumerator HideLaser(float waitTime)
+    {
+        yield return new WaitForSeconds(waitTime);
+        GetComponent<Collider>().enabled = true;
     }
 
     // Update is called once per frame
@@ -47,10 +57,11 @@ public class MissileBaseScript : RTSGameObjectBaseScript
             OnDestroyedAction();
             return;
         }
-        // Been damaged, then boom immediately
+        // Been damaged, then boom immediately (?)
         if (HP <= 0)
         {
-            Boom();
+            Instantiate(interruptEffect, transform.position, new Quaternion());
+            OnDestroyedAction();
             return;
         }
         destination = target.GetComponent<Collider>().ClosestPoint(transform.position);
@@ -104,13 +115,13 @@ public class MissileBaseScript : RTSGameObjectBaseScript
         Collider[] allHits = Physics.OverlapSphere(transform.position, damageRadius);
         foreach (Collider i in allHits)
         {
-            if (i.GetComponent<RTSGameObjectBaseScript>() != null)
+            if (!i.CompareTag("Missile") && i.GetComponent<RTSGameObjectBaseScript>() != null)
             {
                 i.GetComponent<RTSGameObjectBaseScript>().CreateDamage(damage, attackPowerReduce, defencePowerReduce, movePowerReduce, from);
             }
         }
         timer = maxTime;
-        Instantiate(boomEffect, transform.position, new Quaternion());
+        Instantiate(explosionEffect, transform.position, new Quaternion());
     }
 
     private float TestObstacle(Vector3 from, Vector3 to)

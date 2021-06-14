@@ -4,9 +4,21 @@ using UnityEngine;
 
 public class RTSGameObjectBaseScript : MonoBehaviour
 {
+    public enum ObjectScale
+    {
+        Ignore,
+        Fighter,
+        Frigate,
+        Cruiser,
+        Battleship,
+        Obstacle
+    }
+
     // Set by editor
+    public ObjectScale objectScale;
     public string typeID;
     public float maxHP;
+    public SphereCollider NavigationCollider;
     public GameObject onDestroyedEffect;
 
     // Set when instantiate
@@ -26,7 +38,10 @@ public class RTSGameObjectBaseScript : MonoBehaviour
     {
         GameManager.GameManagerInstance.OnGameObjectDestroyed(gameObject, lastDamagedBy);
         Destroy(gameObject);
-        Instantiate(onDestroyedEffect, transform.position, new Quaternion());
+        if (onDestroyedEffect != null)
+        {
+            Instantiate(onDestroyedEffect, transform.position, new Quaternion());
+        }
     }
 
     public virtual void CreateDamage(float damage, float attackPowerReduce, float defencePowerReduce, float movePowerReduce, GameObject from)

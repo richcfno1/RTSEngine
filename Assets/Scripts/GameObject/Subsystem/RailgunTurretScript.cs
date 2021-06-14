@@ -87,7 +87,7 @@ public class RailgunTurretScript : AttackSubsystemBaseScript
                     RaycastHit hit;
                     Vector3 rayPosition = turretBarrels.position;
                     Vector3 rayDirection = turretBarrels.forward;
-                    if (Physics.Raycast(rayPosition, rayDirection, out hit, lockRange))
+                    if (Physics.Raycast(rayPosition, rayDirection, out hit, lockRange, ~pathfinderLayerMask))
                     {
                         if (hit.collider.tag != "AimCollider" && (hit.collider.GetComponent<RTSGameObjectBaseScript>() == null || hit.collider.GetComponent<RTSGameObjectBaseScript>().BelongTo != BelongTo))
                         {
@@ -136,7 +136,7 @@ public class RailgunTurretScript : AttackSubsystemBaseScript
         {
             GameObject target = (GameObject)subsystemTarget[0];
             RaycastHit hit;
-            if (Physics.Raycast(transform.position, (target.transform.position - transform.position).normalized, out hit, (target.transform.position - transform.position).magnitude))
+            if (Physics.Raycast(transform.position, (target.transform.position - transform.position).normalized, out hit, (target.transform.position - transform.position).magnitude, ~pathfinderLayerMask))
             {
                 if (hit.collider.tag != "AimCollider" && (hit.collider.GetComponent<RTSGameObjectBaseScript>() == null || hit.collider.GetComponent<RTSGameObjectBaseScript>().BelongTo != BelongTo))
                 {
@@ -145,7 +145,7 @@ public class RailgunTurretScript : AttackSubsystemBaseScript
                 }
             }
         }
-        List<Collider> allPossibleTargets = new List<Collider>(Physics.OverlapSphere(transform.position, lockRange));
+        List<Collider> allPossibleTargets = new List<Collider>(Physics.OverlapSphere(transform.position, lockRange, ~pathfinderLayerMask));
         List<Collider> filteredPossibleTargets = new List<Collider>();
         foreach (string i in possibleTargetTags)
         {
@@ -158,7 +158,7 @@ public class RailgunTurretScript : AttackSubsystemBaseScript
         foreach (Collider i in filteredPossibleTargets)
         {
             RaycastHit hit;
-            if (Physics.Raycast(transform.position, (i.transform.position - transform.position).normalized, out hit, (i.transform.position - transform.position).magnitude))
+            if (Physics.Raycast(transform.position, (i.transform.position - transform.position).normalized, out hit, (i.transform.position - transform.position).magnitude, ~pathfinderLayerMask))
             {
                 if (hit.collider.tag != "AimCollider" && (hit.collider.GetComponent<RTSGameObjectBaseScript>() == null || hit.collider.GetComponent<RTSGameObjectBaseScript>().BelongTo != BelongTo))
                 {
@@ -169,6 +169,7 @@ public class RailgunTurretScript : AttackSubsystemBaseScript
         }
         fireTarget = null;
     }
+
     private void SetAimpoint(Vector3 position)
     {
         aiming = true;
@@ -289,7 +290,7 @@ public class RailgunTurretScript : AttackSubsystemBaseScript
         RaycastHit hit;
         Vector3 rayPosition = turretBarrels.position;
         Vector3 rayDirection = turretBarrels.forward;
-        if (Physics.Raycast(rayPosition, rayDirection, out hit, lockRange))
+        if (Physics.Raycast(rayPosition, rayDirection, out hit, lockRange, ~pathfinderLayerMask))
         {
             if (hit.collider.tag != "AimCollider" && (hit.collider.GetComponent<RTSGameObjectBaseScript>() == null || hit.collider.GetComponent<RTSGameObjectBaseScript>().BelongTo != BelongTo))
             {

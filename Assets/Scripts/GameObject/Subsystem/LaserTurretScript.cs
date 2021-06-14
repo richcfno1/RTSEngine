@@ -89,7 +89,7 @@ public class LaserTurretScript : AttackSubsystemBaseScript
                     RaycastHit hit;
                     Vector3 rayPosition = turretBarrels.position;
                     Vector3 rayDirection = turretBarrels.forward;
-                    if (Physics.Raycast(rayPosition, rayDirection, out hit, lockRange))
+                    if (Physics.Raycast(rayPosition, rayDirection, out hit, lockRange, ~pathfinderLayerMask))
                     {
                         if (hit.collider.gameObject == fireTarget)
                         {
@@ -100,11 +100,6 @@ public class LaserTurretScript : AttackSubsystemBaseScript
                                 laserCount = 0;
                             }
                         }
-                    }
-                    else
-                    {
-
-
                     }
                 }
                 DetermineFireTarget();
@@ -127,9 +122,9 @@ public class LaserTurretScript : AttackSubsystemBaseScript
         laserRenderer.SetPositions(new Vector3[] { laserStartPosition[laserIndex].position, hit.transform.position });
         hit.GetComponent<RTSGameObjectBaseScript>().CreateDamage(damage, attackPowerReduce, defencePowerReduce, movePowerReduce, Parent.gameObject);
         StopAllCoroutines();
-        StartCoroutine(WaitAndPrint(laserAppearTime));
+        StartCoroutine(HideLaser(laserAppearTime));
     }
-    private IEnumerator WaitAndPrint(float waitTime)
+    private IEnumerator HideLaser(float waitTime)
     {
         yield return new WaitForSeconds(waitTime);
         laserRenderer.enabled = false;
@@ -146,7 +141,7 @@ public class LaserTurretScript : AttackSubsystemBaseScript
         {
             GameObject target = (GameObject)subsystemTarget[0];
             RaycastHit hit;
-            if (Physics.Raycast(transform.position, (target.transform.position - transform.position).normalized, out hit, (target.transform.position - transform.position).magnitude))
+            if (Physics.Raycast(transform.position, (target.transform.position - transform.position).normalized, out hit, (target.transform.position - transform.position).magnitude, ~pathfinderLayerMask))
             {
                 if (hit.collider.tag != "AimCollider" && (hit.collider.GetComponent<RTSGameObjectBaseScript>() == null || hit.collider.GetComponent<RTSGameObjectBaseScript>().BelongTo != BelongTo))
                 {
@@ -155,7 +150,7 @@ public class LaserTurretScript : AttackSubsystemBaseScript
                 }
             }
         }
-        List<Collider> allPossibleTargets = new List<Collider>(Physics.OverlapSphere(transform.position, lockRange));
+        List<Collider> allPossibleTargets = new List<Collider>(Physics.OverlapSphere(transform.position, lockRange, ~pathfinderLayerMask));
         List<Collider> filteredPossibleTargets = new List<Collider>();
         foreach (string i in possibleTargetTags)
         {
@@ -168,9 +163,9 @@ public class LaserTurretScript : AttackSubsystemBaseScript
         foreach (Collider i in filteredPossibleTargets)
         {
             RaycastHit hit;
-            if (Physics.Raycast(transform.position, (i.transform.position - transform.position).normalized, out hit, (i.transform.position - transform.position).magnitude))
+            if (Physics.Raycast(transform.position, (i.transform.position - transform.position).normalized, out hit, lockRange, ~pathfinderLayerMask))
             {
-                if (hit.collider.tag != "AimCollider" && (hit.collider.GetComponent<RTSGameObjectBaseScript>() == null || hit.collider.GetComponent<RTSGameObjectBaseScript>().BelongTo != BelongTo))
+                if (hit.collider == i)
                 {
                     fireTarget = i.gameObject;
                     return;
@@ -299,7 +294,7 @@ public class LaserTurretScript : AttackSubsystemBaseScript
         RaycastHit hit;
         Vector3 rayPosition = turretBarrels.position;
         Vector3 rayDirection = turretBarrels.forward;
-        if (Physics.Raycast(rayPosition, rayDirection, out hit, lockRange))
+        if (Physics.Raycast(rayPosition, rayDirection, out hit, lockRange, ~pathfinderLayerMask))
         {
             if (hit.collider.tag != "AimCollider" && (hit.collider.GetComponent<RTSGameObjectBaseScript>() == null || hit.collider.GetComponent<RTSGameObjectBaseScript>().BelongTo != BelongTo))
             {

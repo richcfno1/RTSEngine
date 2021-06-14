@@ -4,17 +4,7 @@ using UnityEngine;
 
 public class UnitBaseScript : RTSGameObjectBaseScript
 {
-    public enum ObjectScale
-    {
-        Fighter,
-        Frigate,
-        Cruiser,
-        Battleship,
-        Obstacle
-    }
-
     // Set by editor
-    public ObjectScale objectScale;
     public float maxAttackPower;
     public float maxDefencePower;
     public float maxMovePower;

@@ -4900,12 +4900,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d2af75c53c5bb84b9972392b4a3e7ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  objectScale: 0
   typeID: Missile1
   maxHP: 50
-  objectScale: 4
-  onDestroyedEffect: {fileID: 4429858986618900989, guid: 2b55776db2996b2429d6fa98d550f3f4, type: 3}
+  NavigationCollider: {fileID: 0}
+  onDestroyedEffect: {fileID: 0}
   agentMoveSpeed: 100
   agentRotateSpeed: 180
+  timeBeforeEnableCollider: 1
   agentRadius: 0.5
   searchStepDistance: 20
   searchStepMaxDistance: 100
@@ -4917,7 +4919,8 @@ MonoBehaviour:
   damageRadius: 30
   damageTriggerRadius: 5
   maxTime: 20
-  boomEffect: {fileID: 5625997367833245711, guid: 654b2b1cc213bfd4b959daee8be329ac, type: 3}
+  interruptEffect: {fileID: 4429858986618900989, guid: 2b55776db2996b2429d6fa98d550f3f4, type: 3}
+  explosionEffect: {fileID: 5625997367833245711, guid: 654b2b1cc213bfd4b959daee8be329ac, type: 3}
   target: {fileID: 0}
   from: {fileID: 0}
 --- !u!136 &6696164441979991360
@@ -4929,7 +4932,7 @@ CapsuleCollider:
   m_GameObject: {fileID: 5777247254999762963}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Enabled: 1
+  m_Enabled: 0
   m_Radius: 1
   m_Height: 4
   m_Direction: 2

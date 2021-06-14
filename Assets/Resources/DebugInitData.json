@@ -43,7 +43,7 @@
         "RotateSpeed": 10.0,
         "AccelerateLimit": 0.5,
         "MoveAgentRadius": 40.0,
-        "MoveSearchStepDistance": 40.0,
+        "MoveSearchStepDistance": 50.0,
         "MoveSearchStepLimit": 200.0,
         "MoveSearchRandomNumber": 10.0
       },
@@ -65,7 +65,7 @@
       "shipTypeName": "Drone1",
       "properties": {
         "MoveSpeed": 20.0,
-        "RotateSpeed": 180.0,
+        "RotateSpeed": 90.0,
         "AccelerateLimit": 0.0,
         "MoveAgentRadius": 3.0,
         "MoveSearchStepDistance": 20.0,
@@ -96,7 +96,7 @@
       "type": "StandardFrigate",
       "belongTo": 0,
       "position": {
-        "x": -50.0,
+        "x": -100.0,
         "y": 0.0,
         "z": 0.0
       },
@@ -123,10 +123,10 @@
       }
     },
     {
-      "type": "StandardFrigate",
+      "type": "StandardCruiser",
       "belongTo": 0,
       "position": {
-        "x": 50.0,
+        "x": -150.0,
         "y": 0.0,
         "z": 0.0
       },

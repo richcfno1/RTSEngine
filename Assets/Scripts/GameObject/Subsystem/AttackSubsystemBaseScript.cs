@@ -8,6 +8,7 @@ public class AttackSubsystemBaseScript : SubsystemBaseScript
     public float lockRange;
     public List<string> possibleTargetTags;
 
+    protected int pathfinderLayerMask = 1 << 11;
     protected float timer = 0;
 
     public override void SetTarget(List<object> target)

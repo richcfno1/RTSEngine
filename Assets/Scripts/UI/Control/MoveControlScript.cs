@@ -119,7 +119,7 @@ public class MoveControlScript : MonoBehaviour
                 {
                     if (i.GetComponent<MoveAbilityScript>() != null)
                     {
-                        i.GetComponent<MoveAbilityScript>().PauseAbility();
+                        i.GetComponent<MoveAbilityScript>().UseAbility(new List<object>() { 0, Vector3.zero });
                     }
                 }
                 return;
@@ -209,9 +209,9 @@ public class MoveControlScript : MonoBehaviour
         Vector3 right = Vector3.Cross(Vector3.up, forwardDirection).normalized;
         foreach (MoveAbilityScript agent in allAgents)
         {
-            newDestination += right * agent.AgentRadius;
+            newDestination += right * agent.AgentRadius * 2;
             temp.Add(agent, newDestination);
-            newDestination += right * agent.AgentRadius;
+            newDestination += right * agent.AgentRadius * 2;
         }
         Vector3 newDestinationCenter = new Vector3();
         foreach (Vector3 i in temp.Values)
