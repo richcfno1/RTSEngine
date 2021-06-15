@@ -9688,7 +9688,6 @@ Transform:
   - {fileID: 4992179259795071993}
   - {fileID: 8175488331514150145}
   - {fileID: 75241835574686490}
-  - {fileID: 6247056598617674958}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -9791,10 +9790,17 @@ MonoBehaviour:
     anchor: {fileID: 4384353229854127420}
     subsystemScale: 1
     subsystem: {fileID: 0}
+  - anchorName: FighterDeployAnchor1
+    anchor: {fileID: 8088440053577994045}
+    subsystemScale: 0
+    subsystem: {fileID: 0}
+  - anchorName: FighterDeployAnchor2
+    anchor: {fileID: 6322422459963083518}
+    subsystemScale: 0
+    subsystem: {fileID: 0}
   agentMoveSpeed: 20
   agentRotateSpeed: 20
   agentAccelerateLimit: 0.5
-  agentRadius: 20
   searchStepDistance: 20
   searchStepMaxDistance: 100
   searchMaxRandomNumber: 10
@@ -10085,38 +10091,6 @@ Transform:
   m_Father: {fileID: 2960796883598122492}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &4533129036482953217
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 6247056598617674958}
-  m_Layer: 0
-  m_Name: ProductionDeploy
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &6247056598617674958
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4533129036482953217}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children:
-  - {fileID: 6604441812598295564}
-  - {fileID: 2789211762060988391}
-  m_Father: {fileID: 4274729091555711549}
-  m_RootOrder: 4
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4775890249343442427
 GameObject:
   m_ObjectHideFlags: 0
@@ -10215,7 +10189,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2789211762060988391}
   m_Layer: 0
-  m_Name: FighterDeploy2
+  m_Name: FighterDeployAnchor2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -10228,12 +10202,12 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6322422459963083518}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -5, y: 0, z: 1.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 6247056598617674958}
-  m_RootOrder: 1
+  m_Father: {fileID: 2960796883598122492}
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &6650453435631407232
 GameObject:
@@ -10268,6 +10242,8 @@ Transform:
   - {fileID: 4384353231723149314}
   - {fileID: 4384353230030489636}
   - {fileID: 4384353229854127395}
+  - {fileID: 6604441812598295564}
+  - {fileID: 2789211762060988391}
   m_Father: {fileID: 4274729091555711549}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -15118,7 +15094,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6604441812598295564}
   m_Layer: 0
-  m_Name: FighterDeploy1
+  m_Name: FighterDeployAnchor1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -15131,10 +15107,10 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8088440053577994045}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 5, y: 0, z: 1.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 6247056598617674958}
-  m_RootOrder: 0
+  m_Father: {fileID: 2960796883598122492}
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

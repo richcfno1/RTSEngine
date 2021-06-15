@@ -1,11 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 using Neo.IronLua;
-using System;
-using System.Linq;
 using Newtonsoft.Json;
-using System.Threading;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
@@ -44,6 +42,7 @@ public class GameManager : MonoBehaviour
     private class Player
     {
         public string playerName;
+        public float playerMoney;
         public List<int> playerGameObjects = new List<int>();
     }
 
@@ -142,7 +141,7 @@ public class GameManager : MonoBehaviour
             Debug.LogError("No such unit: " + unitType);
             return;
         }
-        UnitLibraryData libraryData = this.unitLibrary[unitType];
+        UnitLibraryData libraryData = unitLibrary[unitType];
 
         // Ship
         GameObject result = Instantiate(Resources.Load<GameObject>(gameObjectLibrary[libraryData.shipTypeName]), position, rotation, parent);
@@ -154,7 +153,7 @@ public class GameManager : MonoBehaviour
             // Init subsystem
             foreach (ShipBaseScript.AnchorData anchorData in shipScript.subsyetemAnchors)
             {
-                if (libraryData.subsystems.ContainsKey(anchorData.anchorName))
+                if (libraryData.subsystems.ContainsKey(anchorData.anchorName) && anchorData.subsystem == null)
                 {
                     string subsystemTypeName = libraryData.subsystems[anchorData.anchorName];
                     GameObject temp = Instantiate(Resources.Load<GameObject>(gameObjectLibrary[subsystemTypeName]), anchorData.anchor.transform);
@@ -169,6 +168,11 @@ public class GameManager : MonoBehaviour
                         subsystemScript.Host = shipScript;
                     }
                 }
+                // Already have a subsystem (set in prefab)
+                else if (anchorData.subsystem != null)
+                {
+                    anchorData.subsystem.GetComponent<SubsystemBaseScript>().Host = shipScript;
+                }
             }
 
             // Init ability
@@ -181,14 +185,22 @@ public class GameManager : MonoBehaviour
                     if (supportedSubsystemAnchor != libraryData.shipTypeName)
                     {
                         GameObject temp = shipScript.subsyetemAnchors.FirstOrDefault(x => x.anchorName == supportedSubsystemAnchor).subsystem;
-                        if (temp.GetComponent<SubsystemBaseScript>().supportedAbility.Contains((AbilityBaseScript.AbilityType)Enum.Parse(typeof(AbilityBaseScript.AbilityType), ability.Key)))
+                        if (temp == default)
                         {
-                            abilityScript.SupportedBy.Add(temp.GetComponent<SubsystemBaseScript>());
+                            Debug.LogError("Cannot find subsystem: " + supportedSubsystemAnchor);
                         }
                         else
                         {
-                            Debug.LogError("Subsystem cannot support ability: " + ability.Key);
+                            if (temp.GetComponent<SubsystemBaseScript>().supportedAbility.Contains((AbilityBaseScript.AbilityType)Enum.Parse(typeof(AbilityBaseScript.AbilityType), ability.Key)))
+                            {
+                                abilityScript.SupportedBy.Add(temp.GetComponent<SubsystemBaseScript>());
+                            }
+                            else
+                            {
+                                Debug.LogError("Subsystem cannot support ability: " + ability.Key);
+                            }
                         }
+
                     }
                 }
                 abilityScript.Host = shipScript;
@@ -211,6 +223,7 @@ public class GameManager : MonoBehaviour
                 {
                     if (supportedSubsystemAnchor != libraryData.shipTypeName)
                     {
+                        // Haha, maybe I need change the rule
                         Debug.LogError("Fighter does not have any subsystem: " + supportedSubsystemAnchor);
                     }
                 }
