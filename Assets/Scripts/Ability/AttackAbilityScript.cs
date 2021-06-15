@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AttackAbilityScript : InstantAbilityBaseScript
+public class AttackAbilityScript : AbilityBaseScript
 {
     public enum UseType
     {

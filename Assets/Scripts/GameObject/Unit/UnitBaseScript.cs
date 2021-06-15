@@ -29,6 +29,8 @@ public class UnitBaseScript : RTSGameObjectBaseScript
     protected float curDefencePower;
     protected float curMovePower;
 
+    protected Vector3 destination;
+
     public override void CreateDamage(float damage, float attackPowerReduce, float defencePowerReduce, float movePowerReduce, GameObject from)
     {
         curAttackPower = Mathf.Clamp(curAttackPower - attackPowerReduce, 0, maxAttackPower);
@@ -37,13 +39,8 @@ public class UnitBaseScript : RTSGameObjectBaseScript
         base.CreateDamage(damage / DefencePower, attackPowerReduce, defencePowerReduce, movePowerReduce, from);
     }
 
-    public virtual bool Command(string commandType, List<object> target)
+    public void SetDestination(Vector3 destination)
     {
-        if (AbilityDictionary.ContainsKey(commandType))
-        {
-            AbilityDictionary[commandType].UseAbility(target);
-            return false;
-        }
-        return true;
+        this.destination = destination;
     }
 }

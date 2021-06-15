@@ -13,15 +13,7 @@
     {
       "unitTypeName": "StandardFrigate",
       "shipTypeName": "Frigate1",
-      "properties": {
-        "MoveSpeed": 10.0,
-        "RotateSpeed": 20.0,
-        "AccelerateLimit": 0.5,
-        "MoveAgentRadius": 20.0,
-        "MoveSearchStepDistance": 20.0,
-        "MoveSearchStepLimit": 100.0,
-        "MoveSearchRandomNumber": 10.0
-      },
+      "properties": {},
       "subsystems": {
         "TurretAnchor1": "Turret1",
         "TurretAnchor2": "Turret1",
@@ -31,22 +23,14 @@
         "TurretAnchor6": "LaserTurret1"
       },
       "abilities": {
-        "ShipMove": [ "Frigate1" ],
+        "Move": [ "Frigate1" ],
         "Attack": [ "TurretAnchor1", "TurretAnchor2", "TurretAnchor3", "TurretAnchor4", "TurretAnchor5", "TurretAnchor6" ]
       }
     },
     {
       "unitTypeName": "StandardCruiser",
       "shipTypeName": "Cruiser1",
-      "properties": {
-        "MoveSpeed": 5.0,
-        "RotateSpeed": 10.0,
-        "AccelerateLimit": 0.5,
-        "MoveAgentRadius": 40.0,
-        "MoveSearchStepDistance": 50.0,
-        "MoveSearchStepLimit": 200.0,
-        "MoveSearchRandomNumber": 10.0
-      },
+      "properties": {},
       "subsystems": {
         "TurretAnchor9": "FixedMissileLauncher1",
         "TurretAnchor10": "FixedMissileLauncher1",
@@ -56,24 +40,18 @@
         "TurretAnchor14": "Turret1"
       },
       "abilities": {
-        "ShipMove": [ "Cruiser1" ],
+        "Move": [ "Cruiser1" ],
         "Attack": [ "TurretAnchor9", "TurretAnchor10", "TurretAnchor11", "TurretAnchor12", "TurretAnchor13", "TurretAnchor14" ]
       }
     },
     {
       "unitTypeName": "ScopeDrone",
       "shipTypeName": "Drone1",
-      "properties": {
-        "MoveSpeed": 20.0,
-        "RotateSpeed": 90.0,
-        "AccelerateLimit": 0.0,
-        "MoveAgentRadius": 3.0,
-        "MoveSearchStepDistance": 20.0,
-        "MoveSearchStepLimit": 100.0,
-        "MoveSearchRandomNumber": 10.0
-      },
+      "properties": {},
       "subsystems": {},
-      "abilities": { "FighterMove": [ "Drone1" ] }
+      "abilities": { 
+        "Move": [ "Drone1" ] 
+      }
     }
   ],
   "initUnitData": [

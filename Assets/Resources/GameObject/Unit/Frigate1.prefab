@@ -9761,6 +9761,8 @@ MonoBehaviour:
   maxAttackPower: 100
   maxDefencePower: 100
   maxMovePower: 100
+  buildProce: 0
+  buildTime: 0
   recoverAttackPower: 1
   recoverDefencePower: 1
   recoverMovePower: 1
@@ -9789,15 +9791,13 @@ MonoBehaviour:
     anchor: {fileID: 4384353229854127420}
     subsystemScale: 1
     subsystem: {fileID: 0}
-  deployPoints:
-  - deployPointName: FighterDeploy1
-    deployPoint: {fileID: 8088440053577994045}
-    deployPath:
-    - {x: 10, y: 0, z: 0}
-  - deployPointName: FighterDeploy2
-    deployPoint: {fileID: 6322422459963083518}
-    deployPath:
-    - {x: -10, y: 0, z: 0}
+  agentMoveSpeed: 20
+  agentRotateSpeed: 20
+  agentAccelerateLimit: 0.5
+  agentRadius: 20
+  searchStepDistance: 20
+  searchStepMaxDistance: 100
+  searchMaxRandomNumber: 10
 --- !u!64 &-7958528129588623642
 MeshCollider:
   m_ObjectHideFlags: 0

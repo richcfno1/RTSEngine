@@ -78,6 +78,7 @@ public class FixedLauncherScript : AttackSubsystemBaseScript
         if (subsystemTarget.Count == 1 && (GameObject)subsystemTarget[0] != null && possibleTargetTags.Contains(((GameObject)subsystemTarget[0]).tag))
         {
             fireTarget = (GameObject)subsystemTarget[0];
+            return;
         }
         List<Collider> allPossibleTargets = new List<Collider>(Physics.OverlapSphere(transform.position, lockRange, ~pathfinderLayerMask));
         List<Collider> filteredPossibleTargets = new List<Collider>();

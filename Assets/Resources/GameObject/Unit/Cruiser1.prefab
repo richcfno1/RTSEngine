@@ -5000,6 +5000,8 @@ MonoBehaviour:
   maxAttackPower: 3000
   maxDefencePower: 3000
   maxMovePower: 3000
+  buildProce: 0
+  buildTime: 0
   recoverAttackPower: 100
   recoverDefencePower: 100
   recoverMovePower: 100
@@ -5060,6 +5062,12 @@ MonoBehaviour:
     anchor: {fileID: 7209210845034141880}
     subsystemScale: 1
     subsystem: {fileID: 0}
+  agentMoveSpeed: 10
+  agentRotateSpeed: 10
+  agentAccelerateLimit: 0.5
+  searchStepDistance: 50
+  searchStepMaxDistance: 200
+  searchMaxRandomNumber: 10
 --- !u!54 &1270299357043665751
 Rigidbody:
   m_ObjectHideFlags: 0
