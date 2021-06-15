@@ -5,12 +5,12 @@ public class SelectControlScript : MonoBehaviour
 {
     public static SelectControlScript SelectionControlInstance { get; private set; }
 
-    public int selfIndex;
     public GameObject SelectionBoxPrefab;
 
     public Dictionary<string, List<GameObject>> SelectedGameObjects { get; private set; } = new Dictionary<string, List<GameObject>>();
     public bool SelectedOwnUnits { get; private set; } = false;
 
+    private int selfIndex;
     private Vector3 mouseStartPosition;
     private Vector3 mouseEndPosition;
     private bool mouseLeftUp;
@@ -29,6 +29,7 @@ public class SelectControlScript : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        selfIndex = GameManager.GameManagerInstance.selfIndex;
         mouseStartPosition = Input.mousePosition;
     }
 

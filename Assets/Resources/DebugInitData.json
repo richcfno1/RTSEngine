@@ -78,7 +78,7 @@
   ],
   "initUnitData": [
     {
-      "type": "StandardFrigate",
+      "type": "StandardCruiser",
       "belongTo": 0,
       "position": {
         "x": 0.0,
@@ -111,9 +111,9 @@
       "type": "StandardFrigate",
       "belongTo": 0,
       "position": {
-        "x": 0.0,
+        "x": 100.0,
         "y": 0.0,
-        "z": -100.0
+        "z": 0.0
       },
       "rotation": {
         "x": 0.0,
@@ -126,9 +126,9 @@
       "type": "StandardFrigate",
       "belongTo": 0,
       "position": {
-        "x": -150.0,
+        "x": 0.0,
         "y": 0.0,
-        "z": 0.0
+        "z": -100.0
       },
       "rotation": {
         "x": 0.0,
@@ -149,7 +149,7 @@
         "x": 0.0,
         "y": 1.0,
         "z": 0.0,
-        "w": -4.371139E-08
+        "w": 0.0
       }
     },
     {
@@ -164,7 +164,7 @@
         "x": 0.0,
         "y": 1.0,
         "z": 0.0,
-        "w": -4.371139E-08
+        "w": 0.0
       }
     },
     {
@@ -179,7 +179,7 @@
         "x": 0.0,
         "y": 1.0,
         "z": 0.0,
-        "w": -4.371139E-08
+        "w": 0.0
       }
     },
     {

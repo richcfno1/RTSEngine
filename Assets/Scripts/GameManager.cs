@@ -49,8 +49,8 @@ public class GameManager : MonoBehaviour
 
     public static GameManager GameManagerInstance { get; private set; }
 
+    public int selfIndex;
     public TextAsset debugInitDataAsset;
-    public GameInitData debugInitData = new GameInitData();
 
     public TextAsset gameObjectLibraryAsset;
     public TextAsset abilityLibraryAsset;

@@ -54,6 +54,12 @@ public class AttackControlScript : MonoBehaviour
     public GameObject attackUILinePrefab;
 
     private List<AttackUI> uiGameObjects = new List<AttackUI>();
+    private int selfIndex;
+
+    void Start()
+    {
+        selfIndex = GameManager.GameManagerInstance.selfIndex;
+    }
 
     // Update is called once per frame
     void Update()
@@ -65,7 +71,7 @@ public class AttackControlScript : MonoBehaviour
                 if (Input.GetKeyDown(InputManager.HotKeys.AttackUnit) && InputManager.InputManagerInstance.EnableAction)
                 {
                     GameObject temp = SingleSelectionHelper();
-                    if (temp != null && temp.GetComponent<RTSGameObjectBaseScript>().BelongTo != SelectControlScript.SelectionControlInstance.selfIndex)
+                    if (temp != null && temp.GetComponent<RTSGameObjectBaseScript>().BelongTo != selfIndex)
                     {
                         ClearAttackUI();
                         foreach (GameObject i in SelectControlScript.SelectionControlInstance.GetAllGameObjects())

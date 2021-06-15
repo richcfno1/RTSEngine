@@ -215,26 +215,240 @@ public class MoveControlScript : MonoBehaviour
     private Dictionary<MoveAbilityScript, Vector3> FindDestination(List<MoveAbilityScript> allAgents, Vector3 destination, Vector3 forwardDirection)
     {
         Dictionary<MoveAbilityScript, Vector3> temp = new Dictionary<MoveAbilityScript, Vector3>();
-        Vector3 newDestination = destination;
+        Vector3 destinationForEachClass = destination;
         Vector3 right = Vector3.Cross(Vector3.up, forwardDirection).normalized;
-        foreach (MoveAbilityScript agent in allAgents)
+
+        List<MoveAbilityScript> allFighters = allAgents.FindAll(x => x.Host.objectScale == RTSGameObjectBaseScript.ObjectScale.Fighter);
+        if (allFighters.Count != 0)
         {
-            newDestination += right * agent.AgentRadius * 2;
-            temp.Add(agent, newDestination);
-            newDestination += right * agent.AgentRadius * 2;
+            if (destinationForEachClass != destination)
+            {
+                destinationForEachClass -= forwardDirection.normalized * 10;
+            }
+
+            // Find a list of detination where perpendicular to "forward direction", then adjust its center to destinationForEachClass
+            List<Vector3> destinationForFighters = new List<Vector3>();
+            Vector3 tempDestination = destinationForEachClass;
+            foreach (MoveAbilityScript i in allFighters)
+            {
+                destinationForFighters.Add(tempDestination);
+                tempDestination += right * 20;
+            }
+            Vector3 destinationForFightersCenter = new Vector3();
+            foreach (Vector3 i in destinationForFighters)
+            {
+                destinationForFightersCenter += i;
+            }
+            Vector3 offset = destinationForEachClass - destinationForFightersCenter / destinationForFighters.Count;
+            List<Vector3> trueDestinationForFighters = new List<Vector3>();
+            foreach (Vector3 i in destinationForFighters)
+            {
+                trueDestinationForFighters.Add(i + offset);
+            }
+            foreach (MoveAbilityScript i in allFighters)
+            {
+                Vector3 destinationForThis = new Vector3();
+                float distance = Mathf.Infinity;
+                foreach (Vector3 j in trueDestinationForFighters)
+                {
+                    float tempDistance = (i.transform.position - j).magnitude;
+                    if (tempDistance < distance)
+                    {
+                        distance = tempDistance;
+                        destinationForThis = j;
+                    }
+                }
+                temp.Add(i, destinationForThis);
+                trueDestinationForFighters.Remove(destinationForThis);
+            }
+            destinationForEachClass -= forwardDirection.normalized * 10;
         }
-        Vector3 newDestinationCenter = new Vector3();
-        foreach (Vector3 i in temp.Values)
+
+        List<MoveAbilityScript> allFrigates = allAgents.FindAll(x => x.Host.objectScale == RTSGameObjectBaseScript.ObjectScale.Frigate);
+        if (allFrigates.Count != 0)
         {
-            newDestinationCenter += i;
+            if (destinationForEachClass != destination)
+            {
+                destinationForEachClass -= forwardDirection.normalized * 30;
+            }
+
+            // Find a list of detination where perpendicular to "forward direction", then adjust its center to destinationForEachClass
+            List<Vector3> destinationForFrigates = new List<Vector3>();
+            Vector3 tempDestination = destinationForEachClass;
+            foreach (MoveAbilityScript i in allFrigates)
+            {
+                destinationForFrigates.Add(tempDestination);
+                tempDestination += right * 60;
+            }
+            Vector3 destinationForFrigatesCenter = new Vector3();
+            foreach (Vector3 i in destinationForFrigates)
+            {
+                destinationForFrigatesCenter += i;
+            }
+            Vector3 offset = destinationForEachClass - destinationForFrigatesCenter / destinationForFrigates.Count;
+            List<Vector3> trueDestinationForFrigates = new List<Vector3>();
+            foreach (Vector3 i in destinationForFrigates)
+            {
+                trueDestinationForFrigates.Add(i + offset);
+            }
+            foreach (MoveAbilityScript i in allFrigates)
+            {
+                Vector3 destinationForThis = new Vector3();
+                float distance = Mathf.Infinity;
+                foreach (Vector3 j in trueDestinationForFrigates)
+                {
+                    float tempDistance = (i.transform.position - j).magnitude;
+                    if (tempDistance < distance)
+                    {
+                        distance = tempDistance;
+                        destinationForThis = j;
+                    }
+                }
+                temp.Add(i, destinationForThis);
+                trueDestinationForFrigates.Remove(destinationForThis);
+            }
+            destinationForEachClass -= forwardDirection.normalized * 30;
         }
-        Vector3 offset = destination - newDestinationCenter / temp.Count;
-        Dictionary<MoveAbilityScript, Vector3> result = new Dictionary<MoveAbilityScript, Vector3>();
-        foreach (KeyValuePair<MoveAbilityScript, Vector3> i in temp)
+
+        List<MoveAbilityScript> allCruisers = allAgents.FindAll(x => x.Host.objectScale == RTSGameObjectBaseScript.ObjectScale.Cruiser);
+        if (allCruisers.Count != 0)
         {
-            result.Add(i.Key, i.Value + offset);
+            if (destinationForEachClass != destination)
+            {
+                destinationForEachClass -= forwardDirection.normalized * 50;
+            }
+
+            // Find a list of detination where perpendicular to "forward direction", then adjust its center to destinationForEachClass
+            List<Vector3> destinationForCruisers = new List<Vector3>();
+            Vector3 tempDestination = destinationForEachClass;
+            foreach (MoveAbilityScript i in allCruisers)
+            {
+                destinationForCruisers.Add(tempDestination);
+                tempDestination += right * 100;
+            }
+            Vector3 destinationForCruisersCenter = new Vector3();
+            foreach (Vector3 i in destinationForCruisers)
+            {
+                destinationForCruisersCenter += i;
+            }
+            Vector3 offset = destinationForEachClass - destinationForCruisersCenter / destinationForCruisers.Count;
+            List<Vector3> trueDestinationForcruisers = new List<Vector3>();
+            foreach (Vector3 i in destinationForCruisers)
+            {
+                trueDestinationForcruisers.Add(i + offset);
+            }
+            foreach (MoveAbilityScript i in allCruisers)
+            {
+                Vector3 destinationForThis = new Vector3();
+                float distance = Mathf.Infinity;
+                foreach (Vector3 j in trueDestinationForcruisers)
+                {
+                    float tempDistance = (i.transform.position - j).magnitude;
+                    if (tempDistance < distance)
+                    {
+                        distance = tempDistance;
+                        destinationForThis = j;
+                    }
+                }
+                temp.Add(i, destinationForThis);
+                trueDestinationForcruisers.Remove(destinationForThis);
+            }
+            destinationForEachClass -= forwardDirection.normalized * 50;
         }
-        return result;
+
+        List<MoveAbilityScript> allBattleships = allAgents.FindAll(x => x.Host.objectScale == RTSGameObjectBaseScript.ObjectScale.Battleship);
+        if (allBattleships.Count != 0)
+        {
+            if (destinationForEachClass != destination)
+            {
+                destinationForEachClass -= forwardDirection.normalized * 80;
+            }
+
+            // Find a list of detination where perpendicular to "forward direction", then adjust its center to destinationForEachClass
+            List<Vector3> destinationForBattleships = new List<Vector3>();
+            Vector3 tempDestination = destinationForEachClass;
+            foreach (MoveAbilityScript i in allBattleships)
+            {
+                destinationForBattleships.Add(tempDestination);
+                tempDestination += right * 160;
+            }
+            Vector3 destinationForBattleshipsCenter = new Vector3();
+            foreach (Vector3 i in destinationForBattleships)
+            {
+                destinationForBattleshipsCenter += i;
+            }
+            Vector3 offset = destinationForEachClass - destinationForBattleshipsCenter / destinationForBattleships.Count;
+            List<Vector3> trueDestinationForBattleships = new List<Vector3>();
+            foreach (Vector3 i in destinationForBattleships)
+            {
+                trueDestinationForBattleships.Add(i + offset);
+            }
+            foreach (MoveAbilityScript i in allBattleships)
+            {
+                Vector3 destinationForThis = new Vector3();
+                float distance = Mathf.Infinity;
+                foreach (Vector3 j in trueDestinationForBattleships)
+                {
+                    float tempDistance = (i.transform.position - j).magnitude;
+                    if (tempDistance < distance)
+                    {
+                        distance = tempDistance;
+                        destinationForThis = j;
+                    }
+                }
+                temp.Add(i, destinationForThis);
+                trueDestinationForBattleships.Remove(destinationForThis);
+            }
+            destinationForEachClass -= forwardDirection.normalized * 80;
+        }
+
+        List<MoveAbilityScript> allMotherships = allAgents.FindAll(x => x.Host.objectScale == RTSGameObjectBaseScript.ObjectScale.Mothership);
+        if (allMotherships.Count != 0)
+        {
+            if (destinationForEachClass != destination)
+            {
+                destinationForEachClass -= forwardDirection.normalized * 120;
+            }
+
+            // Find a list of detination where perpendicular to "forward direction", then adjust its center to destinationForEachClass
+            List<Vector3> destinationForMotherships = new List<Vector3>();
+            Vector3 tempDestination = destinationForEachClass;
+            foreach (MoveAbilityScript i in allMotherships)
+            {
+                destinationForMotherships.Add(tempDestination);
+                tempDestination += right * 240;
+            }
+            Vector3 destinationForMothershipsCenter = new Vector3();
+            foreach (Vector3 i in destinationForMotherships)
+            {
+                destinationForMothershipsCenter += i;
+            }
+            Vector3 offset = destinationForEachClass - destinationForMothershipsCenter / destinationForMotherships.Count;
+            List<Vector3> trueDestinationForMotherships = new List<Vector3>();
+            foreach (Vector3 i in destinationForMotherships)
+            {
+                trueDestinationForMotherships.Add(i + offset);
+            }
+            foreach (MoveAbilityScript i in allMotherships)
+            {
+                Vector3 destinationForThis = new Vector3();
+                float distance = Mathf.Infinity;
+                foreach (Vector3 j in trueDestinationForMotherships)
+                {
+                    float tempDistance = (i.transform.position - j).magnitude;
+                    if (tempDistance < distance)
+                    {
+                        distance = tempDistance;
+                        destinationForThis = j;
+                    }
+                }
+                temp.Add(i, destinationForThis);
+                trueDestinationForMotherships.Remove(destinationForThis);
+            }
+            destinationForEachClass -= forwardDirection.normalized * 120;
+        }
+
+        return temp;
     }
 
     private GameObject SingleSelectionHelper()

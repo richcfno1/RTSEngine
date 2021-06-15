@@ -11,6 +11,7 @@ public class RTSGameObjectBaseScript : MonoBehaviour
         Frigate,
         Cruiser,
         Battleship,
+        Mothership,
         Obstacle
     }
 
