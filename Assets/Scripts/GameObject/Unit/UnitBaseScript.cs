@@ -42,6 +42,7 @@ public class UnitBaseScript : RTSGameObjectBaseScript
     public float buildTime;
 
     // Set when instantiate
+    public string UnitTypeID { get; set; }
     // Three basic value which indicate the performance of ability
     public float AttackPower { get { return curAttackPower / maxAttackPower; } set { curAttackPower = value * maxAttackPower; } }
     public float DefencePower { get { return curDefencePower / maxDefencePower; } set { curDefencePower = value * maxDefencePower; } }

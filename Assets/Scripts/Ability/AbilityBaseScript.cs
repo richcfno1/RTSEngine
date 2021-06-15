@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -8,7 +7,8 @@ public class AbilityBaseScript : MonoBehaviour
     {
         None,
         Move,
-        Attack
+        Attack,
+        Carrier
     }
 
     // Set when instantiate

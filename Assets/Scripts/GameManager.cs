@@ -16,7 +16,7 @@ public class GameManager : MonoBehaviour
     public struct UnitLibraryData
     {
         public string unitTypeName;
-        public string shipTypeName;
+        public string baseTypeName;
         public Dictionary<string, float> properties;
         // string1 = anchor name, string2 = subsystem type
         public Dictionary<string, string> subsystems;
@@ -55,12 +55,12 @@ public class GameManager : MonoBehaviour
     public TextAsset abilityLibraryAsset;
     public Dictionary<string, string> gameObjectLibrary = new Dictionary<string, string>();
     public Dictionary<string, string> abilityLibrary = new Dictionary<string, string>();
+    public Dictionary<string, UnitLibraryData> unitLibrary = new Dictionary<string, UnitLibraryData>();
 
     private int gameObjectIndexCounter = 0;
     private Dictionary<int, Player> allPlayers = new Dictionary<int, Player>();
     private Dictionary<int, GameObject> allGameObjectsDict = new Dictionary<int, GameObject>();
     private List<GameObject> allGameObjectsList = new List<GameObject>();
-    private Dictionary<string, UnitLibraryData> unitLibrary = new Dictionary<string, UnitLibraryData>();
     Lua gameLua = new Lua();
 
     void Awake()
@@ -134,26 +134,32 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void InstantiateUnit(string unitType, Vector3 position, Quaternion rotation, Transform parent, int belongTo)
+    public GameObject InstantiateUnit(string unitType, Vector3 position, Quaternion rotation, Transform parent, int belongTo)
     {
         if (!unitLibrary.ContainsKey(unitType))
         {
             Debug.LogError("No such unit: " + unitType);
-            return;
+            return null;
         }
         UnitLibraryData libraryData = unitLibrary[unitType];
 
         // Ship
-        GameObject result = Instantiate(Resources.Load<GameObject>(gameObjectLibrary[libraryData.shipTypeName]), position, rotation, parent);
+        GameObject result = Instantiate(Resources.Load<GameObject>(gameObjectLibrary[libraryData.baseTypeName]), position, rotation, parent);
         if (result.GetComponent<ShipBaseScript>() != null)
         {
             ShipBaseScript shipScript = result.GetComponent<ShipBaseScript>();
+            shipScript.UnitTypeID = unitType;
             shipScript.PropertyDictionary = libraryData.properties;
 
             // Init subsystem
-            foreach (ShipBaseScript.AnchorData anchorData in shipScript.subsyetemAnchors)
+            foreach (UnitBaseScript.AnchorData anchorData in shipScript.subsyetemAnchors)
             {
-                if (libraryData.subsystems.ContainsKey(anchorData.anchorName) && anchorData.subsystem == null)
+                // Already have a subsystem (set in prefab)
+                if (anchorData.subsystem != null)
+                {
+                    anchorData.subsystem.GetComponent<SubsystemBaseScript>().Host = shipScript;
+                }
+                else if (libraryData.subsystems.ContainsKey(anchorData.anchorName) && anchorData.subsystem == null)
                 {
                     string subsystemTypeName = libraryData.subsystems[anchorData.anchorName];
                     GameObject temp = Instantiate(Resources.Load<GameObject>(gameObjectLibrary[subsystemTypeName]), anchorData.anchor.transform);
@@ -168,11 +174,6 @@ public class GameManager : MonoBehaviour
                         subsystemScript.Host = shipScript;
                     }
                 }
-                // Already have a subsystem (set in prefab)
-                else if (anchorData.subsystem != null)
-                {
-                    anchorData.subsystem.GetComponent<SubsystemBaseScript>().Host = shipScript;
-                }
             }
 
             // Init ability
@@ -182,7 +183,7 @@ public class GameManager : MonoBehaviour
                 AbilityBaseScript abilityScript = (AbilityBaseScript)result.AddComponent(abilityType);
                 foreach (string supportedSubsystemAnchor in ability.Value)
                 {
-                    if (supportedSubsystemAnchor != libraryData.shipTypeName)
+                    if (supportedSubsystemAnchor != libraryData.baseTypeName)
                     {
                         GameObject temp = shipScript.subsyetemAnchors.FirstOrDefault(x => x.anchorName == supportedSubsystemAnchor).subsystem;
                         if (temp == default)
@@ -200,7 +201,6 @@ public class GameManager : MonoBehaviour
                                 Debug.LogError("Subsystem cannot support ability: " + ability.Key);
                             }
                         }
-
                     }
                 }
                 abilityScript.Host = shipScript;
@@ -212,6 +212,7 @@ public class GameManager : MonoBehaviour
         else if (result.GetComponent<FighterBaseScript>() != null)
         {
             FighterBaseScript fighterScript = result.GetComponent<FighterBaseScript>();
+            fighterScript.UnitTypeID = unitType;
             fighterScript.PropertyDictionary = libraryData.properties;
 
             // Init ability
@@ -221,7 +222,7 @@ public class GameManager : MonoBehaviour
                 AbilityBaseScript abilityScript = (AbilityBaseScript)result.AddComponent(abilityType);
                 foreach (string supportedSubsystemAnchor in ability.Value)
                 {
-                    if (supportedSubsystemAnchor != libraryData.shipTypeName)
+                    if (supportedSubsystemAnchor != libraryData.baseTypeName)
                     {
                         // Haha, maybe I need change the rule
                         Debug.LogError("Fighter does not have any subsystem: " + supportedSubsystemAnchor);
@@ -238,6 +239,7 @@ public class GameManager : MonoBehaviour
         {
             i.BelongTo = belongTo;
         }
+        return result;
     }
 
     public void OnGameObjectCreated(GameObject self)

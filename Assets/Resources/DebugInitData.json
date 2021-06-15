@@ -12,7 +12,7 @@
   "initUnitLibraryData": [
     {
       "unitTypeName": "StandardFrigate",
-      "shipTypeName": "Frigate1",
+      "baseTypeName": "Frigate1",
       "properties": {},
       "subsystems": {
         "TurretAnchor1": "Turret1",
@@ -24,12 +24,13 @@
       },
       "abilities": {
         "Move": [ "Frigate1" ],
-        "Attack": [ "TurretAnchor1", "TurretAnchor2", "TurretAnchor3", "TurretAnchor4", "TurretAnchor5", "TurretAnchor6" ]
+        "Attack": [ "TurretAnchor1", "TurretAnchor2", "TurretAnchor3", "TurretAnchor4", "TurretAnchor5", "TurretAnchor6" ],
+        "Carrier": [ "FighterDeployAnchor1" ]
       }
     },
     {
       "unitTypeName": "StandardCruiser",
-      "shipTypeName": "Cruiser1",
+      "baseTypeName": "Cruiser1",
       "properties": {},
       "subsystems": {
         "TurretAnchor9": "FixedMissileLauncher1",
@@ -46,7 +47,7 @@
     },
     {
       "unitTypeName": "ScopeDrone",
-      "shipTypeName": "Drone1",
+      "baseTypeName": "Drone1",
       "properties": {},
       "subsystems": {},
       "abilities": { 

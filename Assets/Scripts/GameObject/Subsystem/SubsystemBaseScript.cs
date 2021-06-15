@@ -9,7 +9,8 @@ public class SubsystemBaseScript : RTSGameObjectBaseScript
         None,
         WeaponS,
         WeaponM,
-        WeaponL
+        WeaponL,
+        CarrierS,
     }
     // Set by editor
     public SubsystemScale scale;

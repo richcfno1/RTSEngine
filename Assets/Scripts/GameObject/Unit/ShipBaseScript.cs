@@ -184,7 +184,7 @@ public class ShipBaseScript : UnitBaseScript
                     intersectObjects.RemoveAll(x => x.CompareTag("Bullet"));
                     if (intersectObjects.Count == 0)
                     {
-                        to = newDestination;
+                        destination = to = newDestination;
                         find = true;
                         break;
                     }
