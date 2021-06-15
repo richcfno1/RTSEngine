@@ -4,28 +4,23 @@ using UnityEngine;
 
 public class ShipBaseScript : UnitBaseScript
 {
-    [Serializable]
-    public class AnchorData
-    {
-        public string anchorName;
-        public GameObject anchor;
-        public SubsystemBaseScript.SubsystemScale subsystemScale;
-        public GameObject subsystem;
-    }
-
-    // Set by editor
-    public List<AnchorData> subsyetemAnchors;
-    // Move
+    [Header("Move")]
+    [Tooltip("Move speed.")]
     public float agentMoveSpeed;
+    [Tooltip("Rotate speed.")]
     public float agentRotateSpeed;
-    public float agentAccelerateLimit;  // Set this to 0 to enable "forward only" mode.
+    [Tooltip("The limitation of max velocity change.")]
+    public float agentAccelerateLimit;
 
-    // Search
-    private float agentRadius;
+    [Header("Path finder")]
+    [Tooltip("The radius difference between each search sphere.")]
     public float searchStepDistance;
+    [Tooltip("The max radius of search sphere.")]
     public float searchStepMaxDistance;
+    [Tooltip("The number of points tested in each sphere.")]
     public float searchMaxRandomNumber;
 
+    private float agentRadius;
     private List<Vector3> moveBeacons = new List<Vector3>();
     private float lastFrameSpeedAdjust = 0;
     private Vector3 lastFrameMoveDirection = new Vector3();

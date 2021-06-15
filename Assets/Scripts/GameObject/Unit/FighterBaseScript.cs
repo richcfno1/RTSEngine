@@ -3,16 +3,21 @@ using UnityEngine;
 
 public class FighterBaseScript : UnitBaseScript
 {
-    // Move
+    [Header("Move")]
+    [Tooltip("Move speed.")]
     public float agentMoveSpeed;
+    [Tooltip("Rotate speed.")]
     public float agentRotateSpeed;
 
-    // Search
-    private float agentRadius;
+    [Header("Path finder")]
+    [Tooltip("The radius difference between each search sphere.")]
     public float searchStepDistance;
+    [Tooltip("The max radius of search sphere.")]
     public float searchStepMaxDistance;
+    [Tooltip("The number of points tested in each sphere.")]
     public float searchMaxRandomNumber;
 
+    private float agentRadius;
     private List<Vector3> moveBeacons = new List<Vector3>();
     private float slowDownRadius;
     private Rigidbody thisBody;

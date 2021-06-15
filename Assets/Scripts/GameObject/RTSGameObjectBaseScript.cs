@@ -16,10 +16,16 @@ public class RTSGameObjectBaseScript : MonoBehaviour
     }
 
     // Set by editor
+    [Header("RTS Game Object")]
+    [Tooltip("Scale of this object.")]
     public ObjectScale objectScale;
+    [Tooltip("Type ID, must be unique.")]
     public string typeID;
+    [Tooltip("Max HP, HP will be set to this value at begining.")]
     public float maxHP;
+    [Tooltip("The collider used in path finding algorithm, it must in layer navigation collider.")]
     public SphereCollider NavigationCollider;
+    [Tooltip("The effect played when the object is destroyed.")]
     public GameObject onDestroyedEffect;
 
     // Set when instantiate

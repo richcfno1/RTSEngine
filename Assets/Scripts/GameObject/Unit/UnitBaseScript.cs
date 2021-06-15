@@ -1,21 +1,45 @@
-using System.Collections;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class UnitBaseScript : RTSGameObjectBaseScript
 {
+    [Serializable]
+    public class AnchorData
+    {
+        public string anchorName;
+        public GameObject anchor;
+        public SubsystemBaseScript.SubsystemScale subsystemScale;
+        public GameObject subsystem;
+    }
+
     // Set by editor
+    [Header("Unit")]
+    [Header("Subsystem")]
+    [Tooltip("Subsystems, only anchor data without associated subsystem gameobject in prefab can be set in init data, or aka custome subsystem.\n" +
+        "This also means fighter should not have anchor data without subsystem gameobject.")]
+    public List<AnchorData> subsyetemAnchors;
+    [Header("Modifier")]
+    [Tooltip("Similar to HP, which can influence attack.")]
     public float maxAttackPower;
+    [Tooltip("Similar to HP, which can influence defence.")]
     public float maxDefencePower;
+    [Tooltip("Similar to HP, which can influence move.")]
     public float maxMovePower;
 
+    [Tooltip("Recover rate")]
+    [Range(0, 1)]
+    public float recoverAttackPower;
+    [Tooltip("Recover rate")]
+    [Range(0, 1)]
+    public float recoverDefencePower;
+    [Tooltip("Recover rate")]
+    [Range(0, 1)]
+    public float recoverMovePower;
+
+    [Header("Build")]
     public float buildProce;
     public float buildTime;
-
-    // These should be value between 0 and 1 for revover per second;
-    public float recoverAttackPower;
-    public float recoverDefencePower;
-    public float recoverMovePower;
 
     // Set when instantiate
     // Three basic value which indicate the performance of ability

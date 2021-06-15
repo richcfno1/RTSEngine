@@ -9757,14 +9757,6 @@ MonoBehaviour:
   maxHP: 1000
   NavigationCollider: {fileID: 8837834912701449260}
   onDestroyedEffect: {fileID: 2654098538732379622, guid: 7031f650af359d8479bd111557859629, type: 3}
-  maxAttackPower: 100
-  maxDefencePower: 100
-  maxMovePower: 100
-  buildProce: 0
-  buildTime: 0
-  recoverAttackPower: 1
-  recoverDefencePower: 1
-  recoverMovePower: 1
   subsyetemAnchors:
   - anchorName: TurretAnchor1
     anchor: {fileID: 4384353230819908595}
@@ -9798,6 +9790,14 @@ MonoBehaviour:
     anchor: {fileID: 6322422459963083518}
     subsystemScale: 0
     subsystem: {fileID: 0}
+  maxAttackPower: 100
+  maxDefencePower: 100
+  maxMovePower: 100
+  recoverAttackPower: 0.05
+  recoverDefencePower: 0.05
+  recoverMovePower: 0.05
+  buildProce: 0
+  buildTime: 0
   agentMoveSpeed: 20
   agentRotateSpeed: 20
   agentAccelerateLimit: 0.5
