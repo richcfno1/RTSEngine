@@ -49,52 +49,80 @@ public class ShipBaseScript : UnitBaseScript
         MovePower = Mathf.Clamp01(MovePower + recoverMovePower * Time.fixedDeltaTime);
 
         // Move
-        GetComponent<Rigidbody>().velocity = Vector3.zero;
-        GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
-        if (thisBody.position != destination)
+        thisBody.velocity = Vector3.zero;
+        thisBody.angularVelocity = Vector3.zero;
+        if (enablePathfinder)
         {
-            if (TestObstacle(thisBody.position, destination) == 0)
+            if (thisBody.position != destination)
             {
-                moveBeacons.Clear();
-                moveBeacons.Add(destination);
-            }
-            if (moveBeacons.Count != 0)
-            {
-                Vector3 moveVector = moveBeacons[0] - thisBody.position;
-                Vector3 rotateDirection = moveVector.normalized;
-                rotateDirection.y = 0;  // Consider to allow rotation in y?
-                thisBody.rotation = Quaternion.RotateTowards(thisBody.rotation, Quaternion.LookRotation(rotateDirection), Time.fixedDeltaTime * agentRotateSpeed);
-                float moveSpeedAdjust = Mathf.Cos(Mathf.Deg2Rad * Quaternion.Angle(thisBody.rotation, Quaternion.LookRotation(rotateDirection)));
-                moveSpeedAdjust = (moveSpeedAdjust + 1) / 2;
-                lastFrameSpeedAdjust = Mathf.Cos(Mathf.Deg2Rad * Quaternion.Angle(thisBody.rotation, Quaternion.LookRotation(lastFrameMoveDirection)));
-                moveSpeedAdjust = Mathf.Clamp(moveSpeedAdjust, lastFrameSpeedAdjust - agentAccelerateLimit, lastFrameSpeedAdjust + agentAccelerateLimit);
-                float moveDistance = agentMoveSpeed * Time.fixedDeltaTime * moveSpeedAdjust * MovePower;
-
-                lastFrameSpeedAdjust = moveSpeedAdjust;
-                lastFrameMoveDirection = moveVector.normalized;
-                if (moveVector.magnitude <= moveDistance)
+                if (TestObstacle(thisBody.position, destination) == 0)
                 {
-                    if (!TestObstacleAndPush(thisBody.position, moveBeacons[0]))
+                    moveBeacons.Clear();
+                    moveBeacons.Add(destination);
+                }
+                if (moveBeacons.Count != 0)
+                {
+                    Vector3 moveVector = moveBeacons[0] - thisBody.position;
+                    Vector3 rotateDirection = moveVector.normalized;
+                    rotateDirection.y = 0;  // Consider to allow rotation in y?
+                    thisBody.rotation = Quaternion.RotateTowards(thisBody.rotation, Quaternion.LookRotation(rotateDirection), Time.fixedDeltaTime * agentRotateSpeed);
+                    float moveSpeedAdjust = Mathf.Cos(Mathf.Deg2Rad * Quaternion.Angle(thisBody.rotation, Quaternion.LookRotation(rotateDirection)));
+                    moveSpeedAdjust = (moveSpeedAdjust + 1) / 2;
+                    lastFrameSpeedAdjust = Mathf.Cos(Mathf.Deg2Rad * Quaternion.Angle(thisBody.rotation, Quaternion.LookRotation(lastFrameMoveDirection)));
+                    moveSpeedAdjust = Mathf.Clamp(moveSpeedAdjust, lastFrameSpeedAdjust - agentAccelerateLimit, lastFrameSpeedAdjust + agentAccelerateLimit);
+                    float moveDistance = agentMoveSpeed * Time.fixedDeltaTime * moveSpeedAdjust * MovePower;
+
+                    lastFrameSpeedAdjust = moveSpeedAdjust;
+                    lastFrameMoveDirection = moveVector.normalized;
+                    if (moveVector.magnitude <= moveDistance)
                     {
-                        FindPath(thisBody.position, destination);
-                        return;
+                        if (!TestObstacleAndPush(thisBody.position, moveBeacons[0]))
+                        {
+                            FindPath(thisBody.position, destination);
+                            return;
+                        }
+                        thisBody.position = moveBeacons[0];
+                        moveBeacons.RemoveAt(0);
                     }
-                    thisBody.position = moveBeacons[0];
-                    moveBeacons.RemoveAt(0);
+                    else
+                    {
+                        if (!TestObstacleAndPush(thisBody.position, thisBody.position + moveVector.normalized * moveDistance))
+                        {
+                            FindPath(thisBody.position, destination);
+                            return;
+                        }
+                        thisBody.position += moveVector.normalized * moveDistance;
+                    }
                 }
                 else
                 {
-                    if (!TestObstacleAndPush(thisBody.position, thisBody.position + moveVector.normalized * moveDistance))
-                    {
-                        FindPath(thisBody.position, destination);
-                        return;
-                    }
+                    FindPath(thisBody.position, destination);
+                }
+            }
+        }
+        else
+        {
+            if (forcedMoveDestinations.Count != 0)
+            {
+                Vector3 moveVector = forcedMoveDestinations[0] - thisBody.position;
+                Vector3 rotateDirection = moveVector.normalized;
+                rotateDirection.y = 0;  // Consider to allow rotation in y?
+                thisBody.rotation = Quaternion.RotateTowards(thisBody.rotation, Quaternion.LookRotation(rotateDirection), Time.fixedDeltaTime * agentRotateSpeed);
+                float moveDistance = agentMoveSpeed * Time.fixedDeltaTime * MovePower;
+
+                if (moveVector.magnitude <= moveDistance)
+                {
+                    thisBody.position = forcedMoveDestinations[0];
+                    forcedMoveDestinations.RemoveAt(0);
+                }
+                else
+                {
                     thisBody.position += moveVector.normalized * moveDistance;
                 }
             }
             else
             {
-                FindPath(thisBody.position, destination);
+                SetDestination(transform.position);
             }
         }
     }
@@ -142,7 +170,7 @@ public class ShipBaseScript : UnitBaseScript
     {
         Vector3 direction = (to - from);
         List<Collider> toIgnore = new List<Collider>(Physics.OverlapSphere(from, agentRadius));
-        RaycastHit[] hits = Physics.CapsuleCastAll(from, to, agentRadius, direction, direction.magnitude, pathfinderLayerMask);
+        RaycastHit[] hits = Physics.CapsuleCastAll(from, to, agentRadius, direction, direction.magnitude, ~pathfinderLayerMask);
         List<RTSGameObjectBaseScript> avoidInfo = new List<RTSGameObjectBaseScript>();
         foreach (RaycastHit i in hits)
         {
@@ -169,7 +197,7 @@ public class ShipBaseScript : UnitBaseScript
     private void FindPath(Vector3 from, Vector3 to)
     {
         List<Vector3> result = new List<Vector3>();
-        List<Collider> intersectObjects = new List<Collider>(Physics.OverlapSphere(to, agentRadius, pathfinderLayerMask));
+        List<Collider> intersectObjects = new List<Collider>(Physics.OverlapSphere(to, agentRadius, ~pathfinderLayerMask));
         float nextStepDistance = searchStepDistance;
         bool find = false;
         if (intersectObjects.Count != 0)
@@ -180,7 +208,7 @@ public class ShipBaseScript : UnitBaseScript
                 {
                     Vector3 newDestination = to + nextStepDistance * 
                         new Vector3(UnityEngine.Random.value * 2 - 1, UnityEngine.Random.value * 2 - 1, UnityEngine.Random.value * 2 - 1).normalized;
-                    intersectObjects = new List<Collider>(Physics.OverlapSphere(newDestination, agentRadius, pathfinderLayerMask));
+                    intersectObjects = new List<Collider>(Physics.OverlapSphere(newDestination, agentRadius, ~pathfinderLayerMask));
                     intersectObjects.RemoveAll(x => x.CompareTag("Bullet"));
                     if (intersectObjects.Count == 0)
                     {
@@ -191,6 +219,10 @@ public class ShipBaseScript : UnitBaseScript
                 }
                 nextStepDistance += searchStepDistance;
             }
+        }
+        if (!find)
+        {
+            Debug.Log("Out of search limitation when determine alternative destination");
         }
         result.Add(to);
         float obstacleDistance = TestObstacle(from, to);
@@ -207,7 +239,7 @@ public class ShipBaseScript : UnitBaseScript
                 {
                     middle = obstaclePosition + nextStepDistance * 
                         new Vector3(UnityEngine.Random.value * 2 - 1, UnityEngine.Random.value * 2 - 1, UnityEngine.Random.value * 2 - 1).normalized;
-                    intersectObjects = new List<Collider>(Physics.OverlapSphere(middle, agentRadius, pathfinderLayerMask));
+                    intersectObjects = new List<Collider>(Physics.OverlapSphere(middle, agentRadius, ~pathfinderLayerMask));
                     intersectObjects.RemoveAll(x => x.CompareTag("Bullet"));
                     if (intersectObjects.Count == 0 && TestObstacle(middle, to) == 0 && TestObstacle(from, middle) == 0)
                     {
@@ -217,10 +249,11 @@ public class ShipBaseScript : UnitBaseScript
                 }
                 nextStepDistance += searchStepDistance;
             }
-            if (nextStepDistance > searchStepMaxDistance)
+            if (!find)
             {
-                Debug.Log("Out of search limitation");
+                Debug.Log("Out of search limitation when determine path");
                 moveBeacons.Clear();
+                return;
             }
             else
             {

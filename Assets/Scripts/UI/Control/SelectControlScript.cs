@@ -135,6 +135,23 @@ public class SelectControlScript : MonoBehaviour
         }
     }
 
+    private void ClearSelectedGameObjects()
+    {
+        foreach (KeyValuePair<string, List<GameObject>> i in SelectedGameObjects)
+        {
+            // Check objects with same type
+            foreach (GameObject j in i.Value)
+            {
+                if (j.GetComponent<cakeslice.Outline>() != null)
+                {
+                    Destroy(j.GetComponent<cakeslice.Outline>());
+                }
+            }
+        }
+        SelectedGameObjects.Clear();
+        SelectedOwnUnits = false;
+    }
+
     private void Judge()
     {
         ClearSelectedGameObjects();
@@ -202,23 +219,6 @@ public class SelectControlScript : MonoBehaviour
         obj.AddComponent<cakeslice.Outline>();
     }
 
-    private void ClearSelectedGameObjects()
-    {
-        foreach (KeyValuePair<string, List<GameObject>> i in SelectedGameObjects)
-        {
-            // Check objects with same type
-            foreach (GameObject j in i.Value)
-            {
-                if (j.GetComponent<cakeslice.Outline>() != null)
-                {
-                    Destroy(j.GetComponent<cakeslice.Outline>());
-                }
-            }
-        }
-        SelectedGameObjects.Clear();
-        SelectedOwnUnits = false;
-    }
-
     public Vector3 FindCenter()
     {
         Vector3 result = new Vector3();
@@ -240,6 +240,32 @@ public class SelectControlScript : MonoBehaviour
         else
         {
             return result / count;
+        }
+    }
+
+    public void SetSelectedGameObjects(List<GameObject> gameObjects)
+    {
+        ClearSelectedGameObjects();
+        if (gameObjects.Count > 1)
+        {
+            foreach (GameObject i in gameObjects)
+            {
+                if (i.GetComponent<UnitBaseScript>() != null && selfIndex == i.GetComponent<UnitBaseScript>().BelongTo)
+                {
+                    AddGameObject(i);
+                    SelectedOwnUnits = true;
+                }
+            }
+        }
+        else if (gameObjects.Count == 1)
+        {
+            GameObject selected = gameObjects[0];
+            if (selected != null)
+            {
+                AddGameObject(selected);
+                SelectedOwnUnits = selected.GetComponent<RTSGameObjectBaseScript>().BelongTo == selfIndex
+                    && selected.GetComponent<UnitBaseScript>() != null;
+            }
         }
     }
 }

@@ -54,7 +54,9 @@ public class UnitBaseScript : RTSGameObjectBaseScript
     protected float curDefencePower;
     protected float curMovePower;
 
+    protected bool enablePathfinder = true;
     protected Vector3 destination;
+    protected List<Vector3> forcedMoveDestinations;
 
     public override void CreateDamage(float damage, float attackPowerReduce, float defencePowerReduce, float movePowerReduce, GameObject from)
     {
@@ -64,8 +66,31 @@ public class UnitBaseScript : RTSGameObjectBaseScript
         base.CreateDamage(damage / DefencePower, attackPowerReduce, defencePowerReduce, movePowerReduce, from);
     }
 
-    public void SetDestination(Vector3 destination)
+    public virtual void SetDestination(Vector3 destination)
     {
+        enablePathfinder = true;
+        List<Collider> allColliders = new List<Collider>();
+        allColliders.AddRange(GetComponents<Collider>());
+        allColliders.AddRange(GetComponentsInChildren<Collider>());
+        allColliders.RemoveAll(x => x.gameObject.layer == 11);
+        foreach (Collider i in allColliders)
+        {
+            i.enabled = true;
+        }
         this.destination = destination;
+    }
+
+    public virtual void ForcedMove(List<Vector3> destinations)
+    {
+        enablePathfinder = false;
+        List<Collider> allColliders = new List<Collider>();
+        allColliders.AddRange(GetComponents<Collider>());
+        allColliders.AddRange(GetComponentsInChildren<Collider>());
+        allColliders.RemoveAll(x => x.gameObject.layer == 11);
+        foreach (Collider i in allColliders)
+        {
+            i.enabled = false;
+        }
+        forcedMoveDestinations = destinations;
     }
 }

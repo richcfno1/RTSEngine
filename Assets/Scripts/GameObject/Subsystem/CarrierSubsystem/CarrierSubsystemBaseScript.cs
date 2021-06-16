@@ -6,13 +6,19 @@ public class CarrierSubsystemBaseScript : SubsystemBaseScript
 {
     public List<string> products;
     public int carrierVolume;
+    public float deployTime;
     public List<Vector3> deployPath;
     public List<Vector3> retrievePath;
 
     [HideInInspector]
     public List<GameObject> deployedUnits = new List<GameObject>();
     public Dictionary<string, int> carriedUnits = new Dictionary<string, int>();
-    private int numberOfUnitInProducing = 0;
+
+    private Queue<string> produceQueue = new Queue<string>();
+    private Queue<string> deployQueue = new Queue<string>();
+
+    private bool isProducing = false;
+    private bool isDeploying = false;
 
     // Start is called before the first frame update
     void Start()
@@ -32,6 +38,47 @@ public class CarrierSubsystemBaseScript : SubsystemBaseScript
             OnSubsystemRepairedAction();
         }
         deployedUnits.RemoveAll(x => x == null);
+
+        if (!isProducing && produceQueue.Count != 0)
+        {
+            string unitType = produceQueue.Peek();
+            string baseTypeName = GameManager.GameManagerInstance.unitLibrary[unitType].baseTypeName;
+            isProducing = true;
+            StartCoroutine(FinishProducingAfter(unitType, Resources.Load<GameObject>(
+                GameManager.GameManagerInstance.gameObjectLibrary[baseTypeName]).GetComponent<UnitBaseScript>().buildTime));
+        }
+        if (!isDeploying && deployQueue.Count != 0)
+        {
+            string unitType = deployQueue.Peek();
+            isDeploying = true;
+            StartCoroutine(FinishDeployingAfter(unitType, deployTime));
+        }
+    }
+
+    private IEnumerator FinishProducingAfter(string type, float waitTime)
+    {
+        yield return new WaitForSeconds(waitTime);
+        produceQueue.Dequeue();
+        carriedUnits[type]++;
+        isProducing = false;
+    }
+
+    private IEnumerator FinishDeployingAfter(string type, float waitTime)
+    {
+        GameObject temp = GameManager.GameManagerInstance.InstantiateUnit(type,
+            transform.TransformPoint(transform.localPosition),
+            transform.rotation, GameObject.Find("GameObject").transform, BelongTo);
+        List<Vector3> trueDeployPath = new List<Vector3>();
+        foreach (Vector3 i in deployPath)
+        {
+            trueDeployPath.Add(transform.position + i);
+        }
+        temp.GetComponent<UnitBaseScript>().ForcedMove(trueDeployPath);
+        carriedUnits[type]--;
+        deployedUnits.Add(temp);
+        deployQueue.Dequeue();
+        yield return new WaitForSeconds(waitTime);
+        isDeploying = false;
     }
 
     // Do I really need set target for this subsystem..?
@@ -57,28 +104,19 @@ public class CarrierSubsystemBaseScript : SubsystemBaseScript
 
     public virtual void Produce(string type)
     {
-        int tempCount = 0;
+        int carriedCount = 0;
         foreach (KeyValuePair<string, int> i in carriedUnits)
         {
-            tempCount += i.Value;
+            carriedCount += i.Value;
         }
-        if (tempCount + numberOfUnitInProducing + deployedUnits.Count >= carrierVolume)
+        if (carriedCount + produceQueue.Count + deployedUnits.Count >= carrierVolume)
         {
             return;
         }
         if (products.Contains(type) && GameManager.GameManagerInstance.unitLibrary.ContainsKey(type))
         {
-            string baseTypeName = GameManager.GameManagerInstance.unitLibrary[type].baseTypeName;
-            numberOfUnitInProducing++;
-            StartCoroutine(FinishProducingAfter(type, Resources.Load<GameObject>(
-                GameManager.GameManagerInstance.gameObjectLibrary[baseTypeName]).GetComponent<UnitBaseScript>().buildTime));
+            produceQueue.Enqueue(type);
         }
-    }
-    private IEnumerator FinishProducingAfter(string type, float waitTime)
-    {
-        yield return new WaitForSeconds(waitTime);
-        carriedUnits[type]++;
-        numberOfUnitInProducing--;
     }
 
     public virtual void Deploy(string type)
@@ -87,11 +125,7 @@ public class CarrierSubsystemBaseScript : SubsystemBaseScript
         {
             if (carriedUnits[type] > 0)
             {
-                GameObject temp = GameManager.GameManagerInstance.InstantiateUnit(type, 
-                    transform.TransformPoint(transform.localPosition + new Vector3(0, 10, 0)), 
-                    transform.rotation, GameObject.Find("GameObject").transform, BelongTo);
-                carriedUnits[type]--;
-                deployedUnits.Add(temp);
+                deployQueue.Enqueue(type);
             }
         }
     }

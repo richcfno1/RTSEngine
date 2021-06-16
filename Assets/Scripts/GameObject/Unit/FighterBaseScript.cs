@@ -48,41 +48,68 @@ public class FighterBaseScript : UnitBaseScript
         // Move
         thisBody.velocity = Vector3.zero;
         thisBody.angularVelocity = Vector3.zero;
-        if (thisBody.position != destination)
+        if (enablePathfinder)
         {
-            if (TestObstacle(thisBody.position, destination) == 0)
+            if (thisBody.position != destination)
             {
-                moveBeacons.Clear();
-                moveBeacons.Add(destination);
-            }
-            if (moveBeacons.Count != 0)
-            {
-                Vector3 moveVector = moveBeacons[0] - thisBody.position;
-                Vector3 rotateDirection = moveVector.normalized;
-                thisBody.rotation = Quaternion.RotateTowards(thisBody.rotation, Quaternion.LookRotation(rotateDirection), Time.fixedDeltaTime * agentRotateSpeed);
-                float moveDistance = agentMoveSpeed * Time.fixedDeltaTime * Mathf.Clamp01((thisBody.position - destination).magnitude / slowDownRadius);
-                if (moveVector.magnitude <= moveDistance)
+                if (TestObstacle(thisBody.position, destination) == 0)
                 {
-                    if (TestObstacle(thisBody.position, moveBeacons[0]) != 0)
+                    moveBeacons.Clear();
+                    moveBeacons.Add(destination);
+                }
+                if (moveBeacons.Count != 0)
+                {
+                    Vector3 moveVector = moveBeacons[0] - thisBody.position;
+                    Vector3 rotateDirection = moveVector.normalized;
+                    thisBody.rotation = Quaternion.RotateTowards(thisBody.rotation, Quaternion.LookRotation(rotateDirection), Time.fixedDeltaTime * agentRotateSpeed);
+                    float moveDistance = agentMoveSpeed * Time.fixedDeltaTime * Mathf.Clamp01((thisBody.position - destination).magnitude / slowDownRadius);
+                    if (moveVector.magnitude <= moveDistance)
                     {
-                        FindPath(thisBody.position, destination);
-                        return;
+                        if (TestObstacle(thisBody.position, moveBeacons[0]) != 0)
+                        {
+                            FindPath(thisBody.position, destination);
+                            return;
+                        }
+                        thisBody.position = moveBeacons[0];
+                        moveBeacons.RemoveAt(0);
                     }
-                    thisBody.position = moveBeacons[0];
-                    moveBeacons.RemoveAt(0);
+                    else
+                    {
+                        if (TestObstacle(thisBody.position, thisBody.position + transform.forward * moveDistance) != 0)
+                        {
+                            FindPath(thisBody.position, destination);
+                        }
+                        thisBody.position += transform.forward * moveDistance;
+                    }
                 }
                 else
                 {
-                    if (TestObstacle(thisBody.position, thisBody.position + transform.forward * moveDistance) != 0)
-                    {
-                        FindPath(thisBody.position, destination);
-                    }
-                    thisBody.position += transform.forward * moveDistance;
+                    FindPath(thisBody.position, destination);
+                }
+            }
+        }
+        else
+        {
+            if (forcedMoveDestinations.Count != 0)
+            {
+                Vector3 moveVector = forcedMoveDestinations[0] - thisBody.position;
+                Vector3 rotateDirection = moveVector.normalized;
+                thisBody.rotation = Quaternion.RotateTowards(thisBody.rotation, Quaternion.LookRotation(rotateDirection), Time.fixedDeltaTime * agentRotateSpeed);
+                float moveDistance = agentMoveSpeed * Time.fixedDeltaTime * MovePower;
+
+                if (moveVector.magnitude <= moveDistance)
+                {
+                    thisBody.position = forcedMoveDestinations[0];
+                    forcedMoveDestinations.RemoveAt(0);
+                }
+                else
+                {
+                    thisBody.position += moveVector.normalized * moveDistance;
                 }
             }
             else
             {
-                FindPath(thisBody.position, destination);
+                SetDestination(transform.position);
             }
         }
     }
@@ -169,7 +196,7 @@ public class FighterBaseScript : UnitBaseScript
             if (nextStepDistance > searchStepMaxDistance)
             {
                 Debug.Log("Out of search limitation");
-                moveBeacons.Clear();
+                result.Clear();
             }
             else
             {

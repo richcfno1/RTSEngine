@@ -66,6 +66,9 @@ public class CarrierControlPanelScript : MonoBehaviour
                         gameObjectLibrary[i.GetComponent<RTSGameObjectBaseScript>().typeID]).icon;
                     temp.GetComponent<Image>().sprite = icon;
                     temp.GetComponentInChildren<Text>().text = "";
+                    temp.GetComponent<Button>().onClick.RemoveAllListeners();
+                    temp.GetComponent<Button>().onClick.AddListener(
+                        () => { SelectControlScript.SelectionControlInstance.SetSelectedGameObjects(new List<GameObject>() { i }); });
                     count++;
                 }
                 foreach (KeyValuePair<string, int> i in carrierSubsystem.carriedUnits)
@@ -86,6 +89,9 @@ public class CarrierControlPanelScript : MonoBehaviour
                             gameObjectLibrary[GameManager.GameManagerInstance.unitLibrary[i.Key].baseTypeName]).icon;
                         temp.GetComponent<Image>().sprite = icon;
                         temp.GetComponentInChildren<Text>().text = "Undeployed";
+                        temp.GetComponent<Button>().onClick.RemoveAllListeners();
+                        temp.GetComponent<Button>().onClick.AddListener(
+                            () => { carrierScript.UseAbility(new List<object>() { CarrierAbilityScript.UseType.Deploy, i.Key}); });
                         count++;
                     }
                 }
@@ -103,6 +109,7 @@ public class CarrierControlPanelScript : MonoBehaviour
                     }
                     temp.GetComponent<Image>().sprite = fighterStatusGridPrefab.GetComponent<Image>().sprite;
                     temp.GetComponentInChildren<Text>().text = "";
+                    temp.GetComponent<Button>().onClick.RemoveAllListeners();
                     count++;
                 }
 
@@ -125,7 +132,8 @@ public class CarrierControlPanelScript : MonoBehaviour
                             gameObjectLibrary[GameManager.GameManagerInstance.unitLibrary[i].baseTypeName]).icon;
                     temp.GetComponent<Image>().sprite = icon;
                     temp.GetComponent<Button>().onClick.RemoveAllListeners();
-                    temp.GetComponent<Button>().onClick.AddListener(() => { carrierSubsystem.Produce(i); });
+                    temp.GetComponent<Button>().onClick.AddListener(
+                        () => { carrierScript.UseAbility(new List<object>() { CarrierAbilityScript.UseType.Produce, i }); });
                 }
                 return;
             }
