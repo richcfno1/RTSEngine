@@ -24,7 +24,7 @@ public class RTSGameObjectBaseScript : MonoBehaviour
     [Tooltip("Max HP, HP will be set to this value at begining.")]
     public float maxHP;
     [Tooltip("The collider used in path finding algorithm, it must in layer navigation collider.")]
-    public SphereCollider NavigationCollider;
+    public BoxCollider NavigationCollider;
     [Tooltip("The effect played when the object is destroyed.")]
     public GameObject onDestroyedEffect;
 

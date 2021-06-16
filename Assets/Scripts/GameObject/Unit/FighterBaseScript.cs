@@ -22,13 +22,11 @@ public class FighterBaseScript : UnitBaseScript
     private float slowDownRadius;
     private Rigidbody thisBody;
 
-    private int pathfinderLayerMask = 1 << 11;
-
     // Start is called before the first frame update
     void Start()
     {
         OnCreatedAction();
-        agentRadius = NavigationCollider.radius;
+        agentRadius = NavigationCollider.size.magnitude;
         destination = transform.position;
         slowDownRadius = 360 / agentRotateSpeed * agentMoveSpeed / Mathf.PI / 2;
         thisBody = GetComponent<Rigidbody>();
@@ -132,7 +130,7 @@ public class FighterBaseScript : UnitBaseScript
     {
         Vector3 direction = (to - from).normalized;
         List<Collider> toIgnore = new List<Collider>(Physics.OverlapSphere(from, agentRadius));
-        RaycastHit[] hits = Physics.CapsuleCastAll(from, from + direction * agentRadius * 5, agentRadius, direction, direction.magnitude, ~pathfinderLayerMask);
+        RaycastHit[] hits = Physics.CapsuleCastAll(from, from + direction * agentRadius * 5, agentRadius, direction, direction.magnitude);
         foreach (RaycastHit i in hits)
         {
             if (!toIgnore.Contains(i.collider) && !i.collider.CompareTag("Bullet"))
@@ -146,7 +144,7 @@ public class FighterBaseScript : UnitBaseScript
     private void FindPath(Vector3 from, Vector3 to)
     {
         List<Vector3> result = new List<Vector3>();
-        List<Collider> intersectObjects = new List<Collider>(Physics.OverlapSphere(to, agentRadius, ~pathfinderLayerMask));
+        List<Collider> intersectObjects = new List<Collider>(Physics.OverlapSphere(to, agentRadius));
         intersectObjects.RemoveAll(x => x.CompareTag("Bullet"));
         float nextStepDistance = searchStepDistance;
         bool find = false;
@@ -157,7 +155,7 @@ public class FighterBaseScript : UnitBaseScript
                 for (int i = 0; i < searchMaxRandomNumber; i++)
                 {
                     Vector3 newDestination = to + nextStepDistance * new Vector3(Random.value * 2 - 1, Random.value * 2 - 1, Random.value * 2 - 1).normalized;
-                    intersectObjects = new List<Collider>(Physics.OverlapSphere(newDestination, agentRadius, ~pathfinderLayerMask));
+                    intersectObjects = new List<Collider>(Physics.OverlapSphere(newDestination, agentRadius));
                     intersectObjects.RemoveAll(x => x.CompareTag("Bullet"));
                     if (intersectObjects.Count == 0)
                     {
@@ -183,7 +181,7 @@ public class FighterBaseScript : UnitBaseScript
                 for (int i = 0; i < searchMaxRandomNumber; i++)
                 {
                     middle = obstaclePosition + nextStepDistance * new Vector3(Random.value * 2 - 1, Random.value * 2 - 1, Random.value * 2 - 1).normalized;
-                    intersectObjects = new List<Collider>(Physics.OverlapSphere(middle, agentRadius, ~pathfinderLayerMask));
+                    intersectObjects = new List<Collider>(Physics.OverlapSphere(middle, agentRadius));
                     intersectObjects.RemoveAll(x => x.CompareTag("Bullet"));
                     if (intersectObjects.Count == 0 && TestObstacle(middle, to) == 0 && TestObstacle(from, middle) == 0)
                     {

@@ -9755,7 +9755,7 @@ MonoBehaviour:
   objectScale: 2
   typeID: Frigate1
   maxHP: 1000
-  NavigationCollider: {fileID: 8837834912701449260}
+  NavigationCollider: {fileID: 123687225256051201}
   onDestroyedEffect: {fileID: 2654098538732379622, guid: 7031f650af359d8479bd111557859629, type: 3}
   subsyetemAnchors:
   - anchorName: TurretAnchor1
@@ -10096,7 +10096,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 75241835574686490}
-  - component: {fileID: 8837834912701449260}
+  - component: {fileID: 123687225256051201}
   m_Layer: 11
   m_Name: NavigationCollider
   m_TagString: NavigationCollider
@@ -10118,8 +10118,8 @@ Transform:
   m_Father: {fileID: 4274729091555711549}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!135 &8837834912701449260
-SphereCollider:
+--- !u!65 &123687225256051201
+BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -10129,7 +10129,7 @@ SphereCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 15
+  m_Size: {x: 20, y: 10, z: 30}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &5612288896538001442
 GameObject:

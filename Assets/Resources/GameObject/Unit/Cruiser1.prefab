@@ -39,7 +39,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8691863728725015748}
-  - component: {fileID: 6541379769639571763}
+  - component: {fileID: 7883202169524740837}
   m_Layer: 11
   m_Name: NavigationCollider
   m_TagString: NavigationCollider
@@ -61,8 +61,8 @@ Transform:
   m_Father: {fileID: 1523402152106728166}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!135 &6541379769639571763
-SphereCollider:
+--- !u!65 &7883202169524740837
+BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -72,7 +72,7 @@ SphereCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 40
+  m_Size: {x: 40, y: 20, z: 70}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &2185499172691980624
 GameObject:
@@ -4995,7 +4995,7 @@ MonoBehaviour:
   objectScale: 3
   typeID: Cruiser1
   maxHP: 3000
-  NavigationCollider: {fileID: 6541379769639571763}
+  NavigationCollider: {fileID: 7883202169524740837}
   onDestroyedEffect: {fileID: 1066807000801938636, guid: 81d16fdabfe449f4a8245b498a0d5180, type: 3}
   subsyetemAnchors:
   - anchorName: TurretAnchor1

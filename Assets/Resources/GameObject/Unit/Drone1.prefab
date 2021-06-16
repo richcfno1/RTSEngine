@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7394003427611575685}
-  - component: {fileID: 8460801701357751187}
+  - component: {fileID: 9192400354402439984}
   m_Layer: 11
   m_Name: NavigationCollider
   m_TagString: NavigationCollider
@@ -31,8 +31,8 @@ Transform:
   m_Father: {fileID: 6235938092276527633}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!135 &8460801701357751187
-SphereCollider:
+--- !u!65 &9192400354402439984
+BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -42,7 +42,7 @@ SphereCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 2.5
+  m_Size: {x: 4, y: 4, z: 4}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &6235938091808974526
 GameObject:
@@ -9799,16 +9799,17 @@ MonoBehaviour:
   objectScale: 1
   typeID: Drone1
   maxHP: 100
-  NavigationCollider: {fileID: 8460801701357751187}
+  NavigationCollider: {fileID: 9192400354402439984}
   onDestroyedEffect: {fileID: 5508734696245866625, guid: 1b6e346305eb28a4fa9a6e2453c446d6, type: 3}
+  subsyetemAnchors: []
   maxAttackPower: 50
   maxDefencePower: 50
   maxMovePower: 50
-  buildProce: 0
-  buildTime: 0
   recoverAttackPower: 0.1
   recoverDefencePower: 0.1
   recoverMovePower: 0.1
+  buildProce: 0
+  buildTime: 0
   agentMoveSpeed: 40
   agentRotateSpeed: 180
   searchStepDistance: 20

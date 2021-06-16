@@ -71,7 +71,7 @@ public class CarrierSubsystemBaseScript : SubsystemBaseScript
         List<Vector3> trueDeployPath = new List<Vector3>();
         foreach (Vector3 i in deployPath)
         {
-            trueDeployPath.Add(transform.position + i);
+            trueDeployPath.Add(transform.TransformPoint(i));
         }
         temp.GetComponent<UnitBaseScript>().ForcedMove(trueDeployPath);
         carriedUnits[type]--;
