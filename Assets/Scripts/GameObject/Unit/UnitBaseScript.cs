@@ -56,7 +56,8 @@ public class UnitBaseScript : RTSGameObjectBaseScript
 
     protected bool enablePathfinder = true;
     protected Vector3 destination;
-    protected List<Vector3> forcedMoveDestinations;
+    protected List<Vector3> moveBeacons = new List<Vector3>();
+    protected List<Vector3> forcedMoveDestinations = new List<Vector3>();
 
     public override void CreateDamage(float damage, float attackPowerReduce, float defencePowerReduce, float movePowerReduce, GameObject from)
     {
@@ -78,6 +79,7 @@ public class UnitBaseScript : RTSGameObjectBaseScript
             i.enabled = true;
         }
         this.destination = destination;
+        moveBeacons.Clear();
     }
 
     public virtual void ForcedMove(List<Vector3> destinations)

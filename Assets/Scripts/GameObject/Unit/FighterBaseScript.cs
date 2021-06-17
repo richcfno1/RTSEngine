@@ -18,7 +18,6 @@ public class FighterBaseScript : UnitBaseScript
     public float searchMaxRandomNumber;
 
     private float agentRadius;
-    private List<Vector3> moveBeacons = new List<Vector3>();
     private float slowDownRadius;
     private Rigidbody thisBody;
 

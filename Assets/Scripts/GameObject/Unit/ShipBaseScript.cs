@@ -21,7 +21,6 @@ public class ShipBaseScript : UnitBaseScript
     public float searchMaxRandomNumber;
 
     private List<Vector3> agentCorners = new List<Vector3>();
-    private List<Vector3> moveBeacons = new List<Vector3>();
     private float lastFrameSpeedAdjust = 0;
     private Vector3 lastFrameMoveDirection = new Vector3();
     private Rigidbody thisBody;
@@ -172,7 +171,7 @@ public class ShipBaseScript : UnitBaseScript
             RaycastHit hit;
             if (Physics.Raycast(from - transform.position + transform.TransformPoint(i), direction, out hit, distance))
             {
-                if (!toIgnore.Contains(hit.collider))
+                if (!toIgnore.Contains(hit.collider) && hit.collider.GetComponentInParent<RTSGameObjectBaseScript>() != null)
                 {
                     if (objectScale <= hit.collider.GetComponentInParent<RTSGameObjectBaseScript>().objectScale)
                     {
