@@ -207,16 +207,32 @@ public class SelectControlScript : MonoBehaviour
         {
             return;
         }
-        string type = obj.GetComponent<RTSGameObjectBaseScript>().typeID;
-        if (SelectedGameObjects.ContainsKey(type))
+        if (obj.GetComponent<UnitBaseScript>() != null)
         {
-            SelectedGameObjects[type].Add(obj);
+            string type = obj.GetComponent<UnitBaseScript>().UnitTypeID;
+            if (SelectedGameObjects.ContainsKey(type))
+            {
+                SelectedGameObjects[type].Add(obj);
+            }
+            else
+            {
+                SelectedGameObjects[type] = new List<GameObject>() { obj };
+            }
+            obj.AddComponent<cakeslice.Outline>();
         }
         else
         {
-            SelectedGameObjects[type] = new List<GameObject>() { obj };
+            string type = obj.GetComponent<RTSGameObjectBaseScript>().typeID;
+            if (SelectedGameObjects.ContainsKey(type))
+            {
+                SelectedGameObjects[type].Add(obj);
+            }
+            else
+            {
+                SelectedGameObjects[type] = new List<GameObject>() { obj };
+            }
+            obj.AddComponent<cakeslice.Outline>();
         }
-        obj.AddComponent<cakeslice.Outline>();
     }
 
     public Vector3 FindCenter()

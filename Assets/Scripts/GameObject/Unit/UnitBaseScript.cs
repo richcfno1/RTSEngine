@@ -38,7 +38,7 @@ public class UnitBaseScript : RTSGameObjectBaseScript
     public float recoverMovePower;
 
     [Header("Build")]
-    public float buildProce;
+    public float buildPrice;
     public float buildTime;
 
     // Set when instantiate

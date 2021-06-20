@@ -1002,8 +1002,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 600, y: 160}
-  m_SizeDelta: {x: 1200, y: 320}
+  m_AnchoredPosition: {x: 240, y: 200}
+  m_SizeDelta: {x: 480, y: 400}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1582630428
 MonoBehaviour:
@@ -1079,7 +1079,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b5922348459a6034db2141807636b48c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gridPrefab: {fileID: 8065706608796064133, guid: f8f4ee607a40c9d42b1d07d21485ad2e, type: 3}
+  detailGridPrefab: {fileID: 0}
+  infoGridPrefab: {fileID: 8065706608796064133, guid: f8f4ee607a40c9d42b1d07d21485ad2e, type: 3}
 --- !u!1 &1629883364
 GameObject:
   m_ObjectHideFlags: 0
@@ -1310,7 +1311,7 @@ MonoBehaviour:
   shiftSpeed: 100
   zoomSpeed: 1000
   rotateSpeed: 500
-  minInfoBarDisplaySize: 10
+  minInfoBarDisplaySize: 20
   InfoBarPrefab: {fileID: 5368361597663915679, guid: f53449e0e098f5047b53a28153c80e71, type: 3}
   Canvas: {fileID: 837343067}
 --- !u!114 &2125966571
