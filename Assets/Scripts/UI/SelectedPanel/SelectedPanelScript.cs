@@ -207,7 +207,7 @@ public class SelectedPanelScript : MonoBehaviour
             script.MoveUp.color = new Color(1, 1, 1, 0);
             script.MoveDown.color = new Color(1, 1, 1, 0);
         }
-        script.numberCount.text = "What should I display?";
+        script.numberCount.text = "";
     }
 
     private void UpdateInfoGrid(InfoGridScript script, List<GameObject> allGameObjects)
