@@ -96,9 +96,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 882ef886950e14e478204afe6b69c4a8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  objectScale: 0
   typeID: Turret2
   maxHP: 150
+  NavigationCollider: {fileID: 0}
   onDestroyedEffect: {fileID: 0}
+  radius: 2
+  ratio: 0.5
   scale: 1
   repairPercentRequired: 0.5
   supportedAbility: 02000000

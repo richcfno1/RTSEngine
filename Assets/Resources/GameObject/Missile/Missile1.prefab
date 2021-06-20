@@ -4905,6 +4905,8 @@ MonoBehaviour:
   maxHP: 50
   NavigationCollider: {fileID: 0}
   onDestroyedEffect: {fileID: 0}
+  radius: 1
+  ratio: 0.2
   agentMoveSpeed: 100
   agentRotateSpeed: 180
   timeBeforeEnableCollider: 1
@@ -4916,7 +4918,7 @@ MonoBehaviour:
   attackPowerReduce: 0
   defencePowerReduce: 0
   movePowerReduce: 0
-  damageRadius: 30
+  damageRadius: 15
   damageTriggerRadius: 5
   maxTime: 20
   interruptEffect: {fileID: 4429858986618900989, guid: 2b55776db2996b2429d6fa98d550f3f4, type: 3}

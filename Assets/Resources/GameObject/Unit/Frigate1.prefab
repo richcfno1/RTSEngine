@@ -9757,6 +9757,8 @@ MonoBehaviour:
   maxHP: 1000
   NavigationCollider: {fileID: 123687225256051201}
   onDestroyedEffect: {fileID: 2654098538732379622, guid: 7031f650af359d8479bd111557859629, type: 3}
+  radius: 15
+  ratio: 0.3
   subsyetemAnchors:
   - anchorName: TurretAnchor1
     anchor: {fileID: 4384353230819908595}

@@ -9801,6 +9801,8 @@ MonoBehaviour:
   maxHP: 100
   NavigationCollider: {fileID: 9192400354402439984}
   onDestroyedEffect: {fileID: 5508734696245866625, guid: 1b6e346305eb28a4fa9a6e2453c446d6, type: 3}
+  radius: 5
+  ratio: 0.3
   subsyetemAnchors: []
   maxAttackPower: 50
   maxDefencePower: 50
