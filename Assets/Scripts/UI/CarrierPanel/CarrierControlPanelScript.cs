@@ -6,13 +6,16 @@ using UnityEngine.UI;
 
 public class CarrierControlPanelScript : MonoBehaviour
 {
-    public GameObject fighterStatusList;
-    public GameObject productList;
-    public GameObject fighterStatusGridPrefab;
-    public GameObject productGridPrefab;
+    public GameObject carrierStatusGridPrefab;
+    public Transform carrierStatusList;
 
-    private List<GameObject> allFighterStatusGrids = new List<GameObject>();
-    private List<GameObject> allProductGrids = new List<GameObject>();
+    private List<CarrierSubsystemBaseScript> allCarrierSubsystemScripts = new List<CarrierSubsystemBaseScript>();
+    private List<CarrierAbilityScript> allCarrierAbilityScripts = new List<CarrierAbilityScript>();
+    private Dictionary<string, List<GameObject>> deployedList = new Dictionary<string, List<GameObject>>();
+    private Dictionary<string, int> carriedList = new Dictionary<string, int>();
+    private Dictionary<string, int> capacityList = new Dictionary<string, int>();
+
+    private Dictionary<string, GameObject> allCarrierStatusGrids = new Dictionary<string, GameObject>();
 
     // Start is called before the first frame update
     void Start()
@@ -25,9 +28,20 @@ public class CarrierControlPanelScript : MonoBehaviour
     {
         if (SelectControlScript.SelectionControlInstance.SelectedOwnUnits)
         {
-            GameObject carrier = SelectControlScript.SelectionControlInstance.GetAllGameObjects().
-                FirstOrDefault(x => x != null && x.GetComponent<CarrierAbilityScript>() != null);
-            if (carrier != default)
+            allCarrierSubsystemScripts.Clear();
+            allCarrierAbilityScripts.Clear();
+            SelectControlScript.SelectionControlInstance.GetAllGameObjects().
+                FindAll(x => x != null && x.GetComponent<CarrierAbilityScript>() != null).
+                ForEach(x =>
+                {
+                    allCarrierAbilityScripts.Add(x.GetComponent<CarrierAbilityScript>());
+                    foreach (SubsystemBaseScript i in x.GetComponent<CarrierAbilityScript>().SupportedBy)
+                    {
+                        allCarrierSubsystemScripts.Add((CarrierSubsystemBaseScript)i);
+                    }
+                });
+
+            if (allCarrierSubsystemScripts.Count != 0)
             {
                 // Enable panel
                 GetComponent<CanvasGroup>().alpha = 1;
@@ -36,104 +50,79 @@ public class CarrierControlPanelScript : MonoBehaviour
                 {
                     InputManager.InputManagerInstance.notSelectUI.Add(gameObject);
                 }
-                CarrierAbilityScript carrierScript = carrier.GetComponent<CarrierAbilityScript>();
-                if (carrierScript.SupportedBy.Count != 1)
-                {
-                    Debug.LogError("Assertion failed: carrier ability supported by incorrect number of subsystem.");
-                }
-                CarrierSubsystemBaseScript carrierSubsystem = (CarrierSubsystemBaseScript)carrierScript.SupportedBy[0];
 
-                // Status
-                int count = 0;
-                int existedGrid = allFighterStatusGrids.Count;
-                foreach (GameObject i in carrierSubsystem.deployedUnits)
+                // Collect data
+                deployedList.Clear();
+                carriedList.Clear();
+                capacityList.Clear();
+                float maxDeployProgress = 0;
+                float maxProduceProgress = 0;
+                foreach (CarrierSubsystemBaseScript i in allCarrierSubsystemScripts)
                 {
-                    if (i == null)
+                    foreach (KeyValuePair<string, List<GameObject>> j in i.deployedUnits)
                     {
-                        continue;
-                    }
-                    GameObject temp;
-                    if (count < existedGrid)
-                    {
-                        temp = allFighterStatusGrids[count];
-                    }
-                    else
-                    {
-                        temp = Instantiate(fighterStatusGridPrefab, fighterStatusList.transform);
-                        allFighterStatusGrids.Add(temp);
-                    }
-                    Sprite icon = Resources.Load<RTSGameObjectData>(GameManager.GameManagerInstance.
-                        gameObjectLibrary[i.GetComponent<RTSGameObjectBaseScript>().typeID]).icon;
-                    temp.GetComponent<Image>().sprite = icon;
-                    temp.GetComponentInChildren<Text>().text = "";
-                    temp.GetComponent<Button>().onClick.RemoveAllListeners();
-                    temp.GetComponent<Button>().onClick.AddListener(
-                        () => { SelectControlScript.SelectionControlInstance.SetSelectedGameObjects(new List<GameObject>() { i }); });
-                    count++;
-                }
-                foreach (KeyValuePair<string, int> i in carrierSubsystem.carriedUnits)
-                {
-                    for (int j = 0; j < i.Value; j++)
-                    {
-                        GameObject temp;
-                        if (count < existedGrid)
+                        if (!deployedList.ContainsKey(j.Key))
                         {
-                            temp = allFighterStatusGrids[count];
+                            deployedList.Add(j.Key, new List<GameObject>(j.Value));
                         }
                         else
                         {
-                            temp = Instantiate(fighterStatusGridPrefab, fighterStatusList.transform);
-                            allFighterStatusGrids.Add(temp);
+                            deployedList[j.Key].AddRange(j.Value);
                         }
-                        Sprite icon = Resources.Load<RTSGameObjectData>(GameManager.GameManagerInstance.
-                            gameObjectLibrary[GameManager.GameManagerInstance.unitLibrary[i.Key].baseTypeName]).icon;
-                        temp.GetComponent<Image>().sprite = icon;
-                        temp.GetComponentInChildren<Text>().text = "Undeployed";
-                        temp.GetComponent<Button>().onClick.RemoveAllListeners();
-                        temp.GetComponent<Button>().onClick.AddListener(
-                            () => { carrierScript.UseAbility(new List<object>() { CarrierAbilityScript.UseType.Deploy, i.Key}); });
-                        count++;
                     }
-                }
-               while (count < carrierSubsystem.carrierVolume)
-                {
-                    GameObject temp;
-                    if (count < existedGrid)
+                    foreach (KeyValuePair<string, int> j in i.carriedUnits)
                     {
-                        temp = allFighterStatusGrids[count];
+                        if (!carriedList.ContainsKey(j.Key))
+                        {
+                            carriedList.Add(j.Key, j.Value);
+                        }
+                        else
+                        {
+                            carriedList[j.Key] += j.Value;
+                        }
                     }
-                    else
+                    foreach (string j in i.products)
                     {
-                        temp = Instantiate(fighterStatusGridPrefab, fighterStatusList.transform);
-                        allFighterStatusGrids.Add(temp);
+                        if (!capacityList.ContainsKey(j))
+                        {
+                            capacityList.Add(j, i.carrierCapacity);
+                        }
+                        else
+                        {
+                            capacityList[j] += i.carrierCapacity;
+                        }
                     }
-                    temp.GetComponent<Image>().sprite = fighterStatusGridPrefab.GetComponent<Image>().sprite;
-                    temp.GetComponentInChildren<Text>().text = "";
-                    temp.GetComponent<Button>().onClick.RemoveAllListeners();
-                    count++;
+                    maxDeployProgress = Mathf.Max(maxDeployProgress, i.DeployProgress);
+                    maxProduceProgress = Mathf.Max(maxProduceProgress, i.ProduceProgress);
                 }
+                List<string> allTypes = new List<string>();
+                allTypes.AddRange(deployedList.Keys);
+                allTypes.AddRange(carriedList.Keys);
+                allTypes.AddRange(capacityList.Keys);
+                allTypes = allTypes.Distinct().ToList();
 
-                // Product
-                count = 0;
-                existedGrid = allProductGrids.Count;
-                foreach (string i in carrierSubsystem.products)
+                // Draw grid
+                foreach (string i in allTypes)
                 {
                     GameObject temp;
-                    if (count < existedGrid)
+                    if (allCarrierStatusGrids.ContainsKey(i))
                     {
-                        temp = allProductGrids[count];
+                        temp = allCarrierStatusGrids[i];
                     }
                     else
                     {
-                        temp = Instantiate(productGridPrefab, productList.transform);
-                        allProductGrids.Add(temp);
-                    }
-                    Sprite icon = Resources.Load<RTSGameObjectData>(GameManager.GameManagerInstance.
+                        temp = Instantiate(carrierStatusGridPrefab, carrierStatusList);
+                        Sprite icon = Resources.Load<RTSGameObjectData>(GameManager.GameManagerInstance.
                             gameObjectLibrary[GameManager.GameManagerInstance.unitLibrary[i].baseTypeName]).icon;
-                    temp.GetComponent<Image>().sprite = icon;
-                    temp.GetComponent<Button>().onClick.RemoveAllListeners();
-                    temp.GetComponent<Button>().onClick.AddListener(
-                        () => { carrierScript.UseAbility(new List<object>() { CarrierAbilityScript.UseType.Produce, i }); });
+                        temp.GetComponent<CarrierStatusGridScript>().InitStatusGrid(i, icon, this);
+                        allCarrierStatusGrids.Add(i, temp);
+                    }
+                    temp.GetComponent<CarrierStatusGridScript>().UpdateStatusGrid(
+                        deployedList.ContainsKey(i) ? deployedList[i].Count : 0,
+                        carriedList.ContainsKey(i) ? carriedList[i] : 0,
+                        capacityList.ContainsKey(i) ? capacityList[i] : 0,
+                        maxDeployProgress,
+                        maxProduceProgress);
                 }
                 return;
             }
@@ -142,15 +131,64 @@ public class CarrierControlPanelScript : MonoBehaviour
         GetComponent<CanvasGroup>().alpha = 0;
         GetComponent<CanvasGroup>().interactable = false;
         InputManager.InputManagerInstance.notSelectUI.Remove(gameObject);
-        foreach (GameObject i in allFighterStatusGrids)
+        foreach (KeyValuePair<string, GameObject> i in allCarrierStatusGrids)
         {
-            Destroy(i);
+            Destroy(i.Value);
         }
-        allFighterStatusGrids.Clear();
-        foreach (GameObject i in allProductGrids)
+        allCarrierStatusGrids.Clear();
+    }
+
+    public void SelectUnitsByType(string type)
+    {
+        SelectControlScript.SelectionControlInstance.SetSelectedGameObjects(deployedList[type]);
+    }
+    
+    public void DepolyUnitsByType(string type)
+    {
+        foreach (CarrierAbilityScript i in allCarrierAbilityScripts)
         {
-            Destroy(i);
+            if (i.UseAbility(new List<object>() { CarrierAbilityScript.UseType.Deploy, type }))
+            {
+                return;
+            }
         }
-        allProductGrids.Clear();
+    }
+
+    // TODO: command of 4 buttons
+    public void OnDepolyAllButtonClicked()
+    {
+        foreach (KeyValuePair<string, int> i in carriedList)
+        {
+            foreach (CarrierAbilityScript j in allCarrierAbilityScripts)
+            {
+                while (j.UseAbility(new List<object>() { CarrierAbilityScript.UseType.Deploy, i.Key })) ;
+            }
+        }
+    }
+
+    public void OnRecallAllButtonClicked()
+    {
+        Debug.Log("Unimplemented function: OnRecallAllButtonClicked");
+    }
+
+    public void OnSelecteAllButtonClicked()
+    {
+        List<GameObject> temp = new List<GameObject>();
+        foreach (KeyValuePair<string, List<GameObject>> i in deployedList)
+        {
+            temp.AddRange(i.Value);
+        }
+        SelectControlScript.SelectionControlInstance.SetSelectedGameObjects(temp);
+    }
+
+    public void OnProduceAllButtonClicked()
+    {
+        foreach (KeyValuePair<string, int> i in capacityList)
+        {
+            foreach (CarrierAbilityScript j in allCarrierAbilityScripts)
+            {
+                while (j.UseAbility(new List<object>() { CarrierAbilityScript.UseType.Produce, i.Key })) ;
+            }
+        }
     }
 }

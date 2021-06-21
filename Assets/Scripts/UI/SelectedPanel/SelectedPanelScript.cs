@@ -17,9 +17,9 @@ public class SelectedPanelScript : MonoBehaviour
     public GameObject infoGridPrefab;
 
     private SelectedType lastSelectedType;
-    private DetailGridScript detaillGrid;
-    private Dictionary<int, InfoGridScript> allGridsByIndex = new Dictionary<int, InfoGridScript>(); // RTSGO index -> Grid
-    private Dictionary<string, InfoGridScript> allGridsByType = new Dictionary<string, InfoGridScript>(); // RTSGO type -> Grid
+    private SelectedDetailGridScript selectedDetaillGrid;
+    private Dictionary<int, SelectedInfoGridScript> allGridsByIndex = new Dictionary<int, SelectedInfoGridScript>(); // RTSGO index -> Grid
+    private Dictionary<string, SelectedInfoGridScript> allGridsByType = new Dictionary<string, SelectedInfoGridScript>(); // RTSGO type -> Grid
     // Start is called before the first frame update
     void Start()
     {
@@ -40,13 +40,13 @@ public class SelectedPanelScript : MonoBehaviour
                 {
                     ClearAll();
                 }
-                if (detaillGrid == null)
+                if (selectedDetaillGrid == null)
                 {
-                    detaillGrid = Instantiate(detailGridPrefab, transform).GetComponent<DetailGridScript>();
+                    selectedDetaillGrid = Instantiate(detailGridPrefab, transform).GetComponent<SelectedDetailGridScript>();
                 }
-                detaillGrid.icon.sprite = Resources.Load<RTSGameObjectData>(GameManager.GameManagerInstance.
+                selectedDetaillGrid.icon.sprite = Resources.Load<RTSGameObjectData>(GameManager.GameManagerInstance.
                     gameObjectLibrary[allSelectedList[0].GetComponent<RTSGameObjectBaseScript>().typeID]).icon;
-                UpdateDetailGrid(detaillGrid, allSelectedList[0]);
+                selectedDetaillGrid.UpdateDetailGrid(allSelectedList[0]);
                 lastSelectedType = SelectedType.Single;
             }
             else
@@ -66,22 +66,22 @@ public class SelectedPanelScript : MonoBehaviour
                     int index = i.GetComponent<RTSGameObjectBaseScript>().Index;
                     if (allGridsByIndex.ContainsKey(index))
                     {
-                        UpdateInfoGrid(allGridsByIndex[index], i);
+                        allGridsByIndex[index].UpdateInfoGrid(i);
                     }
                     else
                     {
                         GameObject temp = Instantiate(infoGridPrefab, transform);
-                        temp.GetComponent<InfoGridScript>().icon.sprite = Resources.Load<RTSGameObjectData>(
+                        temp.GetComponent<SelectedInfoGridScript>().icon.sprite = Resources.Load<RTSGameObjectData>(
                             GameManager.GameManagerInstance.gameObjectLibrary[i.GetComponent<RTSGameObjectBaseScript>().typeID]).icon;
                         temp.GetComponent<Button>().onClick.AddListener(
                             () => { SelectControlScript.SelectionControlInstance.SetSelectedGameObjects(new List<GameObject>() { i }); });
-                        UpdateInfoGrid(temp.GetComponent<InfoGridScript>(), i);
-                        allGridsByIndex.Add(index, temp.GetComponent<InfoGridScript>());
+                        temp.GetComponent<SelectedInfoGridScript>().UpdateInfoGrid(i);
+                        allGridsByIndex.Add(index, temp.GetComponent<SelectedInfoGridScript>());
                     }
                     allIndex.Add(index);
                 }
                 List<int> toRemove = new List<int>();
-                foreach (KeyValuePair<int, InfoGridScript> i in allGridsByIndex)
+                foreach (KeyValuePair<int, SelectedInfoGridScript> i in allGridsByIndex)
                 {
                     if (!allIndex.Contains(i.Key))
                     {
@@ -110,22 +110,22 @@ public class SelectedPanelScript : MonoBehaviour
             {
                 if (allGridsByType.ContainsKey(i.Key))
                 {
-                    UpdateInfoGrid(allGridsByType[i.Key], i.Value);
+                    allGridsByType[i.Key].UpdateInfoGrid(i.Value);
                 }
                 else
                 {
                     GameObject temp = Instantiate(infoGridPrefab, transform);
-                    temp.GetComponent<InfoGridScript>().icon.sprite = Resources.Load<RTSGameObjectData>(
+                    temp.GetComponent<SelectedInfoGridScript>().icon.sprite = Resources.Load<RTSGameObjectData>(
                         GameManager.GameManagerInstance.gameObjectLibrary[GameManager.GameManagerInstance.unitLibrary[i.Key].baseTypeName]).icon;
                     temp.GetComponent<Button>().onClick.AddListener(
                             () => { SelectControlScript.SelectionControlInstance.SetSelectedGameObjects(i.Value); });
-                    UpdateInfoGrid(temp.GetComponent<InfoGridScript>(), i.Value);
-                    allGridsByType.Add(i.Key, temp.GetComponent<InfoGridScript>());
+                    temp.GetComponent<SelectedInfoGridScript>().UpdateInfoGrid(i.Value);
+                    allGridsByType.Add(i.Key, temp.GetComponent<SelectedInfoGridScript>());
                 }
             }
             List<string> allTypes = new List<string>(allSelected.Keys);
             List<string> toRemove = new List<string>();
-            foreach (KeyValuePair<string, InfoGridScript> i in allGridsByType)
+            foreach (KeyValuePair<string, SelectedInfoGridScript> i in allGridsByType)
             {
                 if (!allTypes.Contains(i.Key))
                 {
@@ -148,260 +148,17 @@ public class SelectedPanelScript : MonoBehaviour
         }
     }
 
-    private void UpdateDetailGrid(DetailGridScript script, GameObject targetRTSGameObject)
-    {
-        script.hpdata.value = targetRTSGameObject.GetComponent<RTSGameObjectBaseScript>().HP / targetRTSGameObject.GetComponent<RTSGameObjectBaseScript>().maxHP;
-        UnitBaseScript tempUnitScript = targetRTSGameObject.GetComponent<UnitBaseScript>();
-        if (tempUnitScript != null)
-        {
-            script.typeName.text = tempUnitScript.UnitTypeID;
-            // Attack
-            if (tempUnitScript.AttackPower > 1)
-            {
-                script.AttackUp.color = new Color(1, 1, 1, Mathf.Clamp01(tempUnitScript.AttackPower - 1 + 0.5f));
-                script.AttackDown.color = new Color(1, 1, 1, 0);
-            }
-            else if (tempUnitScript.AttackPower < 1)
-            {
-                script.AttackUp.color = new Color(1, 1, 1, 0);
-                script.AttackDown.color = new Color(1, 1, 1, Mathf.Clamp01(1 - tempUnitScript.AttackPower + 0.5f));
-            }
-            else
-            {
-                script.AttackUp.color = new Color(1, 1, 1, 0);
-                script.AttackDown.color = new Color(1, 1, 1, 0);
-            }
-            // Defence
-            if (tempUnitScript.DefencePower > 1)
-            {
-                script.DefenceUp.color = new Color(1, 1, 1, Mathf.Clamp01(tempUnitScript.DefencePower - 1 + 0.5f));
-                script.DefenceDown.color = new Color(1, 1, 1, 0);
-            }
-            else if (tempUnitScript.DefencePower < 1)
-            {
-                script.DefenceUp.color = new Color(1, 1, 1, 0);
-                script.DefenceDown.color = new Color(1, 1, 1, Mathf.Clamp01(1 - tempUnitScript.DefencePower + 0.5f));
-            }
-            else
-            {
-                script.DefenceUp.color = new Color(1, 1, 1, 0);
-                script.DefenceDown.color = new Color(1, 1, 1, 0);
-            }
-            // Move
-            if (tempUnitScript.MovePower > 1)
-            {
-                script.MoveUp.color = new Color(1, 1, 1, Mathf.Clamp01(tempUnitScript.MovePower - 1 + 0.5f));
-                script.MoveDown.color = new Color(1, 1, 1, 0);
-            }
-            else if (tempUnitScript.MovePower < 1)
-            {
-                script.MoveUp.color = new Color(1, 1, 1, 0);
-                script.MoveDown.color = new Color(1, 1, 1, Mathf.Clamp01(1 - tempUnitScript.MovePower + 0.5f));
-            }
-            else
-            {
-                script.MoveUp.color = new Color(1, 1, 1, 0);
-                script.MoveDown.color = new Color(1, 1, 1, 0);
-            }
-        }
-        else
-        {
-            script.typeName.text = targetRTSGameObject.GetComponent<RTSGameObjectBaseScript>().typeID;
-            script.AttackUp.color = new Color(1, 1, 1, 0);
-            script.AttackDown.color = new Color(1, 1, 1, 0);
-            script.DefenceUp.color = new Color(1, 1, 1, 0);
-            script.DefenceDown.color = new Color(1, 1, 1, 0);
-            script.MoveUp.color = new Color(1, 1, 1, 0);
-            script.MoveDown.color = new Color(1, 1, 1, 0);
-        }
-    }
-
-    private void UpdateInfoGrid(InfoGridScript script, GameObject targetRTSGameObject)
-    {
-        script.hpdata.value = targetRTSGameObject.GetComponent<RTSGameObjectBaseScript>().HP / targetRTSGameObject.GetComponent<RTSGameObjectBaseScript>().maxHP;
-        UnitBaseScript tempUnitScript = targetRTSGameObject.GetComponent<UnitBaseScript>();
-        if (tempUnitScript != null)
-        {
-            // Attack
-            if (tempUnitScript.AttackPower > 1)
-            {
-                script.AttackUp.color = new Color(1, 1, 1, Mathf.Clamp01(tempUnitScript.AttackPower - 1 + 0.5f));
-                script.AttackDown.color = new Color(1, 1, 1, 0);
-            }
-            else if (tempUnitScript.AttackPower < 1)
-            {
-                script.AttackUp.color = new Color(1, 1, 1, 0);
-                script.AttackDown.color = new Color(1, 1, 1, Mathf.Clamp01(1 - tempUnitScript.AttackPower + 0.5f));
-            }
-            else
-            {
-                script.AttackUp.color = new Color(1, 1, 1, 0);
-                script.AttackDown.color = new Color(1, 1, 1, 0);
-            }
-            // Defence
-            if (tempUnitScript.DefencePower > 1)
-            {
-                script.DefenceUp.color = new Color(1, 1, 1, Mathf.Clamp01(tempUnitScript.DefencePower - 1 + 0.5f));
-                script.DefenceDown.color = new Color(1, 1, 1, 0);
-            }
-            else if (tempUnitScript.DefencePower < 1)
-            {
-                script.DefenceUp.color = new Color(1, 1, 1, 0);
-                script.DefenceDown.color = new Color(1, 1, 1, Mathf.Clamp01(1 - tempUnitScript.DefencePower + 0.5f));
-            }
-            else
-            {
-                script.DefenceUp.color = new Color(1, 1, 1, 0);
-                script.DefenceDown.color = new Color(1, 1, 1, 0);
-            }
-            // Move
-            if (tempUnitScript.MovePower > 1)
-            {
-                script.MoveUp.color = new Color(1, 1, 1, Mathf.Clamp01(tempUnitScript.MovePower - 1 + 0.5f));
-                script.MoveDown.color = new Color(1, 1, 1, 0);
-            }
-            else if (tempUnitScript.MovePower < 1)
-            {
-                script.MoveUp.color = new Color(1, 1, 1, 0);
-                script.MoveDown.color = new Color(1, 1, 1, Mathf.Clamp01(1 - tempUnitScript.MovePower + 0.5f));
-            }
-            else
-            {
-                script.MoveUp.color = new Color(1, 1, 1, 0);
-                script.MoveDown.color = new Color(1, 1, 1, 0);
-            }
-        }
-        else
-        {
-            script.AttackUp.color = new Color(1, 1, 1, 0);
-            script.AttackDown.color = new Color(1, 1, 1, 0);
-            script.DefenceUp.color = new Color(1, 1, 1, 0);
-            script.DefenceDown.color = new Color(1, 1, 1, 0);
-            script.MoveUp.color = new Color(1, 1, 1, 0);
-            script.MoveDown.color = new Color(1, 1, 1, 0);
-        }
-        script.numberCount.text = "";
-    }
-
-    private void UpdateInfoGrid(InfoGridScript script, List<GameObject> allGameObjects)
-    {
-        if (script == null)
-        {
-            return;
-        }
-        bool isUnit = true;
-        int count = 0;
-        float avgHP = 0;
-        float maxHP = 0;
-        float avgAttackPower = 0;
-        float avgDefencePower = 0;
-        float avgMovePower = 0;
-        foreach (GameObject i in allGameObjects)
-        {
-            if (i != null)
-            {
-                if (i.GetComponent<UnitBaseScript>() != null)
-                {
-                    count++;
-                    avgHP += i.GetComponent<UnitBaseScript>().HP;
-                    maxHP = i.GetComponent<UnitBaseScript>().maxHP;
-                    avgAttackPower += i.GetComponent<UnitBaseScript>().AttackPower;
-                    avgDefencePower += i.GetComponent<UnitBaseScript>().DefencePower;
-                    avgMovePower += i.GetComponent<UnitBaseScript>().MovePower;
-                    isUnit = true;
-                }
-                else if (i.GetComponent<RTSGameObjectBaseScript>() != null)
-                {
-                    count++;
-                    avgHP += i.GetComponent<RTSGameObjectBaseScript>().HP;
-                    maxHP = i.GetComponent<UnitBaseScript>().maxHP;
-                    isUnit = false;
-                }
-                else
-                {
-                    Debug.LogError("Impossible object type.");
-                    return;
-                }
-            }
-        }
-        avgAttackPower /= count;
-        avgDefencePower /= count;
-        avgMovePower /= count;
-        script.hpdata.value = avgHP / maxHP;
-        if (isUnit)
-        {
-            // Attack
-            if (avgAttackPower > 1)
-            {
-                script.AttackUp.color = new Color(1, 1, 1, Mathf.Clamp01(avgAttackPower - 1 + 0.5f));
-                script.AttackDown.color = new Color(1, 1, 1, 0);
-            }
-            else if (avgAttackPower < 1)
-            {
-                script.AttackUp.color = new Color(1, 1, 1, 0);
-                script.AttackDown.color = new Color(1, 1, 1, Mathf.Clamp01(1 - avgAttackPower + 0.5f));
-            }
-            else
-            {
-                script.AttackUp.color = new Color(1, 1, 1, 0);
-                script.AttackDown.color = new Color(1, 1, 1, 0);
-            }
-            // Defence
-            if (avgDefencePower > 1)
-            {
-                script.DefenceUp.color = new Color(1, 1, 1, Mathf.Clamp01(avgDefencePower - 1 + 0.5f));
-                script.DefenceDown.color = new Color(1, 1, 1, 0);
-            }
-            else if (avgDefencePower < 1)
-            {
-                script.DefenceUp.color = new Color(1, 1, 1, 0);
-                script.DefenceDown.color = new Color(1, 1, 1, Mathf.Clamp01(1 - avgDefencePower + 0.5f));
-            }
-            else
-            {
-                script.DefenceUp.color = new Color(1, 1, 1, 0);
-                script.DefenceDown.color = new Color(1, 1, 1, 0);
-            }
-            // Move
-            if (avgMovePower > 1)
-            {
-                script.MoveUp.color = new Color(1, 1, 1, Mathf.Clamp01(avgMovePower - 1 + 0.5f));
-                script.MoveDown.color = new Color(1, 1, 1, 0);
-            }
-            else if (avgMovePower < 1)
-            {
-                script.MoveUp.color = new Color(1, 1, 1, 0);
-                script.MoveDown.color = new Color(1, 1, 1, Mathf.Clamp01(1 - avgMovePower + 0.5f));
-            }
-            else
-            {
-                script.MoveUp.color = new Color(1, 1, 1, 0);
-                script.MoveDown.color = new Color(1, 1, 1, 0);
-            }
-        }
-        else
-        {
-            script.AttackUp.color = new Color(1, 1, 1, 0);
-            script.AttackDown.color = new Color(1, 1, 1, 0);
-            script.DefenceUp.color = new Color(1, 1, 1, 0);
-            script.DefenceDown.color = new Color(1, 1, 1, 0);
-            script.MoveUp.color = new Color(1, 1, 1, 0);
-            script.MoveDown.color = new Color(1, 1, 1, 0);
-        }
-        script.numberCount.text = count.ToString();
-    }
-
     private void ClearAll()
     {
         // Clear all
         if (lastSelectedType != SelectedType.Empty)
         {
-            if (detaillGrid != null && detaillGrid.gameObject != null)
+            if (selectedDetaillGrid != null && selectedDetaillGrid.gameObject != null)
             {
-                Destroy(detaillGrid.gameObject);
-                detaillGrid = null;
+                Destroy(selectedDetaillGrid.gameObject);
+                selectedDetaillGrid = null;
             }
-            foreach (KeyValuePair<int, InfoGridScript> i in allGridsByIndex)
+            foreach (KeyValuePair<int, SelectedInfoGridScript> i in allGridsByIndex)
             {
                 if (i.Value != null && i.Value.gameObject != null)
                 {
@@ -409,7 +166,7 @@ public class SelectedPanelScript : MonoBehaviour
                 }
             }
             allGridsByIndex.Clear();
-            foreach (KeyValuePair<string, InfoGridScript> i in allGridsByType)
+            foreach (KeyValuePair<string, SelectedInfoGridScript> i in allGridsByType)
             {
                 if (i.Value != null && i.Value.gameObject != null)
                 {

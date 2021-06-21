@@ -9810,8 +9810,8 @@ MonoBehaviour:
   recoverAttackPower: 0.1
   recoverDefencePower: 0.1
   recoverMovePower: 0.1
-  buildProce: 0
-  buildTime: 0
+  buildPrice: 0
+  buildTime: 5
   agentMoveSpeed: 40
   agentRotateSpeed: 180
   searchStepDistance: 20

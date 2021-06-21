@@ -8,7 +8,7 @@ public class CarrierAbilityScript : AbilityBaseScript
     {
         Produce,
         Deploy,
-        Retrieve
+        Recall
     }
 
     // Start is called before the first frame update
@@ -20,14 +20,7 @@ public class CarrierAbilityScript : AbilityBaseScript
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.U))
-        {
-            UseAbility(new List<object>() { UseType.Produce, "ScopeDrone" });
-        }
-        if (Input.GetKeyDown(KeyCode.I))
-        {
-            UseAbility(new List<object>() { UseType.Deploy, "ScopeDrone" });
-        }
+
     }
 
     public override bool UseAbility(List<object> target)
@@ -37,32 +30,33 @@ public class CarrierAbilityScript : AbilityBaseScript
         {
             return false;
         }
-        // Should not use foreach because there should be only one subsystem support carrier ability
+        // Should not use foreach because there should be only one subsystem support carrier ability?
+        bool result = false;
         if (base.UseAbility(target))
         {
             if ((UseType)abilityTarget[0] == UseType.Produce)
             {
                 foreach (CarrierSubsystemBaseScript i in SupportedBy)
                 {
-                    i.Produce((string)abilityTarget[1]);
+                    result |= i.Produce((string)abilityTarget[1]);
                 }
             }
             else if ((UseType)abilityTarget[0] == UseType.Deploy)
             {
                 foreach (CarrierSubsystemBaseScript i in SupportedBy)
                 {
-                    i.Deploy((string)abilityTarget[1]);
+                    result |= i.Deploy((string)abilityTarget[1]);
                 }
             }
-            else if ((UseType)abilityTarget[0] == UseType.Retrieve)
+            else if ((UseType)abilityTarget[0] == UseType.Recall)
             {
                 foreach (CarrierSubsystemBaseScript i in SupportedBy)
                 {
-                    i.Retrieve((GameObject)abilityTarget[1]);
+                    result |= i.Recall((GameObject)abilityTarget[1]);
                 }
             }
-            return true;
+            return result;
         }
-        return false;
+        return result;
     }
 }

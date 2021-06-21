@@ -9794,7 +9794,7 @@ MonoBehaviour:
   recoverAttackPower: 0.05
   recoverDefencePower: 0.05
   recoverMovePower: 0.05
-  buildProce: 0
+  buildPrice: 0
   buildTime: 0
   agentMoveSpeed: 20
   agentRotateSpeed: 20
@@ -15134,23 +15134,11 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2121049342510388789, guid: 3338623f932932540ba962553c1a1ef3, type: 3}
-      propertyPath: scale
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 2121049342510388789, guid: 3338623f932932540ba962553c1a1ef3, type: 3}
-      propertyPath: deployPath.Array.size
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2121049342510388789, guid: 3338623f932932540ba962553c1a1ef3, type: 3}
-      propertyPath: retrievePath.Array.size
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2121049342510388789, guid: 3338623f932932540ba962553c1a1ef3, type: 3}
       propertyPath: deployPath.Array.data[0].x
       value: 15
       objectReference: {fileID: 0}
     - target: {fileID: 2121049342510388789, guid: 3338623f932932540ba962553c1a1ef3, type: 3}
-      propertyPath: retrievePath.Array.data[0].x
+      propertyPath: recallPath.Array.data[0].x
       value: -15
       objectReference: {fileID: 0}
     - target: {fileID: 2121049342510388811, guid: 3338623f932932540ba962553c1a1ef3, type: 3}
