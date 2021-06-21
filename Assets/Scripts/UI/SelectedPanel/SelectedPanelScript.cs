@@ -35,7 +35,7 @@ public class SelectedPanelScript : MonoBehaviour
         {
             if (allSelectedList.Count == 1)
             {
-                GetComponent<GridLayoutGroup>().enabled = false;
+                GetComponent<GridLayoutGroup>().cellSize = new Vector2(480, 400);
                 if (lastSelectedType != SelectedType.Single)
                 {
                     ClearAll();
@@ -51,7 +51,7 @@ public class SelectedPanelScript : MonoBehaviour
             }
             else
             {
-                GetComponent<GridLayoutGroup>().enabled = true;
+                GetComponent<GridLayoutGroup>().cellSize = new Vector2(240, 80);
                 if (lastSelectedType != SelectedType.SameType)
                 {
                     ClearAll();
@@ -59,6 +59,10 @@ public class SelectedPanelScript : MonoBehaviour
                 List<int> allIndex = new List<int>();
                 foreach (GameObject i in allSelectedList)
                 {
+                    if (i == null)
+                    {
+                        continue;
+                    }
                     int index = i.GetComponent<RTSGameObjectBaseScript>().Index;
                     if (allGridsByIndex.ContainsKey(index))
                     {
@@ -97,7 +101,7 @@ public class SelectedPanelScript : MonoBehaviour
         }
         else if (allSelected.Count > 1)
         {
-            GetComponent<GridLayoutGroup>().enabled = true;
+            GetComponent<GridLayoutGroup>().cellSize = new Vector2(240, 80);
             if (lastSelectedType != SelectedType.Multi)
             {
                 ClearAll();
@@ -144,10 +148,10 @@ public class SelectedPanelScript : MonoBehaviour
         }
     }
 
-    private void UpdateDetailGrid(DetailGridScript script, GameObject oneGameObject)
+    private void UpdateDetailGrid(DetailGridScript script, GameObject targetRTSGameObject)
     {
-        script.hpdata.value = oneGameObject.GetComponent<RTSGameObjectBaseScript>().HP / oneGameObject.GetComponent<RTSGameObjectBaseScript>().maxHP;
-        UnitBaseScript tempUnitScript = oneGameObject.GetComponent<UnitBaseScript>();
+        script.hpdata.value = targetRTSGameObject.GetComponent<RTSGameObjectBaseScript>().HP / targetRTSGameObject.GetComponent<RTSGameObjectBaseScript>().maxHP;
+        UnitBaseScript tempUnitScript = targetRTSGameObject.GetComponent<UnitBaseScript>();
         if (tempUnitScript != null)
         {
             script.typeName.text = tempUnitScript.UnitTypeID;
@@ -202,7 +206,7 @@ public class SelectedPanelScript : MonoBehaviour
         }
         else
         {
-            script.typeName.text = gameObject.GetComponent<RTSGameObjectBaseScript>().typeID;
+            script.typeName.text = targetRTSGameObject.GetComponent<RTSGameObjectBaseScript>().typeID;
             script.AttackUp.color = new Color(1, 1, 1, 0);
             script.AttackDown.color = new Color(1, 1, 1, 0);
             script.DefenceUp.color = new Color(1, 1, 1, 0);
@@ -212,10 +216,10 @@ public class SelectedPanelScript : MonoBehaviour
         }
     }
 
-    private void UpdateInfoGrid(InfoGridScript script, GameObject oneGameObject)
+    private void UpdateInfoGrid(InfoGridScript script, GameObject targetRTSGameObject)
     {
-        script.hpdata.value = oneGameObject.GetComponent<RTSGameObjectBaseScript>().HP / oneGameObject.GetComponent<RTSGameObjectBaseScript>().maxHP;
-        UnitBaseScript tempUnitScript = oneGameObject.GetComponent<UnitBaseScript>();
+        script.hpdata.value = targetRTSGameObject.GetComponent<RTSGameObjectBaseScript>().HP / targetRTSGameObject.GetComponent<RTSGameObjectBaseScript>().maxHP;
+        UnitBaseScript tempUnitScript = targetRTSGameObject.GetComponent<UnitBaseScript>();
         if (tempUnitScript != null)
         {
             // Attack
