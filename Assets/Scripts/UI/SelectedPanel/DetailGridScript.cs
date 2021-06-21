@@ -1,18 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class DetailGridScript : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    public Image icon;
+    public Text typeName;
+    public Slider hpdata;
+    public Image AttackUp;
+    public Image AttackDown;
+    public Image DefenceUp;
+    public Image DefenceDown;
+    public Image MoveUp;
+    public Image MoveDown;
+    public Text otherInfo;
 }

@@ -33,7 +33,7 @@ public class SelectedPanelScript : MonoBehaviour
         List<GameObject> allSelectedList = SelectControlScript.SelectionControlInstance.GetAllGameObjects();
         if (allSelected.Count == 1)
         {
-            if (false && allSelectedList.Count == 1)
+            if (allSelectedList.Count == 1)
             {
                 GetComponent<GridLayoutGroup>().enabled = false;
                 if (lastSelectedType != SelectedType.Single)
@@ -44,6 +44,8 @@ public class SelectedPanelScript : MonoBehaviour
                 {
                     detaillGrid = Instantiate(detailGridPrefab, transform).GetComponent<DetailGridScript>();
                 }
+                detaillGrid.icon.sprite = Resources.Load<RTSGameObjectData>(GameManager.GameManagerInstance.
+                    gameObjectLibrary[allSelectedList[0].GetComponent<RTSGameObjectBaseScript>().typeID]).icon;
                 UpdateDetailGrid(detaillGrid, allSelectedList[0]);
                 lastSelectedType = SelectedType.Single;
             }
@@ -67,6 +69,8 @@ public class SelectedPanelScript : MonoBehaviour
                         GameObject temp = Instantiate(infoGridPrefab, transform);
                         temp.GetComponent<InfoGridScript>().icon.sprite = Resources.Load<RTSGameObjectData>(
                             GameManager.GameManagerInstance.gameObjectLibrary[i.GetComponent<RTSGameObjectBaseScript>().typeID]).icon;
+                        temp.GetComponent<Button>().onClick.AddListener(
+                            () => { SelectControlScript.SelectionControlInstance.SetSelectedGameObjects(new List<GameObject>() { i }); });
                         UpdateInfoGrid(temp.GetComponent<InfoGridScript>(), i);
                         allGridsByIndex.Add(index, temp.GetComponent<InfoGridScript>());
                     }
@@ -109,6 +113,8 @@ public class SelectedPanelScript : MonoBehaviour
                     GameObject temp = Instantiate(infoGridPrefab, transform);
                     temp.GetComponent<InfoGridScript>().icon.sprite = Resources.Load<RTSGameObjectData>(
                         GameManager.GameManagerInstance.gameObjectLibrary[GameManager.GameManagerInstance.unitLibrary[i.Key].baseTypeName]).icon;
+                    temp.GetComponent<Button>().onClick.AddListener(
+                            () => { SelectControlScript.SelectionControlInstance.SetSelectedGameObjects(i.Value); });
                     UpdateInfoGrid(temp.GetComponent<InfoGridScript>(), i.Value);
                     allGridsByType.Add(i.Key, temp.GetComponent<InfoGridScript>());
                 }
@@ -140,7 +146,70 @@ public class SelectedPanelScript : MonoBehaviour
 
     private void UpdateDetailGrid(DetailGridScript script, GameObject oneGameObject)
     {
-        // TODO
+        script.hpdata.value = oneGameObject.GetComponent<RTSGameObjectBaseScript>().HP / oneGameObject.GetComponent<RTSGameObjectBaseScript>().maxHP;
+        UnitBaseScript tempUnitScript = oneGameObject.GetComponent<UnitBaseScript>();
+        if (tempUnitScript != null)
+        {
+            script.typeName.text = tempUnitScript.UnitTypeID;
+            // Attack
+            if (tempUnitScript.AttackPower > 1)
+            {
+                script.AttackUp.color = new Color(1, 1, 1, Mathf.Clamp01(tempUnitScript.AttackPower - 1 + 0.5f));
+                script.AttackDown.color = new Color(1, 1, 1, 0);
+            }
+            else if (tempUnitScript.AttackPower < 1)
+            {
+                script.AttackUp.color = new Color(1, 1, 1, 0);
+                script.AttackDown.color = new Color(1, 1, 1, Mathf.Clamp01(1 - tempUnitScript.AttackPower + 0.5f));
+            }
+            else
+            {
+                script.AttackUp.color = new Color(1, 1, 1, 0);
+                script.AttackDown.color = new Color(1, 1, 1, 0);
+            }
+            // Defence
+            if (tempUnitScript.DefencePower > 1)
+            {
+                script.DefenceUp.color = new Color(1, 1, 1, Mathf.Clamp01(tempUnitScript.DefencePower - 1 + 0.5f));
+                script.DefenceDown.color = new Color(1, 1, 1, 0);
+            }
+            else if (tempUnitScript.DefencePower < 1)
+            {
+                script.DefenceUp.color = new Color(1, 1, 1, 0);
+                script.DefenceDown.color = new Color(1, 1, 1, Mathf.Clamp01(1 - tempUnitScript.DefencePower + 0.5f));
+            }
+            else
+            {
+                script.DefenceUp.color = new Color(1, 1, 1, 0);
+                script.DefenceDown.color = new Color(1, 1, 1, 0);
+            }
+            // Move
+            if (tempUnitScript.MovePower > 1)
+            {
+                script.MoveUp.color = new Color(1, 1, 1, Mathf.Clamp01(tempUnitScript.MovePower - 1 + 0.5f));
+                script.MoveDown.color = new Color(1, 1, 1, 0);
+            }
+            else if (tempUnitScript.MovePower < 1)
+            {
+                script.MoveUp.color = new Color(1, 1, 1, 0);
+                script.MoveDown.color = new Color(1, 1, 1, Mathf.Clamp01(1 - tempUnitScript.MovePower + 0.5f));
+            }
+            else
+            {
+                script.MoveUp.color = new Color(1, 1, 1, 0);
+                script.MoveDown.color = new Color(1, 1, 1, 0);
+            }
+        }
+        else
+        {
+            script.typeName.text = gameObject.GetComponent<RTSGameObjectBaseScript>().typeID;
+            script.AttackUp.color = new Color(1, 1, 1, 0);
+            script.AttackDown.color = new Color(1, 1, 1, 0);
+            script.DefenceUp.color = new Color(1, 1, 1, 0);
+            script.DefenceDown.color = new Color(1, 1, 1, 0);
+            script.MoveUp.color = new Color(1, 1, 1, 0);
+            script.MoveDown.color = new Color(1, 1, 1, 0);
+        }
     }
 
     private void UpdateInfoGrid(InfoGridScript script, GameObject oneGameObject)

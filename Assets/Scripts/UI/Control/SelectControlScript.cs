@@ -266,7 +266,7 @@ public class SelectControlScript : MonoBehaviour
         {
             foreach (GameObject i in gameObjects)
             {
-                if (i.GetComponent<UnitBaseScript>() != null && selfIndex == i.GetComponent<UnitBaseScript>().BelongTo)
+                if (i != null && i.GetComponent<UnitBaseScript>() != null && selfIndex == i.GetComponent<UnitBaseScript>().BelongTo)
                 {
                     AddGameObject(i);
                     SelectedOwnUnits = true;

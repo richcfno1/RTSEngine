@@ -1018,7 +1018,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0.7246518, b: 1, a: 0.2509804}
+  m_Color: {r: 0, g: 0.7246518, b: 1, a: 0.5019608}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1050,7 +1050,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1582630426}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8a8695521f0d02e499659fee002a26c2, type: 3}
   m_Name: 
@@ -1079,7 +1079,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b5922348459a6034db2141807636b48c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  detailGridPrefab: {fileID: 0}
+  detailGridPrefab: {fileID: 4576454962409213255, guid: c7092f8d2324cab498da8d6763c66caa, type: 3}
   infoGridPrefab: {fileID: 8065706608796064133, guid: f8f4ee607a40c9d42b1d07d21485ad2e, type: 3}
 --- !u!1 &1629883364
 GameObject:
@@ -1312,6 +1312,7 @@ MonoBehaviour:
   zoomSpeed: 1000
   rotateSpeed: 500
   minInfoBarDisplaySize: 20
+  maxInfoBarDisplaySize: 100
   InfoBarPrefab: {fileID: 5368361597663915679, guid: f53449e0e098f5047b53a28153c80e71, type: 3}
   Canvas: {fileID: 837343067}
 --- !u!114 &2125966571

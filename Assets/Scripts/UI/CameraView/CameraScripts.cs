@@ -10,6 +10,7 @@ public class CameraScripts : MonoBehaviour
     public float rotateSpeed;
 
     public float minInfoBarDisplaySize;
+    public float maxInfoBarDisplaySize;
     public GameObject InfoBarPrefab;
     public Transform Canvas;
 
@@ -162,8 +163,9 @@ public class CameraScripts : MonoBehaviour
             allVisibleIndex.Add(tempIndex);
             if (allInfoBar.ContainsKey(tempIndex))
             {
-                float scale = DistanceAndDiameterToPixelSize(
-                    (i.transform.position - transform.position).magnitude, i.GetComponent<RTSGameObjectBaseScript>().radius);
+                float scale = Mathf.Clamp(DistanceAndDiameterToPixelSize(
+                    (i.transform.position - transform.position).magnitude, i.GetComponent<RTSGameObjectBaseScript>().radius), 
+                    0, maxInfoBarDisplaySize);
                 GameObject newBar = allInfoBar[tempIndex];
                 newBar.transform.position = Camera.main.WorldToScreenPoint(i.transform.position) + Vector3.up * scale * tempScript.ratio;
                 newBar.transform.localScale = InfoBarPrefab.transform.localScale * scale;
@@ -171,8 +173,9 @@ public class CameraScripts : MonoBehaviour
             }
             else
             {
-                float scale = DistanceAndDiameterToPixelSize(
-                    (i.transform.position - transform.position).magnitude, i.GetComponent<RTSGameObjectBaseScript>().radius);
+                float scale = Mathf.Clamp(DistanceAndDiameterToPixelSize(
+                    (i.transform.position - transform.position).magnitude, i.GetComponent<RTSGameObjectBaseScript>().radius),
+                    0, maxInfoBarDisplaySize);
                 GameObject newBar = Instantiate(InfoBarPrefab, 
                     Camera.main.WorldToScreenPoint(i.transform.position) + Vector3.up * scale * tempScript.ratio, 
                     new Quaternion(), Canvas.transform);
