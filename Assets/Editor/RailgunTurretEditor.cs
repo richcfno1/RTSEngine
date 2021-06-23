@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using RTS.RTSGameObject.Subsystem;
 
 // Rotation code is written by another author: https://github.com/brihernandez/GunTurrets
 [CustomEditor(typeof(RailgunTurretScript))]

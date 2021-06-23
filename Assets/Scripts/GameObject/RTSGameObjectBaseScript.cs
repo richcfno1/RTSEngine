@@ -2,63 +2,66 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class RTSGameObjectBaseScript : MonoBehaviour
+namespace RTS.RTSGameObject
 {
-    public enum ObjectScale
+    public class RTSGameObjectBaseScript : MonoBehaviour
     {
-        Ignore,
-        Fighter,
-        Frigate,
-        Cruiser,
-        Battleship,
-        Mothership,
-        Obstacle
-    }
-
-    // Set by editor
-    [Header("RTS Game Object")]
-    [Tooltip("Scale of this object.")]
-    public ObjectScale objectScale;
-    [Tooltip("Type ID, must be unique.")]
-    public string typeID;
-    [Tooltip("Max HP, HP will be set to this value at begining.")]
-    public float maxHP;
-    [Tooltip("The collider used in path finding algorithm, it must in layer navigation collider.")]
-    public BoxCollider NavigationCollider;
-    [Tooltip("The effect played when the object is destroyed.")]
-    public GameObject onDestroyedEffect;
-    [Header("Information Bar Calculation")]
-    [Tooltip("Radius (xz plane) of RTS game object")]
-    public float radius;
-    [Tooltip("Ratio of height to plane radius")]
-    public float ratio;
-
-    // Set when instantiate
-    public int Index { get; set; }
-    public int BelongTo { get; set; }
-    public float HP { get; set; }
-
-    protected GameObject lastDamagedBy = null;
-
-    protected virtual void OnCreatedAction()
-    {
-        HP = maxHP;
-        GameManager.GameManagerInstance.OnGameObjectCreated(gameObject);
-    }
-
-    protected virtual void OnDestroyedAction()
-    {
-        GameManager.GameManagerInstance.OnGameObjectDestroyed(gameObject, lastDamagedBy);
-        Destroy(gameObject);
-        if (onDestroyedEffect != null)
+        public enum ObjectScale
         {
-            Instantiate(onDestroyedEffect, transform.position, new Quaternion());
+            Ignore,
+            Fighter,
+            Frigate,
+            Cruiser,
+            Battleship,
+            Mothership,
+            Obstacle
         }
-    }
 
-    public virtual void CreateDamage(float damage, float attackPowerReduce, float defencePowerReduce, float movePowerReduce, GameObject from)
-    {
-        HP = Mathf.Clamp(HP - damage, 0, maxHP);
-        lastDamagedBy = from;
+        // Set by editor
+        [Header("RTS Game Object")]
+        [Tooltip("Scale of this object.")]
+        public ObjectScale objectScale;
+        [Tooltip("Type ID, must be unique.")]
+        public string typeID;
+        [Tooltip("Max HP, HP will be set to this value at begining.")]
+        public float maxHP;
+        [Tooltip("The collider used in path finding algorithm, it must in layer navigation collider.")]
+        public BoxCollider NavigationCollider;
+        [Tooltip("The effect played when the object is destroyed.")]
+        public GameObject onDestroyedEffect;
+        [Header("Information Bar Calculation")]
+        [Tooltip("Radius (xz plane) of RTS game object")]
+        public float radius;
+        [Tooltip("Ratio of height to plane radius")]
+        public float ratio;
+
+        // Set when instantiate
+        public int Index { get; set; }
+        public int BelongTo { get; set; }
+        public float HP { get; set; }
+
+        protected GameObject lastDamagedBy = null;
+
+        protected virtual void OnCreatedAction()
+        {
+            HP = maxHP;
+            GameManager.GameManagerInstance.OnGameObjectCreated(gameObject);
+        }
+
+        protected virtual void OnDestroyedAction()
+        {
+            GameManager.GameManagerInstance.OnGameObjectDestroyed(gameObject, lastDamagedBy);
+            Destroy(gameObject);
+            if (onDestroyedEffect != null)
+            {
+                Instantiate(onDestroyedEffect, transform.position, new Quaternion());
+            }
+        }
+
+        public virtual void CreateDamage(float damage, float attackPowerReduce, float defencePowerReduce, float movePowerReduce, GameObject from)
+        {
+            HP = Mathf.Clamp(HP - damage, 0, maxHP);
+            lastDamagedBy = from;
+        }
     }
 }

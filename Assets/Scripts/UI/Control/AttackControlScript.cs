@@ -1,151 +1,156 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using RTS.Ability;
+using RTS.RTSGameObject;
 
-public class AttackControlScript : MonoBehaviour
+namespace RTS.UI.Control
 {
-    private class AttackUI
+    public class AttackControlScript : MonoBehaviour
     {
-        public GameObject from;
-        public GameObject to;
-        public GameObject circle;
-        public GameObject line;
-
-        public AttackUI(GameObject from, GameObject to, GameObject circlePrefab, GameObject linePrefab)
+        private class AttackUI
         {
-            this.from = from;
-            this.to = to;
-            circle = Instantiate(circlePrefab, Vector3.zero, Quaternion.AngleAxis(90, Vector3.left), GameObject.Find("UI").transform);
-            circle.transform.localScale *= to.GetComponent<Collider>().bounds.size.magnitude * 2;
-            line = Instantiate(linePrefab, Vector3.zero, new Quaternion(), GameObject.Find("UI").transform);
-        }
+            public GameObject from;
+            public GameObject to;
+            public GameObject circle;
+            public GameObject line;
 
-        // Return false if any of from or to is destoryed
-        public bool Update()
-        {
-            if (from != null && to != null)
+            public AttackUI(GameObject from, GameObject to, GameObject circlePrefab, GameObject linePrefab)
             {
-                circle.transform.position = to.transform.position;
-                LineRenderer lineRenderer = line.GetComponent<LineRenderer>();
-                lineRenderer.positionCount = 2;
-                lineRenderer.startColor = Color.red;
-                lineRenderer.endColor = Color.red;
-                lineRenderer.enabled = true;
-                lineRenderer.SetPosition(0, from.transform.position);
-                lineRenderer.SetPosition(1, to.transform.position);
-                return true;
+                this.from = from;
+                this.to = to;
+                circle = Instantiate(circlePrefab, Vector3.zero, Quaternion.AngleAxis(90, Vector3.left), GameObject.Find("UI").transform);
+                circle.transform.localScale *= to.GetComponent<Collider>().bounds.size.magnitude * 2;
+                line = Instantiate(linePrefab, Vector3.zero, new Quaternion(), GameObject.Find("UI").transform);
             }
-            else
+
+            // Return false if any of from or to is destoryed
+            public bool Update()
             {
-                Destroy();
-                return false;
-            }
-        }
-
-        public void Destroy()
-        {
-            GameObject.Destroy(circle);
-            GameObject.Destroy(line);
-        }
-    }
-
-    public float displayTime;
-    public GameObject attackUICirclePrefab;
-    public GameObject attackUILinePrefab;
-
-    private List<AttackUI> uiGameObjects = new List<AttackUI>();
-    private int selfIndex;
-
-    void Start()
-    {
-        selfIndex = GameManager.GameManagerInstance.selfIndex;
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        if (InputManager.InputManagerInstance.CurrentState == InputManager.State.NoAction)
-        {
-            if (SelectControlScript.SelectionControlInstance.SelectedOwnUnits)
-            {
-                if (Input.GetKeyDown(InputManager.HotKeys.AttackUnit) && InputManager.InputManagerInstance.EnableAction)
+                if (from != null && to != null)
                 {
-                    GameObject temp = SingleSelectionHelper();
-                    if (temp != null && temp.GetComponent<RTSGameObjectBaseScript>().BelongTo != selfIndex)
+                    circle.transform.position = to.transform.position;
+                    LineRenderer lineRenderer = line.GetComponent<LineRenderer>();
+                    lineRenderer.positionCount = 2;
+                    lineRenderer.startColor = Color.red;
+                    lineRenderer.endColor = Color.red;
+                    lineRenderer.enabled = true;
+                    lineRenderer.SetPosition(0, from.transform.position);
+                    lineRenderer.SetPosition(1, to.transform.position);
+                    return true;
+                }
+                else
+                {
+                    Destroy();
+                    return false;
+                }
+            }
+
+            public void Destroy()
+            {
+                GameObject.Destroy(circle);
+                GameObject.Destroy(line);
+            }
+        }
+
+        public float displayTime;
+        public GameObject attackUICirclePrefab;
+        public GameObject attackUILinePrefab;
+
+        private List<AttackUI> uiGameObjects = new List<AttackUI>();
+        private int selfIndex;
+
+        void Start()
+        {
+            selfIndex = GameManager.GameManagerInstance.selfIndex;
+        }
+
+        // Update is called once per frame
+        void Update()
+        {
+            if (InputManager.InputManagerInstance.CurrentState == InputManager.State.NoAction)
+            {
+                if (SelectControlScript.SelectionControlInstance.SelectedOwnUnits)
+                {
+                    if (Input.GetKeyDown(InputManager.HotKeys.AttackUnit) && InputManager.InputManagerInstance.EnableAction)
                     {
-                        ClearAttackUI();
-                        foreach (GameObject i in SelectControlScript.SelectionControlInstance.GetAllGameObjects())
+                        GameObject temp = SingleSelectionHelper();
+                        if (temp != null && temp.GetComponent<RTSGameObjectBaseScript>().BelongTo != selfIndex)
                         {
-                            if (i.GetComponent<AttackAbilityScript>() != null)
+                            ClearAttackUI();
+                            foreach (GameObject i in SelectControlScript.SelectionControlInstance.GetAllGameObjects())
                             {
-                                i.GetComponent<AttackAbilityScript>().UseAbility(new List<object>() { AttackAbilityScript.UseType.Specific, temp });
-                                CreateAttackUI(i, temp);
+                                if (i.GetComponent<AttackAbilityScript>() != null)
+                                {
+                                    i.GetComponent<AttackAbilityScript>().UseAbility(new List<object>() { AttackAbilityScript.UseType.Specific, temp });
+                                    CreateAttackUI(i, temp);
+                                }
                             }
+                            StartCoroutine(ClearUI(displayTime));
                         }
-                        StartCoroutine(ClearUI(displayTime));
                     }
                 }
             }
-        }
-        if (uiGameObjects.Count != 0)
-        {
-            UpdateAttackUI();
-        }
-    }
-
-    private IEnumerator ClearUI(float waitTime)
-    {
-        yield return new WaitForSeconds(waitTime);
-        ClearAttackUI();
-    }
-
-    private void CreateAttackUI(GameObject from, GameObject to)
-    {
-        StopAllCoroutines();
-        uiGameObjects.Add(new AttackUI(from, to, attackUICirclePrefab, attackUILinePrefab));
-    }
-
-    private void UpdateAttackUI()
-    {
-        List<AttackUI> toRemove = new List<AttackUI>();
-        foreach (AttackUI i in uiGameObjects)
-        {
-            if (!i.Update())
+            if (uiGameObjects.Count != 0)
             {
-                toRemove.Add(i);
+                UpdateAttackUI();
             }
         }
-        uiGameObjects.RemoveAll(x => toRemove.Contains(x));
-    }
-    private void ClearAttackUI()
-    {
-        foreach (AttackUI i in uiGameObjects)
-        {
-            i.Destroy();
-        }
-        uiGameObjects.Clear();
-    }
 
-    private GameObject SingleSelectionHelper()
-    {
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        List<RaycastHit> hits = new List<RaycastHit>(Physics.RaycastAll(ray));
-        hits.RemoveAll(x => x.collider.GetComponent<RTSGameObjectBaseScript>() == null);
-        if (hits.Count == 0)
+        private IEnumerator ClearUI(float waitTime)
         {
-            return null;
+            yield return new WaitForSeconds(waitTime);
+            ClearAttackUI();
         }
-        else if (hits.Count == 1 || !hits[0].collider.CompareTag("Ship"))
+
+        private void CreateAttackUI(GameObject from, GameObject to)
         {
-            return hits[0].collider.gameObject;
+            StopAllCoroutines();
+            uiGameObjects.Add(new AttackUI(from, to, attackUICirclePrefab, attackUILinePrefab));
         }
-        else
+
+        private void UpdateAttackUI()
         {
-            if (hits[1].collider.CompareTag("Subsystem"))
+            List<AttackUI> toRemove = new List<AttackUI>();
+            foreach (AttackUI i in uiGameObjects)
             {
-                return hits[1].collider.gameObject;
+                if (!i.Update())
+                {
+                    toRemove.Add(i);
+                }
             }
-            return hits[0].collider.gameObject;
+            uiGameObjects.RemoveAll(x => toRemove.Contains(x));
+        }
+        private void ClearAttackUI()
+        {
+            foreach (AttackUI i in uiGameObjects)
+            {
+                i.Destroy();
+            }
+            uiGameObjects.Clear();
+        }
+
+        private GameObject SingleSelectionHelper()
+        {
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            List<RaycastHit> hits = new List<RaycastHit>(Physics.RaycastAll(ray));
+            hits.RemoveAll(x => x.collider.GetComponent<RTSGameObjectBaseScript>() == null);
+            if (hits.Count == 0)
+            {
+                return null;
+            }
+            else if (hits.Count == 1 || !hits[0].collider.CompareTag("Ship"))
+            {
+                return hits[0].collider.gameObject;
+            }
+            else
+            {
+                if (hits[1].collider.CompareTag("Subsystem"))
+                {
+                    return hits[1].collider.gameObject;
+                }
+                return hits[0].collider.gameObject;
+            }
         }
     }
 }

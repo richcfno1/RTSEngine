@@ -1,62 +1,66 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using RTS.RTSGameObject.Subsystem;
 
-public class CarrierAbilityScript : AbilityBaseScript
+namespace RTS.Ability
 {
-    public enum UseType
+    public class CarrierAbilityScript : AbilityBaseScript
     {
-        Produce,
-        Deploy,
-        Recall
-    }
-
-    // Start is called before the first frame update
-    void Start()
-    {
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-
-    public override bool UseAbility(List<object> target)
-    {
-        // Invalid request
-        if (target.Count != 2)
+        public enum UseType
         {
-            return false;
+            Produce,
+            Deploy,
+            Recall
         }
-        // Should not use foreach because there should be only one subsystem support carrier ability?
-        bool result = false;
-        if (base.UseAbility(target))
+
+        // Start is called before the first frame update
+        void Start()
         {
-            if ((UseType)abilityTarget[0] == UseType.Produce)
+
+        }
+
+        // Update is called once per frame
+        void Update()
+        {
+
+        }
+
+        public override bool UseAbility(List<object> target)
+        {
+            // Invalid request
+            if (target.Count != 2)
             {
-                foreach (CarrierSubsystemBaseScript i in SupportedBy)
-                {
-                    result |= i.Produce((string)abilityTarget[1]);
-                }
+                return false;
             }
-            else if ((UseType)abilityTarget[0] == UseType.Deploy)
+            // Should not use foreach because there should be only one subsystem support carrier ability?
+            bool result = false;
+            if (base.UseAbility(target))
             {
-                foreach (CarrierSubsystemBaseScript i in SupportedBy)
+                if ((UseType)abilityTarget[0] == UseType.Produce)
                 {
-                    result |= i.Deploy((string)abilityTarget[1]);
+                    foreach (CarrierSubsystemBaseScript i in SupportedBy)
+                    {
+                        result |= i.Produce((string)abilityTarget[1]);
+                    }
                 }
-            }
-            else if ((UseType)abilityTarget[0] == UseType.Recall)
-            {
-                foreach (CarrierSubsystemBaseScript i in SupportedBy)
+                else if ((UseType)abilityTarget[0] == UseType.Deploy)
                 {
-                    result |= i.Recall((GameObject)abilityTarget[1]);
+                    foreach (CarrierSubsystemBaseScript i in SupportedBy)
+                    {
+                        result |= i.Deploy((string)abilityTarget[1]);
+                    }
                 }
+                else if ((UseType)abilityTarget[0] == UseType.Recall)
+                {
+                    foreach (CarrierSubsystemBaseScript i in SupportedBy)
+                    {
+                        result |= i.Recall((GameObject)abilityTarget[1]);
+                    }
+                }
+                return result;
             }
             return result;
         }
-        return result;
     }
 }

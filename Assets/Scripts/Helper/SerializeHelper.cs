@@ -2,136 +2,139 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[System.Serializable]
-public struct SerializableVector3
+namespace RTS.Helper
 {
-    /// <summary>
-    /// x component
-    /// </summary>
-    public float x;
-
-    /// <summary>
-    /// y component
-    /// </summary>
-    public float y;
-
-    /// <summary>
-    /// z component
-    /// </summary>
-    public float z;
-
-    /// <summary>
-    /// Constructor
-    /// </summary>
-    /// <param name="rX"></param>
-    /// <param name="rY"></param>
-    /// <param name="rZ"></param>
-    public SerializableVector3(float rX, float rY, float rZ)
+    [System.Serializable]
+    public struct SerializableVector3
     {
-        x = rX;
-        y = rY;
-        z = rZ;
+        /// <summary>
+        /// x component
+        /// </summary>
+        public float x;
+
+        /// <summary>
+        /// y component
+        /// </summary>
+        public float y;
+
+        /// <summary>
+        /// z component
+        /// </summary>
+        public float z;
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="rX"></param>
+        /// <param name="rY"></param>
+        /// <param name="rZ"></param>
+        public SerializableVector3(float rX, float rY, float rZ)
+        {
+            x = rX;
+            y = rY;
+            z = rZ;
+        }
+
+        /// <summary>
+        /// Returns a string representation of the object
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            return string.Format("[{0}, {1}, {2}]", x, y, z);
+        }
+
+        /// <summary>
+        /// Automatic conversion from SerializableVector3 to Vector3
+        /// </summary>
+        /// <param name="rValue"></param>
+        /// <returns></returns>
+        public static implicit operator Vector3(SerializableVector3 rValue)
+        {
+            return new Vector3(rValue.x, rValue.y, rValue.z);
+        }
+
+        /// <summary>
+        /// Automatic conversion from Vector3 to SerializableVector3
+        /// </summary>
+        /// <param name="rValue"></param>
+        /// <returns></returns>
+        public static implicit operator SerializableVector3(Vector3 rValue)
+        {
+            return new SerializableVector3(rValue.x, rValue.y, rValue.z);
+        }
     }
 
     /// <summary>
-    /// Returns a string representation of the object
+    /// Since unity doesn't flag the Quaternion as serializable, we
+    /// need to create our own version. This one will automatically convert
+    /// between Quaternion and SerializableQuaternion
     /// </summary>
-    /// <returns></returns>
-    public override string ToString()
+    [System.Serializable]
+    public struct SerializableQuaternion
     {
-        return string.Format("[{0}, {1}, {2}]", x, y, z);
-    }
+        /// <summary>
+        /// x component
+        /// </summary>
+        public float x;
 
-    /// <summary>
-    /// Automatic conversion from SerializableVector3 to Vector3
-    /// </summary>
-    /// <param name="rValue"></param>
-    /// <returns></returns>
-    public static implicit operator Vector3(SerializableVector3 rValue)
-    {
-        return new Vector3(rValue.x, rValue.y, rValue.z);
-    }
+        /// <summary>
+        /// y component
+        /// </summary>
+        public float y;
 
-    /// <summary>
-    /// Automatic conversion from Vector3 to SerializableVector3
-    /// </summary>
-    /// <param name="rValue"></param>
-    /// <returns></returns>
-    public static implicit operator SerializableVector3(Vector3 rValue)
-    {
-        return new SerializableVector3(rValue.x, rValue.y, rValue.z);
-    }
-}
+        /// <summary>
+        /// z component
+        /// </summary>
+        public float z;
 
-/// <summary>
-/// Since unity doesn't flag the Quaternion as serializable, we
-/// need to create our own version. This one will automatically convert
-/// between Quaternion and SerializableQuaternion
-/// </summary>
-[System.Serializable]
-public struct SerializableQuaternion
-{
-    /// <summary>
-    /// x component
-    /// </summary>
-    public float x;
+        /// <summary>
+        /// w component
+        /// </summary>
+        public float w;
 
-    /// <summary>
-    /// y component
-    /// </summary>
-    public float y;
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="rX"></param>
+        /// <param name="rY"></param>
+        /// <param name="rZ"></param>
+        /// <param name="rW"></param>
+        public SerializableQuaternion(float rX, float rY, float rZ, float rW)
+        {
+            x = rX;
+            y = rY;
+            z = rZ;
+            w = rW;
+        }
 
-    /// <summary>
-    /// z component
-    /// </summary>
-    public float z;
+        /// <summary>
+        /// Returns a string representation of the object
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            return string.Format("[{0}, {1}, {2}, {3}]", x, y, z, w);
+        }
 
-    /// <summary>
-    /// w component
-    /// </summary>
-    public float w;
+        /// <summary>
+        /// Automatic conversion from SerializableQuaternion to Quaternion
+        /// </summary>
+        /// <param name="rValue"></param>
+        /// <returns></returns>
+        public static implicit operator Quaternion(SerializableQuaternion rValue)
+        {
+            return new Quaternion(rValue.x, rValue.y, rValue.z, rValue.w);
+        }
 
-    /// <summary>
-    /// Constructor
-    /// </summary>
-    /// <param name="rX"></param>
-    /// <param name="rY"></param>
-    /// <param name="rZ"></param>
-    /// <param name="rW"></param>
-    public SerializableQuaternion(float rX, float rY, float rZ, float rW)
-    {
-        x = rX;
-        y = rY;
-        z = rZ;
-        w = rW;
-    }
-
-    /// <summary>
-    /// Returns a string representation of the object
-    /// </summary>
-    /// <returns></returns>
-    public override string ToString()
-    {
-        return string.Format("[{0}, {1}, {2}, {3}]", x, y, z, w);
-    }
-
-    /// <summary>
-    /// Automatic conversion from SerializableQuaternion to Quaternion
-    /// </summary>
-    /// <param name="rValue"></param>
-    /// <returns></returns>
-    public static implicit operator Quaternion(SerializableQuaternion rValue)
-    {
-        return new Quaternion(rValue.x, rValue.y, rValue.z, rValue.w);
-    }
-
-    /// <summary>
-    /// Automatic conversion from Quaternion to SerializableQuaternion
-    /// </summary>
-    /// <param name="rValue"></param>
-    /// <returns></returns>
-    public static implicit operator SerializableQuaternion(Quaternion rValue)
-    {
-        return new SerializableQuaternion(rValue.x, rValue.y, rValue.z, rValue.w);
+        /// <summary>
+        /// Automatic conversion from Quaternion to SerializableQuaternion
+        /// </summary>
+        /// <param name="rValue"></param>
+        /// <returns></returns>
+        public static implicit operator SerializableQuaternion(Quaternion rValue)
+        {
+            return new SerializableQuaternion(rValue.x, rValue.y, rValue.z, rValue.w);
+        }
     }
 }

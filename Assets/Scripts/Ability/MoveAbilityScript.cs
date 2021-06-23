@@ -1,46 +1,50 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using RTS.RTSGameObject.Subsystem;
 
-// This class is only used to control two different move ability scripts
-public class MoveAbilityScript : AbilityBaseScript
+namespace RTS.Ability
 {
-    // Move
-    protected float agentMoveSpeed;
-    protected float agentRotateSpeed;
-    protected float agentAccelerateLimit;  // Set this to 0 to enable "forward only" mode.
-
-    // Search
-    protected float agentRadius;
-    protected float searchStepDistance;
-    protected float searchStepMaxDistance;
-    protected float searchMaxRandomNumber;
-
-    protected Vector3 destination;
-    protected List<Vector3> moveBeacons = new List<Vector3>();
-    protected float lastFrameSpeedAdjust = 0;
-    protected Vector3 lastFrameMoveDirection = new Vector3();
-
-    protected int pathfinderLayerMask = 1 << 11;
-
-    public override bool UseAbility(List<object> target)
+    // This class is only used to control two different move ability scripts
+    public class MoveAbilityScript : AbilityBaseScript
     {
-        if (target.Count != 2 || target[1].GetType() != typeof(Vector3))
+        // Move
+        protected float agentMoveSpeed;
+        protected float agentRotateSpeed;
+        protected float agentAccelerateLimit;  // Set this to 0 to enable "forward only" mode.
+
+        // Search
+        protected float agentRadius;
+        protected float searchStepDistance;
+        protected float searchStepMaxDistance;
+        protected float searchMaxRandomNumber;
+
+        protected Vector3 destination;
+        protected List<Vector3> moveBeacons = new List<Vector3>();
+        protected float lastFrameSpeedAdjust = 0;
+        protected Vector3 lastFrameMoveDirection = new Vector3();
+
+        protected int pathfinderLayerMask = 1 << 11;
+
+        public override bool UseAbility(List<object> target)
         {
-            abilityTarget = new List<object>();
-        }
-        if (base.UseAbility(target))
-        {
-            if ((int)abilityTarget[0] == 0)
+            if (target.Count != 2 || target[1].GetType() != typeof(Vector3))
             {
-                Host.SetDestination(transform.position);
+                abilityTarget = new List<object>();
             }
-            else if ((int)abilityTarget[0] == 1)
+            if (base.UseAbility(target))
             {
-                Host.SetDestination((Vector3)abilityTarget[1]);
+                if ((int)abilityTarget[0] == 0)
+                {
+                    Host.SetDestination(transform.position);
+                }
+                else if ((int)abilityTarget[0] == 1)
+                {
+                    Host.SetDestination((Vector3)abilityTarget[1]);
+                }
+                return true;
             }
-            return true;
+            return false;
         }
-        return false;
     }
 }

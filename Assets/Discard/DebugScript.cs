@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class DebugScript : MonoBehaviour
 {
-    public Animator test;
     // Start is called before the first frame update
     void Start()
     {
@@ -14,6 +13,6 @@ public class DebugScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Debug.Log(GetComponent<RTSGameObjectBaseScript>().HP);
+
     }
 }

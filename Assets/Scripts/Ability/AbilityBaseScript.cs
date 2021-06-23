@@ -1,38 +1,43 @@
 using System.Collections.Generic;
 using UnityEngine;
+using RTS.RTSGameObject.Unit;
+using RTS.RTSGameObject.Subsystem;
 
-public class AbilityBaseScript : MonoBehaviour
+namespace RTS.Ability
 {
-    public enum AbilityType
+    public class AbilityBaseScript : MonoBehaviour
     {
-        None,
-        Move,
-        Attack,
-        Carrier
-    }
-
-    // Set when instantiate
-    public UnitBaseScript Host { get; set; }
-    public List<SubsystemBaseScript> SupportedBy { get; set; } = new List<SubsystemBaseScript>();
-
-    protected List<object> abilityTarget = new List<object>();
-
-    public virtual bool UseAbility(List<object> target)
-    {
-        // This only happened when supported by unit itself
-        if (SupportedBy.Count == 0)
+        public enum AbilityType
         {
-            abilityTarget = target;
-            return true;
+            None,
+            Move,
+            Attack,
+            Carrier
         }
-        foreach (SubsystemBaseScript i in SupportedBy)
+
+        // Set when instantiate
+        public UnitBaseScript Host { get; set; }
+        public List<SubsystemBaseScript> SupportedBy { get; set; } = new List<SubsystemBaseScript>();
+
+        protected List<object> abilityTarget = new List<object>();
+
+        public virtual bool UseAbility(List<object> target)
         {
-            if (i.Active)
+            // This only happened when supported by unit itself
+            if (SupportedBy.Count == 0)
             {
                 abilityTarget = target;
                 return true;
             }
+            foreach (SubsystemBaseScript i in SupportedBy)
+            {
+                if (i.Active)
+                {
+                    abilityTarget = target;
+                    return true;
+                }
+            }
+            return false;
         }
-        return false;
     }
 }
