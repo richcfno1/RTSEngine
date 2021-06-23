@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class CameraViewInfoScript : MonoBehaviour
+public class ViewInfoScript : MonoBehaviour
 {
     public Slider hpdata;
     public Image hpimage;

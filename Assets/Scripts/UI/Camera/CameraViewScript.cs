@@ -35,7 +35,7 @@ public class CameraViewScript : MonoBehaviour
                 GameObject newBar = allInfoBar[tempIndex];
                 newBar.transform.position = Camera.main.WorldToScreenPoint(i.transform.position) + Vector3.up * scale * tempScript.ratio;
                 newBar.transform.localScale = InfoBarPrefab.transform.localScale * scale;
-                newBar.GetComponent<CameraViewInfoScript>().hpdata.value = tempScript.HP / tempScript.maxHP;
+                newBar.GetComponent<ViewInfoScript>().hpdata.value = tempScript.HP / tempScript.maxHP;
             }
             else
             {
@@ -47,10 +47,10 @@ public class CameraViewScript : MonoBehaviour
                     new Quaternion(), Canvas.transform);
                 newBar.transform.localScale = InfoBarPrefab.transform.localScale * DistanceAndDiameterToPixelSize(
                     (i.transform.position - transform.position).magnitude, i.GetComponent<RTSGameObjectBaseScript>().radius);
-                newBar.GetComponent<CameraViewInfoScript>().hpdata.value = tempScript.HP / tempScript.maxHP;
+                newBar.GetComponent<ViewInfoScript>().hpdata.value = tempScript.HP / tempScript.maxHP;
                 Color tempColor = tempScript.BelongTo == GameManager.GameManagerInstance.selfIndex ? Color.green : Color.red;
                 tempColor.a = 0.5f;
-                newBar.GetComponent<CameraViewInfoScript>().hpimage.color = tempColor;
+                newBar.GetComponent<ViewInfoScript>().hpimage.color = tempColor;
                 allInfoBar.Add(tempIndex, newBar);
             }
         }

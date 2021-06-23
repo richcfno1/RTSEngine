@@ -21,8 +21,8 @@ public class InputManager : MonoBehaviour
         public static KeyCode AttackUnit = KeyCode.Mouse1;
 
         public static KeyCode RotateCamera = KeyCode.Mouse2;
-        public static KeyCode ResetCamera = KeyCode.B;
-        public static KeyCode TrackSelectedUnits = KeyCode.V;
+        public static KeyCode SetCameraHeight = KeyCode.LeftShift;
+        public static KeyCode TrackSelectedUnits = KeyCode.D;
     }
 
     public Texture2D cursorTexture;
