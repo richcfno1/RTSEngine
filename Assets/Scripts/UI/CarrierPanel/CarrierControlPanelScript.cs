@@ -153,7 +153,7 @@ namespace RTS.UI.CarrierPanel
         {
             foreach (CarrierAbilityScript i in allCarrierAbilityScripts)
             {
-                if (i.UseAbility(new List<object>() { CarrierAbilityScript.UseType.Deploy, type }))
+                if (i.UseCarrierAbility(CarrierAbilityScript.ActionType.Deploy, type))
                 {
                     return;
                 }
@@ -167,7 +167,7 @@ namespace RTS.UI.CarrierPanel
             {
                 foreach (CarrierAbilityScript j in allCarrierAbilityScripts)
                 {
-                    while (j.UseAbility(new List<object>() { CarrierAbilityScript.UseType.Deploy, i.Key })) ;
+                    while (j.UseCarrierAbility(CarrierAbilityScript.ActionType.Deploy, i.Key)) ;
                 }
             }
         }
@@ -193,7 +193,7 @@ namespace RTS.UI.CarrierPanel
             {
                 foreach (CarrierAbilityScript j in allCarrierAbilityScripts)
                 {
-                    while (j.UseAbility(new List<object>() { CarrierAbilityScript.UseType.Produce, i.Key })) ;
+                    while (j.UseCarrierAbility(CarrierAbilityScript.ActionType.Produce, i.Key)) ;
                 }
             }
         }

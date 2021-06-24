@@ -21,19 +21,17 @@ namespace RTS.Ability
 
         protected List<object> abilityTarget = new List<object>();
 
-        public virtual bool UseAbility(List<object> target)
+        public virtual bool CanUseAbility()
         {
             // This only happened when supported by unit itself
             if (SupportedBy.Count == 0)
             {
-                abilityTarget = target;
                 return true;
             }
             foreach (SubsystemBaseScript i in SupportedBy)
             {
                 if (i.Active)
                 {
-                    abilityTarget = target;
                     return true;
                 }
             }

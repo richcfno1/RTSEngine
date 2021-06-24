@@ -16,40 +16,35 @@ namespace RTS.Ability
             ForcedMoveTo,
         }
 
-        // Move
-        protected float agentMoveSpeed;
-        protected float agentRotateSpeed;
-        protected float agentAccelerateLimit;  // Set this to 0 to enable "forward only" mode.
-
-        // Search
-        protected float agentRadius;
-        protected float searchStepDistance;
-        protected float searchStepMaxDistance;
-        protected float searchMaxRandomNumber;
-
-        protected Vector3 destination;
-        protected List<Vector3> moveBeacons = new List<Vector3>();
-        protected float lastFrameSpeedAdjust = 0;
-        protected Vector3 lastFrameMoveDirection = new Vector3();
-
-        protected int pathfinderLayerMask = 1 << 11;
-
-        public override bool UseAbility(List<object> target)
+        public bool UseAbility()
         {
-            if (target.Count != 2 || target[1].GetType() != typeof(Vector3))
+            return true;
+        }
+
+        public bool UseMoveAbility(ActionType action, Vector3 target = new Vector3(), bool clearQueue = true)
+        {
+            if (base.CanUseAbility())
             {
-                abilityTarget = new List<object>();
-                return false;
-            }
-            if (base.UseAbility(target))
-            {
-                if ((ActionType)abilityTarget[0] == ActionType.Stop)
+                if (clearQueue)
                 {
                     Host.Stop();
                 }
-                else if ((ActionType)abilityTarget[0] == ActionType.MoveTo)
+
+                if (action == ActionType.Stop)
                 {
-                    Host.MoveTo((Vector3)abilityTarget[1]);
+                    Host.Stop();
+                }
+                else if (action == ActionType.MoveTo)
+                {
+                    Host.MoveTo(target);
+                }
+                else if (action == ActionType.RotateTo)
+                {
+                    Host.RotateTo(target);
+                }
+                else if (action == ActionType.ForcedMoveTo)
+                {
+                    Host.ForcedMoveTo(target);
                 }
                 return true;
             }

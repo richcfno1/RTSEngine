@@ -7,55 +7,39 @@ namespace RTS.Ability
 {
     public class CarrierAbilityScript : AbilityBaseScript
     {
-        public enum UseType
+        public enum ActionType
         {
             Produce,
             Deploy,
             Recall
         }
 
-        // Start is called before the first frame update
-        void Start()
+        // For action produce and deploy, second target should be string. Or target should be GameObject
+        public bool UseCarrierAbility(ActionType action, object target)
         {
-
-        }
-
-        // Update is called once per frame
-        void Update()
-        {
-
-        }
-
-        public override bool UseAbility(List<object> target)
-        {
-            // Invalid request
-            if (target.Count != 2)
-            {
-                return false;
-            }
             // Should not use foreach because there should be only one subsystem support carrier ability?
             bool result = false;
-            if (base.UseAbility(target))
+            if (base.CanUseAbility())
             {
-                if ((UseType)abilityTarget[0] == UseType.Produce)
+                if (action == ActionType.Produce)
                 {
                     foreach (CarrierSubsystemBaseScript i in SupportedBy)
                     {
-                        result |= i.Produce((string)abilityTarget[1]);
+                        result |= i.Produce((string)target);
                     }
                 }
-                else if ((UseType)abilityTarget[0] == UseType.Deploy)
+                else if (action == ActionType.Deploy)
                 {
                     foreach (CarrierSubsystemBaseScript i in SupportedBy)
                     {
-                        result |= i.Deploy((string)abilityTarget[1]);
+                        result |= i.Deploy((string)target);
                     }
                 }
-                else if ((UseType)abilityTarget[0] == UseType.Recall)
+                else if (action == ActionType.Recall)
                 {
                     foreach (CarrierSubsystemBaseScript i in SupportedBy)
                     {
-                        result |= i.Recall((GameObject)abilityTarget[1]);
+                        result |= i.Recall((GameObject)target);
                     }
                 }
                 return result;

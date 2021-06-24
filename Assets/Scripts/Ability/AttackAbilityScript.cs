@@ -1,13 +1,14 @@
 using System.Collections.Generic;
 using RTS.RTSGameObject.Subsystem;
+using UnityEngine;
 
 namespace RTS.Ability
 {
     public class AttackAbilityScript : AbilityBaseScript
     {
-        public enum UseType
+        public enum ActionType
         {
-            Pause,
+            Stop,
             Auto,
             Specific
         }
@@ -15,42 +16,31 @@ namespace RTS.Ability
         // Start is called before the first frame update
         void Start()
         {
-            UseAbility(new List<object>() { UseType.Auto, null });
-        }
-
-        // Update is called once per frame
-        void FixedUpdate()
-        {
-
+            UseAttackAbility(ActionType.Auto);
         }
 
         // For MoveAbility target size should be 2
         // target[0] = int where 0 = auto attack, 1 = attack specific target;
         // target[1] = game object to attack
-        public override bool UseAbility(List<object> target)
+        public bool UseAttackAbility(ActionType action, GameObject target = null)
         {
-            // Invalid request
-            if (target.Count != 2)
+            if (base.CanUseAbility())
             {
-                return false;
-            }
-            if (base.UseAbility(target))
-            {
-                if ((UseType)abilityTarget[0] == UseType.Pause)
+                if (action == ActionType.Stop)
                 {
                     foreach (AttackSubsystemBaseScript i in SupportedBy)
                     {
                         i.SetTarget(null);
                     }
                 }
-                else if ((UseType)abilityTarget[0] == UseType.Auto)
+                else if (action == ActionType.Auto)
                 {
                     foreach (AttackSubsystemBaseScript i in SupportedBy)
                     {
                         i.SetTarget(new List<object>());
                     }
                 }
-                else if ((UseType)abilityTarget[0] == UseType.Specific)
+                else if (action == ActionType.Specific)
                 {
                     foreach (AttackSubsystemBaseScript i in SupportedBy)
                     {

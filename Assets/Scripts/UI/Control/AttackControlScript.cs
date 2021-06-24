@@ -82,7 +82,7 @@ namespace RTS.UI.Control
                             {
                                 if (i.GetComponent<AttackAbilityScript>() != null)
                                 {
-                                    i.GetComponent<AttackAbilityScript>().UseAbility(new List<object>() { AttackAbilityScript.UseType.Specific, temp });
+                                    i.GetComponent<AttackAbilityScript>().UseAttackAbility(AttackAbilityScript.ActionType.Specific, temp);
                                     CreateAttackUI(i, temp);
                                 }
                             }

@@ -110,7 +110,7 @@ namespace RTS.UI.Control
                         Vector3 destination = destinationHorizontalPosition + new Vector3(0, destinationVerticalDistance, 0);
                         foreach (KeyValuePair<MoveAbilityScript, Vector3> i in FindDestination(allAgents, destination, destination - SelectControlScript.SelectionControlInstance.FindCenter()))
                         {
-                            i.Key.UseAbility(new List<object>() { MoveAbilityScript.ActionType.MoveTo, i.Value });
+                            i.Key.UseMoveAbility(MoveAbilityScript.ActionType.MoveTo, i.Value);
                         }
                         ClearNavigationUI();
                     }
@@ -130,7 +130,7 @@ namespace RTS.UI.Control
                     {
                         if (i.GetComponent<MoveAbilityScript>() != null)
                         {
-                            i.GetComponent<MoveAbilityScript>().UseAbility(new List<object>() { MoveAbilityScript.ActionType.Stop, Vector3.zero });
+                            i.GetComponent<MoveAbilityScript>().UseMoveAbility(MoveAbilityScript.ActionType.Stop);
                         }
                     }
                     return;
