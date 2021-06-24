@@ -47,11 +47,20 @@
     },
     {
       "unitTypeName": "ScopeDrone",
-      "baseTypeName": "Drone1",
+      "baseTypeName": "Fighter1",
       "properties": {},
       "subsystems": {},
       "abilities": { 
-        "Move": [ "Drone1" ] 
+        "Move": [ "Fighter1" ] 
+      }
+    },
+    {
+      "unitTypeName": "StandardFighter",
+      "baseTypeName": "Fighter2",
+      "properties": {},
+      "subsystems": {},
+      "abilities": { 
+        "Move": [ "Fighter2" ] 
       }
     }
   ],
@@ -207,12 +216,12 @@
       }
     },
     {
-      "type": "ScopeDrone",
+      "type": "StandardFighter",
       "belongTo": 0,
       "position": {
         "x": 0.0,
         "y": -5.0,
-        "z": 50.0
+        "z": 55.0
       },
       "rotation": {
         "x": 0.0,
@@ -222,12 +231,12 @@
       }
     },
     {
-      "type": "ScopeDrone",
+      "type": "StandardFighter",
       "belongTo": 0,
       "position": {
         "x": 0.0,
-        "y": -5.0,
-        "z": 50.0
+        "y": 0.0,
+        "z": 55.0
       },
       "rotation": {
         "x": 0.0,
@@ -237,12 +246,12 @@
       }
     },
     {
-      "type": "ScopeDrone",
+      "type": "StandardFighter",
       "belongTo": 0,
       "position": {
         "x": 0.0,
-        "y": -5.0,
-        "z": 50.0
+        "y": 5.0,
+        "z": 55.0
       },
       "rotation": {
         "x": 0.0,

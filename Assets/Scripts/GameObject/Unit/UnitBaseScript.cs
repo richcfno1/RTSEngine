@@ -90,6 +90,7 @@ namespace RTS.RTSGameObject.Unit
         public virtual void Stop()
         {
             moveActionQueue.Clear();
+            moveBeacons.Clear();
         }
 
         public virtual void AddActionToQueue(MoveAction action)
@@ -110,6 +111,7 @@ namespace RTS.RTSGameObject.Unit
             if (clearQueue)
             {
                 moveActionQueue.Clear();
+                moveBeacons.Clear();
             }
             moveActionQueue.Enqueue(new MoveAction
             {
@@ -123,6 +125,7 @@ namespace RTS.RTSGameObject.Unit
             if (clearQueue)
             {
                 moveActionQueue.Clear();
+                moveBeacons.Clear();
             }
             moveActionQueue.Enqueue(new MoveAction
             {
@@ -136,6 +139,7 @@ namespace RTS.RTSGameObject.Unit
             if (clearQueue)
             {
                 moveActionQueue.Clear();
+                moveBeacons.Clear();
             }
             moveActionQueue.Enqueue(new MoveAction
             {

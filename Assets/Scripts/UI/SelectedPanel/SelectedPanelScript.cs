@@ -44,14 +44,21 @@ namespace RTS.UI.SelectedPanel
                     {
                         ClearAll();
                     }
-                    if (selectedDetaillGrid == null)
+                    if (allSelectedList[0] != null)
                     {
-                        selectedDetaillGrid = Instantiate(detailGridPrefab, transform).GetComponent<SelectedDetailGridScript>();
+                        if (selectedDetaillGrid == null)
+                        {
+                            selectedDetaillGrid = Instantiate(detailGridPrefab, transform).GetComponent<SelectedDetailGridScript>();
+                        }
+                        selectedDetaillGrid.icon.sprite = Resources.Load<RTSGameObjectData>(GameManager.GameManagerInstance.
+                            gameObjectLibrary[allSelectedList[0].GetComponent<RTSGameObjectBaseScript>().typeID]).icon;
+                        selectedDetaillGrid.UpdateDetailGrid(allSelectedList[0]);
+                        lastSelectedType = SelectedType.Single;
                     }
-                    selectedDetaillGrid.icon.sprite = Resources.Load<RTSGameObjectData>(GameManager.GameManagerInstance.
-                        gameObjectLibrary[allSelectedList[0].GetComponent<RTSGameObjectBaseScript>().typeID]).icon;
-                    selectedDetaillGrid.UpdateDetailGrid(allSelectedList[0]);
-                    lastSelectedType = SelectedType.Single;
+                    else
+                    {
+                        ClearAll();
+                    }
                 }
                 else
                 {

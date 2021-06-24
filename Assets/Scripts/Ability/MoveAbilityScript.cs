@@ -8,6 +8,14 @@ namespace RTS.Ability
     // This class is only used to control two different move ability scripts
     public class MoveAbilityScript : AbilityBaseScript
     {
+        public enum ActionType
+        {
+            Stop,
+            MoveTo,
+            RotateTo,
+            ForcedMoveTo,
+        }
+
         // Move
         protected float agentMoveSpeed;
         protected float agentRotateSpeed;
@@ -31,14 +39,15 @@ namespace RTS.Ability
             if (target.Count != 2 || target[1].GetType() != typeof(Vector3))
             {
                 abilityTarget = new List<object>();
+                return false;
             }
             if (base.UseAbility(target))
             {
-                if ((int)abilityTarget[0] == 0)
+                if ((ActionType)abilityTarget[0] == ActionType.Stop)
                 {
-                    Host.MoveTo(transform.position);
+                    Host.Stop();
                 }
-                else if ((int)abilityTarget[0] == 1)
+                else if ((ActionType)abilityTarget[0] == ActionType.MoveTo)
                 {
                     Host.MoveTo((Vector3)abilityTarget[1]);
                 }

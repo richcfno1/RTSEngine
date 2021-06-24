@@ -4,13 +4,6 @@ using UnityEngine;
 
 namespace RTS.RTSGameObject
 {
-    [CreateAssetMenu(fileName = "RTSGameObjectData", menuName = "RTSEngine/Create RTSGameObjectData", order = 1)]
-    public class RTSGameObjectData : ScriptableObject
-    {
-        public GameObject prefab;
-        public Sprite icon;
-    }
-
     public class RTSGameObjectBaseScript : MonoBehaviour
     {
         public enum ObjectScale
