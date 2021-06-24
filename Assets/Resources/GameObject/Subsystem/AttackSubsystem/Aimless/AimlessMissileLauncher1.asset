@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fc471de06aad7274886f8fb3ad2218f4, type: 3}
-  m_Name: FixedMissileLauncher1
+  m_Name: AimlessMissileLauncher1
   m_EditorClassIdentifier: 
   prefab: {fileID: 9186829491669107882, guid: 4a1b862107eb0474c8fe44005faf04ca, type: 3}
   icon: {fileID: 21300000, guid: f0f2f972007983740847a61891fb3e67, type: 3}
