@@ -43,7 +43,7 @@ namespace RTS.RTSGameObject.Unit
             agentCorners.Add(new Vector3(max.x, min.y, max.z));
             agentCorners.Add(new Vector3(max.x, max.y, min.z));
             agentCorners.Add(new Vector3(max.x, max.y, max.z));
-            destination = transform.position;
+            finalPosition = transform.position;
             thisBody = GetComponent<Rigidbody>();
         }
 
@@ -58,85 +58,132 @@ namespace RTS.RTSGameObject.Unit
             DefencePower = Mathf.Clamp01(DefencePower + recoverDefencePower * Time.fixedDeltaTime);
             MovePower = Mathf.Clamp01(MovePower + recoverMovePower * Time.fixedDeltaTime);
 
-            // Move
+            // Action
+            // Do not play physcial simulation here, this is a spaceship!
             thisBody.velocity = Vector3.zero;
             thisBody.angularVelocity = Vector3.zero;
-            if (enablePathfinder)
-            {
-                if (thisBody.position != destination)
-                {
-                    if (TestObstacle(thisBody.position, destination) == 0)
-                    {
-                        moveBeacons.Clear();
-                        moveBeacons.Add(destination);
-                    }
-                    if (moveBeacons.Count != 0)
-                    {
-                        Vector3 moveVector = moveBeacons[0] - thisBody.position;
-                        Vector3 rotateDirection = moveVector.normalized;
-                        rotateDirection.y = 0;  // Consider to allow rotation in y?
-                        thisBody.rotation = Quaternion.RotateTowards(thisBody.rotation, Quaternion.LookRotation(rotateDirection), Time.fixedDeltaTime * agentRotateSpeed);
-                        float moveSpeedAdjust = Mathf.Cos(Mathf.Deg2Rad * Quaternion.Angle(thisBody.rotation, Quaternion.LookRotation(rotateDirection)));
-                        moveSpeedAdjust = (moveSpeedAdjust + 1) / 2;
-                        lastFrameSpeedAdjust = Mathf.Cos(Mathf.Deg2Rad * Quaternion.Angle(thisBody.rotation, Quaternion.LookRotation(lastFrameMoveDirection)));
-                        moveSpeedAdjust = Mathf.Clamp(moveSpeedAdjust, lastFrameSpeedAdjust - agentAccelerateLimit, lastFrameSpeedAdjust + agentAccelerateLimit);
-                        float moveDistance = agentMoveSpeed * Time.fixedDeltaTime * moveSpeedAdjust * MovePower;
 
-                        lastFrameSpeedAdjust = moveSpeedAdjust;
-                        lastFrameMoveDirection = (moveVector * moveDistance).normalized;
-                        if (moveVector.magnitude <= moveDistance)
+            if (moveActionQueue.Count != 0)
+            {
+                MoveAction action = moveActionQueue.Peek();
+                switch (action.actionType)
+                {
+                    case MoveActionType.Stop:
+                        moveActionQueue.Clear();
+                        return;
+                    case MoveActionType.Move:
+                        finalPosition = action.target;
+                        if (thisBody.position != finalPosition)
                         {
-                            if (!TestObstacleAndPush(thisBody.position, moveBeacons[0]))
+                            // Moving
+                            if (TestObstacle(thisBody.position, finalPosition) == 0)
                             {
-                                FindPath(thisBody.position, destination);
-                                return;
+                                moveBeacons.Clear();
+                                moveBeacons.Add(finalPosition);
                             }
-                            thisBody.position = moveBeacons[0];
-                            moveBeacons.RemoveAt(0);
+                            if (moveBeacons.Count != 0)
+                            {
+                                Vector3 moveVector = moveBeacons[0] - thisBody.position;
+                                Vector3 rotateDirection = moveVector.normalized;
+                                rotateDirection.y = 0;  // Consider to allow rotation in y?
+                                thisBody.rotation = Quaternion.RotateTowards(thisBody.rotation, Quaternion.LookRotation(rotateDirection), Time.fixedDeltaTime * agentRotateSpeed);
+                                float moveSpeedAdjust = Mathf.Cos(Mathf.Deg2Rad * Quaternion.Angle(thisBody.rotation, Quaternion.LookRotation(rotateDirection)));
+                                moveSpeedAdjust = (moveSpeedAdjust + 1) / 2;
+                                lastFrameSpeedAdjust = Mathf.Cos(Mathf.Deg2Rad * Quaternion.Angle(thisBody.rotation, Quaternion.LookRotation(lastFrameMoveDirection)));
+                                moveSpeedAdjust = Mathf.Clamp(moveSpeedAdjust, lastFrameSpeedAdjust - agentAccelerateLimit, lastFrameSpeedAdjust + agentAccelerateLimit);
+                                float moveDistance = agentMoveSpeed * Time.fixedDeltaTime * moveSpeedAdjust * MovePower;
+
+                                lastFrameSpeedAdjust = moveSpeedAdjust;
+                                lastFrameMoveDirection = (moveVector * moveDistance).normalized;
+                                if (moveVector.magnitude <= moveDistance)
+                                {
+                                    if (!TestObstacleAndPush(thisBody.position, moveBeacons[0]))
+                                    {
+                                        FindPath(thisBody.position, finalPosition);
+                                        return;
+                                    }
+                                    thisBody.position = moveBeacons[0];
+                                    moveBeacons.RemoveAt(0);
+                                }
+                                else
+                                {
+                                    if (!TestObstacleAndPush(thisBody.position, thisBody.position + moveVector.normalized * moveDistance))
+                                    {
+                                        FindPath(thisBody.position, finalPosition);
+                                        return;
+                                    }
+                                    thisBody.position += moveVector.normalized * moveDistance;
+                                }
+                            }
+                            else
+                            {
+                                FindPath(thisBody.position, finalPosition);
+                            }
                         }
                         else
                         {
-                            if (!TestObstacleAndPush(thisBody.position, thisBody.position + moveVector.normalized * moveDistance))
-                            {
-                                FindPath(thisBody.position, destination);
-                                return;
-                            }
-                            thisBody.position += moveVector.normalized * moveDistance;
+                            lastFrameSpeedAdjust = 0;
+                            moveActionQueue.Dequeue();
                         }
-                    }
-                    else
-                    {
-                        FindPath(thisBody.position, destination);
-                    }
-                }
-                else
-                {
-                    lastFrameSpeedAdjust = 0;
-                }
-            }
-            else
-            {
-                if (forcedMoveDestinations.Count != 0)
-                {
-                    Vector3 moveVector = forcedMoveDestinations[0] - thisBody.position;
-                    Vector3 rotateDirection = moveVector.normalized;
-                    rotateDirection.y = 0;  // Consider to allow rotation in y?
-                    thisBody.rotation = Quaternion.RotateTowards(thisBody.rotation, Quaternion.LookRotation(rotateDirection), Time.fixedDeltaTime * agentRotateSpeed);
-                    float moveDistance = agentMoveSpeed * Time.fixedDeltaTime * MovePower;
+                        return;
+                    case MoveActionType.Rotate:
+                        finalRotationTarget = action.target;
+                        Vector3 rotateTo = (finalRotationTarget - thisBody.position).normalized;
+                        rotateTo.y = 0;  // Consider to allow rotation in y?
+                        thisBody.rotation = Quaternion.RotateTowards(thisBody.rotation, Quaternion.LookRotation(rotateTo), Time.fixedDeltaTime * agentRotateSpeed);
+                        if (Vector3.Angle(transform.forward, rotateTo) <= 0.1f)
+                        {
+                            moveActionQueue.Dequeue();
+                        }
+                        return;
+                    case MoveActionType.ForcedMove:
+                        finalPosition = action.target;
+                        if (thisBody.position != finalPosition)
+                        {
+                            // Disable collider
+                            List<Collider> allColliders = new List<Collider>();
+                            allColliders.AddRange(GetComponents<Collider>());
+                            allColliders.AddRange(GetComponentsInChildren<Collider>());
+                            allColliders.RemoveAll(x => x.gameObject.layer == 11);
+                            foreach (Collider i in allColliders)
+                            {
+                                i.enabled = false;
+                            }
 
-                    if (moveVector.magnitude <= moveDistance)
-                    {
-                        thisBody.position = forcedMoveDestinations[0];
-                        forcedMoveDestinations.RemoveAt(0);
-                    }
-                    else
-                    {
-                        thisBody.position += moveVector.normalized * moveDistance;
-                    }
-                }
-                else
-                {
-                    SetDestination(transform.position);
+                            // Move
+                            Vector3 moveVector = finalPosition - thisBody.position;
+                            Vector3 rotateDirection = moveVector.normalized;
+                            rotateDirection.y = 0;  // Consider to allow rotation in y?
+                            thisBody.rotation = Quaternion.RotateTowards(thisBody.rotation, Quaternion.LookRotation(rotateDirection), Time.fixedDeltaTime * agentRotateSpeed);
+                            float moveDistance = agentMoveSpeed * Time.fixedDeltaTime * MovePower;
+
+                            if (moveVector.magnitude <= moveDistance)
+                            {
+                                thisBody.position = finalPosition;
+                            }
+                            else
+                            {
+                                thisBody.position += moveVector.normalized * moveDistance;
+                            }
+                        }
+                        else
+                        {
+                            // Enable collider
+                            List<Collider> allColliders = new List<Collider>();
+                            allColliders.AddRange(GetComponents<Collider>());
+                            allColliders.AddRange(GetComponentsInChildren<Collider>());
+                            allColliders.RemoveAll(x => x.gameObject.layer == 11);
+                            foreach (Collider i in allColliders)
+                            {
+                                i.enabled = false;
+                            }
+                            
+                            moveActionQueue.Dequeue();
+                        }
+                        return;
+                    default:
+                        Debug.LogError("Wrong type of action: " + action.actionType);
+                        return;
                 }
             }
         }
@@ -161,7 +208,7 @@ namespace RTS.RTSGameObject.Unit
             base.OnDestroyedAction();
         }
 
-        // Move
+        // Pathfinder
         private float TestObstacle(Vector3 from, Vector3 to)
         {
             Vector3 direction = (to - from).normalized;
@@ -237,7 +284,7 @@ namespace RTS.RTSGameObject.Unit
                         intersectObjects.RemoveAll(x => x.CompareTag("Bullet"));
                         if (intersectObjects.Count == 0)
                         {
-                            destination = to = newDestination;
+                            finalPosition = to = newDestination;
                             find = true;
                             break;
                         }

@@ -17,6 +17,20 @@ namespace RTS.RTSGameObject.Unit
             public GameObject subsystem;
         }
 
+        public enum MoveActionType
+        {
+            Stop,
+            Move,
+            Rotate,
+            ForcedMove
+        }
+
+        public struct MoveAction
+        {
+            public MoveActionType actionType;
+            public Vector3 target;
+        }
+
         // Set by editor
         [Header("Unit")]
         [Header("Subsystem")]
@@ -59,9 +73,11 @@ namespace RTS.RTSGameObject.Unit
         protected float curMovePower;
 
         protected bool enablePathfinder = true;
-        protected Vector3 destination;
+        protected Vector3 finalPosition;
+        protected Vector3 finalRotationTarget;  // Where to look at
         protected List<Vector3> moveBeacons = new List<Vector3>();
-        protected List<Vector3> forcedMoveDestinations = new List<Vector3>();
+
+        protected Queue<MoveAction> moveActionQueue = new Queue<MoveAction>();
 
         public override void CreateDamage(float damage, float attackPowerReduce, float defencePowerReduce, float movePowerReduce, GameObject from)
         {
@@ -71,33 +87,52 @@ namespace RTS.RTSGameObject.Unit
             base.CreateDamage(damage / DefencePower, attackPowerReduce, defencePowerReduce, movePowerReduce, from);
         }
 
-        public virtual void SetDestination(Vector3 destination)
+        public virtual void Stop()
         {
-            enablePathfinder = true;
-            List<Collider> allColliders = new List<Collider>();
-            allColliders.AddRange(GetComponents<Collider>());
-            allColliders.AddRange(GetComponentsInChildren<Collider>());
-            allColliders.RemoveAll(x => x.gameObject.layer == 11);
-            foreach (Collider i in allColliders)
-            {
-                i.enabled = true;
-            }
-            this.destination = destination;
-            moveBeacons.Clear();
+            moveActionQueue.Clear();
         }
 
-        public virtual void ForcedMove(List<Vector3> destinations)
+        public virtual void AddActionToQueue(MoveAction action)
         {
-            enablePathfinder = false;
-            List<Collider> allColliders = new List<Collider>();
-            allColliders.AddRange(GetComponents<Collider>());
-            allColliders.AddRange(GetComponentsInChildren<Collider>());
-            allColliders.RemoveAll(x => x.gameObject.layer == 11);
-            foreach (Collider i in allColliders)
+            moveActionQueue.Enqueue(action);
+        }
+
+        public virtual void AddActionToQueue(Queue<MoveAction> actions)
+        {
+            while (actions.Count > 0)
             {
-                i.enabled = false;
+                moveActionQueue.Enqueue(actions.Dequeue());
             }
-            forcedMoveDestinations = destinations;
+        }
+
+        public virtual void SetDestination(Vector3 destination)
+        {
+            moveActionQueue.Clear();
+            moveActionQueue.Enqueue(new MoveAction
+            {
+                actionType = MoveActionType.Move,
+                target = destination
+            });
+        }
+
+        public virtual void RotateTo(Vector3 target)
+        {
+            moveActionQueue.Clear();
+            moveActionQueue.Enqueue(new MoveAction
+            {
+                actionType = MoveActionType.Rotate,
+                target = target
+            });
+        }
+
+        public virtual void ForcedMove(Vector3 destination)
+        {
+            moveActionQueue.Clear();
+            moveActionQueue.Enqueue(new MoveAction
+            {
+                actionType = MoveActionType.ForcedMove,
+                target = destination
+            });
         }
     }
 }

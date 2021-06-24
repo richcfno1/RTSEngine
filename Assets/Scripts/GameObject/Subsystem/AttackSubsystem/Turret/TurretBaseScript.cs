@@ -1,19 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System.Linq;
-using RTS.Bullet;
 
 namespace RTS.RTSGameObject.Subsystem
 {
-    // Rotation code is written by another author: https://github.com/brihernandez/GunTurrets
-    public class RailgunTurretScript : AttackSubsystemBaseScript
+    public class TurretBaseScript : AttackSubsystemBaseScript
     {
-        [Header("Objects")]
-        [Tooltip("GameObject used to shoot from the turret")]
-        public GameObject bullet;
-        [Tooltip("Where should the bullet instantiate")]
-        public List<Transform> bulletStartPosition;
         [Tooltip("Transform used to provide the horizontal rotation of the turret.")]
         public Transform turretBase;
         [Tooltip("Transform used to provide the vertical rotation of the barrels. Must be a child of the TurretBase.")]
@@ -37,151 +29,24 @@ namespace RTS.RTSGameObject.Subsystem
         [Range(0.0f, 90.0f)]
         public float depression = 5.0f;
 
-        [Header("Random")]
-        [Tooltip("How bullet randomly deviation when shooting")]
-        public float allowedRandomAngle = 0.05f;
-
         [Header("Utilities")]
         [Tooltip("Show the arcs that the turret can aim through.\n\nRed: Left/Right Traverse\nGreen: Elevation\nBlue: Depression")]
         public bool showArcs = false;
         [Tooltip("When game is running in editor, draws a debug ray to show where the turret is aiming.")]
         public bool showDebugRay = true;
 
-        private GameObject fireTarget;
-        private Vector3 aimPoint;
-        private int bulletCount;
+        protected Vector3 aimPoint;
+        protected bool aiming = false;
+        protected bool atRest = false;
 
-        private bool aiming = false;
-        private bool atRest = false;
-
-        // Start is called before the first frame update
-        void Start()
-        {
-            OnCreatedAction();
-            bulletCount = 0;
-        }
-
-        // Update is called once per frame
-        void FixedUpdate()
-        {
-            if (HP <= 0)
-            {
-                OnDestroyedAction();
-            }
-            if (!Active && HP / maxHP > repairPercentRequired)
-            {
-                OnSubsystemRepairedAction();
-            }
-            if (Active)
-            {
-                if (fireTarget == null)
-                {
-                    SetIdle(true);
-                }
-                else
-                {
-                    SetAimpoint(fireTarget.transform.position);
-                }
-                RotateTurret();
-                if (timer >= coolDown / bulletStartPosition.Count / Host.AttackPower)
-                {
-                    if (fireTarget != null && (transform.position - fireTarget.transform.position).magnitude <= lockRange)
-                    {
-                        RaycastHit hit;
-                        Vector3 rayPosition = turretBarrels.position;
-                        Vector3 rayDirection = turretBarrels.forward;
-                        if (Physics.Raycast(rayPosition, rayDirection, out hit, lockRange, ~pathfinderLayerMask))
-                        {
-                            if (hit.collider.tag != "AimCollider" && (hit.collider.GetComponent<RTSGameObjectBaseScript>() == null || hit.collider.GetComponent<RTSGameObjectBaseScript>().BelongTo != BelongTo))
-                            {
-                                Fire(bulletCount);
-                                bulletCount++;
-                                if (bulletCount == bulletStartPosition.Count)
-                                {
-                                    bulletCount = 0;
-                                }
-                            }
-                        }
-                    }
-                    DetermineFireTarget();
-                    timer = 0;
-                }
-                else
-                {
-                    timer += Time.deltaTime;
-                }
-            }
-            if (showDebugRay && Active)
-            {
-                DrawDebugRay();
-            }
-        }
-
-        protected virtual void Fire(int bulletIndex)
-        {
-            GameObject temp = Instantiate(bullet, bulletStartPosition[bulletIndex].position, turretBarrels.rotation);
-            BulletBaseScript tempScript = temp.GetComponent<BulletBaseScript>();
-            tempScript.moveDirection = turretBarrels.forward + turretBarrels.right * Random.Range(-allowedRandomAngle, allowedRandomAngle) +
-                turretBarrels.up * Random.Range(-allowedRandomAngle, allowedRandomAngle);
-            tempScript.toIgnore.Add(GetComponent<Collider>());
-            tempScript.toIgnore.Add(Host.GetComponent<Collider>());
-            tempScript.createdBy = Host.gameObject;
-        }
-
-        // Try to find a target by the order, compare angleY first, then check obstacles
-        protected override void DetermineFireTarget()
-        {
-            if (subsystemTarget == null)
-            {
-                fireTarget = null;
-                return;
-            }
-            if (subsystemTarget.Count == 1 && (GameObject)subsystemTarget[0] != null && possibleTargetTags.Contains(((GameObject)subsystemTarget[0]).tag))
-            {
-                GameObject target = (GameObject)subsystemTarget[0];
-                RaycastHit hit;
-                if (Physics.Raycast(transform.position, (target.transform.position - transform.position).normalized, out hit, lockRange, ~pathfinderLayerMask))
-                {
-                    if (hit.collider.tag != "AimCollider" && (hit.collider.GetComponent<RTSGameObjectBaseScript>() == null || hit.collider.GetComponent<RTSGameObjectBaseScript>().BelongTo != BelongTo))
-                    {
-                        fireTarget = target;
-                        return;
-                    }
-                }
-            }
-            List<Collider> allPossibleTargets = new List<Collider>(Physics.OverlapSphere(transform.position, lockRange, ~pathfinderLayerMask));
-            List<Collider> filteredPossibleTargets = new List<Collider>();
-            foreach (string i in possibleTargetTags)
-            {
-                filteredPossibleTargets.AddRange(allPossibleTargets.Where(x => x.CompareTag(i)));
-            }
-            filteredPossibleTargets = filteredPossibleTargets.Where(x => x.GetComponent<RTSGameObjectBaseScript>() != null &&
-                x.GetComponent<RTSGameObjectBaseScript>().BelongTo != BelongTo).ToList();
-            filteredPossibleTargets.Sort((x, y) => Comparer.Default.Compare(
-                (x.transform.position - transform.position).sqrMagnitude, (y.transform.position - transform.position).sqrMagnitude));
-            foreach (Collider i in filteredPossibleTargets)
-            {
-                RaycastHit hit;
-                if (Physics.Raycast(transform.position, (i.transform.position - transform.position).normalized, out hit, lockRange, ~pathfinderLayerMask))
-                {
-                    if (hit.collider.tag != "AimCollider" && (hit.collider.GetComponent<RTSGameObjectBaseScript>() == null || hit.collider.GetComponent<RTSGameObjectBaseScript>().BelongTo != BelongTo))
-                    {
-                        fireTarget = i.gameObject;
-                        return;
-                    }
-                }
-            }
-            fireTarget = null;
-        }
-
-        private void SetAimpoint(Vector3 position)
+        protected void SetAimpoint(Vector3 position)
         {
             aiming = true;
             aimPoint = position;
             atRest = false;
         }
 
-        private void SetIdle(bool idle)
+        protected void SetIdle(bool idle)
         {
             aiming = !idle;
 
@@ -191,7 +56,7 @@ namespace RTS.RTSGameObject.Subsystem
             }
         }
 
-        private void RotateTurret()
+        protected void RotateTurret()
         {
             if (aiming)
             {
@@ -204,7 +69,7 @@ namespace RTS.RTSGameObject.Subsystem
             }
         }
 
-        private void RotateBase()
+        protected void RotateBase()
         {
             // TODO: Turret needs to rotate the long way around if the aimpoint gets behind
             // it and traversal limits prevent it from taking the shortest rotation.
@@ -234,7 +99,7 @@ namespace RTS.RTSGameObject.Subsystem
             }
         }
 
-        private void RotateBarrels()
+        protected void RotateBarrels()
         {
             // TODO: A target position directly to the turret's right will cause the turret
             // to attempt to aim straight up. This looks silly and on slow moving turrets can
@@ -262,7 +127,7 @@ namespace RTS.RTSGameObject.Subsystem
             }
         }
 
-        private bool RotateToIdle()
+        protected bool RotateToIdle()
         {
             bool baseFinished = false;
             bool barrelsFinished = false;
@@ -288,7 +153,7 @@ namespace RTS.RTSGameObject.Subsystem
             return (baseFinished && barrelsFinished);
         }
 
-        private void DrawDebugRay()
+        protected void DrawDebugRay()
         {
             // DEBUG RAY
             RaycastHit hit;
@@ -312,3 +177,5 @@ namespace RTS.RTSGameObject.Subsystem
         }
     }
 }
+
+

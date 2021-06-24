@@ -6,7 +6,7 @@ using RTS.RTSGameObject.Missile;
 
 namespace RTS.RTSGameObject.Subsystem
 {
-    public class FixedLauncherScript : AttackSubsystemBaseScript
+    public class AimlessMissileLauncherScript : AttackSubsystemBaseScript
     {
         [Header("Objects")]
         [Tooltip("GameObject used to shoot from the turret")]

@@ -74,12 +74,15 @@ namespace RTS.RTSGameObject.Subsystem
             GameObject temp = GameManager.GameManagerInstance.InstantiateUnit(type,
                 transform.TransformPoint(transform.localPosition),
                 transform.rotation, GameObject.Find("GameObject").transform, BelongTo);
-            List<Vector3> trueDeployPath = new List<Vector3>();
+            temp.GetComponent<UnitBaseScript>().Stop();
             foreach (Vector3 i in deployPath)
             {
-                trueDeployPath.Add(transform.TransformPoint(i));
+                temp.GetComponent<UnitBaseScript>().AddActionToQueue(new UnitBaseScript.MoveAction()
+                {
+                    actionType = UnitBaseScript.MoveActionType.ForcedMove,
+                    target = transform.TransformPoint(i)
+                });
             }
-            temp.GetComponent<UnitBaseScript>().ForcedMove(trueDeployPath);
             carriedUnits[type]--;
             deployedUnits[type].Add(temp);
             deployQueue.Dequeue();

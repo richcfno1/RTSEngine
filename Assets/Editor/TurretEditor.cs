@@ -5,15 +5,15 @@ using UnityEngine;
 using RTS.RTSGameObject.Subsystem;
 
 // Rotation code is written by another author: https://github.com/brihernandez/GunTurrets
-[CustomEditor(typeof(RailgunTurretScript))]
+[CustomEditor(typeof(TurretBaseScript))]
 [CanEditMultipleObjects]
-public class RailgunTurretEditor : Editor
+public class TurretEditor : Editor
 {
     private const float ArcSize = 10.0f;
 
     public override void OnInspectorGUI()
     {
-        RailgunTurretScript turret = (RailgunTurretScript)target;
+        TurretBaseScript turret = (TurretBaseScript)target;
 
         DrawDefaultInspector();
 
@@ -24,7 +24,7 @@ public class RailgunTurretEditor : Editor
 
     private void OnSceneGUI()
     {
-        RailgunTurretScript turret = (RailgunTurretScript)target;
+        TurretBaseScript turret = (TurretBaseScript)target;
         Transform transform = turret.transform;
 
         // Don't show turret arcs when playing, because they won't be correct.
