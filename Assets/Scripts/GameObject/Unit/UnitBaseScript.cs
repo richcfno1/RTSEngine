@@ -25,7 +25,7 @@ namespace RTS.RTSGameObject.Unit
             ForcedMove
         }
 
-        public struct MoveAction
+        public class MoveAction
         {
             public MoveActionType actionType;
             public Vector3 target;
@@ -105,9 +105,12 @@ namespace RTS.RTSGameObject.Unit
             }
         }
 
-        public virtual void SetDestination(Vector3 destination)
+        public virtual void MoveTo(Vector3 destination, bool clearQueue = true)
         {
-            moveActionQueue.Clear();
+            if (clearQueue)
+            {
+                moveActionQueue.Clear();
+            }
             moveActionQueue.Enqueue(new MoveAction
             {
                 actionType = MoveActionType.Move,
@@ -115,9 +118,12 @@ namespace RTS.RTSGameObject.Unit
             });
         }
 
-        public virtual void RotateTo(Vector3 target)
+        public virtual void RotateTo(Vector3 target, bool clearQueue = true)
         {
-            moveActionQueue.Clear();
+            if (clearQueue)
+            {
+                moveActionQueue.Clear();
+            }
             moveActionQueue.Enqueue(new MoveAction
             {
                 actionType = MoveActionType.Rotate,
@@ -125,9 +131,12 @@ namespace RTS.RTSGameObject.Unit
             });
         }
 
-        public virtual void ForcedMove(Vector3 destination)
+        public virtual void ForcedMoveTo(Vector3 destination, bool clearQueue = true)
         {
-            moveActionQueue.Clear();
+            if (clearQueue)
+            {
+                moveActionQueue.Clear();
+            }
             moveActionQueue.Enqueue(new MoveAction
             {
                 actionType = MoveActionType.ForcedMove,

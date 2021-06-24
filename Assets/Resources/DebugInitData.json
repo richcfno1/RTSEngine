@@ -33,8 +33,8 @@
       "baseTypeName": "Cruiser1",
       "properties": {},
       "subsystems": {
-        "TurretAnchor9": "FixedMissileLauncher1",
-        "TurretAnchor10": "FixedMissileLauncher1",
+        "TurretAnchor9": "AimlessMissileLauncher1",
+        "TurretAnchor10": "AimlessMissileLauncher1",
         "TurretAnchor11": "Turret1",
         "TurretAnchor12": "Turret1",
         "TurretAnchor13": "Turret1",

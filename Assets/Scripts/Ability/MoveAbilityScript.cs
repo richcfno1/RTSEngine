@@ -36,11 +36,11 @@ namespace RTS.Ability
             {
                 if ((int)abilityTarget[0] == 0)
                 {
-                    Host.SetDestination(transform.position);
+                    Host.MoveTo(transform.position);
                 }
                 else if ((int)abilityTarget[0] == 1)
                 {
-                    Host.SetDestination((Vector3)abilityTarget[1]);
+                    Host.MoveTo((Vector3)abilityTarget[1]);
                 }
                 return true;
             }

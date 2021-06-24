@@ -99,7 +99,7 @@ namespace RTS.RTSGameObject.Unit
                                 {
                                     if (!TestObstacleAndPush(thisBody.position, moveBeacons[0]))
                                     {
-                                        FindPath(thisBody.position, finalPosition);
+                                        moveActionQueue.Peek().target = FindPath(thisBody.position, finalPosition);
                                         return;
                                     }
                                     thisBody.position = moveBeacons[0];
@@ -109,7 +109,7 @@ namespace RTS.RTSGameObject.Unit
                                 {
                                     if (!TestObstacleAndPush(thisBody.position, thisBody.position + moveVector.normalized * moveDistance))
                                     {
-                                        FindPath(thisBody.position, finalPosition);
+                                        moveActionQueue.Peek().target = FindPath(thisBody.position, finalPosition);
                                         return;
                                     }
                                     thisBody.position += moveVector.normalized * moveDistance;
@@ -117,7 +117,7 @@ namespace RTS.RTSGameObject.Unit
                             }
                             else
                             {
-                                FindPath(thisBody.position, finalPosition);
+                                moveActionQueue.Peek().target = FindPath(thisBody.position, finalPosition);
                             }
                         }
                         else
@@ -257,16 +257,11 @@ namespace RTS.RTSGameObject.Unit
                     }
                 }
             }
-            // Use rigidbody to solve the problem
-            //foreach (RTSGameObjectBaseScript i in avoidInfo)
-            //{
-            //    Vector3 avoidDirection = i.transform.position - transform.position;
-            //    i.transform.position += avoidDirection.normalized * direction.magnitude;
-            //}
             return true;
         }
 
-        private void FindPath(Vector3 from, Vector3 to)
+        // Return value is modified destination
+        private Vector3 FindPath(Vector3 from, Vector3 to)
         {
             List<Vector3> result = new List<Vector3>();
             List<Collider> intersectObjects = new List<Collider>(Physics.OverlapBox(to, NavigationCollider.size, transform.rotation));
@@ -317,26 +312,6 @@ namespace RTS.RTSGameObject.Unit
                             searchDirectionInPlane2 * UnityEngine.Random.value).normalized;
                         intersectObjects = new List<Collider>(Physics.OverlapBox(middle, NavigationCollider.size, transform.rotation));
                         intersectObjects.RemoveAll(x => x.CompareTag("Bullet"));
-                        //if (intersectObjects.Count == 0)
-                        //{
-                        //    if (TestObstacle(middle, to) != 0)
-                        //    {
-                        //        Debug.DrawLine(middle, to, Color.red);
-                        //    }
-                        //    else
-                        //    {
-                        //        Debug.DrawLine(middle, to, Color.green);
-                        //    }
-                        //    if (TestObstacle(from, middle) != 0)
-                        //    {
-                        //        Debug.DrawLine(from, middle, Color.red);
-                        //    }
-                        //    else
-                        //    {
-                        //        Debug.DrawLine(from, middle, Color.green);
-                        //    }
-                        //    //Debug.Break();
-                        //}
                         if (intersectObjects.Count == 0 && TestObstacle(middle, to) == 0 && TestObstacle(from, middle) == 0)
                         {
                             find = true;
@@ -348,8 +323,7 @@ namespace RTS.RTSGameObject.Unit
                 if (!find)
                 {
                     Debug.Log("Out of search limitation when determine path");
-                    moveBeacons.Clear();
-                    return;
+                    result.Clear();
                 }
                 else
                 {
@@ -357,6 +331,7 @@ namespace RTS.RTSGameObject.Unit
                 }
             }
             moveBeacons = result;
+            return finalPosition;
         }
     }
 }

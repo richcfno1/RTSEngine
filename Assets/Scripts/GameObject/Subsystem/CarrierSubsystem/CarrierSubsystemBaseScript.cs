@@ -77,11 +77,7 @@ namespace RTS.RTSGameObject.Subsystem
             temp.GetComponent<UnitBaseScript>().Stop();
             foreach (Vector3 i in deployPath)
             {
-                temp.GetComponent<UnitBaseScript>().AddActionToQueue(new UnitBaseScript.MoveAction()
-                {
-                    actionType = UnitBaseScript.MoveActionType.ForcedMove,
-                    target = transform.TransformPoint(i)
-                });
+                temp.GetComponent<UnitBaseScript>().ForcedMoveTo(transform.TransformPoint(i), false);
             }
             carriedUnits[type]--;
             deployedUnits[type].Add(temp);

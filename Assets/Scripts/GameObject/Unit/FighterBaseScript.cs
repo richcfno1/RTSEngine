@@ -86,7 +86,7 @@ namespace RTS.RTSGameObject.Unit
                                 {
                                     if (TestObstacle(thisBody.position, moveBeacons[0]) != 0)
                                     {
-                                        FindPath(thisBody.position, finalPosition);
+                                        moveActionQueue.Peek().target = FindPath(thisBody.position, finalPosition);
                                         return;
                                     }
                                     thisBody.position = moveBeacons[0];
@@ -96,14 +96,14 @@ namespace RTS.RTSGameObject.Unit
                                 {
                                     if (TestObstacle(thisBody.position, thisBody.position + transform.forward * moveDistance) != 0)
                                     {
-                                        FindPath(thisBody.position, finalPosition);
+                                        moveActionQueue.Peek().target = FindPath(thisBody.position, finalPosition);
                                     }
                                     thisBody.position += transform.forward * moveDistance;
                                 }
                             }
                             else
                             {
-                                FindPath(thisBody.position, finalPosition);
+                                moveActionQueue.Peek().target = FindPath(thisBody.position, finalPosition);
                             }
                         }
                         else
@@ -201,7 +201,8 @@ namespace RTS.RTSGameObject.Unit
             return 0;
         }
 
-        private void FindPath(Vector3 from, Vector3 to)
+        // Return value is modified destination
+        private Vector3 FindPath(Vector3 from, Vector3 to)
         {
             List<Vector3> result = new List<Vector3>();
             List<Collider> intersectObjects = new List<Collider>(Physics.OverlapSphere(to, agentRadius));
@@ -262,6 +263,7 @@ namespace RTS.RTSGameObject.Unit
                 }
             }
             moveBeacons = result;
+            return finalPosition;
         }
     }
 }
