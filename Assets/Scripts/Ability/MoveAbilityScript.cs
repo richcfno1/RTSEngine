@@ -5,7 +5,6 @@ using RTS.RTSGameObject.Subsystem;
 
 namespace RTS.Ability
 {
-    // This class is only used to control two different move ability scripts
     public class MoveAbilityScript : AbilityBaseScript
     {
         public enum ActionType
