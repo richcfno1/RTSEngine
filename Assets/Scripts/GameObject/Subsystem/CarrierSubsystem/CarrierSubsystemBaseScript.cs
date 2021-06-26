@@ -75,10 +75,13 @@ namespace RTS.RTSGameObject.Subsystem
                 transform.TransformPoint(transform.localPosition),
                 transform.rotation, GameObject.Find("GameObject").transform, BelongTo);
             temp.GetComponent<UnitBaseScript>().Stop();
+            Vector3 offset = Vector3.zero;
             foreach (Vector3 i in deployPath)
             {
-                temp.GetComponent<UnitBaseScript>().ForcedMoveTo(transform.TransformPoint(i), false);
+                offset += i;
+                temp.GetComponent<UnitBaseScript>().ForcedMove(transform.TransformPoint(i), false);
             }
+            temp.GetComponent<UnitBaseScript>().Follow(gameObject, offset, false);
             carriedUnits[type]--;
             deployedUnits[type].Add(temp);
             deployQueue.Dequeue();
