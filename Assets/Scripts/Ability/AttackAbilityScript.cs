@@ -70,15 +70,21 @@ namespace RTS.Ability
             List<AxisBaseScript> allAxisWeapons = SupportedBy.OfType<AxisBaseScript>().ToList();
             if (allAxisWeapons.Count != 0)
             {
+                foreach (AttackSubsystemBaseScript i in SupportedBy)
+                {
+                    i.SetTarget(new List<object>() { target });
+                }
                 // call follow and head to
             }
             else
             {
-                // call follow
-            }
-            foreach (AttackSubsystemBaseScript i in SupportedBy)
-            {
-                i.SetTarget(new List<object>() { target });
+                float minLockRange = Mathf.Infinity;
+                foreach (AttackSubsystemBaseScript i in SupportedBy)
+                {
+                    minLockRange = minLockRange < i.lockRange ? minLockRange : i.lockRange;
+                    i.SetTarget(new List<object>() { target });
+                }
+                Host.Follow(target, (transform.position - target.transform.position).normalized * minLockRange, false, false);
             }
         }
     }

@@ -98,7 +98,7 @@ namespace RTS.RTSGameObject.Unit
                                 float moveSpeedAdjust = Mathf.Cos(Mathf.Deg2Rad * Quaternion.Angle(thisBody.rotation, Quaternion.LookRotation(rotateDirection)));
                                 moveSpeedAdjust = (moveSpeedAdjust + 1) / 2;
                                 lastFrameSpeedAdjust = Mathf.Cos(Mathf.Deg2Rad * Quaternion.Angle(thisBody.rotation, Quaternion.LookRotation(lastFrameMoveDirection)));
-                                moveSpeedAdjust = Mathf.Clamp(moveSpeedAdjust, lastFrameSpeedAdjust - agentAccelerateLimit, lastFrameSpeedAdjust + agentAccelerateLimit);
+                                moveSpeedAdjust = Mathf.Clamp(moveSpeedAdjust, 0, lastFrameSpeedAdjust + agentAccelerateLimit);
                                 float moveDistance = agentMoveSpeed * Time.fixedDeltaTime * moveSpeedAdjust * MovePower;
 
                                 lastFrameSpeedAdjust = moveSpeedAdjust;
@@ -170,7 +170,7 @@ namespace RTS.RTSGameObject.Unit
                                     float moveSpeedAdjust = Mathf.Cos(Mathf.Deg2Rad * Quaternion.Angle(thisBody.rotation, Quaternion.LookRotation(rotateDirection)));
                                     moveSpeedAdjust = (moveSpeedAdjust + 1) / 2;
                                     lastFrameSpeedAdjust = Mathf.Cos(Mathf.Deg2Rad * Quaternion.Angle(thisBody.rotation, Quaternion.LookRotation(lastFrameMoveDirection)));
-                                    moveSpeedAdjust = Mathf.Clamp(moveSpeedAdjust, lastFrameSpeedAdjust - agentAccelerateLimit, lastFrameSpeedAdjust + agentAccelerateLimit);
+                                    moveSpeedAdjust = Mathf.Clamp(moveSpeedAdjust, 0, lastFrameSpeedAdjust + agentAccelerateLimit);
                                     float moveDistance = agentMoveSpeed * Time.fixedDeltaTime * moveSpeedAdjust * MovePower;
 
                                     lastFrameSpeedAdjust = moveSpeedAdjust;
@@ -238,7 +238,7 @@ namespace RTS.RTSGameObject.Unit
                                         float moveSpeedAdjust = Mathf.Cos(Mathf.Deg2Rad * Quaternion.Angle(thisBody.rotation, Quaternion.LookRotation(rotateDirection)));
                                         moveSpeedAdjust = (moveSpeedAdjust + 1) / 2;
                                         lastFrameSpeedAdjust = Mathf.Cos(Mathf.Deg2Rad * Quaternion.Angle(thisBody.rotation, Quaternion.LookRotation(lastFrameMoveDirection)));
-                                        moveSpeedAdjust = Mathf.Clamp(moveSpeedAdjust, lastFrameSpeedAdjust - agentAccelerateLimit, lastFrameSpeedAdjust + agentAccelerateLimit);
+                                        moveSpeedAdjust = Mathf.Clamp(moveSpeedAdjust, 0, lastFrameSpeedAdjust + agentAccelerateLimit);
                                         float moveDistance = agentMoveSpeed * Time.fixedDeltaTime * moveSpeedAdjust * MovePower;
 
                                         lastFrameSpeedAdjust = moveSpeedAdjust;
@@ -319,7 +319,7 @@ namespace RTS.RTSGameObject.Unit
                                     float moveSpeedAdjust = Mathf.Cos(Mathf.Deg2Rad * Quaternion.Angle(thisBody.rotation, Quaternion.LookRotation(rotateDirection)));
                                     moveSpeedAdjust = (moveSpeedAdjust + 1) / 2;
                                     lastFrameSpeedAdjust = Mathf.Cos(Mathf.Deg2Rad * Quaternion.Angle(thisBody.rotation, Quaternion.LookRotation(lastFrameMoveDirection)));
-                                    moveSpeedAdjust = Mathf.Clamp(moveSpeedAdjust, lastFrameSpeedAdjust - agentAccelerateLimit, lastFrameSpeedAdjust + agentAccelerateLimit);
+                                    moveSpeedAdjust = Mathf.Clamp(moveSpeedAdjust, 0, lastFrameSpeedAdjust + agentAccelerateLimit);
                                     float moveDistance = agentMoveSpeed * Time.fixedDeltaTime * moveSpeedAdjust * MovePower;
 
                                     lastFrameSpeedAdjust = moveSpeedAdjust;
