@@ -152,9 +152,9 @@ namespace RTS
 
             // Ship
             GameObject result = Instantiate(Resources.Load<GameObject>(gameObjectLibrary[libraryData.baseTypeName]), position, rotation, parent);
-            if (result.GetComponent<ShipBaseScript>() != null)
+            if (result.GetComponent<UnitBaseScript>() != null)
             {
-                ShipBaseScript shipScript = result.GetComponent<ShipBaseScript>();
+                UnitBaseScript shipScript = result.GetComponent<UnitBaseScript>();
                 shipScript.UnitTypeID = unitType;
                 shipScript.PropertyDictionary = libraryData.properties;
 
@@ -212,31 +212,6 @@ namespace RTS
                     }
                     abilityScript.Host = shipScript;
                     shipScript.AbilityDictionary.Add(ability.Key, abilityScript);
-                }
-            }
-
-            // Fighter
-            else if (result.GetComponent<FighterBaseScript>() != null)
-            {
-                FighterBaseScript fighterScript = result.GetComponent<FighterBaseScript>();
-                fighterScript.UnitTypeID = unitType;
-                fighterScript.PropertyDictionary = libraryData.properties;
-
-                // Init ability
-                foreach (KeyValuePair<string, List<string>> ability in libraryData.abilities)
-                {
-                    Type abilityType = Type.GetType(abilityLibrary[ability.Key]);
-                    AbilityBaseScript abilityScript = (AbilityBaseScript)result.AddComponent(abilityType);
-                    foreach (string supportedSubsystemAnchor in ability.Value)
-                    {
-                        if (supportedSubsystemAnchor != libraryData.baseTypeName)
-                        {
-                            // Haha, maybe I need change the rule
-                            Debug.LogError("Fighter does not have any subsystem: " + supportedSubsystemAnchor);
-                        }
-                    }
-                    abilityScript.Host = fighterScript;
-                    fighterScript.AbilityDictionary.Add(ability.Key, abilityScript);
                 }
             }
 

@@ -6,6 +6,6 @@ namespace RTS.RTSGameObject.Subsystem
 {
     public class AxisBaseScript : AttackSubsystemBaseScript
     {
-
+        public float suggestedFireDistance;
     }
 }

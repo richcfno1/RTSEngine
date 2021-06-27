@@ -113,8 +113,8 @@ MonoBehaviour:
   damage: 5
   attackPowerReduce: 0
   defencePowerReduce: 0
-  movePowerReduce: 5
-  moveSpeed: 200
+  movePowerReduce: 2
+  moveSpeed: 500
   maxTime: 5
   hitEffect: {fileID: 5274955551422557383, guid: d15feefb61d4eb94992900187da6874e, type: 3}
   moveDirection: {x: 0, y: 0, z: 0}
@@ -187,7 +187,7 @@ Light:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RenderingLayerMask: 1
-  m_Lightmapping: 4
+  m_Lightmapping: 1
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1

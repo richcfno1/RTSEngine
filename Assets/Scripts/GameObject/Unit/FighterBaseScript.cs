@@ -187,8 +187,70 @@ namespace RTS.RTSGameObject.Unit
                         }
                         return;
                     case ActionType.FollowAndHeadTo:
-                        Debug.LogWarning("Unimplemented: Fighter-FollowAndHeadTo");
-                        moveActionQueue.RemoveFirst();
+                        GameObject followAndHeadToTarget = (GameObject)action.targets[0];
+                        if (followAndHeadToTarget == null)
+                        {
+                            moveActionQueue.RemoveFirst();
+                            isApproaching = true;
+                            return;
+                        }
+                        else
+                        {
+                            float currentDistance = (followAndHeadToTarget.transform.position - transform.position).magnitude;
+                            Vector3 currentDirection = (transform.position - followAndHeadToTarget.transform.position).normalized;
+                            // It is important to use +1 and -1 to avoid unit freezing at a point
+                            isApproaching = isApproaching ?
+                                currentDistance > (float)action.targets[3] + 1 :  // If is approaching and not close enough
+                                currentDistance >= (float)action.targets[2] - 1;  // If is not approaching but be too far away
+
+                            finalPosition = isApproaching ? 
+                                followAndHeadToTarget.transform.position + currentDirection * (float)action.targets[3] :
+                                followAndHeadToTarget.transform.position + currentDirection * (float)action.targets[2];
+
+                            if (thisBody.position != finalPosition)
+                            {
+                                // Moving
+                                if (TestObstacle(thisBody.position, finalPosition) == 0)
+                                {
+                                    moveBeacons.Clear();
+                                    moveBeacons.Add(finalPosition);
+                                }
+                                if (TestObstacle(thisBody.position, finalPosition) == 0)
+                                {
+                                    moveBeacons.Clear();
+                                    moveBeacons.Add(finalPosition);
+                                }
+                                if (moveBeacons.Count != 0)
+                                {
+                                    Vector3 moveVector = moveBeacons[0] - thisBody.position;
+                                    Vector3 rotateDirection = moveVector.normalized;
+                                    thisBody.rotation = Quaternion.RotateTowards(thisBody.rotation, Quaternion.LookRotation(rotateDirection), Time.fixedDeltaTime * agentRotateSpeed);
+                                    float moveDistance = agentMoveSpeed * Time.fixedDeltaTime;
+                                    if (moveVector.magnitude <= moveDistance)
+                                    {
+                                        if (TestObstacle(thisBody.position, moveBeacons[0]) != 0)
+                                        {
+                                            moveActionQueue.First().targets[1] = FindPath(thisBody.position, finalPosition) - followAndHeadToTarget.transform.position;
+                                            return;
+                                        }
+                                        thisBody.position = moveBeacons[0];
+                                        moveBeacons.RemoveAt(0);
+                                    }
+                                    else
+                                    {
+                                        if (TestObstacle(thisBody.position, thisBody.position + transform.forward * moveDistance) != 0)
+                                        {
+                                            moveActionQueue.First().targets[1] = FindPath(thisBody.position, finalPosition) - followAndHeadToTarget.transform.position;
+                                        }
+                                        thisBody.position += transform.forward * moveDistance;
+                                    }
+                                }
+                                else
+                                {
+                                    moveActionQueue.First().targets[1] = FindPath(thisBody.position, finalPosition) - followAndHeadToTarget.transform.position;
+                                }
+                            }
+                        }
                         return;
                     case ActionType.Attack:
                         if (GetComponent<AttackAbilityScript>() != null)

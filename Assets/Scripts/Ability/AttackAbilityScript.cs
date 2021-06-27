@@ -18,7 +18,7 @@ namespace RTS.Ability
         // Start is called before the first frame update
         void Start()
         {
-            UseAttackAbility(ActionType.SetNeutral);
+            UseAttackAbility(ActionType.SetAggressive);
         }
 
         // This is called by UI
@@ -70,11 +70,23 @@ namespace RTS.Ability
             List<AxisBaseScript> allAxisWeapons = SupportedBy.OfType<AxisBaseScript>().ToList();
             if (allAxisWeapons.Count != 0)
             {
+                float maxLockRange = 0;
+                float minSuggestedFireDistance = Mathf.Infinity;
+                foreach (AxisBaseScript i in SupportedBy)
+                {
+                    maxLockRange = maxLockRange > i.lockRange ? maxLockRange : i.lockRange;
+                    minSuggestedFireDistance = minSuggestedFireDistance < i.suggestedFireDistance ? 
+                        minSuggestedFireDistance : i.suggestedFireDistance;
+                    i.SetTarget(new List<object>() { target });
+                }
                 foreach (AttackSubsystemBaseScript i in SupportedBy)
                 {
+                    maxLockRange = maxLockRange < i.lockRange ? maxLockRange : i.lockRange;
                     i.SetTarget(new List<object>() { target });
                 }
                 // call follow and head to
+                Host.FollowAndHeadTo(target, (transform.position - target.transform.position).normalized, 
+                    maxLockRange, minSuggestedFireDistance, false, false);
             }
             else
             {

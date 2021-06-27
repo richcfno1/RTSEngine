@@ -20,13 +20,12 @@ namespace RTS.RTSGameObject.Subsystem
         public float allowedRandomAngle = 0.05f;
 
         private GameObject fireTarget;
-        private int shootCount;  // This is the counter which help to indicate which elements in bulletStartPosition should be used
+        private int shootCount = 0;  // This is the counter which help to indicate which elements in bulletStartPosition should be used
 
         // Start is called before the first frame update
         void Start()
         {
             OnCreatedAction();
-            shootCount = 0;
         }
 
         // Update is called once per frame
@@ -85,9 +84,9 @@ namespace RTS.RTSGameObject.Subsystem
             }
         }
 
-        protected virtual void Fire(int bulletIndex)
+        protected virtual void Fire(int index)
         {
-            GameObject temp = Instantiate(bullet, bulletStartPosition[bulletIndex].position, turretBarrels.rotation);
+            GameObject temp = Instantiate(bullet, bulletStartPosition[index].position, turretBarrels.rotation);
             BulletBaseScript tempScript = temp.GetComponent<BulletBaseScript>();
             tempScript.moveDirection = turretBarrels.forward + turretBarrels.right * Random.Range(-allowedRandomAngle, allowedRandomAngle) +
                 turretBarrels.up * Random.Range(-allowedRandomAngle, allowedRandomAngle);

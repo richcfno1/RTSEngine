@@ -22,7 +22,7 @@ namespace RTS.RTSGameObject.Subsystem
         public List<AbilityBaseScript.AbilityType> supportedAbility;
 
         // Set when instantiate
-        public ShipBaseScript Host { get; set; }
+        public UnitBaseScript Host { get; set; }
         public bool Active { get; private set; }
 
         protected List<object> subsystemTarget = new List<object>();

@@ -51,7 +51,7 @@
       "properties": {},
       "subsystems": {},
       "abilities": { 
-        "Move": [ "Fighter1" ] 
+        "Move": [ "Fighter1" ]
       }
     },
     {
@@ -60,7 +60,8 @@
       "properties": {},
       "subsystems": {},
       "abilities": { 
-        "Move": [ "Fighter2" ] 
+        "Move": [ "Fighter2" ],
+        "Attack": [ "AxisWeaponAnchor1", "AxisWeaponAnchor2" ] 
       }
     }
   ],

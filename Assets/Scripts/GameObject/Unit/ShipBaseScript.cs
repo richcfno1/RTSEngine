@@ -213,13 +213,16 @@ namespace RTS.RTSGameObject.Unit
                         if (followAndHeadToTarget == null)
                         {
                             moveActionQueue.RemoveFirst();
+                            isApproaching = true;
                             return;
                         }
                         else
                         {
                             float currentDistance = (followAndHeadToTarget.transform.position - transform.position).magnitude;
-                            isApproaching = isApproaching ? 
-                                currentDistance <= (float)action.targets[3] : currentDistance >= (float)action.targets[2];
+                            // It is important to use +1 and -1 to avoid unit freezing at a point
+                            isApproaching = isApproaching ?
+                                currentDistance > (float)action.targets[3] + 1 :  // If is approaching and not close enough
+                                currentDistance >= (float)action.targets[2] - 1;  // If is not approaching but be too far away
 
                             if (isApproaching)
                             {
@@ -278,7 +281,7 @@ namespace RTS.RTSGameObject.Unit
                             }
                             else
                             {
-                                finalRotationTarget = (Vector3)action.targets[0];
+                                finalRotationTarget = followAndHeadToTarget.transform.position;
                                 thisBody.rotation = Quaternion.RotateTowards(thisBody.rotation, 
                                     Quaternion.LookRotation((finalRotationTarget - thisBody.position).normalized), 
                                     Time.fixedDeltaTime * agentRotateSpeed);
