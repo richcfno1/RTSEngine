@@ -94,6 +94,7 @@ namespace RTS.RTSGameObject.Unit
                             {
                                 Vector3 moveVector = moveBeacons[0] - thisBody.position;
                                 Vector3 rotateDirection = moveVector.normalized;
+                                rotateDirection.y = 0;
                                 thisBody.rotation = Quaternion.RotateTowards(thisBody.rotation, Quaternion.LookRotation(rotateDirection), Time.fixedDeltaTime * agentRotateSpeed);
                                 float moveSpeedAdjust = Mathf.Cos(Mathf.Deg2Rad * Quaternion.Angle(thisBody.rotation, Quaternion.LookRotation(rotateDirection)));
                                 moveSpeedAdjust = (moveSpeedAdjust + 1) / 2;
@@ -166,6 +167,7 @@ namespace RTS.RTSGameObject.Unit
                                 {
                                     Vector3 moveVector = moveBeacons[0] - thisBody.position;
                                     Vector3 rotateDirection = moveVector.normalized;
+                                    rotateDirection.y = 0;
                                     thisBody.rotation = Quaternion.RotateTowards(thisBody.rotation, Quaternion.LookRotation(rotateDirection), Time.fixedDeltaTime * agentRotateSpeed);
                                     float moveSpeedAdjust = Mathf.Cos(Mathf.Deg2Rad * Quaternion.Angle(thisBody.rotation, Quaternion.LookRotation(rotateDirection)));
                                     moveSpeedAdjust = (moveSpeedAdjust + 1) / 2;
@@ -234,6 +236,7 @@ namespace RTS.RTSGameObject.Unit
                                     {
                                         Vector3 moveVector = moveBeacons[0] - thisBody.position;
                                         Vector3 rotateDirection = moveVector.normalized;
+                                        rotateDirection.y = 0;
                                         thisBody.rotation = Quaternion.RotateTowards(thisBody.rotation, Quaternion.LookRotation(rotateDirection), Time.fixedDeltaTime * agentRotateSpeed);
                                         float moveSpeedAdjust = Mathf.Cos(Mathf.Deg2Rad * Quaternion.Angle(thisBody.rotation, Quaternion.LookRotation(rotateDirection)));
                                         moveSpeedAdjust = (moveSpeedAdjust + 1) / 2;
@@ -315,6 +318,7 @@ namespace RTS.RTSGameObject.Unit
                                 {
                                     Vector3 moveVector = moveBeacons[0] - thisBody.position;
                                     Vector3 rotateDirection = moveVector.normalized;
+                                    rotateDirection.y = 0;
                                     thisBody.rotation = Quaternion.RotateTowards(thisBody.rotation, Quaternion.LookRotation(rotateDirection), Time.fixedDeltaTime * agentRotateSpeed);
                                     float moveSpeedAdjust = Mathf.Cos(Mathf.Deg2Rad * Quaternion.Angle(thisBody.rotation, Quaternion.LookRotation(rotateDirection)));
                                     moveSpeedAdjust = (moveSpeedAdjust + 1) / 2;
