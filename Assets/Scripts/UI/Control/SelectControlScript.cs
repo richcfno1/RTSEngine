@@ -20,8 +20,6 @@ namespace RTS.UI.Control
         private bool mouseLeftUp;
         private bool mouseLeftDown;
         private List<GameObject> allSelectableGameObjects;
-        private List<Vector3> gameObjectWorldPosition = new List<Vector3>();
-        private List<Vector3> gameObjectScreenPosition = new List<Vector3>();
 
         private GameObject SelectionBox = null;
 
@@ -57,18 +55,6 @@ namespace RTS.UI.Control
             }
             if (mouseLeftDown)
             {
-                // Preparation for select
-                gameObjectWorldPosition.Clear();
-                gameObjectScreenPosition.Clear();
-                foreach (GameObject i in allSelectableGameObjects)
-                {
-                    if (i != null)
-                    {
-                        gameObjectWorldPosition.Add(i.transform.position);
-                        gameObjectScreenPosition.Add(Camera.main.WorldToScreenPoint(i.transform.position));
-                    }
-                }
-
                 // Draw box
                 Vector3 boxPosition = (Input.mousePosition + mouseStartPosition) / 2;
                 float boxSizeX = Mathf.Abs(Input.mousePosition.x - mouseStartPosition.x);
@@ -163,7 +149,11 @@ namespace RTS.UI.Control
             {
                 for (int i = 0; i < allSelectableGameObjects.Count; i++)
                 {
-                    Vector2 position2D = gameObjectScreenPosition[i];
+                    if (allSelectableGameObjects[i] == null)
+                    {
+                        continue;
+                    }
+                    Vector2 position2D = Camera.main.WorldToScreenPoint(allSelectableGameObjects[i].transform.position);
                     if ((position2D.x >= mouseStartPosition.x && position2D.x <= mouseEndPosition.x && position2D.y >= mouseStartPosition.y && position2D.y <= mouseEndPosition.y) ||
                         (position2D.x >= mouseStartPosition.x && position2D.x <= mouseEndPosition.x && position2D.y <= mouseStartPosition.y && position2D.y >= mouseEndPosition.y) ||
                         (position2D.x <= mouseStartPosition.x && position2D.x >= mouseEndPosition.x && position2D.y >= mouseStartPosition.y && position2D.y <= mouseEndPosition.y) ||
