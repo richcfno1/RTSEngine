@@ -21,7 +21,7 @@ public class RTSGameObjectEditor : Editor
         if (path.StartsWith("Assets/Resources/") && path.EndsWith(".asset"))
         {
             path = path.Substring("Assets/Resources/".Length, path.Length - ".asset".Length - "Assets/Resources/".Length);
-            TextAsset json = Resources.Load<TextAsset>("Library/GameObjectLibrary");
+            TextAsset json = Resources.Load<TextAsset>("RTSGOLibrary/GameObjectLibrary");
             SortedDictionary<string, string> library = new SortedDictionary<string, string>();
             if (json != null)
             {
@@ -36,7 +36,7 @@ public class RTSGameObjectEditor : Editor
             {
                 library.Add(newKey, path);
             }
-            File.WriteAllText(Application.dataPath + "/Resources/Library/GameObjectLibrary.json",
+            File.WriteAllText(Application.dataPath + "/Resources/RTSGOLibrary/GameObjectLibrary.json",
                 JsonConvert.SerializeObject(library));
             Debug.Log("Success");
         }
