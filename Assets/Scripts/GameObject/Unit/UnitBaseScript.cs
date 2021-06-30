@@ -29,8 +29,10 @@ namespace RTS.RTSGameObject.Unit
             Stop,  // Stop move
             Move,  // Move to a position. Ship and fighter will act in different ways
             HeadTo,  // Head to a position
-            Follow,  // Follow a gameobject with offset
-            FollowAndHeadTo,  // Follow a gameobject with offset and try to head to it. Ship and fighter will act in different ways
+            Follow,  // Follow a gameobject with offset vector
+            KeepInRange,  // Similar to follow, but allow unit stay in a range rather than keep exact distance
+                          // Also, it will try to find a destination where can "look at target directly without seeing a obstacle"
+            KeepInRangeAndHeadTo,  // Follow a gameobject with offset and try to head to it. Ship and fighter will act in different ways
             Attack,  // Set attack target
             AttackAndMove,  // Move to a position, but when there ia a enemy nearby, call attack
             UseSpecialAbility,  // Use a special ability, NOT IMPLEMENTED!
@@ -45,10 +47,11 @@ namespace RTS.RTSGameObject.Unit
             /* Targets contains a list of objects which are used to act
              * Move: size = 1: [0] = Vector3 destination
              * HeadTo: size = 1: [0] = Vector3 look at
-             * Follow: size = 2: [0] = GameObject follow to which [1] = Vecto3 offset
-             * FollowAndHeadTo: size = 4: [0] = GameObject follow to which [1] = Vecto3 offset 
-             *                            [2] = float distance to trigger "follow", when larger than this value, unit will call "follow"
-             *                            [3] = float distance to trigger "headto", when smaller than this value, unit will call "headto"
+             * Follow: size = 2: [0] = GameObject follow to which [1] = Vector3 offset
+             * KeepInRange: size = 3: [0] = GameObject follow to which [1] = float upper limitation [2] = float lower limitation
+             * KeepInRangeAndHeadTo: size = 4: [0] = GameObject follow to which [1] = Vector3 offset (used as direction indicator)
+             *                                 [2] = float distance to trigger "follow", when larger than this value, unit will call "follow"
+             *                                 [3] = float distance to trigger "headto", when smaller than this value, unit will call "headto"
              * Attack: size = 1: [0] = GameObject target
              * AttackAndMove: size = 1: [0] = Vector3 destination
              * UseSpecialAbility: Undecided
@@ -243,8 +246,7 @@ namespace RTS.RTSGameObject.Unit
             }
         }
 
-        public virtual void FollowAndHeadTo(GameObject target, Vector3 offset, float followDistance, 
-            float rotateDistance, bool clearQueue = true, bool addToEnd = true)
+        public virtual void KeepInRange(GameObject target, float upperBound, float lowerBound, bool clearQueue = true, bool addToEnd = true)
         {
             if (clearQueue)
             {
@@ -255,8 +257,8 @@ namespace RTS.RTSGameObject.Unit
             {
                 moveActionQueue.AddLast(new UnitAction
                 {
-                    actionType = ActionType.FollowAndHeadTo,
-                    targets = new List<object>() { target, offset, followDistance, rotateDistance }
+                    actionType = ActionType.KeepInRange,
+                    targets = new List<object>() { target, upperBound, lowerBound }
                 });
                 moveActionQueue.AddLast(new UnitAction
                 {
@@ -273,8 +275,44 @@ namespace RTS.RTSGameObject.Unit
                 });
                 moveActionQueue.AddFirst(new UnitAction
                 {
-                    actionType = ActionType.FollowAndHeadTo,
-                    targets = new List<object>() { target, offset, followDistance, rotateDistance }
+                    actionType = ActionType.KeepInRange,
+                    targets = new List<object>() { target, upperBound, lowerBound }
+                });
+            }
+        }
+
+        public virtual void KeepInRangeAndHeadTo(GameObject target, Vector3 offset, float upperBound, 
+            float lowerBound, bool clearQueue = true, bool addToEnd = true)
+        {
+            if (clearQueue)
+            {
+                moveActionQueue.Clear();
+                moveBeacons.Clear();
+            }
+            if (addToEnd)
+            {
+                moveActionQueue.AddLast(new UnitAction
+                {
+                    actionType = ActionType.KeepInRangeAndHeadTo,
+                    targets = new List<object>() { target, offset, upperBound, lowerBound }
+                });
+                moveActionQueue.AddLast(new UnitAction
+                {
+                    actionType = ActionType.Stop,
+                    targets = new List<object>()
+                });
+            }
+            else
+            {
+                moveActionQueue.AddFirst(new UnitAction
+                {
+                    actionType = ActionType.Stop,
+                    targets = new List<object>()
+                });
+                moveActionQueue.AddFirst(new UnitAction
+                {
+                    actionType = ActionType.KeepInRangeAndHeadTo,
+                    targets = new List<object>() { target, offset, upperBound, lowerBound }
                 });
             }
         }

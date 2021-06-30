@@ -85,7 +85,7 @@ namespace RTS.Ability
                     i.SetTarget(new List<object>() { target });
                 }
                 // call follow and head to
-                Host.FollowAndHeadTo(target, (transform.position - target.transform.position).normalized, 
+                Host.KeepInRangeAndHeadTo(target, (transform.position - target.transform.position).normalized, 
                     maxLockRange, minSuggestedFireDistance, false, false);
             }
             else
@@ -96,7 +96,7 @@ namespace RTS.Ability
                     minLockRange = minLockRange < i.lockRange ? minLockRange : i.lockRange;
                     i.SetTarget(new List<object>() { target });
                 }
-                Host.Follow(target, (transform.position - target.transform.position).normalized * minLockRange, false, false);
+                Host.KeepInRange(target, minLockRange, 0, false, false);
             }
         }
     }

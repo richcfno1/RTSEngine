@@ -186,9 +186,91 @@ namespace RTS.RTSGameObject.Unit
                             }
                         }
                         return;
-                    case ActionType.FollowAndHeadTo:
-                        GameObject followAndHeadToTarget = (GameObject)action.targets[0];
-                        if (followAndHeadToTarget == null)
+                    case ActionType.KeepInRange:
+                        GameObject keepInRangeTarget = (GameObject)action.targets[0];
+                        if (keepInRangeTarget == null)
+                        {
+                            moveActionQueue.RemoveFirst();
+                            return;
+                        }
+                        else
+                        {
+                            if ((thisBody.position - keepInRangeTarget.transform.position).magnitude < (float)action.targets[1] &&
+                                (thisBody.position - keepInRangeTarget.transform.position).magnitude > (float)action.targets[2])
+                            {
+                                finalPosition = thisBody.position;
+                            }
+                            else
+                            {
+                                Vector3 currentDirection = (transform.position - keepInRangeTarget.transform.position).normalized;
+                                finalPosition = keepInRangeTarget.transform.position + currentDirection * 
+                                    ((float)action.targets[1] + (float)action.targets[2]) / 2;
+                            }
+                            for (int i = 0; i < searchMaxRandomNumber; i++)
+                            {
+                                if (Physics.RaycastAll(finalPosition, (keepInRangeTarget.transform.position - finalPosition).normalized,
+                                    (keepInRangeTarget.transform.position - finalPosition).magnitude).
+                                    Where(x => !transform.GetComponentsInChildren<Collider>().Contains(x.collider) &&
+                                    !keepInRangeTarget.transform.GetComponentsInChildren<Collider>().Contains(x.collider)).ToArray().Length == 0)
+                                {
+                                    break;
+                                }
+                                else
+                                {
+                                    finalPosition = keepInRangeTarget.transform.position + 
+                                        new Vector3(Random.Range(-1, 1), Random.Range(-1, 1), Random.Range(-1, 1)).normalized *
+                                        ((float)action.targets[1] + (float)action.targets[2]) / 2;
+                                }
+                            }
+                            
+                            if (thisBody.position != finalPosition)
+                            {
+                                // Moving
+                                if (TestObstacle(thisBody.position, finalPosition) == 0)
+                                {
+                                    moveBeacons.Clear();
+                                    moveBeacons.Add(finalPosition);
+                                }
+                                if (TestObstacle(thisBody.position, finalPosition) == 0)
+                                {
+                                    moveBeacons.Clear();
+                                    moveBeacons.Add(finalPosition);
+                                }
+                                if (moveBeacons.Count != 0)
+                                {
+                                    Vector3 moveVector = moveBeacons[0] - thisBody.position;
+                                    Vector3 rotateDirection = moveVector.normalized;
+                                    thisBody.rotation = Quaternion.RotateTowards(thisBody.rotation, Quaternion.LookRotation(rotateDirection), Time.fixedDeltaTime * agentRotateSpeed);
+                                    float moveDistance = agentMoveSpeed * Time.fixedDeltaTime * Mathf.Clamp01((thisBody.position - finalPosition).magnitude / slowDownRadius);
+                                    if (moveVector.magnitude <= moveDistance)
+                                    {
+                                        if (TestObstacle(thisBody.position, moveBeacons[0]) != 0)
+                                        {
+                                            moveActionQueue.First().targets[1] = FindPath(thisBody.position, finalPosition) - keepInRangeTarget.transform.position;
+                                            return;
+                                        }
+                                        thisBody.position = moveBeacons[0];
+                                        moveBeacons.RemoveAt(0);
+                                    }
+                                    else
+                                    {
+                                        if (TestObstacle(thisBody.position, thisBody.position + transform.forward * moveDistance) != 0)
+                                        {
+                                            moveActionQueue.First().targets[1] = FindPath(thisBody.position, finalPosition) - keepInRangeTarget.transform.position;
+                                        }
+                                        thisBody.position += transform.forward * moveDistance;
+                                    }
+                                }
+                                else
+                                {
+                                    moveActionQueue.First().targets[1] = FindPath(thisBody.position, finalPosition) - keepInRangeTarget.transform.position;
+                                }
+                            }
+                        }
+                        return;
+                    case ActionType.KeepInRangeAndHeadTo:
+                        GameObject keepInRangeAndHeadToTarget = (GameObject)action.targets[0];
+                        if (keepInRangeAndHeadToTarget == null)
                         {
                             moveActionQueue.RemoveFirst();
                             isApproaching = true;
@@ -196,16 +278,16 @@ namespace RTS.RTSGameObject.Unit
                         }
                         else
                         {
-                            float currentDistance = (followAndHeadToTarget.transform.position - transform.position).magnitude;
-                            Vector3 currentDirection = (transform.position - followAndHeadToTarget.transform.position).normalized;
+                            float currentDistance = (keepInRangeAndHeadToTarget.transform.position - transform.position).magnitude;
+                            Vector3 currentDirection = (transform.position - keepInRangeAndHeadToTarget.transform.position).normalized;
                             // It is important to use +1 and -1 to avoid unit freezing at a point
                             isApproaching = isApproaching ?
                                 currentDistance > (float)action.targets[3] + 1 :  // If is approaching and not close enough
                                 currentDistance >= (float)action.targets[2] - 1;  // If is not approaching but be too far away
 
                             finalPosition = isApproaching ? 
-                                followAndHeadToTarget.transform.position + currentDirection * (float)action.targets[3] :
-                                followAndHeadToTarget.transform.position + currentDirection * (float)action.targets[2];
+                                keepInRangeAndHeadToTarget.transform.position + currentDirection * (float)action.targets[3] :
+                                keepInRangeAndHeadToTarget.transform.position + currentDirection * (float)action.targets[2];
 
                             if (thisBody.position != finalPosition)
                             {
@@ -230,7 +312,7 @@ namespace RTS.RTSGameObject.Unit
                                     {
                                         if (TestObstacle(thisBody.position, moveBeacons[0]) != 0)
                                         {
-                                            moveActionQueue.First().targets[1] = FindPath(thisBody.position, finalPosition) - followAndHeadToTarget.transform.position;
+                                            moveActionQueue.First().targets[1] = FindPath(thisBody.position, finalPosition) - keepInRangeAndHeadToTarget.transform.position;
                                             return;
                                         }
                                         thisBody.position = moveBeacons[0];
@@ -240,14 +322,14 @@ namespace RTS.RTSGameObject.Unit
                                     {
                                         if (TestObstacle(thisBody.position, thisBody.position + transform.forward * moveDistance) != 0)
                                         {
-                                            moveActionQueue.First().targets[1] = FindPath(thisBody.position, finalPosition) - followAndHeadToTarget.transform.position;
+                                            moveActionQueue.First().targets[1] = FindPath(thisBody.position, finalPosition) - keepInRangeAndHeadToTarget.transform.position;
                                         }
                                         thisBody.position += transform.forward * moveDistance;
                                     }
                                 }
                                 else
                                 {
-                                    moveActionQueue.First().targets[1] = FindPath(thisBody.position, finalPosition) - followAndHeadToTarget.transform.position;
+                                    moveActionQueue.First().targets[1] = FindPath(thisBody.position, finalPosition) - keepInRangeAndHeadToTarget.transform.position;
                                 }
                             }
                         }
