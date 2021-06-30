@@ -26,6 +26,9 @@
         "Move": [ "Frigate1" ],
         "Attack": [ "TurretAnchor1", "TurretAnchor2", "TurretAnchor3", "TurretAnchor4", "TurretAnchor5", "TurretAnchor6" ],
         "Carrier": [ "FighterDeployAnchor1" ]
+      },
+      "scripts": {
+        "Test": "if (Time() > 5 and not flag) then flag = true\n Test({ unitType=\"StandardFrigate\", position={x=0.0,y=100.0,z=0.0}, belongsTo=1 })\n HelloWorld() end"
       }
     },
     {

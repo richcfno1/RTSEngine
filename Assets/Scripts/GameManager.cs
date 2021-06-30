@@ -29,6 +29,8 @@ namespace RTS
             public Dictionary<string, string> subsystems;
             // string = ability type, List<string> = supported by which anchor (or use shipTypeName to indicate supported by ship)
             public Dictionary<string, List<string>> abilities;
+            // not particularly useful, it's just here to show how it could be used
+            public Dictionary<string, string> scripts;
         }
 
         public struct UnitData
@@ -54,6 +56,7 @@ namespace RTS
         }
 
         public static GameManager GameManagerInstance { get; private set; }
+        public ScriptSystem ScriptSystem { get; private set; }
 
         public int selfIndex;
         public TextAsset debugInitDataAsset;
@@ -68,11 +71,11 @@ namespace RTS
         private Dictionary<int, Player> allPlayers = new Dictionary<int, Player>();
         private Dictionary<int, GameObject> allGameObjectsDict = new Dictionary<int, GameObject>();
         private List<GameObject> allGameObjectsList = new List<GameObject>();
-        Lua gameLua = new Lua();
 
         void Awake()
         {
             GameManagerInstance = this;
+            ScriptSystem = new ScriptSystem();
             gameObjectLibrary = JsonConvert.DeserializeObject<Dictionary<string, string>>(gameObjectLibraryAsset.text);
             abilityLibrary = JsonConvert.DeserializeObject<Dictionary<string, string>>(abilityLibraryAsset.text);
 
@@ -149,6 +152,12 @@ namespace RTS
                 return null;
             }
             UnitLibraryData libraryData = unitLibrary[unitType];
+
+            // debug script:
+            if (libraryData.scripts != null && libraryData.scripts.TryGetValue("Test", out var code)) {
+                var script = ScriptSystem.CreateScript("Test", code);
+                ScriptSystem.ExecuteScript(script);
+            }
 
             // Ship
             GameObject result = Instantiate(Resources.Load<GameObject>(gameObjectLibrary[libraryData.baseTypeName]), position, rotation, parent);
