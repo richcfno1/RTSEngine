@@ -1,3 +1,4 @@
+using RTS.RTSGameObject;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -71,13 +72,35 @@ namespace RTS.UI.Control
             //Raycast using the Graphics Raycaster and mouse click position
             raycaster.Raycast(pointerEventData, results);
 
-            //For every result returned, output the name of the GameObject on the Canvas hit by the Ray
             foreach (RaycastResult result in results)
             {
                 if (notSelectUI.Contains(result.gameObject))
                 {
                     EnableAction = false;
                 }
+            }
+        }
+
+        public static GameObject SingleSelectionHelper()
+        {
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            List<RaycastHit> hits = new List<RaycastHit>(Physics.RaycastAll(ray));
+            hits.RemoveAll(x => x.collider.GetComponent<RTSGameObjectBaseScript>() == null);
+            if (hits.Count == 0)
+            {
+                return null;
+            }
+            else if (hits.Count == 1 || !hits[0].collider.CompareTag("Ship"))
+            {
+                return hits[0].collider.gameObject;
+            }
+            else
+            {
+                if (hits[1].collider.CompareTag("Subsystem"))
+                {
+                    return hits[1].collider.gameObject;
+                }
+                return hits[0].collider.gameObject;
             }
         }
     }
