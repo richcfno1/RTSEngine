@@ -8,6 +8,13 @@ namespace RTS.UI.MainCamera
     public class CameraViewInfoScript : MonoBehaviour
     {
         public Slider hpdata;
-        public Image hpimage;
+
+        public void ChangeColor(Color color)
+        {
+            foreach (Image i in GetComponentsInChildren<Image>())
+            {
+                i.color = color;
+            }
+        }
     }
 }

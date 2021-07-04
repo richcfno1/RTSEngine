@@ -9797,6 +9797,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   objectScale: 1
+  objectType: 1
   typeID: Fighter1
   maxHP: 100
   NavigationCollider: {fileID: 9192400354402439984}
@@ -9804,6 +9805,10 @@ MonoBehaviour:
   radius: 5
   ratio: 0.3
   subsyetemAnchors: []
+  searchStepDistance: 20
+  searchStepMaxDistance: 100
+  searchMaxRandomNumber: 10
+  autoEngageDistance: 0
   maxAttackPower: 50
   maxDefencePower: 50
   maxMovePower: 50
@@ -9814,9 +9819,6 @@ MonoBehaviour:
   buildTime: 5
   agentMoveSpeed: 40
   agentRotateSpeed: 180
-  searchStepDistance: 20
-  searchStepMaxDistance: 100
-  searchMaxRandomNumber: 10
 --- !u!54 &6615391078702848229
 Rigidbody:
   m_ObjectHideFlags: 0

@@ -9753,6 +9753,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   objectScale: 2
+  objectType: 2
   typeID: Frigate1
   maxHP: 1000
   NavigationCollider: {fileID: 123687225256051201}
@@ -9788,6 +9789,10 @@ MonoBehaviour:
     anchor: {fileID: 8088440053577994045}
     subsystemScale: 4
     subsystem: {fileID: 3461491656825404701}
+  searchStepDistance: 20
+  searchStepMaxDistance: 100
+  searchMaxRandomNumber: 10
+  autoEngageDistance: 0
   maxAttackPower: 100
   maxDefencePower: 100
   maxMovePower: 100
@@ -9799,9 +9804,6 @@ MonoBehaviour:
   agentMoveSpeed: 20
   agentRotateSpeed: 20
   agentAccelerateLimit: 0.5
-  searchStepDistance: 20
-  searchStepMaxDistance: 100
-  searchMaxRandomNumber: 10
 --- !u!64 &-7958528129588623642
 MeshCollider:
   m_ObjectHideFlags: 0

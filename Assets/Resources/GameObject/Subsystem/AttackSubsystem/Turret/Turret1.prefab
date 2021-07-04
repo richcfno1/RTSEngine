@@ -110,6 +110,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   objectScale: 0
+  objectType: 7
   typeID: Turret1
   maxHP: 100
   NavigationCollider: {fileID: 0}
@@ -125,10 +126,6 @@ MonoBehaviour:
   - Ship
   - Fighter
   - Subsystem
-  bullet: {fileID: 200688503556163643, guid: 18c4861f8f235184ba3004c333b41113, type: 3}
-  bulletStartPosition:
-  - {fileID: 5170811280945999704}
-  - {fileID: 6274115186706424018}
   turretBase: {fileID: 4238861060343121659}
   turretBarrels: {fileID: 4238861060343121604}
   turnRate: 90
@@ -137,9 +134,13 @@ MonoBehaviour:
   rightTraverse: 60
   elevation: 90
   depression: 5
-  allowedRandomAngle: 0.01
   showArcs: 1
   showDebugRay: 1
+  bullet: {fileID: 200688503556163643, guid: 18c4861f8f235184ba3004c333b41113, type: 3}
+  bulletStartPosition:
+  - {fileID: 5170811280945999704}
+  - {fileID: 6274115186706424018}
+  allowedRandomAngle: 0.01
 --- !u!1 &5964766674836517162
 GameObject:
   m_ObjectHideFlags: 0

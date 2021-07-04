@@ -44,6 +44,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   objectScale: 0
+  objectType: 0
   typeID: FighterCarrier1
   maxHP: 1
   NavigationCollider: {fileID: 0}

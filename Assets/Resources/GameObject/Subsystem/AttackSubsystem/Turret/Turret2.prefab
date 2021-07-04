@@ -97,6 +97,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   objectScale: 0
+  objectType: 7
   typeID: Turret2
   maxHP: 150
   NavigationCollider: {fileID: 0}
@@ -110,9 +111,6 @@ MonoBehaviour:
   lockRange: 400
   possibleTargetTags:
   - Ship
-  bullet: {fileID: 8668021796344179376, guid: aab41ae67710d174f8990ac66437216c, type: 3}
-  bulletStartPosition:
-  - {fileID: 7921085107502865375}
   turretBase: {fileID: 38348465165933248}
   turretBarrels: {fileID: 1028195842422837517}
   turnRate: 30
@@ -121,9 +119,12 @@ MonoBehaviour:
   rightTraverse: 60
   elevation: 60
   depression: 5
-  allowedRandomAngle: 0
   showArcs: 1
   showDebugRay: 1
+  bullet: {fileID: 8668021796344179376, guid: aab41ae67710d174f8990ac66437216c, type: 3}
+  bulletStartPosition:
+  - {fileID: 7921085107502865375}
+  allowedRandomAngle: 0
 --- !u!65 &2596330254963194438
 BoxCollider:
   m_ObjectHideFlags: 0

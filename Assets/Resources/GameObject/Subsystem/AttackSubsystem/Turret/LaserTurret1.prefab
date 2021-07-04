@@ -321,6 +321,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   objectScale: 0
+  objectType: 7
   typeID: LaserTurret1
   maxHP: 100
   NavigationCollider: {fileID: 0}
@@ -335,9 +336,6 @@ MonoBehaviour:
   possibleTargetTags:
   - Fighter
   - Missile
-  laserRenderer: {fileID: 6039840074901208093}
-  laserStartPosition:
-  - {fileID: 6039840074901208092}
   turretBase: {fileID: 500694939855110566}
   turretBarrels: {fileID: 6037872329675554032}
   turnRate: 90
@@ -348,6 +346,9 @@ MonoBehaviour:
   depression: 15
   showArcs: 0
   showDebugRay: 1
+  laserRenderer: {fileID: 6039840074901208093}
+  laserStartPosition:
+  - {fileID: 6039840074901208092}
   laserAppearTime: 0.1
   damage: 1
   attackPowerReduce: 0

@@ -4105,7 +4105,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: faf74f416b4a47e4ca46008373288239, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  minInfoBarDisplaySize: 10
-  maxInfoBarDisplaySize: 100
-  InfoBarPrefab: {fileID: 5368361597663915679, guid: f53449e0e098f5047b53a28153c80e71, type: 3}
+  minInfoBarDisplaySize: 20
+  maxInfoBarDisplaySize: 400
+  infoPrefabs:
+  - type: 1
+    infoPrefab: {fileID: 4695638505344111388, guid: f960ec0d604b878448b3afb6ebbaf6d4, type: 3}
+  - type: 2
+    infoPrefab: {fileID: 8831795043030219414, guid: 68c0c4ccf7675284d9ccb0eb524124af, type: 3}
+  - type: 3
+    infoPrefab: {fileID: 2103462991934341400, guid: 9774dbe38685e7241a4a35a45eec342e, type: 3}
+  - type: 4
+    infoPrefab: {fileID: 5855459645277541904, guid: 176683a1f5b96bd49a2aa26dc9ccfad7, type: 3}
+  - type: 5
+    infoPrefab: {fileID: 3678463938084255058, guid: 795a947f01f7b4a4097ab064ffa96c49, type: 3}
+  - type: 6
+    infoPrefab: {fileID: 4308006401199677850, guid: 1740963d6a8340b40bb3ce97d9439d43, type: 3}
+  - type: 7
+    infoPrefab: {fileID: 8856398566437231610, guid: 7c6da25fd1690b341a279a74965dc3b4, type: 3}
   Canvas: {fileID: 837343067}

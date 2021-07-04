@@ -1,4 +1,4 @@
-using System.Collections;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -8,12 +8,19 @@ namespace RTS.UI.MainCamera
 {
     public class CameraViewScript : MonoBehaviour
     {
+        [Serializable]
+        public class InfoData
+        {
+            public RTSGameObjectBaseScript.ObjectType type;
+            public GameObject infoPrefab;
+        }
+
         public float minInfoBarDisplaySize;
         public float maxInfoBarDisplaySize;
-        public GameObject InfoBarPrefab;
+        public List<InfoData> infoPrefabs;
         public Transform Canvas;
 
-        private Dictionary<int, GameObject> allInfoBar = new Dictionary<int, GameObject>();  // RTSGO index -> Info bar
+        private Dictionary<int, GameObject> allInfoBar = new Dictionary<int, GameObject>();  // RTSGO index -> Info
 
         // Update is called once per frame
         void Update()
@@ -22,38 +29,52 @@ namespace RTS.UI.MainCamera
             List<GameObject> visibleGameObjects = GameManager.GameManagerInstance.GetAllGameObjects().
                 Where(x => x != null && x.GetComponent<Renderer>() != null && x.GetComponent<Renderer>().enabled &&
                 x.GetComponent<Renderer>().isVisible).
-                Where(x => DistanceAndDiameterToPixelSize((x.transform.position - transform.position).magnitude,
-                x.GetComponent<RTSGameObjectBaseScript>().radius) >= minInfoBarDisplaySize).ToList();
+                Where(x =>
+                {
+                    float scale = DistanceAndDiameterToPixelSize((x.transform.position - transform.position).magnitude,
+                        x.GetComponent<RTSGameObjectBaseScript>().radius);
+                    return scale >= minInfoBarDisplaySize && scale <= maxInfoBarDisplaySize;
+                }).ToList();
             List<int> allVisibleIndex = new List<int>();
             foreach (GameObject i in visibleGameObjects)
             {
                 RTSGameObjectBaseScript tempScript = i.GetComponent<RTSGameObjectBaseScript>();
                 int tempIndex = tempScript.Index;
+                RTSGameObjectBaseScript.ObjectType tempType = tempScript.objectType;
+                InfoData tempInfoData = infoPrefabs.FirstOrDefault(x => x.type == tempType);
+                GameObject tempPrefab;
+                if (tempInfoData == default)
+                {
+                    continue;
+                }
+                else
+                {
+                    tempPrefab = tempInfoData.infoPrefab;
+                }
                 allVisibleIndex.Add(tempIndex);
                 if (allInfoBar.ContainsKey(tempIndex))
                 {
-                    float scale = Mathf.Clamp(DistanceAndDiameterToPixelSize(
-                        (i.transform.position - transform.position).magnitude, i.GetComponent<RTSGameObjectBaseScript>().radius),
-                        0, maxInfoBarDisplaySize);
+                    Vector3 position = Camera.main.WorldToScreenPoint(i.transform.position);
+                    position.z = 0;
+                    float scale = DistanceAndDiameterToPixelSize(
+                        (i.transform.position - transform.position).magnitude, i.GetComponent<RTSGameObjectBaseScript>().radius);
                     GameObject newBar = allInfoBar[tempIndex];
-                    newBar.transform.position = Camera.main.WorldToScreenPoint(i.transform.position) + Vector3.up * scale * tempScript.ratio;
-                    newBar.transform.localScale = InfoBarPrefab.transform.localScale * scale;
+                    newBar.transform.position = position;
+                    newBar.transform.localScale = Vector3.one * scale;
                     newBar.GetComponent<CameraViewInfoScript>().hpdata.value = tempScript.HP / tempScript.maxHP;
                 }
                 else
                 {
-                    float scale = Mathf.Clamp(DistanceAndDiameterToPixelSize(
-                        (i.transform.position - transform.position).magnitude, i.GetComponent<RTSGameObjectBaseScript>().radius),
-                        0, maxInfoBarDisplaySize);
-                    GameObject newBar = Instantiate(InfoBarPrefab,
-                        Camera.main.WorldToScreenPoint(i.transform.position) + Vector3.up * scale * tempScript.ratio,
-                        new Quaternion(), Canvas.transform);
-                    newBar.transform.localScale = InfoBarPrefab.transform.localScale * DistanceAndDiameterToPixelSize(
+                    Vector3 position = Camera.main.WorldToScreenPoint(i.transform.position);
+                    position.z = 0;
+                    float scale = DistanceAndDiameterToPixelSize(
                         (i.transform.position - transform.position).magnitude, i.GetComponent<RTSGameObjectBaseScript>().radius);
+                    GameObject newBar = Instantiate(tempPrefab, position, new Quaternion(), Canvas.transform);
+                    newBar.transform.localScale = Vector3.one * scale;
                     newBar.GetComponent<CameraViewInfoScript>().hpdata.value = tempScript.HP / tempScript.maxHP;
                     Color tempColor = tempScript.BelongTo == GameManager.GameManagerInstance.selfIndex ? Color.green : Color.red;
                     tempColor.a = 0.5f;
-                    newBar.GetComponent<CameraViewInfoScript>().hpimage.color = tempColor;
+                    newBar.GetComponent<CameraViewInfoScript>().ChangeColor(tempColor);
                     allInfoBar.Add(tempIndex, newBar);
                 }
             }

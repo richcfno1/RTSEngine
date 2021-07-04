@@ -4993,6 +4993,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   objectScale: 3
+  objectType: 3
   typeID: Cruiser1
   maxHP: 3000
   NavigationCollider: {fileID: 7883202169524740837}
@@ -5056,20 +5057,21 @@ MonoBehaviour:
     anchor: {fileID: 7209210845034141880}
     subsystemScale: 1
     subsystem: {fileID: 0}
+  searchStepDistance: 50
+  searchStepMaxDistance: 200
+  searchMaxRandomNumber: 10
+  autoEngageDistance: 0
   maxAttackPower: 3000
   maxDefencePower: 3000
   maxMovePower: 3000
   recoverAttackPower: 0.05
   recoverDefencePower: 0.05
   recoverMovePower: 0.05
-  buildProce: 0
+  buildPrice: 0
   buildTime: 0
   agentMoveSpeed: 10
   agentRotateSpeed: 10
   agentAccelerateLimit: 0.5
-  searchStepDistance: 50
-  searchStepMaxDistance: 200
-  searchMaxRandomNumber: 10
 --- !u!54 &1270299357043665751
 Rigidbody:
   m_ObjectHideFlags: 0

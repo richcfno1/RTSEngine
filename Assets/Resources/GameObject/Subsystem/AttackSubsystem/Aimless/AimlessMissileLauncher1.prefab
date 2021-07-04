@@ -44,7 +44,7 @@ GameObject:
   - component: {fileID: 8340461374920997369}
   - component: {fileID: 8340461374920997318}
   m_Layer: 0
-  m_Name: FixedMissileLauncher1
+  m_Name: AimlessMissileLauncher1
   m_TagString: Subsystem
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -140,6 +140,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   objectScale: 0
+  objectType: 7
   typeID: FixedMissileLauncher1
   maxHP: 200
   NavigationCollider: {fileID: 0}

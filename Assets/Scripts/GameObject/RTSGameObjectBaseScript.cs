@@ -6,6 +6,7 @@ namespace RTS.RTSGameObject
 {
     public class RTSGameObjectBaseScript : MonoBehaviour
     {
+        // Used for pathfinder
         public enum ObjectScale
         {
             Ignore,
@@ -17,10 +18,26 @@ namespace RTS.RTSGameObject
             Obstacle
         }
 
+        // Represent the type of object
+        public enum ObjectType
+        {
+            Ignore,
+            Fighter,
+            Frigate,
+            Cruiser,
+            Battleship,
+            Mothership,
+            Structure,
+            Subsystem,
+            Obstacle
+        }
+
         // Set by editor
         [Header("RTS Game Object")]
         [Tooltip("Scale of this object.")]
         public ObjectScale objectScale;
+        [Tooltip("Type of this object.")]
+        public ObjectType objectType;
         [Tooltip("Type ID, must be unique.")]
         public string typeID;
         [Tooltip("Max HP, HP will be set to this value at begining.")]
