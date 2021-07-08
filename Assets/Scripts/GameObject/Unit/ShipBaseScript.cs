@@ -576,6 +576,10 @@ namespace RTS.RTSGameObject.Unit
                 {
                     if (!toIgnore.Contains(hit.collider))
                     {
+                        if (hit.collider.GetComponentInParent<RTSGameObjectBaseScript>() == null)
+                        {
+                            continue;
+                        }
                         if (objectScale <= hit.collider.GetComponentInParent<RTSGameObjectBaseScript>().objectScale)
                         {
                             return false;
