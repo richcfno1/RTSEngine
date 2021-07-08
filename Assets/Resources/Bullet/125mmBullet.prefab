@@ -116,6 +116,7 @@ MonoBehaviour:
   movePowerReduce: 0
   moveSpeed: 400
   maxTime: 10
+  isDestoryAtHit: 1
   hitEffect: {fileID: 2369021655912796706, guid: 0643096084fbfb940bd8ab33ba76f553, type: 3}
   moveDirection: {x: 0, y: 0, z: 0}
   toIgnore: []

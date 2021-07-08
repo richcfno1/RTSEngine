@@ -14,6 +14,7 @@ namespace RTS.Bullet
         public float movePowerReduce;
         public float moveSpeed;
         public float maxTime;
+        public bool isDestoryAtHit;
 
         public GameObject hitEffect;
 
@@ -78,8 +79,14 @@ namespace RTS.Bullet
             {
                 other.GetComponent<RTSGameObjectBaseScript>().CreateDamage(damage, attackPowerReduce, defencePowerReduce, movePowerReduce, createdBy);
             }
-            Instantiate(hitEffect, transform.position, new Quaternion());
-            Destroy(gameObject);
+            if (hitEffect != null)
+            {
+                Instantiate(hitEffect, transform.position, new Quaternion());
+            }
+            if (isDestoryAtHit)
+            {
+                Destroy(gameObject);
+            }
         }
     }
 }

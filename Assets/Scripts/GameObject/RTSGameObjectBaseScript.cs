@@ -49,8 +49,6 @@ namespace RTS.RTSGameObject
         [Header("Information Bar Calculation")]
         [Tooltip("Radius (xz plane) of RTS game object")]
         public float radius;
-        [Tooltip("Ratio of height to plane radius")]
-        public float ratio;
 
         // Set when instantiate
         public int Index { get; set; }

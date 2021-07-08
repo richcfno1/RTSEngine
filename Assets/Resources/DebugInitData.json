@@ -49,6 +49,16 @@
       }
     },
     {
+      "unitTypeName": "StandardBattleship",
+      "baseTypeName": "Battleship1",
+      "properties": {},
+      "subsystems": {},
+      "abilities": {
+        "Move": [ "Battleship1" ],
+        "Attack": [ "AxisWeaponAnchor" ]
+      }
+    },
+    {
       "unitTypeName": "ScopeDrone",
       "baseTypeName": "Fighter1",
       "properties": {},
@@ -85,12 +95,12 @@
       }
     },
     {
-      "type": "StandardFrigate",
+      "type": "StandardBattleship",
       "belongTo": 0,
       "position": {
-        "x": -100.0,
+        "x": -300.0,
         "y": 0.0,
-        "z": 0.0
+        "z": 300.0
       },
       "rotation": {
         "x": 0.0,

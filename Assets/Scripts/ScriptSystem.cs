@@ -24,7 +24,7 @@ namespace RTS
         public ScriptSystem()
         {
             gameManager = GameManager.GameManagerInstance;
-            masterGameObject = GameObject.Find("GameObject");
+            masterGameObject = GameObject.Find("RTSGameObject");
             converters = new Dictionary<Type, Func<LuaTable, string, object>>();
             AddConverter(GetVector3);
             lua = new Lua(LuaIntegerType.Int32, LuaFloatType.Float);

@@ -73,7 +73,7 @@ namespace RTS.RTSGameObject.Subsystem
         {
             GameObject temp = GameManager.GameManagerInstance.InstantiateUnit(type,
                 transform.TransformPoint(transform.localPosition),
-                transform.rotation, GameObject.Find("GameObject").transform, BelongTo);
+                transform.rotation, GameObject.Find("RTSGameObject").transform, BelongTo);
             temp.GetComponent<UnitBaseScript>().Stop();
             Vector3 offset = Vector3.zero;
             foreach (Vector3 i in deployPath)

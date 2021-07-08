@@ -17,12 +17,20 @@ namespace RTS.UI.Control
         }
         public static class HotKeys
         {
+            // Unit
+            // Select
             public static KeyCode SelectUnit = KeyCode.Mouse0;
-            public static KeyCode SetUnitMoveHeight = KeyCode.LeftShift;
+            public static KeyCode SelectAllUnit = KeyCode.Q;
+            public static KeyCode SelectSameType = KeyCode.W;
+
+            // Action
             public static KeyCode MoveUnit = KeyCode.Mouse1;
+            public static KeyCode SetUnitMoveHeight = KeyCode.LeftShift;
             public static KeyCode StopUnit = KeyCode.S;
             public static KeyCode AttackUnit = KeyCode.Mouse1;
+            public static KeyCode FollowUnit = KeyCode.Mouse1;
 
+            // Camera
             public static KeyCode RotateCamera = KeyCode.Mouse2;
             public static KeyCode SetCameraHeight = KeyCode.LeftShift;
             public static KeyCode TrackSelectedUnits = KeyCode.D;
@@ -31,7 +39,7 @@ namespace RTS.UI.Control
         public Texture2D cursorTexture;
 
         public List<GameObject> notSelectUI;  // A list of UI component when mouse click on them, selection will not be called
-        private GraphicRaycaster raycaster;
+        private GraphicRaycaster graphicRaycaster;
         private PointerEventData pointerEventData;
         private EventSystem eventSystem;
 
@@ -49,7 +57,7 @@ namespace RTS.UI.Control
             Cursor.SetCursor(cursorTexture, Vector2.zero, CursorMode.Auto);
             CurrentState = State.NoAction;
 
-            raycaster = GetComponent<GraphicRaycaster>();
+            graphicRaycaster = GetComponent<GraphicRaycaster>();
             eventSystem = GetComponent<EventSystem>();
         }
 
@@ -65,15 +73,14 @@ namespace RTS.UI.Control
             pointerEventData = new PointerEventData(eventSystem);
             //Set the Pointer Event Position to that of the mouse position
             pointerEventData.position = Input.mousePosition;
-
             //Create a list of Raycast Results
             List<RaycastResult> results = new List<RaycastResult>();
-
             //Raycast using the Graphics Raycaster and mouse click position
-            raycaster.Raycast(pointerEventData, results);
+            graphicRaycaster.Raycast(pointerEventData, results);
 
             foreach (RaycastResult result in results)
             {
+                Debug.Log(result.gameObject.name);
                 if (notSelectUI.Contains(result.gameObject))
                 {
                     EnableAction = false;

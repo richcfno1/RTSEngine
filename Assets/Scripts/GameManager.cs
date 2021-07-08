@@ -101,7 +101,7 @@ namespace RTS
             // Debug use
             if (Input.GetKeyDown(KeyCode.O))
             {
-                InstantiateUnit("StandardFrigate", new Vector3(recordData, 0, recordData + recordData2), new Quaternion(), GameObject.Find("GameObject").transform, 0);
+                InstantiateUnit("StandardFrigate", new Vector3(recordData, 0, recordData + recordData2), new Quaternion(), GameObject.Find("RTSGameObject").transform, 0);
                 recordData -= 25;
                 Debug.Log(recordData / 25);
             }
@@ -135,7 +135,7 @@ namespace RTS
             {
                 if (unitLibrary.ContainsKey(i.type))
                 {
-                    InstantiateUnit(i.type, i.position, i.rotation, GameObject.Find("GameObject").transform, i.belongTo);
+                    InstantiateUnit(i.type, i.position, i.rotation, GameObject.Find("RTSGameObject").transform, i.belongTo);
                 }
                 else
                 {
