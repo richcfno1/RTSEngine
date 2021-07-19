@@ -85,7 +85,6 @@ GameObject:
   m_Component:
   - component: {fileID: 2103462991233248676}
   - component: {fileID: 2103462991233248680}
-  - component: {fileID: 2103462991233248681}
   - component: {fileID: 2103462991233248682}
   - component: {fileID: 2103462991233248683}
   m_Layer: 5
@@ -166,19 +165,6 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &2103462991233248681
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2103462991233248677}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 83ca910f57ce69b47aa1a90d36adb401, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  hpdata: {fileID: 2103462991233248680}
 --- !u!222 &2103462991233248682
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -227,7 +213,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2103462992194701226}
   - component: {fileID: 2103462991934341406}
-  - component: {fileID: 2103462991934341405}
+  - component: {fileID: 2633849020135842769}
   m_Layer: 5
   m_Name: CruiserIcon
   m_TagString: Untagged
@@ -264,7 +250,7 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2103462991934341400}
   m_CullTransparentMesh: 1
---- !u!114 &2103462991934341405
+--- !u!114 &2633849020135842769
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -277,6 +263,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hpdata: {fileID: 2103462991233248680}
+  bindObject: {fileID: 0}
 --- !u!1 &2103462992068651246
 GameObject:
   m_ObjectHideFlags: 0

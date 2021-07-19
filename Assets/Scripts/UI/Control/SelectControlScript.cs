@@ -39,19 +39,20 @@ namespace RTS.UI.Control
         void Update()
         {
             allSelectableGameObjects = GameManager.GameManagerInstance.GetAllGameObjects();
-            if (Input.GetKeyDown(InputManager.HotKeys.SelectUnit) && InputManager.InputManagerInstance.EnableAction)
+            if (Input.GetKeyDown(InputManager.HotKeys.SelectUnit) && 
+                InputManager.InputManagerInstance.CurrentMousePosition != InputManager.MousePosition.UI)
             {
                 mouseStartPosition = Input.mousePosition;
                 mouseLeftUp = false;
                 mouseLeftDown = true;
-                InputManager.InputManagerInstance.CurrentState = InputManager.State.Selecting;
+                InputManager.InputManagerInstance.CurrentCommandActionState = InputManager.CommandActionState.Selecting;
             }
-            else if (Input.GetKeyUp(InputManager.HotKeys.SelectUnit) && InputManager.InputManagerInstance.CurrentState == InputManager.State.Selecting)
+            else if (Input.GetKeyUp(InputManager.HotKeys.SelectUnit) && InputManager.InputManagerInstance.CurrentCommandActionState == InputManager.CommandActionState.Selecting)
             {
                 mouseEndPosition = Input.mousePosition;
                 mouseLeftUp = true;
                 mouseLeftDown = false;
-                InputManager.InputManagerInstance.CurrentState = InputManager.State.NoAction;
+                InputManager.InputManagerInstance.CurrentCommandActionState = InputManager.CommandActionState.NoAction;
             }
             if (mouseLeftDown)
             {

@@ -1,1 +1,13 @@
-{"AimlessMissileLauncher1":"GameObject/Subsystem/AttackSubsystem/Aimless/AimlessMissileLauncher1","Battleship1":"GameObject/Unit/Battleship1","Cruiser1":"GameObject/Unit/Cruiser1","Fighter1":"GameObject/Unit/Fighter1","Fighter2":"GameObject/Unit/Fighter2","Frigate1":"GameObject/Unit/Frigate1","LaserTurret1":"GameObject/Subsystem/AttackSubsystem/Turret/LaserTurret1","Turret1":"GameObject/Subsystem/AttackSubsystem/Turret/Turret1","Turret2":"GameObject/Subsystem/AttackSubsystem/Turret/Turret2"}
+{
+  "AimlessMissileLauncher1": "GameObject/Subsystem/AttackSubsystem/Aimless/AimlessMissileLauncher1",
+  "Battleship1": "GameObject/Unit/Battleship1",
+  "Battleship1AxisWeapon1": "GameObject/Subsystem/AttackSubsystem/Axis/Battleship1AxisWeapon1",
+  "Cruiser1": "GameObject/Unit/Cruiser1",
+  "Fighter1": "GameObject/Unit/Fighter1",
+  "Fighter2": "GameObject/Unit/Fighter2",
+  "Fighter2AxisWeapon1": "GameObject/Subsystem/AttackSubsystem/Axis/Fighter2AxisWeapon1",
+  "Frigate1": "GameObject/Unit/Frigate1",
+  "LaserTurret1": "GameObject/Subsystem/AttackSubsystem/Turret/LaserTurret1",
+  "Turret1": "GameObject/Subsystem/AttackSubsystem/Turret/Turret1",
+  "Turret2": "GameObject/Subsystem/AttackSubsystem/Turret/Turret2"
+}

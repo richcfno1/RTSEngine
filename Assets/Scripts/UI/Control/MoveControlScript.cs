@@ -50,95 +50,95 @@ namespace RTS.UI.Control
         // Update is called once per frame
         void Update()
         {
-            if (InputManager.InputManagerInstance.CurrentState != InputManager.State.NoAction &&
-                InputManager.InputManagerInstance.CurrentState != InputManager.State.Moving)
+            if (InputManager.InputManagerInstance.CurrentCommandActionState == InputManager.CommandActionState.NoAction ||
+                InputManager.InputManagerInstance.CurrentCommandActionState == InputManager.CommandActionState.Moving)
             {
-                return;
-            }
-            if (SelectControlScript.SelectionControlInstance.SelectedOwnUnits)
-            {
-                // This must be run first, or at the init time, set destination will also be called due to same keydown
-                if (navigationUIBase != null)
+                if (SelectControlScript.SelectionControlInstance.SelectedOwnUnits)
                 {
-                    if (Input.GetKeyDown(InputManager.HotKeys.SetUnitMoveHeight))
+                    // This must be run first, or at the init time, set destination will also be called due to same keydown
+                    if (navigationUIBase != null)
                     {
-                        POINT p;
-                        GetCursorPos(out p);
-                        mousePositionX = p.X;
-                        mousePositionY = p.Y;
-                    }
-                    else if (Input.GetKeyUp(InputManager.HotKeys.SetUnitMoveHeight))
-                    {
-                        SetCursorPos(mousePositionX, mousePositionY);
-                    }
-                    // If exist and get set height key, set height
-                    if (Input.GetKey(InputManager.HotKeys.SetUnitMoveHeight))
-                    {
-                        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-                        Vector3 center = SelectControlScript.SelectionControlInstance.FindCenter();
-                        Plane hPlane = new Plane(Vector3.right, destinationHorizontalPosition);
-                        float distance;
-                        if (hPlane.Raycast(ray, out distance))
+                        if (Input.GetKeyDown(InputManager.HotKeys.SetUnitMoveHeight))
                         {
-                            destinationVerticalDistance = (ray.GetPoint(distance) - destinationHorizontalPosition).y;
+                            POINT p;
+                            GetCursorPos(out p);
+                            mousePositionX = p.X;
+                            mousePositionY = p.Y;
                         }
-                    }
-                    // Or move in horizontal plane
-                    else
-                    {
-                        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-                        Vector3 center = SelectControlScript.SelectionControlInstance.FindCenter();
-                        Plane hPlane = new Plane(Vector3.up, center);
-                        float distance;
-                        if (hPlane.Raycast(ray, out distance))
+                        else if (Input.GetKeyUp(InputManager.HotKeys.SetUnitMoveHeight))
                         {
-                            destinationHorizontalPosition = ray.GetPoint(distance);
-                            destinationHorizontalDistance = (destinationHorizontalPosition - center).magnitude;
+                            SetCursorPos(mousePositionX, mousePositionY);
                         }
+                        // If exist and get set height key, set height
+                        if (Input.GetKey(InputManager.HotKeys.SetUnitMoveHeight))
+                        {
+                            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                            Vector3 center = SelectControlScript.SelectionControlInstance.FindCenter();
+                            Plane hPlane = new Plane(Vector3.right, destinationHorizontalPosition);
+                            float distance;
+                            if (hPlane.Raycast(ray, out distance))
+                            {
+                                destinationVerticalDistance = (ray.GetPoint(distance) - destinationHorizontalPosition).y;
+                            }
+                        }
+                        // Or move in horizontal plane
+                        else
+                        {
+                            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                            Vector3 center = SelectControlScript.SelectionControlInstance.FindCenter();
+                            Plane hPlane = new Plane(Vector3.up, center);
+                            float distance;
+                            if (hPlane.Raycast(ray, out distance))
+                            {
+                                destinationHorizontalPosition = ray.GetPoint(distance);
+                                destinationHorizontalDistance = (destinationHorizontalPosition - center).magnitude;
+                            }
+                        }
+                        // If exist and get end key, move
+                        if (Input.GetKeyDown(InputManager.HotKeys.MainCommand))
+                        {
+                            List<MoveAbilityScript> allAgents = new List<MoveAbilityScript>();
+                            foreach (GameObject i in SelectControlScript.SelectionControlInstance.GetAllGameObjects())
+                            {
+                                if (i.GetComponent<MoveAbilityScript>() != null)
+                                {
+                                    allAgents.Add(i.GetComponent<MoveAbilityScript>());
+                                }
+                            }
+                            Vector3 destination = destinationHorizontalPosition + new Vector3(0, destinationVerticalDistance, 0);
+                            foreach (KeyValuePair<MoveAbilityScript, Vector3> i in FindDestination(allAgents, destination, destination - 
+                                SelectControlScript.SelectionControlInstance.FindCenter()))
+                            {
+                                i.Key.UseMoveAbility(MoveAbilityScript.ActionType.MoveTo, i.Value);
+                            }
+                            ClearNavigationUI();
+                        }
+                        UpdateNavigationUI();
                     }
-                    // If exist and get end key, move
-                    if (Input.GetKeyDown(InputManager.HotKeys.MoveUnit))
+                    // If not exist, create, this is the first time of move control, so test where the cursor is and if it is able to do such action
+                    else if (navigationUIBase == null && Input.GetKeyDown(InputManager.HotKeys.MainCommand) &&
+                        InputManager.InputManagerInstance.CurrentMousePosition == InputManager.MousePosition.None)
                     {
-                        List<MoveAbilityScript> allAgents = new List<MoveAbilityScript>();
+                        CreateNavigationUI();
+                    }
+
+                    // If exist and get stop key, stop (this does not require navigation UI)
+                    if (Input.GetKeyDown(InputManager.HotKeys.StopUnit))
+                    {
                         foreach (GameObject i in SelectControlScript.SelectionControlInstance.GetAllGameObjects())
                         {
                             if (i.GetComponent<MoveAbilityScript>() != null)
                             {
-                                allAgents.Add(i.GetComponent<MoveAbilityScript>());
+                                i.GetComponent<MoveAbilityScript>().UseMoveAbility(MoveAbilityScript.ActionType.Stop);
                             }
                         }
-                        Vector3 destination = destinationHorizontalPosition + new Vector3(0, destinationVerticalDistance, 0);
-                        foreach (KeyValuePair<MoveAbilityScript, Vector3> i in FindDestination(allAgents, destination, destination - SelectControlScript.SelectionControlInstance.FindCenter()))
-                        {
-                            i.Key.UseMoveAbility(MoveAbilityScript.ActionType.MoveTo, i.Value);
-                        }
-                        ClearNavigationUI();
+                        return;
                     }
-                    UpdateNavigationUI();
                 }
-                // If not exist, create, this is the first time of move control, so test where the cursor is and if it is able to do such action
-                else if (navigationUIBase == null && Input.GetKeyDown(InputManager.HotKeys.MoveUnit) &&
-                    InputManager.InputManagerInstance.EnableAction && SingleSelectionHelper() == null)
+                else
                 {
-                    CreateNavigationUI();
+                    ClearNavigationUI();
                 }
-
-                // If exist and get stop key, stop (this does not require navigation UI)
-                if (Input.GetKeyDown(InputManager.HotKeys.StopUnit))
-                {
-                    foreach (GameObject i in SelectControlScript.SelectionControlInstance.GetAllGameObjects())
-                    {
-                        if (i.GetComponent<MoveAbilityScript>() != null)
-                        {
-                            i.GetComponent<MoveAbilityScript>().UseMoveAbility(MoveAbilityScript.ActionType.Stop);
-                        }
-                    }
-                    return;
-                }
-            }
-            else
-            {
-                ClearNavigationUI();
             }
         }
 
@@ -153,7 +153,7 @@ namespace RTS.UI.Control
             navigationUILine = Instantiate(navigationUILinePrefab, Vector3.zero, new Quaternion(), GameObject.Find("UI").transform);
 
             Cursor.visible = false;
-            InputManager.InputManagerInstance.CurrentState = InputManager.State.Moving;
+            InputManager.InputManagerInstance.CurrentCommandActionState = InputManager.CommandActionState.Moving;
         }
 
         private void UpdateNavigationUI()
@@ -212,7 +212,7 @@ namespace RTS.UI.Control
                 Destroy(navigationUILine);
             }
             Cursor.visible = true;
-            InputManager.InputManagerInstance.CurrentState = InputManager.State.NoAction;
+            InputManager.InputManagerInstance.CurrentCommandActionState = InputManager.CommandActionState.NoAction;
         }
 
         private Dictionary<MoveAbilityScript, Vector3> FindDestination(List<MoveAbilityScript> allAgents, Vector3 destination, Vector3 forwardDirection)
@@ -452,29 +452,6 @@ namespace RTS.UI.Control
             }
 
             return temp;
-        }
-
-        private GameObject SingleSelectionHelper()
-        {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            List<RaycastHit> hits = new List<RaycastHit>(Physics.RaycastAll(ray));
-            hits.RemoveAll(x => x.collider.GetComponent<RTSGameObjectBaseScript>() == null);
-            if (hits.Count == 0)
-            {
-                return null;
-            }
-            else if (hits.Count == 1 || !hits[0].collider.CompareTag("Ship"))
-            {
-                return hits[0].collider.gameObject;
-            }
-            else
-            {
-                if (hits[1].collider.CompareTag("Subsystem"))
-                {
-                    return hits[1].collider.gameObject;
-                }
-                return hits[0].collider.gameObject;
-            }
         }
     }
 }

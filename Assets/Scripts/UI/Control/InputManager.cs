@@ -1,4 +1,5 @@
 using RTS.RTSGameObject;
+using RTS.UI.CameraView;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -8,15 +9,26 @@ namespace RTS.UI.Control
 {
     public class InputManager : MonoBehaviour
     {
-        public static InputManager InputManagerInstance { get; private set; }
-        public enum State
+        public enum MousePosition
+        {
+            None,
+            UI,
+            SelfUnit,
+            OtherUnit
+        }
+
+        public enum CommandActionState
         {
             NoAction,
             Selecting,
-            Moving
+            Moving,
+            AttackMoving
         }
+
         public static class HotKeys
         {
+            // UI
+
             // Unit
             // Select
             public static KeyCode SelectUnit = KeyCode.Mouse0;
@@ -24,27 +36,32 @@ namespace RTS.UI.Control
             public static KeyCode SelectSameType = KeyCode.W;
 
             // Action
-            public static KeyCode MoveUnit = KeyCode.Mouse1;
+            // Base mouse action (without button)
+            public static KeyCode MainCommand = KeyCode.Mouse1;
+            public static KeyCode SelectTarget = KeyCode.Mouse0;
+            // Special key (without button) height setting
             public static KeyCode SetUnitMoveHeight = KeyCode.LeftShift;
+            // Additional action supported by click button
+            public static KeyCode Attack = KeyCode.A;
             public static KeyCode StopUnit = KeyCode.S;
-            public static KeyCode AttackUnit = KeyCode.Mouse1;
-            public static KeyCode FollowUnit = KeyCode.Mouse1;
 
             // Camera
             public static KeyCode RotateCamera = KeyCode.Mouse2;
             public static KeyCode SetCameraHeight = KeyCode.LeftShift;
-            public static KeyCode TrackSelectedUnits = KeyCode.D;
+            public static KeyCode TrackSelectedUnits = KeyCode.V;
         }
+        public static InputManager InputManagerInstance { get; private set; }
 
         public Texture2D cursorTexture;
-
         public List<GameObject> notSelectUI;  // A list of UI component when mouse click on them, selection will not be called
+
         private GraphicRaycaster graphicRaycaster;
         private PointerEventData pointerEventData;
         private EventSystem eventSystem;
 
-        public State CurrentState { get; set; }
-        public bool EnableAction { get; private set; }
+        public RTSGameObjectBaseScript PointedRTSGameObject { get; set; } = null;
+        public MousePosition CurrentMousePosition { get; private set; }
+        public CommandActionState CurrentCommandActionState { get; set; } = CommandActionState.NoAction;
 
         void Awake()
         {
@@ -55,7 +72,6 @@ namespace RTS.UI.Control
         void Start()
         {
             Cursor.SetCursor(cursorTexture, Vector2.zero, CursorMode.Auto);
-            CurrentState = State.NoAction;
 
             graphicRaycaster = GetComponent<GraphicRaycaster>();
             eventSystem = GetComponent<EventSystem>();
@@ -64,31 +80,67 @@ namespace RTS.UI.Control
         // Update is called once per frame
         void Update()
         {
+            // DEBUG USE
             if (Input.GetKeyDown(KeyCode.Escape))
             {
                 Application.Quit();
             }
-            EnableAction = true;
-            //Set up the new Pointer Event
-            pointerEventData = new PointerEventData(eventSystem);
-            //Set the Pointer Event Position to that of the mouse position
-            pointerEventData.position = Input.mousePosition;
-            //Create a list of Raycast Results
-            List<RaycastResult> results = new List<RaycastResult>();
-            //Raycast using the Graphics Raycaster and mouse click position
-            graphicRaycaster.Raycast(pointerEventData, results);
 
+            // Determine mouse position
+            CurrentMousePosition = MousePosition.None;
+            pointerEventData = new PointerEventData(eventSystem)
+            {
+                position = Input.mousePosition
+            };
+            List<RaycastResult> results = new List<RaycastResult>();
+            graphicRaycaster.Raycast(pointerEventData, results);
             foreach (RaycastResult result in results)
             {
-                Debug.Log(result.gameObject.name);
+                if (!result.gameObject.activeInHierarchy)
+                {
+                    continue;
+                }
                 if (notSelectUI.Contains(result.gameObject))
                 {
-                    EnableAction = false;
+                    CurrentMousePosition = MousePosition.UI;
+                    break;
+                }
+                else if (result.gameObject.GetComponent<CameraViewInfoScript>() != null)
+                {
+                    if (result.gameObject.GetComponent<CameraViewInfoScript>().bindObject.BelongTo == 
+                        GameManager.GameManagerInstance.selfIndex)
+                    {
+                        CurrentMousePosition = MousePosition.SelfUnit;
+                        PointedRTSGameObject = result.gameObject.GetComponent<CameraViewInfoScript>().bindObject;
+                    }
+                    else
+                    {
+                        CurrentMousePosition = MousePosition.OtherUnit;
+                        PointedRTSGameObject = result.gameObject.GetComponent<CameraViewInfoScript>().bindObject;
+                    }
+                }
+            }
+
+            if (CurrentMousePosition == MousePosition.None)
+            {
+                RTSGameObjectBaseScript temp = SingleSelectionHelper();
+                if (temp != null)
+                {
+                    if (temp.BelongTo == GameManager.GameManagerInstance.selfIndex)
+                    {
+                        CurrentMousePosition = MousePosition.SelfUnit;
+                        PointedRTSGameObject = temp;
+                    }
+                    else
+                    {
+                        CurrentMousePosition = MousePosition.OtherUnit;
+                        PointedRTSGameObject = temp;
+                    }
                 }
             }
         }
 
-        public static GameObject SingleSelectionHelper()
+        public static RTSGameObjectBaseScript SingleSelectionHelper()
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             List<RaycastHit> hits = new List<RaycastHit>(Physics.RaycastAll(ray));
@@ -99,15 +151,15 @@ namespace RTS.UI.Control
             }
             else if (hits.Count == 1 || !hits[0].collider.CompareTag("Ship"))
             {
-                return hits[0].collider.gameObject;
+                return hits[0].collider.GetComponent<RTSGameObjectBaseScript>();
             }
             else
             {
                 if (hits[1].collider.CompareTag("Subsystem"))
                 {
-                    return hits[1].collider.gameObject;
+                    return hits[1].collider.GetComponent<RTSGameObjectBaseScript>();
                 }
-                return hits[0].collider.gameObject;
+                return hits[0].collider.GetComponent<RTSGameObjectBaseScript>();
             }
         }
     }

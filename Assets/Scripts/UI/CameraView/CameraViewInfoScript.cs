@@ -2,12 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using RTS.RTSGameObject;
 
-namespace RTS.UI.MainCamera
+namespace RTS.UI.CameraView
 {
     public class CameraViewInfoScript : MonoBehaviour
     {
         public Slider hpdata;
+        [HideInInspector]
+        public RTSGameObjectBaseScript bindObject;
 
         public void ChangeColor(Color color)
         {

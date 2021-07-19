@@ -68,26 +68,25 @@ namespace RTS.UI.Control
         // Update is called once per frame
         void Update()
         {
-            if (InputManager.InputManagerInstance.CurrentState == InputManager.State.NoAction)
+            if (InputManager.InputManagerInstance.CurrentCommandActionState == InputManager.CommandActionState.NoAction &&
+                SelectControlScript.SelectionControlInstance.SelectedOwnUnits)
             {
-                if (SelectControlScript.SelectionControlInstance.SelectedOwnUnits)
+                if (Input.GetKeyDown(InputManager.HotKeys.MainCommand) &&
+                    InputManager.InputManagerInstance.CurrentMousePosition != InputManager.MousePosition.UI)
                 {
-                    if (Input.GetKeyDown(InputManager.HotKeys.AttackUnit) && InputManager.InputManagerInstance.EnableAction)
+                    GameObject temp = SingleSelectionHelper();
+                    if (temp != null && temp.GetComponent<RTSGameObjectBaseScript>().BelongTo != selfIndex)
                     {
-                        GameObject temp = SingleSelectionHelper();
-                        if (temp != null && temp.GetComponent<RTSGameObjectBaseScript>().BelongTo != selfIndex)
+                        ClearAttackUI();
+                        foreach (GameObject i in SelectControlScript.SelectionControlInstance.GetAllGameObjects())
                         {
-                            ClearAttackUI();
-                            foreach (GameObject i in SelectControlScript.SelectionControlInstance.GetAllGameObjects())
+                            if (i.GetComponent<AttackAbilityScript>() != null)
                             {
-                                if (i.GetComponent<AttackAbilityScript>() != null)
-                                {
-                                    i.GetComponent<AttackAbilityScript>().UseAttackAbility(AttackAbilityScript.ActionType.Specific, temp);
-                                    CreateAttackUI(i, temp);
-                                }
+                                i.GetComponent<AttackAbilityScript>().UseAttackAbility(AttackAbilityScript.ActionType.Specific, temp);
+                                CreateAttackUI(i, temp);
                             }
-                            StartCoroutine(ClearUI(displayTime));
                         }
+                        StartCoroutine(ClearUI(displayTime));
                     }
                 }
             }

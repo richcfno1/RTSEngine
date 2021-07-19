@@ -60,6 +60,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hpdata: {fileID: 5855459645457229970}
+  bindObject: {fileID: 0}
 --- !u!1 &5855459645454003229
 GameObject:
   m_ObjectHideFlags: 0
@@ -145,7 +146,6 @@ GameObject:
   m_Component:
   - component: {fileID: 5855459645457229974}
   - component: {fileID: 5855459645457229970}
-  - component: {fileID: 5855459645457229971}
   - component: {fileID: 5855459645457229972}
   - component: {fileID: 5855459645457229973}
   m_Layer: 5
@@ -226,19 +226,6 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &5855459645457229971
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5855459645457229975}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 83ca910f57ce69b47aa1a90d36adb401, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  hpdata: {fileID: 5855459645457229970}
 --- !u!222 &5855459645457229972
 CanvasRenderer:
   m_ObjectHideFlags: 0

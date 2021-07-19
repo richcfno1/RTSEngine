@@ -4,7 +4,7 @@ using System.Linq;
 using UnityEngine;
 using RTS.RTSGameObject;
 
-namespace RTS.UI.MainCamera
+namespace RTS.UI.CameraView
 {
     public class CameraViewScript : MonoBehaviour
     {
@@ -75,6 +75,7 @@ namespace RTS.UI.MainCamera
                     Color tempColor = tempScript.BelongTo == GameManager.GameManagerInstance.selfIndex ? Color.green : Color.red;
                     tempColor.a = 0.5f;
                     newBar.GetComponent<CameraViewInfoScript>().ChangeColor(tempColor);
+                    newBar.GetComponent<CameraViewInfoScript>().bindObject = i.GetComponent<RTSGameObjectBaseScript>();
                     allInfoBar.Add(tempIndex, newBar);
                 }
             }
