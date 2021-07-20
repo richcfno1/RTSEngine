@@ -73,7 +73,7 @@ namespace RTS.Ability
                     i.SetTarget(new List<object>() { target });
                 }
                 // call follow and head to
-                Host.KeepInRangeAndHeadTo(target, (transform.position - target.transform.position).normalized, 
+                Host.KeepInRangeAndLookAt(target, (transform.position - target.transform.position).normalized, 
                     maxLockRange, minSuggestedFireDistance, false, false);
             }
             else

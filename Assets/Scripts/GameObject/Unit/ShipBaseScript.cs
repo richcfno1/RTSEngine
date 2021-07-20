@@ -146,7 +146,7 @@ namespace RTS.RTSGameObject.Unit
                             ActionQueue.RemoveFirst();
                         }
                         return;
-                    case ActionType.HeadTo:
+                    case ActionType.LookAt:
                         // Ability check
                         if (GetComponent<MoveAbilityScript>() == null)
                         {
@@ -165,6 +165,30 @@ namespace RTS.RTSGameObject.Unit
                         if (Vector3.Angle(transform.forward, (finalRotationTarget - thisBody.position).normalized) <= 0.1f)
                         {
                             ActionQueue.RemoveFirst();
+                        }
+                        return;
+                    case ActionType.LookAtTarget:
+                        // Ability check
+                        if (GetComponent<MoveAbilityScript>() == null)
+                        {
+                            ActionQueue.RemoveFirst();
+                            return;
+                        }
+                        else if (!GetComponent<MoveAbilityScript>().CanUseAbility())
+                        {
+                            return;
+                        }
+                        // Action implementation
+                        if ((GameObject)action.targets[0] == null)
+                        {
+                            ActionQueue.RemoveFirst();
+                        }
+                        else
+                        {
+                            finalRotationTarget = ((GameObject)action.targets[0]).transform.position;
+                            thisBody.rotation = Quaternion.RotateTowards(thisBody.rotation,
+                                Quaternion.LookRotation((finalRotationTarget - thisBody.position).normalized),
+                                Time.fixedDeltaTime * agentRotateSpeed);
                         }
                         return;
                     case ActionType.Follow:
@@ -349,7 +373,7 @@ namespace RTS.RTSGameObject.Unit
                             }
                         }
                         return;
-                    case ActionType.KeepInRangeAndHeadTo:
+                    case ActionType.KeepInRangeAndLookAt:
                         // Ability check
                         if (GetComponent<MoveAbilityScript>() == null)
                         {

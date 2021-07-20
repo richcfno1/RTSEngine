@@ -335,12 +335,101 @@ namespace RTS.UI.Control
 
         private void LookAtTarget()
         {
-            InputManager.InputManagerInstance.CurrentCommandActionState = InputManager.CommandActionState.NoAction;
+            if (Input.GetKeyDown(InputManager.HotKeys.SelectTarget))
+            {
+                RTSGameObjectBaseScript followTarget = InputManager.InputManagerInstance.PointedRTSGameObject;
+                if (followTarget != null)
+                {
+                    ClearAllTargetDisplayUI();
+                    foreach (GameObject i in SelectControlScript.SelectionControlInstance.GetAllGameObjects())
+                    {
+                        if (i.GetComponent<UnitBaseScript>() != null)
+                        {
+                            i.GetComponent<UnitBaseScript>().LookAtTarget(followTarget.gameObject);
+                            CreateGOToGOUI(i, followTarget.gameObject, Color.yellow);
+                        }
+                        StartCoroutine(ClearTargetDisplayUIWithWaitTime(displayTime));
+                    }
+                }
+                InputManager.InputManagerInstance.CurrentCommandActionState = InputManager.CommandActionState.NoAction;
+            }
         }
 
         private void LookAtSpace()
         {
-            InputManager.InputManagerInstance.CurrentCommandActionState = InputManager.CommandActionState.NoAction;
+            // This must be run first, or at the init time, set destination will also be called due to same keydown
+            if (navigationUI != null)
+            {
+                if (Input.GetKeyDown(InputManager.HotKeys.SetUnitMoveHeight))
+                {
+                    POINT p;
+                    GetCursorPos(out p);
+                    mousePositionX = p.X;
+                    mousePositionY = p.Y;
+                }
+                else if (Input.GetKeyUp(InputManager.HotKeys.SetUnitMoveHeight))
+                {
+                    SetCursorPos(mousePositionX, mousePositionY);
+                }
+                // If exist and get set height key, set height
+                if (Input.GetKey(InputManager.HotKeys.SetUnitMoveHeight))
+                {
+                    Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                    Vector3 center = SelectControlScript.SelectionControlInstance.FindCenter();
+                    Plane hPlane = new Plane(Vector3.right, destinationHorizontalPosition);
+                    float distance;
+                    if (hPlane.Raycast(ray, out distance))
+                    {
+                        destinationVerticalDistance = (ray.GetPoint(distance) - destinationHorizontalPosition).y;
+                    }
+                }
+                // Or move in horizontal plane
+                else
+                {
+                    Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                    Vector3 center = SelectControlScript.SelectionControlInstance.FindCenter();
+                    Plane hPlane = new Plane(Vector3.up, center);
+                    float distance;
+                    if (hPlane.Raycast(ray, out distance))
+                    {
+                        destinationHorizontalPosition = ray.GetPoint(distance);
+                        destinationHorizontalDistance = (destinationHorizontalPosition - center).magnitude;
+                    }
+                }
+                // If exist and get end key, move
+                if (Input.GetKeyDown(InputManager.HotKeys.MainCommand))
+                {
+                    List<UnitBaseScript> allAgents = new List<UnitBaseScript>();
+                    foreach (GameObject i in SelectControlScript.SelectionControlInstance.GetAllGameObjects())
+                    {
+                        if (i.GetComponent<UnitBaseScript>() != null)
+                        {
+                            allAgents.Add(i.GetComponent<UnitBaseScript>());
+                        }
+                    }
+                    ClearAllTargetDisplayUI();
+                    Vector3 destination = destinationHorizontalPosition + new Vector3(0, destinationVerticalDistance, 0);
+                    foreach (KeyValuePair<UnitBaseScript, Vector3> i in FindDestination(allAgents, destination, destination -
+                        SelectControlScript.SelectionControlInstance.FindCenter()))
+                    {
+                        i.Key.LookAt(i.Value);
+                        CreateGOToVectorUI(i.Key.gameObject, i.Value, Color.yellow);
+                    }
+                    navigationUI.Destroy();
+                    navigationUI = null;
+                    StartCoroutine(ClearTargetDisplayUIWithWaitTime(displayTime));
+                    InputManager.InputManagerInstance.CurrentCommandActionState = InputManager.CommandActionState.NoAction;
+                }
+                else
+                {
+                    navigationUI.Update(destinationHorizontalDistance, destinationHorizontalPosition, destinationVerticalDistance);
+                }
+            }
+            // If not exist, create, this is the first time of move control, so test where the cursor is and if it is able to do such action
+            else
+            {
+                navigationUI = new NavigationUI(navigationUIBasePrefab, navigationUICirclePrefab, navigationUILinePrefab, Color.yellow);
+            }
         }
 
         public void OnStopButtonClicked()
