@@ -67,7 +67,7 @@ namespace RTS.UI.Control
                             {
                                 Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
                                 Vector3 center = SelectControlScript.SelectionControlInstance.FindCenter();
-                                Plane hPlane = new Plane(Vector3.right, destinationHorizontalPosition);
+                                Plane hPlane = new Plane(Vector3.Cross(center - destinationHorizontalPosition, Vector3.up), destinationHorizontalPosition);
                                 float distance;
                                 if (hPlane.Raycast(ray, out distance))
                                 {
@@ -119,6 +119,9 @@ namespace RTS.UI.Control
                         // If not exist, create, this is the first time of move control, so test where the cursor is and if it is able to do such action
                         else
                         {
+                            destinationHorizontalDistance = 0;
+                            destinationVerticalDistance = 0;
+                            destinationHorizontalPosition = new Vector3();
                             navigationUI = new NavigationUI(navigationUIBasePrefab, navigationUICirclePrefab, navigationUILinePrefab, Color.green);
                         }
                         break;
