@@ -249,7 +249,7 @@ MonoBehaviour:
   searchStepDistance: 50
   searchStepMaxDistance: 200
   searchMaxRandomNumber: 10
-  autoEngageDistance: 0
+  autoEngageDistance: 1000
   maxAttackPower: 5000
   maxDefencePower: 5000
   maxMovePower: 5000

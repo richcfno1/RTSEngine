@@ -464,10 +464,6 @@ namespace RTS.RTSGameObject.Unit
                             ActionQueue.RemoveFirst();
                             return;
                         }
-                        else if (!GetComponent<AttackAbilityScript>().CanUseAbility() && !GetComponent<MoveAbilityScript>().CanUseAbility())
-                        {
-                            return;
-                        }
                         if (GetComponent<MoveAbilityScript>() != null && GetComponent<MoveAbilityScript>().CanUseAbility())
                         {
                             finalPosition = (Vector3)action.targets[0];
@@ -536,7 +532,6 @@ namespace RTS.RTSGameObject.Unit
                                     autoEngageTarget = temp.gameObject;
                                 }
                             }
-                            return;
                         }
                         return;
                     case ActionType.UseSpecialAbility:

@@ -41,7 +41,11 @@ namespace RTS.UI.Control
         {
             allSelectableGameObjects = GameManager.GameManagerInstance.GetAllGameObjects();
             if (Input.GetKeyDown(InputManager.HotKeys.SelectUnit) && 
-                InputManager.InputManagerInstance.CurrentMousePosition != InputManager.MousePosition.UI)
+                InputManager.InputManagerInstance.CurrentMousePosition != InputManager.MousePosition.UI &&
+                InputManager.InputManagerInstance.CurrentCommandActionState != InputManager.CommandActionState.AttackWaitingNextKey &&
+                InputManager.InputManagerInstance.LastCommandActionState != InputManager.CommandActionState.AttackWaitingNextKey &&
+                InputManager.InputManagerInstance.CurrentCommandActionState != InputManager.CommandActionState.AttackTarget &&
+                InputManager.InputManagerInstance.LastCommandActionState != InputManager.CommandActionState.AttackTarget)
             {
                 mouseStartPosition = Input.mousePosition;
                 mouseLeftUp = false;

@@ -82,6 +82,7 @@ namespace RTS.UI.Control
         public RTSGameObjectBaseScript PointedRTSGameObject { get; set; } = null;
         public MousePosition CurrentMousePosition { get; private set; } = MousePosition.None;
         public CommandActionState CurrentCommandActionState { get; set; } = CommandActionState.NoAction;
+        public CommandActionState LastCommandActionState { get; set; } = CommandActionState.NoAction;
 
         void Awake()
         {
@@ -100,6 +101,7 @@ namespace RTS.UI.Control
         // Update is called once per frame
         void Update()
         {
+            LastCommandActionState = CurrentCommandActionState;
             // DEBUG USE
             if (Input.GetKeyDown(KeyCode.Escape))
             {
