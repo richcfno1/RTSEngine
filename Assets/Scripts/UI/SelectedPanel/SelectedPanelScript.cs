@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -22,9 +21,10 @@ namespace RTS.UI.SelectedPanel
 
         private SelectedType lastSelectedType;
         private SelectedDetailGridScript selectedDetaillGrid;
-        private Dictionary<int, SelectedInfoGridScript> allGridsByIndex = new Dictionary<int, SelectedInfoGridScript>(); // RTSGO index -> Grid
+        private Dictionary<int, SelectedInfoGridScript> allGridsByIndex = new Dictionary<int, SelectedInfoGridScript>();      // RTSGO index -> Grid
         private Dictionary<string, SelectedInfoGridScript> allGridsByType = new Dictionary<string, SelectedInfoGridScript>(); // RTSGO type -> Grid
-                                                                                                                              // Start is called before the first frame update
+
+        // Start is called before the first frame update
         void Start()
         {
             lastSelectedType = SelectedType.Empty;

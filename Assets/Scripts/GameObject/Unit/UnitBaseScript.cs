@@ -104,10 +104,8 @@ namespace RTS.RTSGameObject.Unit
         public float DefencePower { get { return curDefencePower / maxDefencePower; } set { curDefencePower = value * maxDefencePower; } }
         public float MovePower { get { return curMovePower / maxMovePower; } set { curMovePower = value * maxMovePower; } }
         public Dictionary<string, float> PropertyDictionary { get; set; } = new Dictionary<string, float>();
-        public Dictionary<string, AbilityBaseScript> AbilityDictionary { get; private set; } = new Dictionary<string, AbilityBaseScript>();
         public FireControlStatus CurrentFireControlStatus { get; set; } = FireControlStatus.Passive;
-
-        public LinkedList<UnitAction> moveActionQueue = new LinkedList<UnitAction>();
+        public LinkedList<UnitAction> ActionQueue { get; protected set; } = new LinkedList<UnitAction>();
 
         protected float curAttackPower;
         protected float curDefencePower;
@@ -121,7 +119,6 @@ namespace RTS.RTSGameObject.Unit
         protected List<Vector3> moveBeacons = new List<Vector3>();
         protected bool isApproaching = true;
 
-
         public override void CreateDamage(float damage, float attackPowerReduce, float defencePowerReduce, float movePowerReduce, GameObject from)
         {
             curAttackPower = Mathf.Clamp(curAttackPower - attackPowerReduce, 0, maxAttackPower);
@@ -132,9 +129,9 @@ namespace RTS.RTSGameObject.Unit
 
         public virtual void Stop()
         {
-            moveActionQueue.Clear();
+            ActionQueue.Clear();
             moveBeacons.Clear();
-            moveActionQueue.AddLast(new UnitAction
+            ActionQueue.AddLast(new UnitAction
             {
                 actionType = ActionType.Stop,
                 targets = new List<object>()
@@ -145,17 +142,17 @@ namespace RTS.RTSGameObject.Unit
         {
             if (clearQueue)
             {
-                moveActionQueue.Clear();
+                ActionQueue.Clear();
                 moveBeacons.Clear();
             }
             if (addToEnd)
             {
-                moveActionQueue.AddLast(new UnitAction
+                ActionQueue.AddLast(new UnitAction
                 {
                     actionType = ActionType.Move,
                     targets = new List<object>() { destination }
                 });
-                moveActionQueue.AddLast(new UnitAction
+                ActionQueue.AddLast(new UnitAction
                 {
                     actionType = ActionType.Stop,
                     targets = new List<object>()
@@ -163,12 +160,12 @@ namespace RTS.RTSGameObject.Unit
             }
             else
             {
-                moveActionQueue.AddFirst(new UnitAction
+                ActionQueue.AddFirst(new UnitAction
                 {
                     actionType = ActionType.Stop,
                     targets = new List<object>()
                 });
-                moveActionQueue.AddFirst(new UnitAction
+                ActionQueue.AddFirst(new UnitAction
                 {
                     actionType = ActionType.Move,
                     targets = new List<object>() { destination }
@@ -180,17 +177,17 @@ namespace RTS.RTSGameObject.Unit
         {
             if (clearQueue)
             {
-                moveActionQueue.Clear();
+                ActionQueue.Clear();
                 moveBeacons.Clear();
             }
             if (addToEnd)
             {
-                moveActionQueue.AddLast(new UnitAction
+                ActionQueue.AddLast(new UnitAction
                 {
                     actionType = ActionType.HeadTo,
                     targets = new List<object>() { target }
                 });
-                moveActionQueue.AddLast(new UnitAction
+                ActionQueue.AddLast(new UnitAction
                 {
                     actionType = ActionType.Stop,
                     targets = new List<object>()
@@ -198,12 +195,12 @@ namespace RTS.RTSGameObject.Unit
             }
             else
             {
-                moveActionQueue.AddFirst(new UnitAction
+                ActionQueue.AddFirst(new UnitAction
                 {
                     actionType = ActionType.Stop,
                     targets = new List<object>()
                 });
-                moveActionQueue.AddFirst(new UnitAction
+                ActionQueue.AddFirst(new UnitAction
                 {
                     actionType = ActionType.HeadTo,
                     targets = new List<object>() { target }
@@ -211,21 +208,25 @@ namespace RTS.RTSGameObject.Unit
             }
         }
 
-        public virtual void Follow(GameObject target, Vector3 offset, bool clearQueue = true, bool addToEnd = true)
+        public virtual void Follow(GameObject target, bool clearQueue = true, bool addToEnd = true)
         {
+            // Distance determination
+            float distance = target.GetComponent<Collider>().bounds.size.magnitude + GetComponent<Collider>().bounds.size.magnitude;
+            distance /= 2;
+            Vector3 offset = (transform.position - target.transform.position).normalized * distance;
             if (clearQueue)
             {
-                moveActionQueue.Clear();
+                ActionQueue.Clear();
                 moveBeacons.Clear();
             }
             if (addToEnd)
             {
-                moveActionQueue.AddLast(new UnitAction
+                ActionQueue.AddLast(new UnitAction
                 {
                     actionType = ActionType.Follow,
                     targets = new List<object>() { target, offset }
                 });
-                moveActionQueue.AddLast(new UnitAction
+                ActionQueue.AddLast(new UnitAction
                 {
                     actionType = ActionType.Stop,
                     targets = new List<object>()
@@ -233,15 +234,53 @@ namespace RTS.RTSGameObject.Unit
             }
             else
             {
-                moveActionQueue.AddFirst(new UnitAction
+                ActionQueue.AddFirst(new UnitAction
                 {
                     actionType = ActionType.Stop,
                     targets = new List<object>()
                 });
-                moveActionQueue.AddFirst(new UnitAction
+                ActionQueue.AddFirst(new UnitAction
                 {
                     actionType = ActionType.Follow,
                     targets = new List<object>() { target, offset }
+                });
+            }
+        }
+
+        public virtual void Follow(GameObject target, Vector3 offset, bool clearQueue = true, bool addToEnd = true)
+        {
+            // Distance determination
+            float distance = target.GetComponent<Collider>().bounds.size.magnitude + GetComponent<Collider>().bounds.size.magnitude;
+            distance /= 2;
+            if (clearQueue)
+            {
+                ActionQueue.Clear();
+                moveBeacons.Clear();
+            }
+            if (addToEnd)
+            {
+                ActionQueue.AddLast(new UnitAction
+                {
+                    actionType = ActionType.Follow,
+                    targets = new List<object>() { target, offset + offset.normalized * distance }
+                });
+                ActionQueue.AddLast(new UnitAction
+                {
+                    actionType = ActionType.Stop,
+                    targets = new List<object>()
+                });
+            }
+            else
+            {
+                ActionQueue.AddFirst(new UnitAction
+                {
+                    actionType = ActionType.Stop,
+                    targets = new List<object>()
+                });
+                ActionQueue.AddFirst(new UnitAction
+                {
+                    actionType = ActionType.Follow,
+                    targets = new List<object>() { target, offset + offset.normalized * distance }
                 });
             }
         }
@@ -250,17 +289,17 @@ namespace RTS.RTSGameObject.Unit
         {
             if (clearQueue)
             {
-                moveActionQueue.Clear();
+                ActionQueue.Clear();
                 moveBeacons.Clear();
             }
             if (addToEnd)
             {
-                moveActionQueue.AddLast(new UnitAction
+                ActionQueue.AddLast(new UnitAction
                 {
                     actionType = ActionType.KeepInRange,
                     targets = new List<object>() { target, upperBound, lowerBound }
                 });
-                moveActionQueue.AddLast(new UnitAction
+                ActionQueue.AddLast(new UnitAction
                 {
                     actionType = ActionType.Stop,
                     targets = new List<object>()
@@ -268,12 +307,12 @@ namespace RTS.RTSGameObject.Unit
             }
             else
             {
-                moveActionQueue.AddFirst(new UnitAction
+                ActionQueue.AddFirst(new UnitAction
                 {
                     actionType = ActionType.Stop,
                     targets = new List<object>()
                 });
-                moveActionQueue.AddFirst(new UnitAction
+                ActionQueue.AddFirst(new UnitAction
                 {
                     actionType = ActionType.KeepInRange,
                     targets = new List<object>() { target, upperBound, lowerBound }
@@ -286,17 +325,17 @@ namespace RTS.RTSGameObject.Unit
         {
             if (clearQueue)
             {
-                moveActionQueue.Clear();
+                ActionQueue.Clear();
                 moveBeacons.Clear();
             }
             if (addToEnd)
             {
-                moveActionQueue.AddLast(new UnitAction
+                ActionQueue.AddLast(new UnitAction
                 {
                     actionType = ActionType.KeepInRangeAndHeadTo,
                     targets = new List<object>() { target, offset, upperBound, lowerBound }
                 });
-                moveActionQueue.AddLast(new UnitAction
+                ActionQueue.AddLast(new UnitAction
                 {
                     actionType = ActionType.Stop,
                     targets = new List<object>()
@@ -304,12 +343,12 @@ namespace RTS.RTSGameObject.Unit
             }
             else
             {
-                moveActionQueue.AddFirst(new UnitAction
+                ActionQueue.AddFirst(new UnitAction
                 {
                     actionType = ActionType.Stop,
                     targets = new List<object>()
                 });
-                moveActionQueue.AddFirst(new UnitAction
+                ActionQueue.AddFirst(new UnitAction
                 {
                     actionType = ActionType.KeepInRangeAndHeadTo,
                     targets = new List<object>() { target, offset, upperBound, lowerBound }
@@ -321,17 +360,17 @@ namespace RTS.RTSGameObject.Unit
         {
             if (clearQueue)
             {
-                moveActionQueue.Clear();
+                ActionQueue.Clear();
                 moveBeacons.Clear();
             }
             if (addToEnd)
             {
-                moveActionQueue.AddLast(new UnitAction
+                ActionQueue.AddLast(new UnitAction
                 {
                     actionType = ActionType.Attack,
                     targets = new List<object>() { target }
                 });
-                moveActionQueue.AddLast(new UnitAction
+                ActionQueue.AddLast(new UnitAction
                 {
                     actionType = ActionType.Stop,
                     targets = new List<object>()
@@ -339,12 +378,12 @@ namespace RTS.RTSGameObject.Unit
             }
             else
             {
-                moveActionQueue.AddFirst(new UnitAction
+                ActionQueue.AddFirst(new UnitAction
                 {
                     actionType = ActionType.Stop,
                     targets = new List<object>()
                 });
-                moveActionQueue.AddFirst(new UnitAction
+                ActionQueue.AddFirst(new UnitAction
                 {
                     actionType = ActionType.Attack,
                     targets = new List<object>() { target }
@@ -356,17 +395,17 @@ namespace RTS.RTSGameObject.Unit
         {
             if (clearQueue)
             {
-                moveActionQueue.Clear();
+                ActionQueue.Clear();
                 moveBeacons.Clear();
             }
             if (addToEnd)
             {
-                moveActionQueue.AddLast(new UnitAction
+                ActionQueue.AddLast(new UnitAction
                 {
                     actionType = ActionType.AttackAndMove,
                     targets = new List<object>() { destination }
                 });
-                moveActionQueue.AddLast(new UnitAction
+                ActionQueue.AddLast(new UnitAction
                 {
                     actionType = ActionType.Stop,
                     targets = new List<object>()
@@ -374,12 +413,12 @@ namespace RTS.RTSGameObject.Unit
             }
             else
             {
-                moveActionQueue.AddFirst(new UnitAction
+                ActionQueue.AddFirst(new UnitAction
                 {
                     actionType = ActionType.Stop,
                     targets = new List<object>()
                 });
-                moveActionQueue.AddFirst(new UnitAction
+                ActionQueue.AddFirst(new UnitAction
                 {
                     actionType = ActionType.AttackAndMove,
                     targets = new List<object>() { destination }
@@ -387,27 +426,51 @@ namespace RTS.RTSGameObject.Unit
             }
         }
 
+        public virtual void SetPassive()
+        {
+            if (GetComponent<AttackAbilityScript>() != null)
+            {
+                GetComponent<AttackAbilityScript>().HandleAttackMode(AttackAbilityScript.ActionType.SetPassive);
+            }
+        }
+
+        public virtual void SetNeutral()
+        {
+            if (GetComponent<AttackAbilityScript>() != null)
+            {
+                GetComponent<AttackAbilityScript>().HandleAttackMode(AttackAbilityScript.ActionType.SetNeutral);
+            }
+        }
+
+        public virtual void SetAggressive()
+        {
+            if (GetComponent<AttackAbilityScript>() != null)
+            {
+                GetComponent<AttackAbilityScript>().HandleAttackMode(AttackAbilityScript.ActionType.SetAggressive);
+            }
+        }
+
         // This function should only be called when deploy the unit
         public virtual void ForcedMove(Vector3 destination, bool clearQueue = true, bool addToEnd = true)
         {
-            if (moveActionQueue.Count == 0)
+            if (ActionQueue.Count == 0)
             {
                 fireControlStatusBeforeOverride = CurrentFireControlStatus;
                 CurrentFireControlStatus = FireControlStatus.Passive;
             }
             if (clearQueue)
             {
-                moveActionQueue.Clear();
+                ActionQueue.Clear();
                 moveBeacons.Clear();
             }
             if (addToEnd)
             {
-                moveActionQueue.AddLast(new UnitAction
+                ActionQueue.AddLast(new UnitAction
                 {
                     actionType = ActionType.ForcedMove,
                     targets = new List<object>() { destination }
                 });
-                moveActionQueue.AddLast(new UnitAction
+                ActionQueue.AddLast(new UnitAction
                 {
                     actionType = ActionType.Stop,
                     targets = new List<object>()
@@ -415,12 +478,12 @@ namespace RTS.RTSGameObject.Unit
             }
             else
             {
-                moveActionQueue.AddFirst(new UnitAction
+                ActionQueue.AddFirst(new UnitAction
                 {
                     actionType = ActionType.Stop,
                     targets = new List<object>()
                 });
-                moveActionQueue.AddFirst(new UnitAction
+                ActionQueue.AddFirst(new UnitAction
                 {
                     actionType = ActionType.ForcedMove,
                     targets = new List<object>() { destination }

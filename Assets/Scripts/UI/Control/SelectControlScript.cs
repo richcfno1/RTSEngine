@@ -12,6 +12,7 @@ namespace RTS.UI.Control
         public GameObject SelectionBoxPrefab;
 
         public Dictionary<string, List<GameObject>> SelectedGameObjects { get; private set; } = new Dictionary<string, List<GameObject>>();
+        public bool SelectedChanged { get; private set; } = false;
         public bool SelectedOwnUnits { get; private set; } = false;
 
         private int selfIndex;
@@ -45,9 +46,9 @@ namespace RTS.UI.Control
                 mouseStartPosition = Input.mousePosition;
                 mouseLeftUp = false;
                 mouseLeftDown = true;
-                InputManager.InputManagerInstance.CurrentCommandActionState = InputManager.CommandActionState.Selecting;
+                InputManager.InputManagerInstance.CurrentCommandActionState = InputManager.CommandActionState.Select;
             }
-            else if (Input.GetKeyUp(InputManager.HotKeys.SelectUnit) && InputManager.InputManagerInstance.CurrentCommandActionState == InputManager.CommandActionState.Selecting)
+            else if (Input.GetKeyUp(InputManager.HotKeys.SelectUnit) && InputManager.InputManagerInstance.CurrentCommandActionState == InputManager.CommandActionState.Select)
             {
                 mouseEndPosition = Input.mousePosition;
                 mouseLeftUp = true;
@@ -72,6 +73,11 @@ namespace RTS.UI.Control
                 mouseLeftUp = false;
                 Judge();
                 Destroy(SelectionBox);
+                SelectedChanged = true;
+            }
+            else
+            {
+                SelectedChanged = false;
             }
 
             // Remove destroyed object and add highlighted outline to others
@@ -172,12 +178,11 @@ namespace RTS.UI.Control
             // Single selection
             else
             {
-                GameObject selected = SingleSelectionHelper();
+                RTSGameObjectBaseScript selected = InputManager.InputManagerInstance.PointedRTSGameObject;
                 if (selected != null)
                 {
-                    AddGameObject(selected);
-                    SelectedOwnUnits = selected.GetComponent<RTSGameObjectBaseScript>().BelongTo == selfIndex
-                        && selected.GetComponent<UnitBaseScript>() != null;
+                    AddGameObject(selected.gameObject);
+                    SelectedOwnUnits = selected.BelongTo == selfIndex && selected.GetComponent<UnitBaseScript>() != null;
                 }
             }
         }

@@ -54,24 +54,35 @@ namespace RTS.RTSGameObject.Unit
                     FirstOrDefault(x => x.GetComponent<UnitBaseScript>() != null && x.GetComponent<UnitBaseScript>().BelongTo != BelongTo);
                 if (temp != null)
                 {
-                    GetComponent<AttackAbilityScript>().UseAttackAbility(AttackAbilityScript.ActionType.Specific, temp.gameObject);
+                    Attack(temp.gameObject);
                     autoEngageTarget = temp.gameObject;
                 }
             }
 
-            if (moveActionQueue.Count != 0)
+            if (ActionQueue.Count != 0)
             {
-                UnitAction action = moveActionQueue.First();
+                UnitAction action = ActionQueue.First();
                 switch (action.actionType)
                 {
                     case ActionType.Stop:
-                        if (moveActionQueue.Count == 1)
+                        if (ActionQueue.Count == 1)
                         {
                             CurrentFireControlStatus = fireControlStatusBeforeOverride;
                         }
-                        moveActionQueue.RemoveFirst();
+                        ActionQueue.RemoveFirst();
                         return;
                     case ActionType.Move:
+                        // Ability check
+                        if (GetComponent<MoveAbilityScript>() == null)
+                        {
+                            ActionQueue.RemoveFirst();
+                            return;
+                        }
+                        else if (!GetComponent<MoveAbilityScript>().CanUseAbility())
+                        {
+                            return;
+                        }
+                        // Action implementation
                         finalPosition = (Vector3)action.targets[0];
                         if (thisBody.position != finalPosition)
                         {
@@ -96,7 +107,7 @@ namespace RTS.RTSGameObject.Unit
                                 {
                                     if (TestObstacle(thisBody.position, moveBeacons[0]) != 0)
                                     {
-                                        moveActionQueue.First().targets[0] = FindPath(thisBody.position, finalPosition);
+                                        ActionQueue.First().targets[0] = FindPath(thisBody.position, finalPosition);
                                         return;
                                     }
                                     thisBody.position = moveBeacons[0];
@@ -106,36 +117,58 @@ namespace RTS.RTSGameObject.Unit
                                 {
                                     if (TestObstacle(thisBody.position, thisBody.position + transform.forward * moveDistance) != 0)
                                     {
-                                        moveActionQueue.First().targets[0] = FindPath(thisBody.position, finalPosition);
+                                        ActionQueue.First().targets[0] = FindPath(thisBody.position, finalPosition);
                                     }
                                     thisBody.position += transform.forward * moveDistance;
                                 }
                             }
                             else
                             {
-                                moveActionQueue.First().targets[0] = FindPath(thisBody.position, finalPosition);
+                                ActionQueue.First().targets[0] = FindPath(thisBody.position, finalPosition);
                             }
                         }
                         else
                         {
-                            moveActionQueue.RemoveFirst();
+                            ActionQueue.RemoveFirst();
                         }
                         return;
                     case ActionType.HeadTo:
+                        // Ability check
+                        if (GetComponent<MoveAbilityScript>() == null)
+                        {
+                            ActionQueue.RemoveFirst();
+                            return;
+                        }
+                        else if (!GetComponent<MoveAbilityScript>().CanUseAbility())
+                        {
+                            return;
+                        }
+                        // Action implementation
                         finalRotationTarget = (Vector3)action.targets[0];
                         Vector3 rotateTo = (finalRotationTarget - thisBody.position).normalized;
                         rotateTo.y = 0;  // Consider to allow rotation in y?
                         thisBody.rotation = Quaternion.RotateTowards(thisBody.rotation, Quaternion.LookRotation(rotateTo), Time.fixedDeltaTime * agentRotateSpeed);
                         if (Vector3.Angle(transform.forward, rotateTo) <= 0.1f)
                         {
-                            moveActionQueue.RemoveFirst();
+                            ActionQueue.RemoveFirst();
                         }
                         return;
                     case ActionType.Follow:
+                        // Ability check
+                        if (GetComponent<MoveAbilityScript>() == null)
+                        {
+                            ActionQueue.RemoveFirst();
+                            return;
+                        }
+                        else if (!GetComponent<MoveAbilityScript>().CanUseAbility())
+                        {
+                            return;
+                        }
+                        // Action implementation
                         GameObject followTarget = (GameObject)action.targets[0];
                         if (followTarget == null)
                         {
-                            moveActionQueue.RemoveFirst();
+                            ActionQueue.RemoveFirst();
                             return;
                         }
                         else
@@ -164,7 +197,7 @@ namespace RTS.RTSGameObject.Unit
                                     {
                                         if (TestObstacle(thisBody.position, moveBeacons[0]) != 0)
                                         {
-                                            moveActionQueue.First().targets[1] = FindPath(thisBody.position, finalPosition) - followTarget.transform.position;
+                                            ActionQueue.First().targets[1] = FindPath(thisBody.position, finalPosition) - followTarget.transform.position;
                                             return;
                                         }
                                         thisBody.position = moveBeacons[0];
@@ -174,23 +207,34 @@ namespace RTS.RTSGameObject.Unit
                                     {
                                         if (TestObstacle(thisBody.position, thisBody.position + transform.forward * moveDistance) != 0)
                                         {
-                                            moveActionQueue.First().targets[1] = FindPath(thisBody.position, finalPosition) - followTarget.transform.position;
+                                            ActionQueue.First().targets[1] = FindPath(thisBody.position, finalPosition) - followTarget.transform.position;
                                         }
                                         thisBody.position += transform.forward * moveDistance;
                                     }
                                 }
                                 else
                                 {
-                                    moveActionQueue.First().targets[1] = FindPath(thisBody.position, finalPosition) - followTarget.transform.position;
+                                    ActionQueue.First().targets[1] = FindPath(thisBody.position, finalPosition) - followTarget.transform.position;
                                 }
                             }
                         }
                         return;
                     case ActionType.KeepInRange:
+                        // Ability check
+                        if (GetComponent<MoveAbilityScript>() == null)
+                        {
+                            ActionQueue.RemoveFirst();
+                            return;
+                        }
+                        else if (!GetComponent<MoveAbilityScript>().CanUseAbility())
+                        {
+                            return;
+                        }
+                        // Action implementation
                         GameObject keepInRangeTarget = (GameObject)action.targets[0];
                         if (keepInRangeTarget == null)
                         {
-                            moveActionQueue.RemoveFirst();
+                            ActionQueue.RemoveFirst();
                             return;
                         }
                         else
@@ -246,7 +290,7 @@ namespace RTS.RTSGameObject.Unit
                                     {
                                         if (TestObstacle(thisBody.position, moveBeacons[0]) != 0)
                                         {
-                                            moveActionQueue.First().targets[1] = FindPath(thisBody.position, finalPosition) - keepInRangeTarget.transform.position;
+                                            ActionQueue.First().targets[1] = FindPath(thisBody.position, finalPosition) - keepInRangeTarget.transform.position;
                                             return;
                                         }
                                         thisBody.position = moveBeacons[0];
@@ -256,23 +300,34 @@ namespace RTS.RTSGameObject.Unit
                                     {
                                         if (TestObstacle(thisBody.position, thisBody.position + transform.forward * moveDistance) != 0)
                                         {
-                                            moveActionQueue.First().targets[1] = FindPath(thisBody.position, finalPosition) - keepInRangeTarget.transform.position;
+                                            ActionQueue.First().targets[1] = FindPath(thisBody.position, finalPosition) - keepInRangeTarget.transform.position;
                                         }
                                         thisBody.position += transform.forward * moveDistance;
                                     }
                                 }
                                 else
                                 {
-                                    moveActionQueue.First().targets[1] = FindPath(thisBody.position, finalPosition) - keepInRangeTarget.transform.position;
+                                    ActionQueue.First().targets[1] = FindPath(thisBody.position, finalPosition) - keepInRangeTarget.transform.position;
                                 }
                             }
                         }
                         return;
                     case ActionType.KeepInRangeAndHeadTo:
+                        // Ability check
+                        if (GetComponent<MoveAbilityScript>() == null)
+                        {
+                            ActionQueue.RemoveFirst();
+                            return;
+                        }
+                        else if (!GetComponent<MoveAbilityScript>().CanUseAbility())
+                        {
+                            return;
+                        }
+                        // Action implementation
                         GameObject keepInRangeAndHeadToTarget = (GameObject)action.targets[0];
                         if (keepInRangeAndHeadToTarget == null)
                         {
-                            moveActionQueue.RemoveFirst();
+                            ActionQueue.RemoveFirst();
                             isApproaching = true;
                             return;
                         }
@@ -312,7 +367,7 @@ namespace RTS.RTSGameObject.Unit
                                     {
                                         if (TestObstacle(thisBody.position, moveBeacons[0]) != 0)
                                         {
-                                            moveActionQueue.First().targets[1] = FindPath(thisBody.position, finalPosition) - keepInRangeAndHeadToTarget.transform.position;
+                                            ActionQueue.First().targets[1] = FindPath(thisBody.position, finalPosition) - keepInRangeAndHeadToTarget.transform.position;
                                             return;
                                         }
                                         thisBody.position = moveBeacons[0];
@@ -322,88 +377,114 @@ namespace RTS.RTSGameObject.Unit
                                     {
                                         if (TestObstacle(thisBody.position, thisBody.position + transform.forward * moveDistance) != 0)
                                         {
-                                            moveActionQueue.First().targets[1] = FindPath(thisBody.position, finalPosition) - keepInRangeAndHeadToTarget.transform.position;
+                                            ActionQueue.First().targets[1] = FindPath(thisBody.position, finalPosition) - keepInRangeAndHeadToTarget.transform.position;
                                         }
                                         thisBody.position += transform.forward * moveDistance;
                                     }
                                 }
                                 else
                                 {
-                                    moveActionQueue.First().targets[1] = FindPath(thisBody.position, finalPosition) - keepInRangeAndHeadToTarget.transform.position;
+                                    ActionQueue.First().targets[1] = FindPath(thisBody.position, finalPosition) - keepInRangeAndHeadToTarget.transform.position;
                                 }
                             }
                         }
                         return;
                     case ActionType.Attack:
-                        if (GetComponent<AttackAbilityScript>() != null)
+                        // Ability check
+                        if (GetComponent<AttackAbilityScript>() == null)
                         {
-                            moveActionQueue.RemoveFirst();
-                            GetComponent<AttackAbilityScript>().ParseAttackAction((GameObject)action.targets[0]);
+                            ActionQueue.RemoveFirst();
+                            return;
                         }
+                        else if (GetComponent<AttackAbilityScript>().CanUseAbility())
+                        {
+                            ActionQueue.RemoveFirst();
+                            GetComponent<AttackAbilityScript>().HandleAttackAction((GameObject)action.targets[0]);
+                            return;
+                        }
+                        Follow((GameObject)action.targets[0]);
                         return;
                     case ActionType.AttackAndMove:
-                        if (GetComponent<AttackAbilityScript>() != null && autoEngageTarget == null)
+                        // Ability check
+                        if (GetComponent<AttackAbilityScript>() == null && GetComponent<MoveAbilityScript>() == null)
                         {
-                            Collider temp = Physics.OverlapSphere(transform.position, autoEngageDistance).
-                                FirstOrDefault(x => x.GetComponent<UnitBaseScript>() != null && x.GetComponent<UnitBaseScript>().BelongTo != BelongTo);
-                            if (temp != null)
-                            {
-                                GetComponent<AttackAbilityScript>().UseAttackAbility(AttackAbilityScript.ActionType.Specific, temp.gameObject);
-                                autoEngageTarget = temp.gameObject;
-                            }
+                            ActionQueue.RemoveFirst();
+                            return;
                         }
-                        finalPosition = (Vector3)action.targets[0];
-                        if (thisBody.position != finalPosition)
+                        else if (!GetComponent<AttackAbilityScript>().CanUseAbility() && !GetComponent<MoveAbilityScript>().CanUseAbility())
                         {
-                            // Moving
-                            if (TestObstacle(thisBody.position, finalPosition) == 0)
+                            return;
+                        }
+                        if (GetComponent<MoveAbilityScript>() != null && GetComponent<MoveAbilityScript>().CanUseAbility())
+                        {
+                            finalPosition = (Vector3)action.targets[0];
+                            if (thisBody.position != finalPosition)
                             {
-                                moveBeacons.Clear();
-                                moveBeacons.Add(finalPosition);
-                            }
-                            if (TestObstacle(thisBody.position, finalPosition) == 0)
-                            {
-                                moveBeacons.Clear();
-                                moveBeacons.Add(finalPosition);
-                            }
-                            if (moveBeacons.Count != 0)
-                            {
-                                Vector3 moveVector = moveBeacons[0] - thisBody.position;
-                                Vector3 rotateDirection = moveVector.normalized;
-                                thisBody.rotation = Quaternion.RotateTowards(thisBody.rotation, Quaternion.LookRotation(rotateDirection), Time.fixedDeltaTime * agentRotateSpeed);
-                                float moveDistance = agentMoveSpeed * Time.fixedDeltaTime * Mathf.Clamp01((thisBody.position - finalPosition).magnitude / slowDownRadius);
-                                if (moveVector.magnitude <= moveDistance)
+                                // Moving
+                                if (TestObstacle(thisBody.position, finalPosition) == 0)
                                 {
-                                    if (TestObstacle(thisBody.position, moveBeacons[0]) != 0)
+                                    moveBeacons.Clear();
+                                    moveBeacons.Add(finalPosition);
+                                }
+                                if (TestObstacle(thisBody.position, finalPosition) == 0)
+                                {
+                                    moveBeacons.Clear();
+                                    moveBeacons.Add(finalPosition);
+                                }
+                                if (moveBeacons.Count != 0)
+                                {
+                                    Vector3 moveVector = moveBeacons[0] - thisBody.position;
+                                    Vector3 rotateDirection = moveVector.normalized;
+                                    thisBody.rotation = Quaternion.RotateTowards(thisBody.rotation, Quaternion.LookRotation(rotateDirection), Time.fixedDeltaTime * agentRotateSpeed);
+                                    float moveDistance = agentMoveSpeed * Time.fixedDeltaTime * Mathf.Clamp01((thisBody.position - finalPosition).magnitude / slowDownRadius);
+                                    if (moveVector.magnitude <= moveDistance)
                                     {
-                                        moveActionQueue.First().targets[0] = FindPath(thisBody.position, finalPosition);
-                                        return;
+                                        if (TestObstacle(thisBody.position, moveBeacons[0]) != 0)
+                                        {
+                                            ActionQueue.First().targets[0] = FindPath(thisBody.position, finalPosition);
+                                            return;
+                                        }
+                                        thisBody.position = moveBeacons[0];
+                                        moveBeacons.RemoveAt(0);
                                     }
-                                    thisBody.position = moveBeacons[0];
-                                    moveBeacons.RemoveAt(0);
+                                    else
+                                    {
+                                        if (TestObstacle(thisBody.position, thisBody.position + transform.forward * moveDistance) != 0)
+                                        {
+                                            ActionQueue.First().targets[0] = FindPath(thisBody.position, finalPosition);
+                                        }
+                                        thisBody.position += transform.forward * moveDistance;
+                                    }
                                 }
                                 else
                                 {
-                                    if (TestObstacle(thisBody.position, thisBody.position + transform.forward * moveDistance) != 0)
-                                    {
-                                        moveActionQueue.First().targets[0] = FindPath(thisBody.position, finalPosition);
-                                    }
-                                    thisBody.position += transform.forward * moveDistance;
+                                    ActionQueue.First().targets[0] = FindPath(thisBody.position, finalPosition);
                                 }
                             }
                             else
                             {
-                                moveActionQueue.First().targets[0] = FindPath(thisBody.position, finalPosition);
+                                ActionQueue.RemoveFirst();
                             }
+                            return;
                         }
-                        else
+                        if (GetComponent<AttackAbilityScript>() != null && GetComponent<AttackAbilityScript>().CanUseAbility())
                         {
-                            moveActionQueue.RemoveFirst();
+                            if (GetComponent<AttackAbilityScript>() != null && autoEngageTarget == null)
+                            {
+                                Collider temp = Physics.OverlapSphere(transform.position, autoEngageDistance).
+                                    FirstOrDefault(x => x.GetComponent<UnitBaseScript>() != null && x.GetComponent<UnitBaseScript>().BelongTo != BelongTo);
+                                if (temp != null)
+                                {
+                                    Attack(temp.gameObject);
+                                    autoEngageTarget = temp.gameObject;
+                                }
+                            }
+                            return;
                         }
                         return;
                     case ActionType.UseSpecialAbility:
                         Debug.LogWarning("Unimplemented: UseSpecialAbility");
-                        moveActionQueue.RemoveFirst();
+                        ActionQueue.RemoveFirst();
                         return;
                     case ActionType.ForcedMove:
                         finalPosition = (Vector3)action.targets[0];
@@ -446,7 +527,7 @@ namespace RTS.RTSGameObject.Unit
                                 i.enabled = false;
                             }
 
-                            moveActionQueue.RemoveFirst();
+                            ActionQueue.RemoveFirst();
                         }
                         return;
                     default:

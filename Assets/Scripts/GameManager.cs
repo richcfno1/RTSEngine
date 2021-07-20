@@ -220,7 +220,6 @@ namespace RTS
                         }
                     }
                     abilityScript.Host = shipScript;
-                    shipScript.AbilityDictionary.Add(ability.Key, abilityScript);
                 }
             }
 

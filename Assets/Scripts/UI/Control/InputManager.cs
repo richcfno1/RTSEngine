@@ -14,21 +14,28 @@ namespace RTS.UI.Control
             None,
             UI,
             SelfUnit,
-            OtherUnit
+            FriendUnit,
+            EnemyUnit
         }
 
         public enum CommandActionState
         {
             NoAction,
-            Selecting,
-            Moving,
-            AttackMoving
+            Select,
+            MainCommandMove,
+            MainCommandAttack,
+            MainCommandFollow,
+            Attack,
+            AttackMoving,
+            Stop,
+            Follow,
+            LookAt,
+            Rotate,
+            Skill
         }
 
         public static class HotKeys
         {
-            // UI
-
             // Unit
             // Select
             public static KeyCode SelectUnit = KeyCode.Mouse0;
@@ -38,12 +45,22 @@ namespace RTS.UI.Control
             // Action
             // Base mouse action (without button)
             public static KeyCode MainCommand = KeyCode.Mouse1;
+            public static KeyCode CancelMainCommand = KeyCode.Mouse0;  // In fact, Key SelectUnit can achieve the cancel function
             public static KeyCode SelectTarget = KeyCode.Mouse0;
+            public static KeyCode CancelSelectTarget = KeyCode.Mouse1;
             // Special key (without button) height setting
             public static KeyCode SetUnitMoveHeight = KeyCode.LeftShift;
             // Additional action supported by click button
             public static KeyCode Attack = KeyCode.A;
-            public static KeyCode StopUnit = KeyCode.S;
+            public static KeyCode Stop = KeyCode.S;
+            public static KeyCode Follow = KeyCode.Z;
+            public static KeyCode LookAt = KeyCode.X;
+            public static KeyCode Rotate = KeyCode.C;
+            public static KeyCode Skill1 = KeyCode.E;
+            public static KeyCode Skill2 = KeyCode.R;
+            public static KeyCode Skill3 = KeyCode.D;
+            public static KeyCode Skill4 = KeyCode.F;
+            public static KeyCode Skill5 = KeyCode.G;
 
             // Camera
             public static KeyCode RotateCamera = KeyCode.Mouse2;
@@ -60,7 +77,7 @@ namespace RTS.UI.Control
         private EventSystem eventSystem;
 
         public RTSGameObjectBaseScript PointedRTSGameObject { get; set; } = null;
-        public MousePosition CurrentMousePosition { get; private set; }
+        public MousePosition CurrentMousePosition { get; private set; } = MousePosition.None;
         public CommandActionState CurrentCommandActionState { get; set; } = CommandActionState.NoAction;
 
         void Awake()
@@ -88,6 +105,7 @@ namespace RTS.UI.Control
 
             // Determine mouse position
             CurrentMousePosition = MousePosition.None;
+            PointedRTSGameObject = null;
             pointerEventData = new PointerEventData(eventSystem)
             {
                 position = Input.mousePosition
@@ -105,18 +123,17 @@ namespace RTS.UI.Control
                     CurrentMousePosition = MousePosition.UI;
                     break;
                 }
-                else if (result.gameObject.GetComponent<CameraViewInfoScript>() != null)
+                else if (result.gameObject.GetComponentInParent<CameraViewInfoScript>() != null)
                 {
-                    if (result.gameObject.GetComponent<CameraViewInfoScript>().bindObject.BelongTo == 
+                    PointedRTSGameObject = result.gameObject.GetComponentInParent<CameraViewInfoScript>().bindObject;
+                    if (result.gameObject.GetComponentInParent<CameraViewInfoScript>().bindObject.BelongTo == 
                         GameManager.GameManagerInstance.selfIndex)
                     {
                         CurrentMousePosition = MousePosition.SelfUnit;
-                        PointedRTSGameObject = result.gameObject.GetComponent<CameraViewInfoScript>().bindObject;
                     }
                     else
                     {
-                        CurrentMousePosition = MousePosition.OtherUnit;
-                        PointedRTSGameObject = result.gameObject.GetComponent<CameraViewInfoScript>().bindObject;
+                        CurrentMousePosition = MousePosition.EnemyUnit;
                     }
                 }
             }
@@ -133,7 +150,7 @@ namespace RTS.UI.Control
                     }
                     else
                     {
-                        CurrentMousePosition = MousePosition.OtherUnit;
+                        CurrentMousePosition = MousePosition.EnemyUnit;
                         PointedRTSGameObject = temp;
                     }
                 }

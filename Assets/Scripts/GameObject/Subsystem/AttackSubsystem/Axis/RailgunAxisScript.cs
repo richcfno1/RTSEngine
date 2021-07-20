@@ -45,7 +45,6 @@ namespace RTS.RTSGameObject.Subsystem
                     Vector3 rayDirection = transform.forward;
                     if (Physics.Raycast(rayPosition, rayDirection, out hit, lockRange, ~pathfinderLayerMask))
                     {
-                        Debug.Log(hit.collider.name);
                         if (possibleTargetTags.Contains(hit.collider.tag) && (
                             hit.collider.GetComponent<RTSGameObjectBaseScript>() == null || 
                             hit.collider.GetComponent<RTSGameObjectBaseScript>().BelongTo != BelongTo))

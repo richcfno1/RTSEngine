@@ -11,56 +11,44 @@ namespace RTS.Ability
         {
             SetPassive,
             SetNeutral,
-            SetAggressive,
-            Specific
+            SetAggressive
         }
 
-        // Start is called before the first frame update
-        void Start()
+        public override bool CanUseAbility()
         {
-            UseAttackAbility(ActionType.SetAggressive);
+            return base.CanUseAbility();
         }
 
-        // This is called by UI
-        public bool UseAttackAbility(ActionType action, GameObject target = null, bool clearQueue = true)
+        public void HandleAttackMode(ActionType action)
         {
-            if (base.CanUseAbility())
+            if (action == ActionType.SetPassive)
             {
-                if (action == ActionType.SetPassive)
+                foreach (AttackSubsystemBaseScript i in SupportedBy)
                 {
-                    foreach (AttackSubsystemBaseScript i in SupportedBy)
-                    {
-                        i.SetTarget(null);
-                    }
-                    Host.CurrentFireControlStatus = RTSGameObject.Unit.UnitBaseScript.FireControlStatus.Passive;
+                    i.SetTarget(null);
                 }
-                else if (action == ActionType.SetNeutral)
-                {
-                    foreach (AttackSubsystemBaseScript i in SupportedBy)
-                    {
-                        i.SetTarget(new List<object>());
-                    }
-                    Host.CurrentFireControlStatus = RTSGameObject.Unit.UnitBaseScript.FireControlStatus.Neutral;
-                }
-                else if (action == ActionType.SetAggressive)
-                {
-                    foreach (AttackSubsystemBaseScript i in SupportedBy)
-                    {
-                        i.SetTarget(new List<object>());
-                    }
-                    Host.CurrentFireControlStatus = RTSGameObject.Unit.UnitBaseScript.FireControlStatus.Aggressive;
-                }
-                else if (action == ActionType.Specific && target != null)
-                {
-                    Host.Attack(target, clearQueue);
-                }
-                return true;
+                Host.CurrentFireControlStatus = RTSGameObject.Unit.UnitBaseScript.FireControlStatus.Passive;
             }
-            return false;
+            else if (action == ActionType.SetNeutral)
+            {
+                foreach (AttackSubsystemBaseScript i in SupportedBy)
+                {
+                    i.SetTarget(new List<object>());
+                }
+                Host.CurrentFireControlStatus = RTSGameObject.Unit.UnitBaseScript.FireControlStatus.Neutral;
+            }
+            else if (action == ActionType.SetAggressive)
+            {
+                foreach (AttackSubsystemBaseScript i in SupportedBy)
+                {
+                    i.SetTarget(new List<object>());
+                }
+                Host.CurrentFireControlStatus = RTSGameObject.Unit.UnitBaseScript.FireControlStatus.Aggressive;
+            }
         }
 
         // This is called by unit to set action queue
-        public void ParseAttackAction(GameObject target)
+        public void HandleAttackAction(GameObject target)
         {
             if (target == null)
             {
