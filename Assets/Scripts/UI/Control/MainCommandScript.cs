@@ -13,6 +13,17 @@ namespace RTS.UI.Control
         {
             if (SelectControlScript.SelectionControlInstance.SelectedOwnUnits)
             {
+                if (SelectControlScript.SelectionControlInstance.SelectedChanged)
+                {
+                    InputManager.InputManagerInstance.CurrentCommandActionState = InputManager.CommandActionState.NoAction;
+                    if (navigationUI != null)
+                    {
+                        navigationUI.Destroy();
+                        navigationUI = null;
+                    }
+                    ClearAllTargetDisplayUI();
+                }
+
                 if (InputManager.InputManagerInstance.CurrentCommandActionState == InputManager.CommandActionState.NoAction &&
                     InputManager.InputManagerInstance.LastCommandActionState == InputManager.CommandActionState.NoAction)
                 {

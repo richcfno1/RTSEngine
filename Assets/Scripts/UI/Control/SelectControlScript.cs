@@ -40,12 +40,7 @@ namespace RTS.UI.Control
         void Update()
         {
             allSelectableGameObjects = GameManager.GameManagerInstance.GetAllGameObjects();
-            if (Input.GetKeyDown(InputManager.HotKeys.SelectUnit) && 
-                InputManager.InputManagerInstance.CurrentMousePosition != InputManager.MousePosition.UI &&
-                InputManager.InputManagerInstance.CurrentCommandActionState != InputManager.CommandActionState.AttackWaitingNextKey &&
-                InputManager.InputManagerInstance.LastCommandActionState != InputManager.CommandActionState.AttackWaitingNextKey &&
-                InputManager.InputManagerInstance.CurrentCommandActionState != InputManager.CommandActionState.AttackTarget &&
-                InputManager.InputManagerInstance.LastCommandActionState != InputManager.CommandActionState.AttackTarget)
+            if (Input.GetKeyDown(InputManager.HotKeys.SelectUnit) && CanSelect())
             {
                 mouseStartPosition = Input.mousePosition;
                 mouseLeftUp = false;
@@ -113,29 +108,6 @@ namespace RTS.UI.Control
             //Debug.Log(SelectedGameObjects.Count);
         }
 
-        private GameObject SingleSelectionHelper()
-        {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            List<RaycastHit> hits = new List<RaycastHit>(Physics.RaycastAll(ray));
-            hits.RemoveAll(x => x.collider.GetComponent<RTSGameObjectBaseScript>() == null);
-            if (hits.Count == 0)
-            {
-                return null;
-            }
-            else if (hits.Count == 1 || !hits[0].collider.CompareTag("Ship"))
-            {
-                return hits[0].collider.gameObject;
-            }
-            else
-            {
-                if (hits[1].collider.CompareTag("Subsystem"))
-                {
-                    return hits[1].collider.gameObject;
-                }
-                return hits[0].collider.gameObject;
-            }
-        }
-
         private void ClearSelectedGameObjects()
         {
             foreach (KeyValuePair<string, List<GameObject>> i in SelectedGameObjects)
@@ -151,6 +123,27 @@ namespace RTS.UI.Control
             }
             SelectedGameObjects.Clear();
             SelectedOwnUnits = false;
+        }
+
+        private bool CanSelect()
+        {
+            return InputManager.InputManagerInstance.CurrentMousePosition != InputManager.MousePosition.UI &&
+                // Main command
+                (InputManager.InputManagerInstance.CurrentCommandActionState == InputManager.CommandActionState.NoAction &&
+                InputManager.InputManagerInstance.LastCommandActionState == InputManager.CommandActionState.NoAction) ||
+                (InputManager.InputManagerInstance.CurrentCommandActionState == InputManager.CommandActionState.MainCommandMove &&
+                InputManager.InputManagerInstance.LastCommandActionState == InputManager.CommandActionState.MainCommandMove) ||
+                (InputManager.InputManagerInstance.CurrentCommandActionState == InputManager.CommandActionState.MainCommandFollow &&
+                InputManager.InputManagerInstance.LastCommandActionState == InputManager.CommandActionState.MainCommandFollow) ||
+                (InputManager.InputManagerInstance.CurrentCommandActionState == InputManager.CommandActionState.MainCommandAttack &&
+                InputManager.InputManagerInstance.LastCommandActionState == InputManager.CommandActionState.MainCommandAttack) ||
+                // Command which does not need left click
+                (InputManager.InputManagerInstance.CurrentCommandActionState == InputManager.CommandActionState.Move &&
+                InputManager.InputManagerInstance.LastCommandActionState == InputManager.CommandActionState.Move) ||
+                (InputManager.InputManagerInstance.CurrentCommandActionState == InputManager.CommandActionState.LookAtSpace &&
+                InputManager.InputManagerInstance.LastCommandActionState == InputManager.CommandActionState.LookAtSpace) ||
+                (InputManager.InputManagerInstance.CurrentCommandActionState == InputManager.CommandActionState.AttackMoving &&
+                InputManager.InputManagerInstance.LastCommandActionState == InputManager.CommandActionState.AttackMoving);
         }
 
         private void Judge()

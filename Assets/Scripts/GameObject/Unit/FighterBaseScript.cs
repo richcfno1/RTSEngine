@@ -394,6 +394,7 @@ namespace RTS.RTSGameObject.Unit
                         if (GetComponent<AttackAbilityScript>() == null)
                         {
                             ActionQueue.RemoveFirst();
+                            Follow((GameObject)action.targets[0]);
                             return;
                         }
                         else if (GetComponent<AttackAbilityScript>().CanUseAbility())

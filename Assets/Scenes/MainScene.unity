@@ -154,7 +154,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1641855510}
-  m_RootOrder: 4
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -204,7 +204,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 115460674}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 837343070}
+        m_TargetAssemblyTypeName: RTS.UI.Control.AdditionalCommandScript, Assembly-CSharp
+        m_MethodName: OnFollowButtonClicked
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &115460674
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -397,7 +409,7 @@ GameObject:
   - component: {fileID: 209899179}
   - component: {fileID: 209899178}
   m_Layer: 5
-  m_Name: LookAtSpaceButton
+  m_Name: MoveButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -415,7 +427,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1641855510}
-  m_RootOrder: 6
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -465,7 +477,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 209899179}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 837343070}
+        m_TargetAssemblyTypeName: RTS.UI.Control.AdditionalCommandScript, Assembly-CSharp
+        m_MethodName: OnMoveButtonClicked
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &209899179
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1588,7 +1612,14 @@ MonoBehaviour:
   navigationUIBasePrefab: {fileID: 8783078794543994080, guid: 24e2c6c7664f66e4d8385e587a397f46, type: 3}
   navigationUICirclePrefab: {fileID: 5473045744445145576, guid: 29b80690f0bf40542b047ea494d00dc7, type: 3}
   navigationUILinePrefab: {fileID: 6457748906955816786, guid: ef48b97abcbd2ef43933fe6628d8eba9, type: 3}
-  buttons: []
+  buttons:
+  - {fileID: 209899178}
+  - {fileID: 115460673}
+  - {fileID: 1886728381}
+  - {fileID: 2116127836}
+  - {fileID: 1979498571}
+  - {fileID: 1613296812}
+  - {fileID: 669203265}
 --- !u!114 &837343071
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3120,7 +3151,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1641855510}
-  m_RootOrder: 1
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -3344,13 +3375,13 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 1979498570}
-  - {fileID: 1613296811}
+  - {fileID: 209899177}
+  - {fileID: 115460672}
   - {fileID: 1599103073}
   - {fileID: 2116127835}
-  - {fileID: 115460672}
   - {fileID: 1886728380}
-  - {fileID: 209899177}
+  - {fileID: 1613296811}
+  - {fileID: 1979498570}
   - {fileID: 148395351}
   - {fileID: 646772799}
   - {fileID: 669203264}
@@ -3580,7 +3611,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1641855510}
-  m_RootOrder: 5
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -3630,7 +3661,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1886728382}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 837343070}
+        m_TargetAssemblyTypeName: RTS.UI.Control.AdditionalCommandScript, Assembly-CSharp
+        m_MethodName: OnLookAtTargetButtonClicked
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1886728382
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3811,7 +3854,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1641855510}
-  m_RootOrder: 0
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -3925,7 +3968,7 @@ GameObject:
   - component: {fileID: 2116127837}
   - component: {fileID: 2116127836}
   m_Layer: 5
-  m_Name: RotateButton
+  m_Name: LookAtSpaceButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3993,7 +4036,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2116127837}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 837343070}
+        m_TargetAssemblyTypeName: RTS.UI.Control.AdditionalCommandScript, Assembly-CSharp
+        m_MethodName: OnLookAtSpaceButtonClicked
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &2116127837
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -29,11 +29,12 @@ namespace RTS.UI.Control
             AttackWaitingNextKey,
             AttackTarget,
             AttackMoving,
-            Follow,
+            FollowWaitingNextKey,
+            FollowTarget,
+            Move,
             LookAtWaitingNextKey,
             LookAtTarget,
             LookAtSpace,
-            Rotate,
             Skill
         }
 
@@ -53,17 +54,16 @@ namespace RTS.UI.Control
             public static KeyCode CancelSelectTarget = KeyCode.Mouse1;
             // Special key (without button) height setting
             public static KeyCode SetUnitMoveHeight = KeyCode.LeftShift;
-            // Additional action supported by click button
-            public static KeyCode Attack = KeyCode.A;
+            // Additional action supported by click 
             public static KeyCode Stop = KeyCode.S;
+            public static KeyCode Attack = KeyCode.A;
             public static KeyCode Follow = KeyCode.Z;
             public static KeyCode LookAt = KeyCode.X;
-            public static KeyCode Rotate = KeyCode.C;  // HUMMMMMMMM
             public static KeyCode Skill1 = KeyCode.E;
             public static KeyCode Skill2 = KeyCode.R;
             public static KeyCode Skill3 = KeyCode.D;
             public static KeyCode Skill4 = KeyCode.F;
-            public static KeyCode Skill5 = KeyCode.G;
+            public static KeyCode Skill5 = KeyCode.C;
 
             // Camera
             public static KeyCode RotateCamera = KeyCode.Mouse2;
@@ -82,7 +82,7 @@ namespace RTS.UI.Control
         public RTSGameObjectBaseScript PointedRTSGameObject { get; set; } = null;
         public MousePosition CurrentMousePosition { get; private set; } = MousePosition.None;
         public CommandActionState CurrentCommandActionState { get; set; } = CommandActionState.NoAction;
-        public CommandActionState LastCommandActionState { get; set; } = CommandActionState.NoAction;
+        public CommandActionState LastCommandActionState { get; private set; } = CommandActionState.NoAction;
 
         void Awake()
         {
