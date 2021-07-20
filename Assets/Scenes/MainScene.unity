@@ -154,7 +154,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1641855510}
-  m_RootOrder: 2
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -302,7 +302,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1641855510}
-  m_RootOrder: 8
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -397,7 +397,7 @@ GameObject:
   - component: {fileID: 209899179}
   - component: {fileID: 209899178}
   m_Layer: 5
-  m_Name: MoveButton
+  m_Name: LookAtSpaceButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -415,7 +415,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1641855510}
-  m_RootOrder: 0
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -1289,7 +1289,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1641855510}
-  m_RootOrder: 9
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -1327,7 +1327,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1641855510}
-  m_RootOrder: 4
+  m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -1377,7 +1377,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 669203266}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 837343070}
+        m_TargetAssemblyTypeName: RTS.UI.Control.AdditionalCommandScript, Assembly-CSharp
+        m_MethodName: OnStopButtonClicked
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &669203266
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1566,12 +1578,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 837343066}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 455f29aac9966dd4b80376caeb6caced, type: 3}
+  m_Script: {fileID: 11500000, guid: d2620ff1cff80d144ad9ad0e6f88837c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  displayTime: 2
-  attackUICirclePrefab: {fileID: 2100809017602535252, guid: e16be0b6d085dce458831d8b40fae8e2, type: 3}
-  attackUILinePrefab: {fileID: 4119383822706373772, guid: 7a7ca23ca6785c74bb9261c3b51aed6e, type: 3}
+  buttons: []
 --- !u!114 &837343071
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1646,6 +1656,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   verticalSensitive: 5
+  displayTime: 0.5
+  targetDisplayUICirclePrefab: {fileID: 2100809017602535252, guid: e16be0b6d085dce458831d8b40fae8e2, type: 3}
+  targetDisplayUILinePrefab: {fileID: 4119383822706373772, guid: 7a7ca23ca6785c74bb9261c3b51aed6e, type: 3}
   navigationUIBasePrefab: {fileID: 8783078794543994080, guid: 24e2c6c7664f66e4d8385e587a397f46, type: 3}
   navigationUICirclePrefab: {fileID: 5473045744445145576, guid: 29b80690f0bf40542b047ea494d00dc7, type: 3}
   navigationUILinePrefab: {fileID: 6457748906955816786, guid: ef48b97abcbd2ef43933fe6628d8eba9, type: 3}
@@ -3062,7 +3075,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1641855510}
-  m_RootOrder: 7
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -3082,7 +3095,7 @@ GameObject:
   - component: {fileID: 1613296813}
   - component: {fileID: 1613296812}
   m_Layer: 5
-  m_Name: MoveWithAttackButton
+  m_Name: AttackMovingButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3100,7 +3113,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1641855510}
-  m_RootOrder: 6
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -3312,16 +3325,16 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 209899177}
-  - {fileID: 2116127835}
-  - {fileID: 115460672}
-  - {fileID: 1886728380}
-  - {fileID: 669203264}
   - {fileID: 1979498570}
   - {fileID: 1613296811}
   - {fileID: 1599103073}
+  - {fileID: 2116127835}
+  - {fileID: 115460672}
+  - {fileID: 1886728380}
+  - {fileID: 209899177}
   - {fileID: 148395351}
   - {fileID: 646772799}
+  - {fileID: 669203264}
   - {fileID: 994286888}
   - {fileID: 1807326866}
   - {fileID: 871564827}
@@ -3530,7 +3543,7 @@ GameObject:
   - component: {fileID: 1886728382}
   - component: {fileID: 1886728381}
   m_Layer: 5
-  m_Name: HeadToButton
+  m_Name: LookAtTargetButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3548,7 +3561,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1641855510}
-  m_RootOrder: 3
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -3761,7 +3774,7 @@ GameObject:
   - component: {fileID: 1979498572}
   - component: {fileID: 1979498571}
   m_Layer: 5
-  m_Name: AttackButton
+  m_Name: AttackTargetButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3779,7 +3792,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1641855510}
-  m_RootOrder: 5
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -3899,7 +3912,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1641855510}
-  m_RootOrder: 1
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}

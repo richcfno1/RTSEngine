@@ -25,11 +25,14 @@ namespace RTS.UI.Control
             MainCommandMove,
             MainCommandAttack,
             MainCommandFollow,
-            Attack,
-            AttackMoving,
             Stop,
+            AttackWaitingNextKey,
+            AttackTarget,
+            AttackMoving,
             Follow,
-            LookAt,
+            LookAtWaitingNextKey,
+            LookAtTarget,
+            LookAtSpace,
             Rotate,
             Skill
         }
@@ -55,7 +58,7 @@ namespace RTS.UI.Control
             public static KeyCode Stop = KeyCode.S;
             public static KeyCode Follow = KeyCode.Z;
             public static KeyCode LookAt = KeyCode.X;
-            public static KeyCode Rotate = KeyCode.C;
+            public static KeyCode Rotate = KeyCode.C;  // HUMMMMMMMM
             public static KeyCode Skill1 = KeyCode.E;
             public static KeyCode Skill2 = KeyCode.R;
             public static KeyCode Skill3 = KeyCode.D;

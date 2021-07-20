@@ -271,19 +271,6 @@ namespace RTS.UI.Control
         {
             if (SelectControlScript.SelectionControlInstance.SelectedOwnUnits)
             {
-                // TODO: Move this to another script
-                if (Input.GetKeyDown(InputManager.HotKeys.Stop))
-                {
-                    foreach (GameObject i in SelectControlScript.SelectionControlInstance.GetAllGameObjects())
-                    {
-                        if (i.GetComponent<UnitBaseScript>() != null)
-                        {
-                            i.GetComponent<UnitBaseScript>().Stop();
-                        }
-                    }
-                    return;
-                }
-
                 if (InputManager.InputManagerInstance.CurrentCommandActionState == InputManager.CommandActionState.NoAction)
                 {
                     if (Input.GetKeyDown(InputManager.HotKeys.MainCommand))
