@@ -48,7 +48,8 @@ namespace RTS.RTSGameObject.Unit
             thisBody.angularVelocity = Vector3.zero;
 
             // In aggressive status, when detect a nearby enemy, call attack ability
-            if (GetComponent<AttackAbilityScript>() != null && CurrentFireControlStatus == FireControlStatus.Aggressive && autoEngageTarget == null)
+            if (AttackAbility != null && CurrentFireControlStatus == FireControlStatus.Aggressive && autoEngageTarget == null &&
+                (ActionQueue.Count == 0 || ActionQueue.First().actionType != ActionType.ForcedMove))
             {
                 Collider temp = Physics.OverlapSphere(transform.position, autoEngageDistance).
                     FirstOrDefault(x => x.GetComponent<UnitBaseScript>() != null && x.GetComponent<UnitBaseScript>().BelongTo != BelongTo);
@@ -65,20 +66,16 @@ namespace RTS.RTSGameObject.Unit
                 switch (action.actionType)
                 {
                     case ActionType.Stop:
-                        if (ActionQueue.Count == 1)
-                        {
-                            CurrentFireControlStatus = fireControlStatusBeforeOverride;
-                        }
                         ActionQueue.RemoveFirst();
                         return;
                     case ActionType.Move:
                         // Ability check
-                        if (GetComponent<MoveAbilityScript>() == null)
+                        if (MoveAbility == null)
                         {
                             ActionQueue.RemoveFirst();
                             return;
                         }
-                        else if (!GetComponent<MoveAbilityScript>().CanUseAbility())
+                        else if (!MoveAbility.CanUseAbility())
                         {
                             return;
                         }
@@ -134,12 +131,12 @@ namespace RTS.RTSGameObject.Unit
                         return;
                     case ActionType.LookAt:
                         // Ability check
-                        if (GetComponent<MoveAbilityScript>() == null)
+                        if (MoveAbility == null)
                         {
                             ActionQueue.RemoveFirst();
                             return;
                         }
-                        else if (!GetComponent<MoveAbilityScript>().CanUseAbility())
+                        else if (!MoveAbility.CanUseAbility())
                         {
                             return;
                         }
@@ -155,12 +152,12 @@ namespace RTS.RTSGameObject.Unit
                         return;
                     case ActionType.LookAtTarget:
                         // Ability check
-                        if (GetComponent<MoveAbilityScript>() == null)
+                        if (MoveAbility == null)
                         {
                             ActionQueue.RemoveFirst();
                             return;
                         }
-                        else if (!GetComponent<MoveAbilityScript>().CanUseAbility())
+                        else if (!MoveAbility.CanUseAbility())
                         {
                             return;
                         }
@@ -179,12 +176,12 @@ namespace RTS.RTSGameObject.Unit
                         return;
                     case ActionType.Follow:
                         // Ability check
-                        if (GetComponent<MoveAbilityScript>() == null)
+                        if (MoveAbility == null)
                         {
                             ActionQueue.RemoveFirst();
                             return;
                         }
-                        else if (!GetComponent<MoveAbilityScript>().CanUseAbility())
+                        else if (!MoveAbility.CanUseAbility())
                         {
                             return;
                         }
@@ -245,12 +242,12 @@ namespace RTS.RTSGameObject.Unit
                         return;
                     case ActionType.KeepInRange:
                         // Ability check
-                        if (GetComponent<MoveAbilityScript>() == null)
+                        if (MoveAbility == null)
                         {
                             ActionQueue.RemoveFirst();
                             return;
                         }
-                        else if (!GetComponent<MoveAbilityScript>().CanUseAbility())
+                        else if (!MoveAbility.CanUseAbility())
                         {
                             return;
                         }
@@ -338,12 +335,12 @@ namespace RTS.RTSGameObject.Unit
                         return;
                     case ActionType.KeepInRangeAndLookAt:
                         // Ability check
-                        if (GetComponent<MoveAbilityScript>() == null)
+                        if (MoveAbility == null)
                         {
                             ActionQueue.RemoveFirst();
                             return;
                         }
-                        else if (!GetComponent<MoveAbilityScript>().CanUseAbility())
+                        else if (!MoveAbility.CanUseAbility())
                         {
                             return;
                         }
@@ -415,28 +412,28 @@ namespace RTS.RTSGameObject.Unit
                         return;
                     case ActionType.Attack:
                         // Ability check
-                        if (GetComponent<AttackAbilityScript>() == null)
+                        if (AttackAbility == null)
                         {
                             ActionQueue.RemoveFirst();
                             Follow((GameObject)action.targets[0]);
                             return;
                         }
-                        else if (GetComponent<AttackAbilityScript>().CanUseAbility())
+                        else if (AttackAbility.CanUseAbility())
                         {
                             ActionQueue.RemoveFirst();
-                            GetComponent<AttackAbilityScript>().HandleAttackAction((GameObject)action.targets[0]);
+                            AttackAbility.HandleAttackAction((GameObject)action.targets[0]);
                             return;
                         }
                         Follow((GameObject)action.targets[0]);
                         return;
                     case ActionType.AttackAndMove:
                         // Ability check
-                        if (GetComponent<AttackAbilityScript>() == null && GetComponent<MoveAbilityScript>() == null)
+                        if (AttackAbility == null && MoveAbility == null)
                         {
                             ActionQueue.RemoveFirst();
                             return;
                         }
-                        if (GetComponent<MoveAbilityScript>() != null && GetComponent<MoveAbilityScript>().CanUseAbility())
+                        if (MoveAbility != null && MoveAbility.CanUseAbility())
                         {
                             finalPosition = (Vector3)action.targets[0];
                             if (thisBody.position != finalPosition)
@@ -487,9 +484,9 @@ namespace RTS.RTSGameObject.Unit
                                 ActionQueue.RemoveFirst();
                             }
                         }
-                        if (GetComponent<AttackAbilityScript>() != null && GetComponent<AttackAbilityScript>().CanUseAbility())
+                        if (AttackAbility != null && AttackAbility.CanUseAbility())
                         {
-                            if (GetComponent<AttackAbilityScript>() != null && autoEngageTarget == null)
+                            if (AttackAbility != null && autoEngageTarget == null)
                             {
                                 Collider temp = Physics.OverlapSphere(transform.position, autoEngageDistance).
                                     FirstOrDefault(x => x.GetComponent<UnitBaseScript>() != null && x.GetComponent<UnitBaseScript>().BelongTo != BelongTo);

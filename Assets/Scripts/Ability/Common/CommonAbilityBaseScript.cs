@@ -5,9 +5,9 @@ using RTS.RTSGameObject.Subsystem;
 
 namespace RTS.Ability
 {
-    public class AbilityBaseScript : MonoBehaviour
+    public class CommonAbilityBaseScript : MonoBehaviour
     {
-        public enum AbilityType
+        public enum CommonAbilityType
         {
             None,
             Move,
@@ -18,8 +18,6 @@ namespace RTS.Ability
         // Set when instantiate
         public UnitBaseScript Host { get; set; }
         public List<SubsystemBaseScript> SupportedBy { get; set; } = new List<SubsystemBaseScript>();
-
-        protected List<object> abilityTarget = new List<object>();
 
         public virtual bool CanUseAbility()
         {

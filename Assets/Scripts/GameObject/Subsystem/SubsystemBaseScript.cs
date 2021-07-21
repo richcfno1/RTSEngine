@@ -8,18 +8,25 @@ namespace RTS.RTSGameObject.Subsystem
 {
     public class SubsystemBaseScript : RTSGameObjectBaseScript
     {
-        public enum SubsystemScale
+        public enum SubsystemType
         {
             None,
+            SpecialAbilitySupporter,
             WeaponS,
             WeaponM,
             WeaponL,
+            AxisWeaponS,
+            AxisWeaponM,
+            AxisWeaponL,
             CarrierS,
+            CarrierM,
+            CarrierL,
         }
         // Set by editor
-        public SubsystemScale scale;
+        public SubsystemType type;
         public float repairPercentRequired;
-        public List<AbilityBaseScript.AbilityType> supportedAbility;
+        public List<CommonAbilityBaseScript.CommonAbilityType> supportedCommonAbility;
+        public List<SpecialAbilityBaseScript.SpecialAbilityType> supportedSepcialAbility;
 
         // Set when instantiate
         public UnitBaseScript Host { get; set; }

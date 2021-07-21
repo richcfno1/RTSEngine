@@ -103,7 +103,10 @@ namespace RTS.UI.Control
                                 foreach (KeyValuePair<UnitBaseScript, Vector3> i in FindDestination(allAgents, destination, destination -
                                     SelectControlScript.SelectionControlInstance.FindCenter()))
                                 {
-                                    i.Key.Move(i.Value);
+                                    if (i.Key.MoveAbility != null)
+                                    {
+                                        i.Key.MoveAbility.Move(i.Value);
+                                    }
                                     CreateGOToVectorUI(i.Key.gameObject, i.Value, Color.green);
                                 }
                                 navigationUI.Destroy();
@@ -134,7 +137,10 @@ namespace RTS.UI.Control
                             {
                                 if (i.GetComponent<UnitBaseScript>() != null)
                                 {
-                                    i.GetComponent<UnitBaseScript>().Follow(followTarget.gameObject);
+                                    if (i.GetComponent<UnitBaseScript>().MoveAbility != null)
+                                    {
+                                        i.GetComponent<UnitBaseScript>().MoveAbility.Follow(followTarget.gameObject);
+                                    }
                                     CreateGOToGOUI(i, followTarget.gameObject, Color.green);
                                 }
                                 StartCoroutine(ClearTargetDisplayUIWithWaitTime(displayTime));
@@ -151,8 +157,16 @@ namespace RTS.UI.Control
                             {
                                 if (i.GetComponent<UnitBaseScript>() != null)
                                 {
-                                    i.GetComponent<UnitBaseScript>().Attack(attackTarget.gameObject);
-                                    CreateGOToGOUI(i, attackTarget.gameObject, Color.red);
+                                    if (i.GetComponent<UnitBaseScript>().AttackAbility != null)
+                                    {
+                                        i.GetComponent<UnitBaseScript>().AttackAbility.Attack(attackTarget.gameObject);
+                                        CreateGOToGOUI(i, attackTarget.gameObject, Color.red);
+                                    }
+                                    else if (i.GetComponent<UnitBaseScript>().MoveAbility != null)
+                                    {
+                                        i.GetComponent<UnitBaseScript>().MoveAbility.Follow(attackTarget.gameObject);
+                                        CreateGOToGOUI(i, attackTarget.gameObject, Color.green);
+                                    }
                                 }
                             }
                             StartCoroutine(ClearTargetDisplayUIWithWaitTime(displayTime));

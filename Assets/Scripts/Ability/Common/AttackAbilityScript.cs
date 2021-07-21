@@ -2,10 +2,11 @@ using System.Linq;
 using System.Collections.Generic;
 using RTS.RTSGameObject.Subsystem;
 using UnityEngine;
+using System;
 
 namespace RTS.Ability
 {
-    public class AttackAbilityScript : AbilityBaseScript
+    public class AttackAbilityScript : CommonAbilityBaseScript
     {
         public enum ActionType
         {
@@ -14,37 +15,49 @@ namespace RTS.Ability
             SetAggressive
         }
 
+        private void Start()
+        {
+            SetAggressive();
+        }
+
         public override bool CanUseAbility()
         {
             return base.CanUseAbility();
         }
 
-        public void HandleAttackMode(ActionType action)
+        public void SetPassive()
         {
-            if (action == ActionType.SetPassive)
+            foreach (AttackSubsystemBaseScript i in SupportedBy)
             {
-                foreach (AttackSubsystemBaseScript i in SupportedBy)
-                {
-                    i.SetTarget(null);
-                }
-                Host.CurrentFireControlStatus = RTSGameObject.Unit.UnitBaseScript.FireControlStatus.Passive;
+                i.SetTarget(null);
             }
-            else if (action == ActionType.SetNeutral)
+            Host.CurrentFireControlStatus = RTSGameObject.Unit.UnitBaseScript.FireControlStatus.Passive;
+        }
+        public void SetNetural()
+        {
+            foreach (AttackSubsystemBaseScript i in SupportedBy)
             {
-                foreach (AttackSubsystemBaseScript i in SupportedBy)
-                {
-                    i.SetTarget(new List<object>());
-                }
-                Host.CurrentFireControlStatus = RTSGameObject.Unit.UnitBaseScript.FireControlStatus.Neutral;
+                i.SetTarget(new List<object>());
             }
-            else if (action == ActionType.SetAggressive)
+            Host.CurrentFireControlStatus = RTSGameObject.Unit.UnitBaseScript.FireControlStatus.Neutral;
+        }
+        public void SetAggressive()
+        {
+            foreach (AttackSubsystemBaseScript i in SupportedBy)
             {
-                foreach (AttackSubsystemBaseScript i in SupportedBy)
-                {
-                    i.SetTarget(new List<object>());
-                }
-                Host.CurrentFireControlStatus = RTSGameObject.Unit.UnitBaseScript.FireControlStatus.Aggressive;
+                i.SetTarget(new List<object>());
             }
+            Host.CurrentFireControlStatus = RTSGameObject.Unit.UnitBaseScript.FireControlStatus.Aggressive;
+        }
+
+        public void Attack(GameObject target, bool clearQueue = true, bool addToEnd = true)
+        {
+            Host.Attack(target, clearQueue, addToEnd);
+        }
+
+        public void AttackAndMove(Vector3 destination, bool clearQueue = true, bool addToEnd = true)
+        {
+            Host.AttackAndMove(destination, clearQueue, addToEnd);
         }
 
         // This is called by unit to set action queue
@@ -73,8 +86,11 @@ namespace RTS.Ability
                     i.SetTarget(new List<object>() { target });
                 }
                 // call follow and head to
-                Host.KeepInRangeAndLookAt(target, (transform.position - target.transform.position).normalized, 
-                    maxLockRange, minSuggestedFireDistance, false, false);
+                if (Host.MoveAbility != null)
+                {
+                    Host.MoveAbility.KeepInRangeAndLookAt(target, (transform.position - target.transform.position).normalized,
+                        maxLockRange, minSuggestedFireDistance, false, false);
+                }
             }
             else
             {
@@ -84,7 +100,10 @@ namespace RTS.Ability
                     minLockRange = minLockRange < i.lockRange ? minLockRange : i.lockRange;
                     i.SetTarget(new List<object>() { target });
                 }
-                Host.KeepInRange(target, minLockRange, 0, false, false);
+                if (Host.MoveAbility != null)
+                {
+                    Host.MoveAbility.KeepInRange(target, minLockRange, 0, false, false);
+                }
             }
         }
     }

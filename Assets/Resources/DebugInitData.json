@@ -22,11 +22,12 @@
         "TurretAnchor5": "Turret1",
         "TurretAnchor6": "LaserTurret1"
       },
-      "abilities": {
+      "commonAbilities": {
         "Move": [ "Frigate1" ],
         "Attack": [ "TurretAnchor1", "TurretAnchor2", "TurretAnchor3", "TurretAnchor4", "TurretAnchor5", "TurretAnchor6" ],
         "Carrier": [ "FighterDeployAnchor1" ]
       },
+      "specialAbilities":{},
       "scripts": {
         "Test": "if (Time() > 5 and not flag) then flag = true\n Test({ unitType=\"StandardFrigate\", position={x=0.0,y=100.0,z=0.0}, belongsTo=1 })\n HelloWorld() end"
       }
@@ -43,39 +44,43 @@
         "TurretAnchor13": "Turret1",
         "TurretAnchor14": "Turret1"
       },
-      "abilities": {
+      "commonAbilities": {
         "Move": [ "Cruiser1" ],
         "Attack": [ "TurretAnchor9", "TurretAnchor10", "TurretAnchor11", "TurretAnchor12", "TurretAnchor13", "TurretAnchor14" ]
-      }
+      },
+      "specialAbilities":{}
     },
     {
       "unitTypeName": "StandardBattleship",
       "baseTypeName": "Battleship1",
       "properties": {},
       "subsystems": {},
-      "abilities": {
+      "commonAbilities": {
         "Move": [ "Battleship1" ],
         "Attack": [ "AxisWeaponAnchor" ]
-      }
+      },
+      "specialAbilities":{}
     },
     {
       "unitTypeName": "ScopeDrone",
       "baseTypeName": "Fighter1",
       "properties": {},
       "subsystems": {},
-      "abilities": { 
+      "commonAbilities": { 
         "Move": [ "Fighter1" ]
-      }
+      },
+      "specialAbilities":{}
     },
     {
       "unitTypeName": "StandardFighter",
       "baseTypeName": "Fighter2",
       "properties": {},
       "subsystems": {},
-      "abilities": { 
+      "commonAbilities": { 
         "Move": [ "Fighter2" ],
         "Attack": [ "AxisWeaponAnchor1", "AxisWeaponAnchor2" ] 
-      }
+      },
+      "specialAbilities":{}
     }
   ],
   "initUnitData": [

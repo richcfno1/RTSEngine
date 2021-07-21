@@ -5,7 +5,7 @@ using RTS.RTSGameObject.Subsystem;
 
 namespace RTS.Ability
 {
-    public class CarrierAbilityScript : AbilityBaseScript
+    public class CarrierAbilityScript : CommonAbilityBaseScript
     {
         public enum ActionType
         {

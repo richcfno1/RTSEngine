@@ -146,9 +146,10 @@ MonoBehaviour:
   NavigationCollider: {fileID: 5869779624500136968}
   onDestroyedEffect: {fileID: 0}
   radius: 4
-  scale: 3
+  type: 7
   repairPercentRequired: 0.5
-  supportedAbility: 02000000
+  supportedCommonAbility: 02000000
+  supportedSepcialAbility: 
   coolDown: 1
   lockRange: 1000
   possibleTargetTags:

@@ -9791,15 +9791,14 @@ MonoBehaviour:
   NavigationCollider: {fileID: 2017322392065377187}
   onDestroyedEffect: {fileID: 0}
   radius: 5
-  ratio: 0.3
   subsyetemAnchors:
   - anchorName: AxisWeaponAnchor1
     anchor: {fileID: 4055276698543824860}
-    subsystemScale: 0
+    subsystemScale: 5
     subsystem: {fileID: 1831783733531879851}
   - anchorName: AxisWeaponAnchor2
     anchor: {fileID: 1675775746079455219}
-    subsystemScale: 0
+    subsystemScale: 5
     subsystem: {fileID: 6371312778263202576}
   searchStepDistance: 20
   searchStepMaxDistance: 100

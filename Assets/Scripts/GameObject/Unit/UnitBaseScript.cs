@@ -13,7 +13,7 @@ namespace RTS.RTSGameObject.Unit
         {
             public string anchorName;
             public GameObject anchor;
-            public SubsystemBaseScript.SubsystemScale subsystemScale;
+            public SubsystemBaseScript.SubsystemType subsystemScale;
             public GameObject subsystem;
         }
 
@@ -85,14 +85,11 @@ namespace RTS.RTSGameObject.Unit
         public float maxDefencePower;
         [Tooltip("Similar to HP, which can influence move.")]
         public float maxMovePower;
-        [Tooltip("Recover rate")]
-        [Range(0, 1)]
+        [Tooltip("Recover")]
         public float recoverAttackPower;
-        [Tooltip("Recover rate")]
-        [Range(0, 1)]
+        [Tooltip("Recover")]
         public float recoverDefencePower;
-        [Tooltip("Recover rate")]
-        [Range(0, 1)]
+        [Tooltip("Recover")]
         public float recoverMovePower;
 
         [Header("Build")]
@@ -106,14 +103,18 @@ namespace RTS.RTSGameObject.Unit
         public float DefencePower { get { return curDefencePower / maxDefencePower; } set { curDefencePower = value * maxDefencePower; } }
         public float MovePower { get { return curMovePower / maxMovePower; } set { curMovePower = value * maxMovePower; } }
         public Dictionary<string, float> PropertyDictionary { get; set; } = new Dictionary<string, float>();
-        public FireControlStatus CurrentFireControlStatus { get; set; } = FireControlStatus.Passive;
+        public FireControlStatus CurrentFireControlStatus { get; set; } = FireControlStatus.Neutral;
         public LinkedList<UnitAction> ActionQueue { get; protected set; } = new LinkedList<UnitAction>();
+
+        public MoveAbilityScript MoveAbility { get; set; } = null;
+        public AttackAbilityScript AttackAbility { get; set; } = null;
+        public CarrierAbilityScript CarrierAbility { get; set; } = null;
+        public List<SpecialAbilityBaseScript> SpecialAbilityList { get; set; } = new List<SpecialAbilityBaseScript>();
 
         protected float curAttackPower;
         protected float curDefencePower;
         protected float curMovePower;
 
-        protected FireControlStatus fireControlStatusBeforeOverride = FireControlStatus.Passive;
         protected GameObject autoEngageTarget = null;
 
         protected Vector3 finalPosition;
@@ -463,38 +464,9 @@ namespace RTS.RTSGameObject.Unit
             }
         }
 
-        public virtual void SetPassive()
-        {
-            if (GetComponent<AttackAbilityScript>() != null)
-            {
-                GetComponent<AttackAbilityScript>().HandleAttackMode(AttackAbilityScript.ActionType.SetPassive);
-            }
-        }
-
-        public virtual void SetNeutral()
-        {
-            if (GetComponent<AttackAbilityScript>() != null)
-            {
-                GetComponent<AttackAbilityScript>().HandleAttackMode(AttackAbilityScript.ActionType.SetNeutral);
-            }
-        }
-
-        public virtual void SetAggressive()
-        {
-            if (GetComponent<AttackAbilityScript>() != null)
-            {
-                GetComponent<AttackAbilityScript>().HandleAttackMode(AttackAbilityScript.ActionType.SetAggressive);
-            }
-        }
-
         // This function should only be called when deploy the unit
         public virtual void ForcedMove(Vector3 destination, bool clearQueue = true, bool addToEnd = true)
         {
-            if (ActionQueue.Count == 0)
-            {
-                fireControlStatusBeforeOverride = CurrentFireControlStatus;
-                CurrentFireControlStatus = FireControlStatus.Passive;
-            }
             if (clearQueue)
             {
                 ActionQueue.Clear();

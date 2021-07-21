@@ -59,6 +59,7 @@ namespace RTS.UI.Control
             public static KeyCode Attack = KeyCode.A;
             public static KeyCode Follow = KeyCode.Z;
             public static KeyCode LookAt = KeyCode.X;
+            // Special Ability
             public static KeyCode Skill1 = KeyCode.E;
             public static KeyCode Skill2 = KeyCode.R;
             public static KeyCode Skill3 = KeyCode.D;

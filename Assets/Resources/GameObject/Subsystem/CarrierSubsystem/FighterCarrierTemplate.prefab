@@ -44,16 +44,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   objectScale: 0
-  objectType: 0
+  objectType: 7
   typeID: FighterCarrier1
   maxHP: 1
   NavigationCollider: {fileID: 0}
   onDestroyedEffect: {fileID: 0}
   radius: 0
-  ratio: 0
-  scale: 4
+  type: 8
   repairPercentRequired: 0
-  supportedAbility: 03000000
+  supportedCommonAbility: 03000000
+  supportedSepcialAbility: 
   products:
   - ScopeDrone
   carrierCapacity: 2
