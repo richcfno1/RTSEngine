@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using RTS.RTSGameObject.Subsystem;
 
-namespace RTS.Ability
+namespace RTS.Ability.CommonAbility
 {
     public class CarrierAbilityScript : CommonAbilityBaseScript
     {

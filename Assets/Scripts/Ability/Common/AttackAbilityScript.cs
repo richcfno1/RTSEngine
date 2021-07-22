@@ -4,7 +4,7 @@ using RTS.RTSGameObject.Subsystem;
 using UnityEngine;
 using System;
 
-namespace RTS.Ability
+namespace RTS.Ability.CommonAbility
 {
     public class AttackAbilityScript : CommonAbilityBaseScript
     {

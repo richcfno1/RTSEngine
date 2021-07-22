@@ -3,7 +3,7 @@ using UnityEngine;
 using RTS.RTSGameObject.Unit;
 using RTS.RTSGameObject.Subsystem;
 
-namespace RTS.Ability
+namespace RTS.Ability.CommonAbility
 {
     public class CommonAbilityBaseScript : MonoBehaviour
     {

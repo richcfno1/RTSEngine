@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using RTS.RTSGameObject.Missile;
+using RTS.RTSGameObject.Projectile.Missile;
 
 namespace RTS.RTSGameObject.Subsystem
 {
@@ -66,7 +66,7 @@ namespace RTS.RTSGameObject.Subsystem
             temp.transform.position += transform.up * missileUpwardFlyDistance;
             MissileBaseScript tempScript = temp.GetComponent<MissileBaseScript>();
             tempScript.target = fireTarget;
-            tempScript.from = Host.gameObject;
+            tempScript.createdBy = Host.gameObject;
             tempScript.BelongTo = BelongTo;
         }
 

@@ -1,5 +1,0 @@
-{
-  "Attack": "RTS.Ability.AttackAbilityScript",
-  "Move": "RTS.Ability.MoveAbilityScript",
-  "Carrier": "RTS.Ability.CarrierAbilityScript"
-}

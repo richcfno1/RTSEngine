@@ -1,10 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using RTS.RTSGameObject;
 
-namespace RTS.RTSGameObject.Missile
+namespace RTS.RTSGameObject.Projectile.Missile
 {
-    public class MissileBaseScript : RTSGameObjectBaseScript
+    public class MissileBaseScript : ProjectileBaseScript
     {
         // Move
         public float agentMoveSpeed;
@@ -18,10 +19,6 @@ namespace RTS.RTSGameObject.Missile
         public float searchMaxRandomNumber;
 
         // Boom!
-        public float damage;
-        public float attackPowerReduce;
-        public float defencePowerReduce;
-        public float movePowerReduce;
         public float damageRadius;
         public float damageTriggerRadius;
         public float maxTime;
@@ -29,21 +26,18 @@ namespace RTS.RTSGameObject.Missile
         public GameObject interruptEffect;
         public GameObject explosionEffect;
 
-        public GameObject target;
-        public GameObject from;
-
         private Vector3 destination;
         private List<Vector3> moveBeacons = new List<Vector3>();
-        private float timer = 0;
 
         // Start is called before the first frame update
         void Start()
         {
             OnCreatedAction();
+            thisRigidbody = GetComponent<Rigidbody>();
             GetComponent<Collider>().enabled = false;
-            StartCoroutine(HideLaser(timeBeforeEnableCollider));
+            StartCoroutine(EnableCollider(timeBeforeEnableCollider));
         }
-        private IEnumerator HideLaser(float waitTime)
+        private IEnumerator EnableCollider(float waitTime)
         {
             yield return new WaitForSeconds(waitTime);
             GetComponent<Collider>().enabled = true;
@@ -119,7 +113,7 @@ namespace RTS.RTSGameObject.Missile
             {
                 if (!i.CompareTag("Missile") && i.GetComponent<RTSGameObjectBaseScript>() != null)
                 {
-                    i.GetComponent<RTSGameObjectBaseScript>().CreateDamage(damage, attackPowerReduce, defencePowerReduce, movePowerReduce, from);
+                    i.GetComponent<RTSGameObjectBaseScript>().CreateDamage(damage, attackPowerReduce, defencePowerReduce, movePowerReduce, createdBy);
                 }
             }
             timer = maxTime;

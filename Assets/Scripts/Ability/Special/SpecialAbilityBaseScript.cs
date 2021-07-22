@@ -1,10 +1,9 @@
 using RTS.RTSGameObject.Unit;
 using RTS.RTSGameObject.Subsystem;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace RTS.Ability
+namespace RTS.Ability.SpecialAbility
 {
     public class SpecialAbilityBaseScript : MonoBehaviour
     {

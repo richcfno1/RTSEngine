@@ -51,8 +51,8 @@ namespace RTS.RTSGameObject
         public float radius;
 
         // Set when instantiate
-        public int Index { get; set; }
-        public int BelongTo { get; set; }
+        public int Index { get; set; } = -1;
+        public int BelongTo { get; set; } = 0;
         public float HP { get; set; }
 
         protected GameObject lastDamagedBy = null;

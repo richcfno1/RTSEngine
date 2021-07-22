@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using RTS.Bullet;
+using RTS.RTSGameObject.Projectile.Bullet;
 
 namespace RTS.RTSGameObject.Subsystem
 {

@@ -4,14 +4,10 @@ using UnityEngine;
 using RTS.RTSGameObject;
 using RTS.RTSGameObject.Subsystem;
 
-namespace RTS.Bullet
+namespace RTS.RTSGameObject.Projectile.Bullet
 {
-    public class BulletBaseScript : MonoBehaviour
+    public class BulletBaseScript : ProjectileBaseScript
     {
-        public float damage;
-        public float attackPowerReduce;
-        public float defencePowerReduce;
-        public float movePowerReduce;
         public float moveSpeed;
         public float maxTime;
         public bool isDestoryAtHit;
@@ -22,11 +18,7 @@ namespace RTS.Bullet
         public Vector3 moveDirection;
         [HideInInspector]
         public List<Collider> toIgnore = new List<Collider>();
-        [HideInInspector]
-        public GameObject createdBy;
 
-        private float timer;
-        private Rigidbody thisRigidbody;
 
         // Start is called before the first frame update
         void Start()
@@ -37,12 +29,13 @@ namespace RTS.Bullet
         // Update is called once per frame
         void FixedUpdate()
         {
-            thisRigidbody.MovePosition(thisRigidbody.position + moveDirection * Time.fixedDeltaTime * moveSpeed);
+            // There is not a HP test, hence even if bullet is damaged, it won't be destroyed.
             timer += Time.fixedDeltaTime;
             if (timer > maxTime)
             {
-                Destroy(gameObject);
+                OnDestroyedAction();
             }
+            thisRigidbody.MovePosition(thisRigidbody.position + moveDirection * Time.fixedDeltaTime * moveSpeed);
         }
 
         void OnTriggerEnter(Collider other)
@@ -85,7 +78,7 @@ namespace RTS.Bullet
             }
             if (isDestoryAtHit)
             {
-                Destroy(gameObject);
+                OnDestroyedAction();
             }
         }
     }

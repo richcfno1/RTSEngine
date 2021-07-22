@@ -1,7 +1,8 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using RTS.Ability;
+using RTS.Ability.CommonAbility;
+using RTS.Ability.SpecialAbility;
 using RTS.RTSGameObject.Subsystem;
 
 namespace RTS.RTSGameObject.Unit

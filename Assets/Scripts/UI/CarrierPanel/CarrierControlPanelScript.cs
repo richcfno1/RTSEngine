@@ -4,7 +4,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 using RTS.UI.Control;
-using RTS.Ability;
+using RTS.Ability.CommonAbility;
 using RTS.RTSGameObject;
 using RTS.RTSGameObject.Subsystem;
 
