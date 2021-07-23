@@ -56,6 +56,7 @@ namespace RTS.RTSGameObject
         public float HP { get; set; }
 
         protected GameObject lastDamagedBy = null;
+        protected GameObject lastRepairedBy = null;
 
         protected virtual void OnCreatedAction()
         {
@@ -76,6 +77,12 @@ namespace RTS.RTSGameObject
         public virtual void CreateDamage(float damage, float attackPowerReduce, float defencePowerReduce, float movePowerReduce, GameObject from)
         {
             HP = Mathf.Clamp(HP - damage, 0, maxHP);
+            lastDamagedBy = from;
+        }
+
+        public virtual void Repair(float amount, float attackPowerRecover, float defencePowerRecover, float movePowerRecover, GameObject from)
+        {
+            HP = Mathf.Clamp(HP + amount, 0, maxHP);
             lastDamagedBy = from;
         }
     }

@@ -60,5 +60,11 @@ namespace RTS.RTSGameObject.Subsystem
             Host.CreateDamage(HP == 0 ? damage : 0, attackPowerReduce, defencePowerReduce, powerPowerReduce, from);
             base.CreateDamage(damage / Host.DefencePower, attackPowerReduce, defencePowerReduce, powerPowerReduce, from);
         }
+        
+        public override void Repair(float amount, float attackPowerRecover, float defencePowerRecover, float movePowerRecover, GameObject from)
+        {
+            Host.Repair(HP == maxHP ? amount : 0, attackPowerRecover, defencePowerRecover, movePowerRecover, from);
+            base.Repair(amount, attackPowerRecover, defencePowerRecover, movePowerRecover, from);
+        }
     }
 }

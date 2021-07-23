@@ -253,7 +253,14 @@ namespace RTS
 
                 foreach (SpecialAbilityBaseScript speaiclAbility in result.transform.GetComponents<SpecialAbilityBaseScript>())
                 {
-                    shipScript.SpecialAbilityList.Add(speaiclAbility);
+                    if (shipScript.SpecialAbilityList.ContainsKey(speaiclAbility.specialAbilityID))
+                    {
+                        shipScript.SpecialAbilityList[speaiclAbility.specialAbilityID].Add(speaiclAbility);
+                    }
+                    else
+                    {
+                        shipScript.SpecialAbilityList.Add(speaiclAbility.specialAbilityID, new List<SpecialAbilityBaseScript>() { speaiclAbility });
+                    }
                 }
             }
 

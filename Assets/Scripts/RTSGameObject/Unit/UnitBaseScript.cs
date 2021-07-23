@@ -110,7 +110,7 @@ namespace RTS.RTSGameObject.Unit
         public MoveAbilityScript MoveAbility { get; set; } = null;
         public AttackAbilityScript AttackAbility { get; set; } = null;
         public CarrierAbilityScript CarrierAbility { get; set; } = null;
-        public List<SpecialAbilityBaseScript> SpecialAbilityList { get; set; } = new List<SpecialAbilityBaseScript>();
+        public Dictionary<string, List<SpecialAbilityBaseScript>> SpecialAbilityList { get; set; } = new Dictionary<string, List<SpecialAbilityBaseScript>>();
 
         protected float curAttackPower;
         protected float curDefencePower;
@@ -129,6 +129,14 @@ namespace RTS.RTSGameObject.Unit
             curDefencePower = Mathf.Clamp(curDefencePower - defencePowerReduce, 0, maxDefencePower);
             curMovePower = Mathf.Clamp(curMovePower - movePowerReduce, 0, maxDefencePower);
             base.CreateDamage(damage / DefencePower, attackPowerReduce, defencePowerReduce, movePowerReduce, from);
+        }
+
+        public override void Repair(float amount, float attackPowerRecover, float defencePowerRecover, float movePowerRecover, GameObject from)
+        {
+            curAttackPower = Mathf.Clamp(curAttackPower + attackPowerRecover, 0, maxAttackPower);
+            curDefencePower = Mathf.Clamp(curDefencePower + defencePowerRecover, 0, maxDefencePower);
+            curMovePower = Mathf.Clamp(curMovePower + movePowerRecover, 0, maxDefencePower);
+            base.Repair(amount, attackPowerRecover, defencePowerRecover, movePowerRecover, from);
         }
 
         public virtual void Stop()

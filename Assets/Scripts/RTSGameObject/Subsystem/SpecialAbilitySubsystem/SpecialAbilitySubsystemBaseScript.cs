@@ -6,16 +6,18 @@ namespace RTS.RTSGameObject.Subsystem
 {
     public class SpecialAbilitySubsystemBaseScript : SubsystemBaseScript
     {
-        // Start is called before the first frame update
-        void Start()
-        {
+        public float coolDown;
 
+        protected float timer;
+
+        public virtual bool Use(Object target)
+        {
+            return true;
         }
 
-        // Update is called once per frame
-        void Update()
+        public virtual float GetCoolDownPercent()
         {
-
+            return timer / coolDown;
         }
     }
 }
