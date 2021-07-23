@@ -2372,7 +2372,7 @@ MonoBehaviour:
   selfIndex: 0
   debugInitDataAsset: {fileID: 4900000, guid: 49fc18f04eff1f84f89f5fa39e0aedf1, type: 3}
   gameObjectLibraryAsset: {fileID: 4900000, guid: 5ec89fe72628a7c40a36c1707bbc0df1, type: 3}
-  abilityLibraryAsset: {fileID: 4900000, guid: 6249921438c19bb42a9ff1900a265da1, type: 3}
+  specialAbilityLibraryAsset: {fileID: 4900000, guid: 4cb23c636aa493547867e73ffad7e34f, type: 3}
 --- !u!1 &1111898013
 GameObject:
   m_ObjectHideFlags: 0

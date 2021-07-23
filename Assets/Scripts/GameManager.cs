@@ -30,7 +30,6 @@ namespace RTS
             public Dictionary<string, string> subsystems;
             // string = ability type, List<string> = supported by which anchor (or use shipTypeName to indicate supported by ship)
             public Dictionary<string, List<string>> commonAbilities;
-            public Dictionary<string, List<string>> specialAbilities;
             // not particularly useful, it's just here to show how it could be used
             public Dictionary<string, string> scripts;
         }
@@ -64,9 +63,7 @@ namespace RTS
         public TextAsset debugInitDataAsset;
 
         public TextAsset gameObjectLibraryAsset;
-        public TextAsset abilityLibraryAsset;
         public Dictionary<string, string> gameObjectLibrary = new Dictionary<string, string>();
-        public Dictionary<string, string> abilityLibrary = new Dictionary<string, string>();
         public Dictionary<string, UnitLibraryData> unitLibrary = new Dictionary<string, UnitLibraryData>();
 
         private int gameObjectIndexCounter = 0;
@@ -79,7 +76,6 @@ namespace RTS
             GameManagerInstance = this;
             ScriptSystem = new ScriptSystem();
             gameObjectLibrary = JsonConvert.DeserializeObject<Dictionary<string, string>>(gameObjectLibraryAsset.text);
-            abilityLibrary = JsonConvert.DeserializeObject<Dictionary<string, string>>(abilityLibraryAsset.text);
 
             if (debugInitDataAsset != null)
             {
@@ -197,12 +193,22 @@ namespace RTS
                 // Init common ability
                 foreach (KeyValuePair<string, List<string>> ability in libraryData.commonAbilities)
                 {
-                    if (!abilityLibrary.ContainsKey(ability.Key))
+                    Type abilityType;
+                    switch (ability.Key)
                     {
-                        Debug.LogError("Cannot find ability: " + ability.Key);
-                        continue;
+                        case "Attack":
+                            abilityType = Type.GetType("RTS.Ability.CommonAbility.AttackAbilityScript");
+                            break;
+                        case "Move":
+                            abilityType = Type.GetType("RTS.Ability.CommonAbility.MoveAbilityScript");
+                            break;
+                        case "Carrier":
+                            abilityType = Type.GetType("RTS.Ability.CommonAbility.CarrierAbilityScript");
+                            break;
+                        default:
+                            Debug.LogError("Wrong type of common ability: " + ability.Key);
+                            continue;
                     }
-                    Type abilityType = Type.GetType(abilityLibrary[ability.Key]);
                     CommonAbilityBaseScript abilityScript = (CommonAbilityBaseScript)result.AddComponent(abilityType);
                     foreach (string supportedSubsystemAnchor in ability.Value)
                     {
@@ -245,45 +251,9 @@ namespace RTS
                     }
                 }
 
-                // Init special ability
-                if (libraryData.specialAbilities.Count > 5)
+                foreach (SpecialAbilityBaseScript speaiclAbility in result.transform.GetComponents<SpecialAbilityBaseScript>())
                 {
-                    Debug.LogWarning($"In {libraryData.unitTypeName}, number of special ability should not excess 5, or UI cannot handle all of them");
-                }
-                foreach (KeyValuePair<string, List<string>> ability in libraryData.specialAbilities)
-                {
-                    if (!abilityLibrary.ContainsKey(ability.Key))
-                    {
-                        Debug.LogError("Cannot find ability: " + ability.Key);
-                        continue;
-                    }
-                    Type abilityType = Type.GetType(abilityLibrary[ability.Key]);
-                    SpecialAbilityBaseScript abilityScript = (SpecialAbilityBaseScript)result.AddComponent(abilityType);
-                    foreach (string supportedSubsystemAnchor in ability.Value)
-                    {
-                        if (supportedSubsystemAnchor != libraryData.baseTypeName)
-                        {
-                            GameObject temp = shipScript.subsyetemAnchors.FirstOrDefault(x => x.anchorName == supportedSubsystemAnchor).subsystem;
-                            if (temp == default)
-                            {
-                                Debug.LogError("Cannot find subsystem: " + supportedSubsystemAnchor);
-                            }
-                            else
-                            {
-                                if (temp.GetComponent<SubsystemBaseScript>().supportedSepcialAbility.Contains(
-                                    (SpecialAbilityBaseScript.SpecialAbilityType)Enum.Parse(typeof(CommonAbilityBaseScript.CommonAbilityType), ability.Key)))
-                                {
-                                    abilityScript.SupportedBy.Add(temp.GetComponent<SubsystemBaseScript>());
-                                }
-                                else
-                                {
-                                    Debug.LogError("Subsystem cannot support special ability: " + ability.Key);
-                                }
-                            }
-                        }
-                    }
-                    abilityScript.Host = shipScript;
-                    shipScript.SpecialAbilityList.Add(abilityScript);
+                    shipScript.SpecialAbilityList.Add(speaiclAbility);
                 }
             }
 

@@ -27,7 +27,6 @@ namespace RTS.RTSGameObject.Subsystem
         public SubsystemType type;
         public float repairPercentRequired;
         public List<CommonAbilityBaseScript.CommonAbilityType> supportedCommonAbility;
-        public List<SpecialAbilityBaseScript.SpecialAbilityType> supportedSepcialAbility;
 
         // Set when instantiate
         public UnitBaseScript Host { get; set; }

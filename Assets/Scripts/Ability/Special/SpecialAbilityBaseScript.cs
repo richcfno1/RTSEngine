@@ -7,11 +7,6 @@ namespace RTS.Ability.SpecialAbility
 {
     public class SpecialAbilityBaseScript : MonoBehaviour
     {
-        public enum SpecialAbilityType
-        {
-            None
-        }
-
         // Set when instantiate
         public UnitBaseScript Host { get; set; }
         public List<SubsystemBaseScript> SupportedBy { get; set; } = new List<SubsystemBaseScript>();
