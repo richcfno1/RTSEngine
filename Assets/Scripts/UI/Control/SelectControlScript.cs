@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using RTS.RTSGameObject;
 using RTS.RTSGameObject.Unit;
@@ -11,7 +12,10 @@ namespace RTS.UI.Control
 
         public GameObject SelectionBoxPrefab;
 
-        public Dictionary<string, List<GameObject>> SelectedGameObjects { get; private set; } = new Dictionary<string, List<GameObject>>();
+        // TODO: add a comparator here
+        public SortedDictionary<string, List<GameObject>> SelectedGameObjects { get; private set; } = new SortedDictionary<string, List<GameObject>>();
+        public string MainSelectedType { get; private set; } = "";
+        public GameObject MainSelectedGameObject { get; private set; } = null;
         public bool SelectedChanged { get; private set; } = false;
         public bool SelectedOwnUnits { get; private set; } = false;
 
@@ -105,7 +109,43 @@ namespace RTS.UI.Control
             {
                 SelectedGameObjects.Remove(i);
             }
-            //Debug.Log(SelectedGameObjects.Count);
+
+            if (SelectedGameObjects.Keys.Count > 1)
+            {
+                if (!SelectedGameObjects.Keys.Contains(MainSelectedType))
+                {
+                    MainSelectedType = SelectedGameObjects.Keys.FirstOrDefault();
+                }
+                if (Input.GetKeyDown(InputManager.HotKeys.MoveMainSelectTypeToNext))
+                {
+                    List<string> tempSortedTypes = SelectedGameObjects.Keys.ToList();
+                    int index = tempSortedTypes.IndexOf(MainSelectedType) + 1;
+                    index = index >= tempSortedTypes.Count ? 0 : index;
+                    MainSelectedType = tempSortedTypes[index];
+                }
+                if (Input.GetKeyDown(InputManager.HotKeys.SelectMainSelected))
+                {
+                    SetSelectedGameObjects(SelectedGameObjects[MainSelectedType]);
+                }
+            }
+            else if (GetAllGameObjects().Count > 1)
+            {
+                List<GameObject> tempAllGameObjects = GetAllGameObjects();
+                if (MainSelectedGameObject == null)
+                {
+                    MainSelectedGameObject = tempAllGameObjects.FirstOrDefault();
+                }
+                if (Input.GetKeyDown(InputManager.HotKeys.MoveMainSelectTypeToNext))
+                {
+                    int index = tempAllGameObjects.IndexOf(MainSelectedGameObject) + 1;
+                    index = index >= tempAllGameObjects.Count ? 0 : index;
+                    MainSelectedGameObject = tempAllGameObjects[index];
+                }
+                if (Input.GetKeyDown(InputManager.HotKeys.SelectMainSelected))
+                {
+                    SetSelectedGameObjects(new List<GameObject>() { MainSelectedGameObject });
+                }
+            }
         }
 
         private void ClearSelectedGameObjects()
@@ -122,6 +162,8 @@ namespace RTS.UI.Control
                 }
             }
             SelectedGameObjects.Clear();
+            MainSelectedType = "";
+            MainSelectedGameObject = null;
             SelectedOwnUnits = false;
         }
 
@@ -279,6 +321,21 @@ namespace RTS.UI.Control
                     SelectedOwnUnits = selected.GetComponent<RTSGameObjectBaseScript>().BelongTo == selfIndex
                         && selected.GetComponent<UnitBaseScript>() != null;
                 }
+            }
+        }
+
+        public void SetMainSelectedType(string target)
+        {
+            if (SelectedGameObjects.ContainsKey(target))
+            {
+                MainSelectedType = target;
+            }
+        }
+        public void SetMainSelectedGameObject(GameObject target)
+        {
+            if (GetAllGameObjects().Contains(target))
+            {
+                MainSelectedGameObject = target;
             }
         }
     }

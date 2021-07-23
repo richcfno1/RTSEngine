@@ -45,6 +45,8 @@ namespace RTS.UI.Control
             public static KeyCode SelectUnit = KeyCode.Mouse0;
             public static KeyCode SelectAllUnit = KeyCode.Q;
             public static KeyCode SelectSameType = KeyCode.W;
+            public static KeyCode MoveMainSelectTypeToNext = KeyCode.Tab;
+            public static KeyCode SelectMainSelected = KeyCode.LeftShift;
 
             // Action
             // Base mouse action (without button)

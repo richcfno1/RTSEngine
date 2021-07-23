@@ -9,6 +9,8 @@ namespace RTS.UI.SelectedPanel
 {
     public class SelectedInfoGridScript : MonoBehaviour
     {
+        public float normalAlphaValue;
+        public float highlightAlphaValue;
         public Image icon;
         public Slider hpdata;
         public Text numberCount;
@@ -18,6 +20,8 @@ namespace RTS.UI.SelectedPanel
         public Image DefenceDown;
         public Image MoveUp;
         public Image MoveDown;
+
+        public bool IsMainSelectedGrid { get; private set; } = false;
 
         public void UpdateInfoGrid(GameObject targetRTSGameObject)
         {
@@ -188,6 +192,13 @@ namespace RTS.UI.SelectedPanel
                 MoveDown.color = new Color(1, 1, 1, 0);
             }
             numberCount.text = count.ToString();
+        }
+
+        public void SetMainSelected(bool isMainSelected)
+        {
+            IsMainSelectedGrid = isMainSelected;
+            Color temp = GetComponent<Image>().color;
+            GetComponent<Image>().color = new Color(temp.r, temp.g, temp.b, isMainSelected ? highlightAlphaValue / 255 : normalAlphaValue / 255);
         }
     }
 }

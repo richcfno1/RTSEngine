@@ -33,7 +33,7 @@ namespace RTS.UI.SelectedPanel
         // Update is called once per frame
         void Update()
         {
-            Dictionary<string, List<GameObject>> allSelected = SelectControlScript.SelectionControlInstance.SelectedGameObjects;
+            SortedDictionary<string, List<GameObject>> allSelected = SelectControlScript.SelectionControlInstance.SelectedGameObjects;
             List<GameObject> allSelectedList = SelectControlScript.SelectionControlInstance.GetAllGameObjects();
             if (allSelected.Count == 1)
             {
@@ -85,11 +85,31 @@ namespace RTS.UI.SelectedPanel
                             temp.GetComponent<SelectedInfoGridScript>().icon.sprite = Resources.Load<RTSGameObjectData>(
                                 GameManager.GameManagerInstance.gameObjectLibrary[i.GetComponent<RTSGameObjectBaseScript>().typeID]).icon;
                             temp.GetComponent<Button>().onClick.AddListener(
-                                () => { SelectControlScript.SelectionControlInstance.SetSelectedGameObjects(new List<GameObject>() { i }); });
+                                () => { SelectControlScript.SelectionControlInstance.SetMainSelectedGameObject(i); });
                             temp.GetComponent<SelectedInfoGridScript>().UpdateInfoGrid(i);
                             allGridsByIndex.Add(index, temp.GetComponent<SelectedInfoGridScript>());
                         }
                         allIndex.Add(index);
+                        if (i == SelectControlScript.SelectionControlInstance.MainSelectedGameObject)
+                        {
+                            if (!allGridsByIndex[index].IsMainSelectedGrid)
+                            {
+                                allGridsByIndex[index].SetMainSelected(true);
+                                allGridsByIndex[index].GetComponent<Button>().onClick.RemoveAllListeners();
+                                allGridsByIndex[index].GetComponent<Button>().onClick.AddListener(
+                                    () => { SelectControlScript.SelectionControlInstance.SetSelectedGameObjects( new List<GameObject>() { i }); });
+                            }
+                        }
+                        else
+                        {
+                            if (allGridsByIndex[index].IsMainSelectedGrid)
+                            {
+                                allGridsByIndex[index].SetMainSelected(false);
+                                allGridsByIndex[index].GetComponent<Button>().onClick.RemoveAllListeners();
+                                allGridsByIndex[index].GetComponent<Button>().onClick.AddListener(
+                                    () => { SelectControlScript.SelectionControlInstance.SetMainSelectedGameObject(i); });
+                            }
+                        }
                     }
                     List<int> toRemove = new List<int>();
                     foreach (KeyValuePair<int, SelectedInfoGridScript> i in allGridsByIndex)
@@ -129,9 +149,29 @@ namespace RTS.UI.SelectedPanel
                         temp.GetComponent<SelectedInfoGridScript>().icon.sprite = Resources.Load<RTSGameObjectData>(
                             GameManager.GameManagerInstance.gameObjectLibrary[GameManager.GameManagerInstance.unitLibrary[i.Key].baseTypeName]).icon;
                         temp.GetComponent<Button>().onClick.AddListener(
-                                () => { SelectControlScript.SelectionControlInstance.SetSelectedGameObjects(i.Value); });
+                                () => { SelectControlScript.SelectionControlInstance.SetMainSelectedType(i.Key); });
                         temp.GetComponent<SelectedInfoGridScript>().UpdateInfoGrid(i.Value);
                         allGridsByType.Add(i.Key, temp.GetComponent<SelectedInfoGridScript>());
+                    }
+                    if (i.Key == SelectControlScript.SelectionControlInstance.MainSelectedType)
+                    {
+                        if (!allGridsByType[i.Key].IsMainSelectedGrid)
+                        {
+                            allGridsByType[i.Key].SetMainSelected(true);
+                            allGridsByType[i.Key].GetComponent<Button>().onClick.RemoveAllListeners();
+                            allGridsByType[i.Key].GetComponent<Button>().onClick.AddListener(
+                                () => { SelectControlScript.SelectionControlInstance.SetSelectedGameObjects(i.Value); });
+                        }
+                    }
+                    else
+                    {
+                        if (allGridsByType[i.Key].IsMainSelectedGrid)
+                        {
+                            allGridsByType[i.Key].SetMainSelected(false);
+                            allGridsByType[i.Key].GetComponent<Button>().onClick.RemoveAllListeners();
+                            allGridsByType[i.Key].GetComponent<Button>().onClick.AddListener(
+                                () => { SelectControlScript.SelectionControlInstance.SetMainSelectedType(i.Key); });
+                        }
                     }
                 }
                 List<string> allTypes = new List<string>(allSelected.Keys);
