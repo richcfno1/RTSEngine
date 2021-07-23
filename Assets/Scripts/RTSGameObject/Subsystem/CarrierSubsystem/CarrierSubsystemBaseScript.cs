@@ -83,7 +83,7 @@ namespace RTS.RTSGameObject.Subsystem
             }
             if (temp.GetComponent<UnitBaseScript>().MoveAbility != null)
             {
-                temp.GetComponent<UnitBaseScript>().MoveAbility.Follow(gameObject, offset, false);
+                temp.GetComponent<UnitBaseScript>().MoveAbility.Follow(Host.gameObject, offset, false);
             }
             carriedUnits[type]--;
             deployedUnits[type].Add(temp);

@@ -60,44 +60,43 @@ namespace RTS.RTSGameObject.Projectile.Missile
                 OnDestroyedAction();
                 return;
             }
-            destination = target.GetComponent<Collider>().ClosestPoint(transform.position);
-            if ((transform.position - destination).magnitude > damageTriggerRadius)
+            destination = target.GetComponent<Collider>().ClosestPoint(thisRigidbody.position);
+            if ((thisRigidbody.position - destination).magnitude > damageTriggerRadius)
             {
-                if (TestObstacle(transform.position, destination) == 0)
+                if (TestObstacle(thisRigidbody.position, destination) == 0)
                 {
                     moveBeacons.Clear();
                     moveBeacons.Add(destination);
                 }
                 if (moveBeacons.Count != 0)
                 {
-                    Vector3 moveVector = moveBeacons[0] - transform.position;
+                    Vector3 moveVector = moveBeacons[0] - thisRigidbody.position;
                     Vector3 rotateDirection = moveVector.normalized;
-                    transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(rotateDirection), Time.fixedDeltaTime * agentRotateSpeed);
+                    thisRigidbody.rotation = Quaternion.RotateTowards(thisRigidbody.rotation, Quaternion.LookRotation(rotateDirection), Time.fixedDeltaTime * agentRotateSpeed);
                     float moveDistance = agentMoveSpeed * Time.fixedDeltaTime;
                     if (moveVector.magnitude <= moveDistance)
                     {
-                        if (TestObstacle(transform.position, moveBeacons[0]) != 0)
+                        if (TestObstacle(thisRigidbody.position, moveBeacons[0]) != 0)
                         {
-                            FindPath(transform.position, destination);
+                            FindPath(thisRigidbody.position, destination);
                             return;
                         }
-                        transform.position = moveBeacons[0];
+                        thisRigidbody.position = moveBeacons[0];
                         moveBeacons.RemoveAt(0);
                     }
                     else
                     {
-                        if (TestObstacle(transform.position, transform.position + transform.forward * moveDistance) != 0)
+                        if (TestObstacle(thisRigidbody.position, thisRigidbody.position + transform.forward * moveDistance) != 0)
                         {
-                            TestObstacle(transform.position, transform.position + transform.forward * moveDistance);
-                            FindPath(transform.position, destination);
+                            FindPath(thisRigidbody.position, destination);
                             return;
                         }
-                        transform.position += transform.forward * moveDistance;
+                        thisRigidbody.position += transform.forward * moveDistance;
                     }
                 }
                 else
                 {
-                    FindPath(transform.position, destination);
+                    FindPath(thisRigidbody.position, destination);
                 }
             }
             else

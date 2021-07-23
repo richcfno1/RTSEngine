@@ -89,11 +89,6 @@ namespace RTS.RTSGameObject.Unit
                                 moveBeacons.Clear();
                                 moveBeacons.Add(finalPosition);
                             }
-                            if (TestObstacle(thisBody.position, finalPosition) == 0)
-                            {
-                                moveBeacons.Clear();
-                                moveBeacons.Add(finalPosition);
-                            }
                             if (moveBeacons.Count != 0)
                             {
                                 Vector3 moveVector = moveBeacons[0] - thisBody.position;
@@ -203,11 +198,6 @@ namespace RTS.RTSGameObject.Unit
                                     moveBeacons.Clear();
                                     moveBeacons.Add(finalPosition);
                                 }
-                                if (TestObstacle(thisBody.position, finalPosition) == 0)
-                                {
-                                    moveBeacons.Clear();
-                                    moveBeacons.Add(finalPosition);
-                                }
                                 if (moveBeacons.Count != 0)
                                 {
                                     Vector3 moveVector = moveBeacons[0] - thisBody.position;
@@ -291,11 +281,6 @@ namespace RTS.RTSGameObject.Unit
                             if (thisBody.position != finalPosition)
                             {
                                 // Moving
-                                if (TestObstacle(thisBody.position, finalPosition) == 0)
-                                {
-                                    moveBeacons.Clear();
-                                    moveBeacons.Add(finalPosition);
-                                }
                                 if (TestObstacle(thisBody.position, finalPosition) == 0)
                                 {
                                     moveBeacons.Clear();
@@ -439,11 +424,6 @@ namespace RTS.RTSGameObject.Unit
                             if (thisBody.position != finalPosition)
                             {
                                 // Moving
-                                if (TestObstacle(thisBody.position, finalPosition) == 0)
-                                {
-                                    moveBeacons.Clear();
-                                    moveBeacons.Add(finalPosition);
-                                }
                                 if (TestObstacle(thisBody.position, finalPosition) == 0)
                                 {
                                     moveBeacons.Clear();

@@ -40,11 +40,7 @@ namespace RTS.RTSGameObject.Projectile.Bullet
 
         void OnTriggerEnter(Collider other)
         {
-            if (other.CompareTag("AimCollider") || other.CompareTag("Bullet"))
-            {
-                return;
-            }
-            if (toIgnore.Contains(other))
+            if (other.CompareTag("AimCollider") || other.CompareTag("Bullet") || toIgnore.Contains(other))
             {
                 return;
             }
@@ -64,11 +60,7 @@ namespace RTS.RTSGameObject.Projectile.Bullet
                 }
                 other.GetComponent<RTSGameObjectBaseScript>().CreateDamage(damage, attackPowerReduce, defencePowerReduce, movePowerReduce, createdBy);
             }
-            else if (other.CompareTag("Subsystem"))
-            {
-                other.GetComponent<RTSGameObjectBaseScript>().CreateDamage(damage, attackPowerReduce, defencePowerReduce, movePowerReduce, createdBy);
-            }
-            else if (other.CompareTag("Fighter"))
+            else if (other.GetComponent<RTSGameObjectBaseScript>() != null)
             {
                 other.GetComponent<RTSGameObjectBaseScript>().CreateDamage(damage, attackPowerReduce, defencePowerReduce, movePowerReduce, createdBy);
             }
