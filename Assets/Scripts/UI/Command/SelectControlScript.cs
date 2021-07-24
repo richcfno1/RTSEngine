@@ -87,7 +87,7 @@ namespace RTS.UI.Command
             if (Input.GetKeyDown(InputManager.HotKeys.SelectAllUnit))
             {
                 SetSelectedGameObjects(GameManager.GameManagerInstance.GetGameObjectForPlayer(
-                    GameManager.GameManagerInstance.selfIndex).Where(x => x.GetComponent<UnitBaseScript>() != null).ToList());
+                    GameManager.GameManagerInstance.selfIndex).Where(x => x != null && x.GetComponent<UnitBaseScript>() != null).ToList());
             }
 
             if (Input.GetKeyDown(InputManager.HotKeys.SelectSameType) && SelectedOwnUnits)
@@ -98,7 +98,7 @@ namespace RTS.UI.Command
                 {
                     targetType = MainSelectedGameObject.GetComponent<UnitBaseScript>().UnitTypeID;
                 }
-                tempSameType = tempSameType.Where(x => x.GetComponent<UnitBaseScript>() != null && 
+                tempSameType = tempSameType.Where(x => x != null && x.GetComponent<UnitBaseScript>() != null && 
                     x.GetComponent<UnitBaseScript>().UnitTypeID == targetType).ToList();
                 SetSelectedGameObjects(tempSameType);
             }
