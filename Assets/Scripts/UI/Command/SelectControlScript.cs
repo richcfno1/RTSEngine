@@ -143,10 +143,6 @@ namespace RTS.UI.Command
                     index = index >= tempSortedTypes.Count ? 0 : index;
                     MainSelectedType = tempSortedTypes[index];
                 }
-                if (Input.GetKeyDown(InputManager.HotKeys.SelectMainSelected))
-                {
-                    SetSelectedGameObjects(SelectedGameObjects[MainSelectedType]);
-                }
             }
             else
             {
@@ -160,10 +156,6 @@ namespace RTS.UI.Command
                     int index = tempAllGameObjects.IndexOf(MainSelectedGameObject) + 1;
                     index = index >= tempAllGameObjects.Count ? 0 : index;
                     MainSelectedGameObject = tempAllGameObjects[index];
-                }
-                if (Input.GetKeyDown(InputManager.HotKeys.SelectMainSelected))
-                {
-                    SetSelectedGameObjects(new List<GameObject>() { MainSelectedGameObject });
                 }
             }
         }
