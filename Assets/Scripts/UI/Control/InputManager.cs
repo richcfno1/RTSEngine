@@ -35,7 +35,9 @@ namespace RTS.UI.Control
             LookAtWaitingNextKey,
             LookAtTarget,
             LookAtSpace,
-            Skill
+            UseNoSelectionSkill,
+            UseSelectionSkill,
+            UseToSpaceSkill
         }
 
         public static class HotKeys
@@ -46,7 +48,7 @@ namespace RTS.UI.Control
             public static KeyCode SelectAllUnit = KeyCode.Q;
             public static KeyCode SelectSameType = KeyCode.W;
             public static KeyCode MoveMainSelectTypeToNext = KeyCode.Tab;
-            public static KeyCode SelectMainSelected = KeyCode.LeftShift;
+            public static KeyCode SelectMainSelected = KeyCode.BackQuote;
 
             // Action
             // Base mouse action (without button)
