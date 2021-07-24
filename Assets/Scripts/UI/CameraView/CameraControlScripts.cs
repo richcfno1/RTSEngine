@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using System.Linq;
-using RTS.UI.Control;
+using RTS.UI.Command;
 using System.Collections.Generic;
 
 namespace RTS.UI.CameraView
@@ -88,7 +88,7 @@ namespace RTS.UI.CameraView
                 isTracking = true;
             }
 
-            isTracking = isTracking && SelectControlScript.SelectionControlInstance.GetAllGameObjects().Count != 0;
+            isTracking = isTracking && SelectControlScript.SelectionControlInstance.GetAllGameObjectsAsList().Count != 0;
 
             if (isTracking)
             {

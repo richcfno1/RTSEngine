@@ -1,18 +1,51 @@
+using RTS.Ability.SpecialAbility;
 using RTS.RTSGameObject;
 using RTS.RTSGameObject.Unit;
-using System.Collections;
+using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace RTS.UI.Control
+namespace RTS.UI.Command
 {
     public class AdditionalCommandScript : CommandBaseScript
     {
         public List<Button> buttons;
+        public List<Button> skillButtons;  // size shoule bd 5 with order E R D F C
+
+        private SortedDictionary<string, List<SpecialAbilityBaseScript>> showingAbilities = new SortedDictionary<string, List<SpecialAbilityBaseScript>>();
+
         // Update is called once per frame
         void Update()
         {
+            // draw skill icons
+            showingAbilities = SelectControlScript.SelectionControlInstance.GetAllSpecialAbilityOfMainSelected();
+            int indexOfSkillButtons = 0;
+            foreach (KeyValuePair<string, List<SpecialAbilityBaseScript>> i in showingAbilities)
+            {
+                if (indexOfSkillButtons >= skillButtons.Count)
+                {
+                    Debug.LogWarning($"Number of special ability {indexOfSkillButtons + 1} is more than number of skill buttons {skillButtons.Count}");
+                    break;
+                }
+                skillButtons[indexOfSkillButtons].gameObject.SetActive(true);
+                if (i.Value.Count == 0)
+                {
+                    Debug.LogError($"Impossible case: there is a special ability key {i.Key} without any instance of it");
+                }
+                else
+                {
+                    skillButtons[indexOfSkillButtons].GetComponent<Image>().sprite = i.Value.FirstOrDefault().specialAbilityIcon;
+                }
+                indexOfSkillButtons++;
+            }
+            for (int i = indexOfSkillButtons; i < skillButtons.Count; i++)
+            {
+                skillButtons[i].gameObject.SetActive(false);
+            }
+            // At this point, indexOfSkillButtons will be the amount of valid skill button.
+
+            // Command
             if (SelectControlScript.SelectionControlInstance.SelectedOwnUnits)
             {
                 if (SelectControlScript.SelectionControlInstance.SelectedChanged)
@@ -27,6 +60,10 @@ namespace RTS.UI.Control
                 }
 
                 foreach (Button i in buttons)
+                {
+                    i.interactable = true;
+                }
+                foreach (Button i in skillButtons)
                 {
                     i.interactable = true;
                 }
@@ -54,7 +91,7 @@ namespace RTS.UI.Control
                 switch (InputManager.InputManagerInstance.CurrentCommandActionState)
                 {
                     case InputManager.CommandActionState.Stop:
-                        foreach (GameObject i in SelectControlScript.SelectionControlInstance.GetAllGameObjects())
+                        foreach (GameObject i in SelectControlScript.SelectionControlInstance.GetAllGameObjectsAsList())
                         {
                             if (i.GetComponent<UnitBaseScript>() != null)
                             {
@@ -126,6 +163,10 @@ namespace RTS.UI.Control
                 {
                     i.interactable = false;
                 }
+                foreach (Button i in skillButtons)
+                {
+                    i.interactable = false;
+                }
                 if (navigationUI != null)
                 {
                     navigationUI.Destroy();
@@ -143,7 +184,7 @@ namespace RTS.UI.Control
                 if (attackTarget != null && attackTarget.BelongTo != GameManager.GameManagerInstance.selfIndex)
                 {
                     ClearAllTargetDisplayUI();
-                    foreach (GameObject i in SelectControlScript.SelectionControlInstance.GetAllGameObjects())
+                    foreach (GameObject i in SelectControlScript.SelectionControlInstance.GetAllGameObjectsAsList())
                     {
                         if (i.GetComponent<UnitBaseScript>() != null)
                         {
@@ -210,7 +251,7 @@ namespace RTS.UI.Control
                 if (Input.GetKeyDown(InputManager.HotKeys.MainCommand))
                 {
                     List<UnitBaseScript> allAgents = new List<UnitBaseScript>();
-                    foreach (GameObject i in SelectControlScript.SelectionControlInstance.GetAllGameObjects())
+                    foreach (GameObject i in SelectControlScript.SelectionControlInstance.GetAllGameObjectsAsList())
                     {
                         if (i.GetComponent<UnitBaseScript>() != null)
                         {
@@ -261,7 +302,7 @@ namespace RTS.UI.Control
                 if (followTarget != null)
                 {
                     ClearAllTargetDisplayUI();
-                    foreach (GameObject i in SelectControlScript.SelectionControlInstance.GetAllGameObjects())
+                    foreach (GameObject i in SelectControlScript.SelectionControlInstance.GetAllGameObjectsAsList())
                     {
                         if (i.GetComponent<UnitBaseScript>() != null)
                         {
@@ -323,7 +364,7 @@ namespace RTS.UI.Control
                 if (Input.GetKeyDown(InputManager.HotKeys.MainCommand))
                 {
                     List<UnitBaseScript> allAgents = new List<UnitBaseScript>();
-                    foreach (GameObject i in SelectControlScript.SelectionControlInstance.GetAllGameObjects())
+                    foreach (GameObject i in SelectControlScript.SelectionControlInstance.GetAllGameObjectsAsList())
                     {
                         if (i.GetComponent<UnitBaseScript>() != null)
                         {
@@ -369,7 +410,7 @@ namespace RTS.UI.Control
                 if (followTarget != null)
                 {
                     ClearAllTargetDisplayUI();
-                    foreach (GameObject i in SelectControlScript.SelectionControlInstance.GetAllGameObjects())
+                    foreach (GameObject i in SelectControlScript.SelectionControlInstance.GetAllGameObjectsAsList())
                     {
                         if (i.GetComponent<UnitBaseScript>() != null)
                         {
@@ -431,7 +472,7 @@ namespace RTS.UI.Control
                 if (Input.GetKeyDown(InputManager.HotKeys.MainCommand))
                 {
                     List<UnitBaseScript> allAgents = new List<UnitBaseScript>();
-                    foreach (GameObject i in SelectControlScript.SelectionControlInstance.GetAllGameObjects())
+                    foreach (GameObject i in SelectControlScript.SelectionControlInstance.GetAllGameObjectsAsList())
                     {
                         if (i.GetComponent<UnitBaseScript>() != null)
                         {

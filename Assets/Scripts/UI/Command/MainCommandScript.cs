@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace RTS.UI.Control
+namespace RTS.UI.Command
 {
     public class MainCommandScript : CommandBaseScript
     {
@@ -91,7 +91,7 @@ namespace RTS.UI.Control
                             if (Input.GetKeyDown(InputManager.HotKeys.MainCommand))
                             {
                                 List<UnitBaseScript> allAgents = new List<UnitBaseScript>();
-                                foreach (GameObject i in SelectControlScript.SelectionControlInstance.GetAllGameObjects())
+                                foreach (GameObject i in SelectControlScript.SelectionControlInstance.GetAllGameObjectsAsList())
                                 {
                                     if (i.GetComponent<UnitBaseScript>() != null)
                                     {
@@ -133,7 +133,7 @@ namespace RTS.UI.Control
                         if (followTarget != null && followTarget.BelongTo == GameManager.GameManagerInstance.selfIndex)
                         {
                             ClearAllTargetDisplayUI();
-                            foreach (GameObject i in SelectControlScript.SelectionControlInstance.GetAllGameObjects())
+                            foreach (GameObject i in SelectControlScript.SelectionControlInstance.GetAllGameObjectsAsList())
                             {
                                 if (i.GetComponent<UnitBaseScript>() != null)
                                 {
@@ -153,7 +153,7 @@ namespace RTS.UI.Control
                         if (attackTarget != null && attackTarget.BelongTo != GameManager.GameManagerInstance.selfIndex)
                         {
                             ClearAllTargetDisplayUI();
-                            foreach (GameObject i in SelectControlScript.SelectionControlInstance.GetAllGameObjects())
+                            foreach (GameObject i in SelectControlScript.SelectionControlInstance.GetAllGameObjectsAsList())
                             {
                                 if (i.GetComponent<UnitBaseScript>() != null)
                                 {

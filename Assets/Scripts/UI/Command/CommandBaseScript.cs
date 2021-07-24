@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using UnityEngine;
 
-namespace RTS.UI.Control
+namespace RTS.UI.Command
 {
     public class CommandBaseScript : MonoBehaviour
     {

@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-namespace RTS.UI.Control
+namespace RTS.UI.Command
 {
     public class InputManager : MonoBehaviour
     {

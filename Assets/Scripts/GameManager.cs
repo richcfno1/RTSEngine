@@ -251,7 +251,7 @@ namespace RTS
                     }
                 }
 
-                foreach (SpecialAbilityBaseScript speaiclAbility in result.transform.GetComponents<SpecialAbilityBaseScript>())
+                foreach (SpecialAbilityBaseScript speaiclAbility in result.transform.GetComponentsInChildren<SpecialAbilityBaseScript>())
                 {
                     if (shipScript.SpecialAbilityList.ContainsKey(speaiclAbility.specialAbilityID))
                     {
@@ -273,6 +273,19 @@ namespace RTS
             return result;
         }
 
+        public List<GameObject> GetGameObjectForPlayer(int index)
+        {
+            List<GameObject> result = new List<GameObject>();
+            if (allPlayers.ContainsKey(index))
+            {
+                foreach (int i in allPlayers[index].playerGameObjects)
+                {
+                    result.Add(allGameObjectsDict[i]);
+                }
+            }
+            return result;
+        }
+
         public void OnGameObjectCreated(GameObject self)
         {
             // TODO: LUA
@@ -290,6 +303,12 @@ namespace RTS
         }
 
         public void OnGameObjectDamaged(GameObject self, GameObject other)
+        {
+            // TODO: LUA
+
+        }
+
+        public void OnGameObjectRepaired(GameObject self, GameObject other)
         {
             // TODO: LUA
 

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using RTS.UI.Control;
+using RTS.UI.Command;
 using RTS.RTSGameObject;
 
 namespace RTS.UI.SelectedPanel
@@ -34,7 +34,7 @@ namespace RTS.UI.SelectedPanel
         void Update()
         {
             SortedDictionary<string, List<GameObject>> allSelected = SelectControlScript.SelectionControlInstance.SelectedGameObjects;
-            List<GameObject> allSelectedList = SelectControlScript.SelectionControlInstance.GetAllGameObjects();
+            List<GameObject> allSelectedList = SelectControlScript.SelectionControlInstance.GetAllGameObjectsAsList();
             if (allSelected.Count == 1)
             {
                 if (allSelectedList.Count == 1)

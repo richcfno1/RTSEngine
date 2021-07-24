@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using RTS.Ability.SpecialAbility;
 using RTS.RTSGameObject;
 using RTS.RTSGameObject.Unit;
 
-namespace RTS.UI.Control
+namespace RTS.UI.Command
 {
     public class SelectControlScript : MonoBehaviour
     {
@@ -14,7 +15,7 @@ namespace RTS.UI.Control
 
         // TODO: add a comparator here
         public SortedDictionary<string, List<GameObject>> SelectedGameObjects { get; private set; } = new SortedDictionary<string, List<GameObject>>();
-        public string MainSelectedType { get; private set; } = "";
+        public string MainSelectedType { get; private set; } = default;
         public GameObject MainSelectedGameObject { get; private set; } = null;
         public bool SelectedChanged { get; private set; } = false;
         public bool SelectedOwnUnits { get; private set; } = false;
@@ -83,6 +84,25 @@ namespace RTS.UI.Control
                 SelectedChanged = false;
             }
 
+            if (Input.GetKeyDown(InputManager.HotKeys.SelectAllUnit))
+            {
+                SetSelectedGameObjects(GameManager.GameManagerInstance.GetGameObjectForPlayer(
+                    GameManager.GameManagerInstance.selfIndex).Where(x => x.GetComponent<UnitBaseScript>() != null).ToList());
+            }
+
+            if (Input.GetKeyDown(InputManager.HotKeys.SelectSameType) && SelectedOwnUnits)
+            {
+                List<GameObject> tempSameType = GameManager.GameManagerInstance.GetGameObjectForPlayer(GameManager.GameManagerInstance.selfIndex);
+                string targetType = MainSelectedType;
+                if (MainSelectedGameObject != null)
+                {
+                    targetType = MainSelectedGameObject.GetComponent<UnitBaseScript>().UnitTypeID;
+                }
+                tempSameType = tempSameType.Where(x => x.GetComponent<UnitBaseScript>() != null && 
+                    x.GetComponent<UnitBaseScript>().UnitTypeID == targetType).ToList();
+                SetSelectedGameObjects(tempSameType);
+            }
+
             // Remove destroyed object and add highlighted outline to others
             List<string> toRemoveKey = new List<string>();
             foreach (KeyValuePair<string, List<GameObject>> i in SelectedGameObjects)
@@ -112,7 +132,7 @@ namespace RTS.UI.Control
 
             if (SelectedGameObjects.Keys.Count > 1)
             {
-                if (!SelectedGameObjects.Keys.Contains(MainSelectedType))
+                if (MainSelectedType == null || !SelectedGameObjects.Keys.Contains(MainSelectedType))
                 {
                     MainSelectedType = SelectedGameObjects.Keys.FirstOrDefault();
                 }
@@ -128,9 +148,9 @@ namespace RTS.UI.Control
                     SetSelectedGameObjects(SelectedGameObjects[MainSelectedType]);
                 }
             }
-            else if (GetAllGameObjects().Count > 1)
+            else
             {
-                List<GameObject> tempAllGameObjects = GetAllGameObjects();
+                List<GameObject> tempAllGameObjects = GetAllGameObjectsAsList();
                 if (MainSelectedGameObject == null)
                 {
                     MainSelectedGameObject = tempAllGameObjects.FirstOrDefault();
@@ -162,7 +182,7 @@ namespace RTS.UI.Control
                 }
             }
             SelectedGameObjects.Clear();
-            MainSelectedType = "";
+            MainSelectedType = default;
             MainSelectedGameObject = null;
             SelectedOwnUnits = false;
         }
@@ -226,7 +246,7 @@ namespace RTS.UI.Control
             }
         }
 
-        public List<GameObject> GetAllGameObjects()
+        public List<GameObject> GetAllGameObjectsAsList()
         {
             List<GameObject> result = new List<GameObject>();
             foreach (KeyValuePair<string, List<GameObject>> i in SelectedGameObjects)
@@ -238,6 +258,34 @@ namespace RTS.UI.Control
                 }
             }
             return result;
+        }
+
+        public SortedDictionary<string, List<SpecialAbilityBaseScript>> GetAllSpecialAbilityOfMainSelected()
+        {
+            if (MainSelectedGameObject != null)
+            {
+                return MainSelectedGameObject.GetComponent<UnitBaseScript>().SpecialAbilityList;
+            }
+            else if (MainSelectedType != default)
+            {
+                SortedDictionary<string, List<SpecialAbilityBaseScript>> result = new SortedDictionary<string, List<SpecialAbilityBaseScript>>();
+                foreach (GameObject i in SelectedGameObjects[MainSelectedType])
+                {
+                    foreach (KeyValuePair<string, List<SpecialAbilityBaseScript>> j in i.GetComponent<UnitBaseScript>().SpecialAbilityList)
+                    {
+                        if (result.ContainsKey(j.Key))
+                        {
+                            result[j.Key].AddRange(j.Value);
+                        }
+                        else
+                        {
+                            result.Add(j.Key, new List<SpecialAbilityBaseScript>(j.Value));
+                        }
+                    }
+                }
+                return result;
+            }
+            return new SortedDictionary<string, List<SpecialAbilityBaseScript>>();
         }
 
         public void AddGameObject(GameObject obj)
@@ -331,9 +379,10 @@ namespace RTS.UI.Control
                 MainSelectedType = target;
             }
         }
+
         public void SetMainSelectedGameObject(GameObject target)
         {
-            if (GetAllGameObjects().Contains(target))
+            if (GetAllGameObjectsAsList().Contains(target))
             {
                 MainSelectedGameObject = target;
             }

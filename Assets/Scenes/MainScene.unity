@@ -1622,6 +1622,12 @@ MonoBehaviour:
   - {fileID: 1979498571}
   - {fileID: 1613296812}
   - {fileID: 669203265}
+  skillButtons:
+  - {fileID: 994286889}
+  - {fileID: 1807326867}
+  - {fileID: 871564828}
+  - {fileID: 854952432}
+  - {fileID: 1536709390}
 --- !u!114 &837343071
 MonoBehaviour:
   m_ObjectHideFlags: 0

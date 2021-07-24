@@ -110,7 +110,7 @@ namespace RTS.RTSGameObject.Unit
         public MoveAbilityScript MoveAbility { get; set; } = null;
         public AttackAbilityScript AttackAbility { get; set; } = null;
         public CarrierAbilityScript CarrierAbility { get; set; } = null;
-        public Dictionary<string, List<SpecialAbilityBaseScript>> SpecialAbilityList { get; set; } = new Dictionary<string, List<SpecialAbilityBaseScript>>();
+        public SortedDictionary<string, List<SpecialAbilityBaseScript>> SpecialAbilityList { get; set; } = new SortedDictionary<string, List<SpecialAbilityBaseScript>>();
 
         protected float curAttackPower;
         protected float curDefencePower;
