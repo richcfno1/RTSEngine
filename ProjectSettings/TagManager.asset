@@ -10,7 +10,6 @@ TagManager:
   - Obstacle
   - Ship
   - Fighter
-  - Unit
   - Missile
   - NavigationCollider
   layers:

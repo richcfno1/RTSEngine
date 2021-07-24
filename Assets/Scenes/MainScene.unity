@@ -1589,7 +1589,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3ea1ad5b22e6ee641965be3a4ff6382a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cursorTexture: {fileID: 2800000, guid: c7e04bbc1b942c74b833930dc6c20593, type: 3}
+  normalCursorTexture: {fileID: 2800000, guid: c7e04bbc1b942c74b833930dc6c20593, type: 3}
+  commandCursorTexture: {fileID: 2800000, guid: 7b0e1bce015450b428e4d5b48aee5ac8, type: 3}
+  validTargetCursorTexture: {fileID: 2800000, guid: 64fad80705966f44fbaff0b969cb0f28, type: 3}
   notSelectUI:
   - {fileID: 605325574}
   - {fileID: 1298135916}

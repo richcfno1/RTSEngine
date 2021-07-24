@@ -18,6 +18,13 @@ namespace RTS.UI.Command
             EnemyUnit
         }
 
+        public enum MouseTexture
+        {
+            Normal,
+            Command,
+            ValidTarget
+        }
+
         public enum CommandActionState
         {
             NoAction,
@@ -40,14 +47,6 @@ namespace RTS.UI.Command
             Skill3,
             Skill4,
             Skill5
-        }
-
-        public enum SkillCommandType
-        {
-            None,  // Not a skill
-            NoSelection,
-            SelectTarget,
-            SelectSpace
         }
 
         public static class HotKeys
@@ -86,7 +85,9 @@ namespace RTS.UI.Command
         }
         public static InputManager InputManagerInstance { get; private set; }
 
-        public Texture2D cursorTexture;
+        public Texture2D normalCursorTexture;
+        public Texture2D commandCursorTexture;
+        public Texture2D validTargetCursorTexture;
         public List<GameObject> notSelectUI;  // A list of UI component when mouse click on them, selection will not be called
 
         private GraphicRaycaster graphicRaycaster;
@@ -95,9 +96,10 @@ namespace RTS.UI.Command
 
         public RTSGameObjectBaseScript PointedRTSGameObject { get; set; } = null;
         public MousePosition CurrentMousePosition { get; private set; } = MousePosition.None;
+        public MouseTexture CurrentMouseTexture { get; set; } = MouseTexture.Normal;
+        public MouseTexture LastMouseTexture { get; private set; } = MouseTexture.Normal;
         public CommandActionState CurrentCommandActionState { get; set; } = CommandActionState.NoAction;
         public CommandActionState LastCommandActionState { get; private set; } = CommandActionState.NoAction;
-        public SkillCommandType CurrentSkillType { get; set; } = SkillCommandType.None;
 
         void Awake()
         {
@@ -107,7 +109,7 @@ namespace RTS.UI.Command
         // Start is called before the first frame update
         void Start()
         {
-            Cursor.SetCursor(cursorTexture, Vector2.zero, CursorMode.Auto);
+            Cursor.SetCursor(normalCursorTexture, Vector2.zero, CursorMode.Auto);
 
             graphicRaycaster = GetComponent<GraphicRaycaster>();
             eventSystem = GetComponent<EventSystem>();
@@ -174,6 +176,38 @@ namespace RTS.UI.Command
                         PointedRTSGameObject = temp;
                     }
                 }
+            }
+
+            if (CurrentMousePosition == MousePosition.UI || !SelectControlScript.SelectionControlInstance.SelectedOwnUnits)
+            {
+                CurrentMouseTexture = MouseTexture.Normal;
+            }
+
+            switch (CurrentMouseTexture)
+            {
+                case MouseTexture.Normal:
+                    if (LastMouseTexture != MouseTexture.Normal)
+                    {
+                        Cursor.SetCursor(normalCursorTexture, Vector2.zero, CursorMode.Auto);
+                        LastMouseTexture = MouseTexture.Normal;
+                    }
+                    break;
+                case MouseTexture.Command:
+                    if (LastMouseTexture != MouseTexture.Command)
+                    {
+                        Cursor.SetCursor(commandCursorTexture, new Vector2(commandCursorTexture.width / 2, commandCursorTexture.height / 2),
+                            CursorMode.Auto);
+                        LastMouseTexture = MouseTexture.Command;
+                    }
+                    break;
+                case MouseTexture.ValidTarget:
+                    if (LastMouseTexture != MouseTexture.ValidTarget)
+                    {
+                        Cursor.SetCursor(validTargetCursorTexture, new Vector2(commandCursorTexture.width / 2, commandCursorTexture.height / 2),
+                            CursorMode.Auto);
+                        LastMouseTexture = MouseTexture.ValidTarget;
+                    }
+                    break;
             }
         }
 

@@ -121,6 +121,15 @@ namespace RTS.UI.Command
                         InputManager.InputManagerInstance.CurrentCommandActionState = InputManager.CommandActionState.NoAction;
                         break;
                     case InputManager.CommandActionState.AttackWaitingNextKey:
+                        switch (InputManager.InputManagerInstance.CurrentMousePosition)
+                        {
+                            case InputManager.MousePosition.None:
+                                InputManager.InputManagerInstance.CurrentMouseTexture = InputManager.MouseTexture.Command;
+                                break;
+                            case InputManager.MousePosition.EnemyUnit:
+                                InputManager.InputManagerInstance.CurrentMouseTexture = InputManager.MouseTexture.ValidTarget;
+                                break;
+                        }
                         if (Input.GetKeyDown(InputManager.HotKeys.SelectTarget))
                         {
                             OnAttackTargetButtonClicked();
@@ -133,6 +142,17 @@ namespace RTS.UI.Command
                         }
                         break;
                     case InputManager.CommandActionState.FollowWaitingNextKey:
+                        switch (InputManager.InputManagerInstance.CurrentMousePosition)
+                        {
+                            case InputManager.MousePosition.None:
+                                InputManager.InputManagerInstance.CurrentMouseTexture = InputManager.MouseTexture.Command;
+                                break;
+                            case InputManager.MousePosition.SelfUnit:
+                            case InputManager.MousePosition.FriendUnit:
+                            case InputManager.MousePosition.EnemyUnit:
+                                InputManager.InputManagerInstance.CurrentMouseTexture = InputManager.MouseTexture.ValidTarget;
+                                break;
+                        }
                         if (Input.GetKeyDown(InputManager.HotKeys.SelectTarget))
                         {
                             OnFollowButtonClicked();
@@ -145,6 +165,17 @@ namespace RTS.UI.Command
                         }
                         break;
                     case InputManager.CommandActionState.LookAtWaitingNextKey:
+                        switch (InputManager.InputManagerInstance.CurrentMousePosition)
+                        {
+                            case InputManager.MousePosition.None:
+                                InputManager.InputManagerInstance.CurrentMouseTexture = InputManager.MouseTexture.Command;
+                                break;
+                            case InputManager.MousePosition.SelfUnit:
+                            case InputManager.MousePosition.FriendUnit:
+                            case InputManager.MousePosition.EnemyUnit:
+                                InputManager.InputManagerInstance.CurrentMouseTexture = InputManager.MouseTexture.ValidTarget;
+                                break;
+                        }
                         if (Input.GetKeyDown(InputManager.HotKeys.SelectTarget))
                         {
                             OnLookAtTargetButtonClicked();
@@ -238,6 +269,7 @@ namespace RTS.UI.Command
                     StartCoroutine(ClearTargetDisplayUIWithWaitTime(displayTime));
                 }
                 InputManager.InputManagerInstance.CurrentCommandActionState = InputManager.CommandActionState.NoAction;
+                InputManager.InputManagerInstance.CurrentMouseTexture = InputManager.MouseTexture.Normal;
             }
         }
 
@@ -313,6 +345,7 @@ namespace RTS.UI.Command
                     navigationUI = null;
                     StartCoroutine(ClearTargetDisplayUIWithWaitTime(displayTime));
                     InputManager.InputManagerInstance.CurrentCommandActionState = InputManager.CommandActionState.NoAction;
+                    InputManager.InputManagerInstance.CurrentMouseTexture = InputManager.MouseTexture.Normal;
                 }
                 else
                 {
@@ -351,6 +384,7 @@ namespace RTS.UI.Command
                     }
                 }
                 InputManager.InputManagerInstance.CurrentCommandActionState = InputManager.CommandActionState.NoAction;
+                InputManager.InputManagerInstance.CurrentMouseTexture = InputManager.MouseTexture.Normal;
             }
         }
 
@@ -421,6 +455,7 @@ namespace RTS.UI.Command
                     navigationUI = null;
                     StartCoroutine(ClearTargetDisplayUIWithWaitTime(displayTime));
                     InputManager.InputManagerInstance.CurrentCommandActionState = InputManager.CommandActionState.NoAction;
+                    InputManager.InputManagerInstance.CurrentMouseTexture = InputManager.MouseTexture.Normal;
                 }
                 else
                 {
@@ -459,6 +494,7 @@ namespace RTS.UI.Command
                     }
                 }
                 InputManager.InputManagerInstance.CurrentCommandActionState = InputManager.CommandActionState.NoAction;
+                InputManager.InputManagerInstance.CurrentMouseTexture = InputManager.MouseTexture.Normal;
             }
         }
 
@@ -529,6 +565,7 @@ namespace RTS.UI.Command
                     navigationUI = null;
                     StartCoroutine(ClearTargetDisplayUIWithWaitTime(displayTime));
                     InputManager.InputManagerInstance.CurrentCommandActionState = InputManager.CommandActionState.NoAction;
+                    InputManager.InputManagerInstance.CurrentMouseTexture = InputManager.MouseTexture.Normal;
                 }
                 else
                 {

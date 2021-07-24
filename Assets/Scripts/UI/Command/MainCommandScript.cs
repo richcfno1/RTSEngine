@@ -27,6 +27,22 @@ namespace RTS.UI.Command
                 if (InputManager.InputManagerInstance.CurrentCommandActionState == InputManager.CommandActionState.NoAction &&
                     InputManager.InputManagerInstance.LastCommandActionState == InputManager.CommandActionState.NoAction)
                 {
+                    // Note: current we only have 3 cursor texture, and adding valid texture for main command 
+                    //       may make player confusing, especially when they press A and LMB to attack target, 
+                    //       then command state back to main command, and cursor is still valid texture. 
+                    //       However, at this point player need RMB to command attack. THIS IS BAD.
+                    //switch (InputManager.InputManagerInstance.CurrentMousePosition)
+                    //{
+                    //    case InputManager.MousePosition.None:
+                    //        InputManager.InputManagerInstance.CurrentMouseTexture = InputManager.MouseTexture.Normal;
+                    //        break;
+                    //    case InputManager.MousePosition.SelfUnit:
+                    //    case InputManager.MousePosition.FriendUnit:
+                    //    case InputManager.MousePosition.EnemyUnit:
+                    //        InputManager.InputManagerInstance.CurrentMouseTexture = InputManager.MouseTexture.ValidTarget;
+                    //        break;
+                    //}
+
                     if (Input.GetKeyDown(InputManager.HotKeys.MainCommand))
                     {
                         switch (InputManager.InputManagerInstance.CurrentMousePosition)
