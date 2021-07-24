@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 6958833070657369792}
   m_Layer: 0
   m_Name: InstantRepairDevice1
-  m_TagString: Untagged
+  m_TagString: Subsystem
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -44,7 +44,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6da639a20987dca4f97a1074b260a2fe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  specialAbilityID: InstantRepairScript
+  specialAbilityID: InstantRepair
   specialAbilityIcon: {fileID: 21300000, guid: 750830778897c5b46b5fa8b3f7bb193e, type: 3}
   supportedBy: {fileID: 6958833070657369792}
 --- !u!114 &6958833070657369792

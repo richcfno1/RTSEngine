@@ -1789,7 +1789,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 854952433}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 837343070}
+        m_TargetAssemblyTypeName: RTS.UI.Command.AdditionalCommandScript, Assembly-CSharp
+        m_MethodName: OnSkill4ButtonClicked
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &854952433
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2041,7 +2053,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 871564829}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 837343070}
+        m_TargetAssemblyTypeName: RTS.UI.Command.AdditionalCommandScript, Assembly-CSharp
+        m_MethodName: OnSkill3ButtonClicked
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &871564829
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2293,7 +2317,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 994286890}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 837343070}
+        m_TargetAssemblyTypeName: RTS.UI.Command.AdditionalCommandScript, Assembly-CSharp
+        m_MethodName: OnSkill1ButtonClicked
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &994286890
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2921,7 +2957,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1536709391}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 837343070}
+        m_TargetAssemblyTypeName: RTS.UI.Command.AdditionalCommandScript, Assembly-CSharp
+        m_MethodName: OnSkill5ButtonClicked
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1536709391
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3548,7 +3596,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1807326868}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 837343070}
+        m_TargetAssemblyTypeName: RTS.UI.Command.AdditionalCommandScript, Assembly-CSharp
+        m_MethodName: OnSkill2ButtonClicked
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1807326868
 MonoBehaviour:
   m_ObjectHideFlags: 0

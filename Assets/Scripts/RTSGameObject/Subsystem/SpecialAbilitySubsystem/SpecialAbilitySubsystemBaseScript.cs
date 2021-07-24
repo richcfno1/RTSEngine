@@ -10,11 +10,22 @@ namespace RTS.RTSGameObject.Subsystem
 
         protected float timer;
 
+        public virtual bool Use()
+        {
+            return true;
+        }
+
         public virtual bool Use(Object target)
         {
             return true;
         }
 
+        public virtual bool Use(GameObject target)
+        {
+            return true;
+        }
+
+        // 1 = ready
         public virtual float GetCoolDownPercent()
         {
             return timer / coolDown;

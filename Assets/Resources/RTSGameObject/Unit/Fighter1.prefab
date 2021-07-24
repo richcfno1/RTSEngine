@@ -9803,7 +9803,6 @@ MonoBehaviour:
   NavigationCollider: {fileID: 9192400354402439984}
   onDestroyedEffect: {fileID: 5508734696245866625, guid: 1b6e346305eb28a4fa9a6e2453c446d6, type: 3}
   radius: 5
-  ratio: 0.3
   subsyetemAnchors: []
   searchStepDistance: 20
   searchStepMaxDistance: 100
@@ -9812,9 +9811,9 @@ MonoBehaviour:
   maxAttackPower: 50
   maxDefencePower: 50
   maxMovePower: 50
-  recoverAttackPower: 0.1
-  recoverDefencePower: 0.1
-  recoverMovePower: 0.1
+  recoverAttackPower: 5
+  recoverDefencePower: 5
+  recoverMovePower: 5
   buildPrice: 0
   buildTime: 5
   agentMoveSpeed: 40

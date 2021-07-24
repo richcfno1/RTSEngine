@@ -161,17 +161,17 @@ namespace RTS
             GameObject result = Instantiate(Resources.Load<GameObject>(gameObjectLibrary[libraryData.baseTypeName]), position, rotation, parent);
             if (result.GetComponent<UnitBaseScript>() != null)
             {
-                UnitBaseScript shipScript = result.GetComponent<UnitBaseScript>();
-                shipScript.UnitTypeID = unitType;
-                shipScript.PropertyDictionary = libraryData.properties;
+                UnitBaseScript unitScript = result.GetComponent<UnitBaseScript>();
+                unitScript.UnitTypeID = unitType;
+                unitScript.PropertyDictionary = libraryData.properties;
 
                 // Init subsystem
-                foreach (UnitBaseScript.AnchorData anchorData in shipScript.subsyetemAnchors)
+                foreach (UnitBaseScript.AnchorData anchorData in unitScript.subsyetemAnchors)
                 {
                     // Already have a subsystem (set in prefab)
                     if (anchorData.subsystem != null)
                     {
-                        anchorData.subsystem.GetComponent<SubsystemBaseScript>().Host = shipScript;
+                        anchorData.subsystem.GetComponent<SubsystemBaseScript>().Host = unitScript;
                     }
                     else if (libraryData.subsystems.ContainsKey(anchorData.anchorName) && anchorData.subsystem == null)
                     {
@@ -185,7 +185,7 @@ namespace RTS
                         else
                         {
                             anchorData.subsystem = temp;
-                            subsystemScript.Host = shipScript;
+                            subsystemScript.Host = unitScript;
                         }
                     }
                 }
@@ -214,7 +214,7 @@ namespace RTS
                     {
                         if (supportedSubsystemAnchor != libraryData.baseTypeName)
                         {
-                            GameObject temp = shipScript.subsyetemAnchors.FirstOrDefault(x => x.anchorName == supportedSubsystemAnchor).subsystem;
+                            GameObject temp = unitScript.subsyetemAnchors.FirstOrDefault(x => x.anchorName == supportedSubsystemAnchor).subsystem;
                             if (temp == default)
                             {
                                 Debug.LogError("Cannot find subsystem: " + supportedSubsystemAnchor);
@@ -233,17 +233,17 @@ namespace RTS
                             }
                         }
                     }
-                    abilityScript.Host = shipScript;
+                    abilityScript.Host = unitScript;
                     switch (ability.Key)
                     {
                         case "Attack":
-                            shipScript.AttackAbility = (AttackAbilityScript)abilityScript;
+                            unitScript.AttackAbility = (AttackAbilityScript)abilityScript;
                             break;
                         case "Move":
-                            shipScript.MoveAbility = (MoveAbilityScript)abilityScript;
+                            unitScript.MoveAbility = (MoveAbilityScript)abilityScript;
                             break;
                         case "Carrier":
-                            shipScript.CarrierAbility = (CarrierAbilityScript)abilityScript;
+                            unitScript.CarrierAbility = (CarrierAbilityScript)abilityScript;
                             break;
                         default:
                             Debug.LogError("Wrong type of common ability: " + ability.Key);
@@ -253,13 +253,14 @@ namespace RTS
 
                 foreach (SpecialAbilityBaseScript speaiclAbility in result.transform.GetComponentsInChildren<SpecialAbilityBaseScript>())
                 {
-                    if (shipScript.SpecialAbilityList.ContainsKey(speaiclAbility.specialAbilityID))
+                    speaiclAbility.Host = unitScript;
+                    if (unitScript.SpecialAbilityList.ContainsKey(speaiclAbility.specialAbilityID))
                     {
-                        shipScript.SpecialAbilityList[speaiclAbility.specialAbilityID].Add(speaiclAbility);
+                        unitScript.SpecialAbilityList[speaiclAbility.specialAbilityID].Add(speaiclAbility);
                     }
                     else
                     {
-                        shipScript.SpecialAbilityList.Add(speaiclAbility.specialAbilityID, new List<SpecialAbilityBaseScript>() { speaiclAbility });
+                        unitScript.SpecialAbilityList.Add(speaiclAbility.specialAbilityID, new List<SpecialAbilityBaseScript>() { speaiclAbility });
                     }
                 }
             }

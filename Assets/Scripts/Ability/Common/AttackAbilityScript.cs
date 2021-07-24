@@ -17,7 +17,7 @@ namespace RTS.Ability.CommonAbility
 
         private void Start()
         {
-            SetAggressive();
+            SetNeutral();
         }
 
         public override bool CanUseAbility()
@@ -33,7 +33,7 @@ namespace RTS.Ability.CommonAbility
             }
             Host.CurrentFireControlStatus = RTSGameObject.Unit.UnitBaseScript.FireControlStatus.Passive;
         }
-        public void SetNetural()
+        public void SetNeutral()
         {
             foreach (AttackSubsystemBaseScript i in SupportedBy)
             {

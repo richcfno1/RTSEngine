@@ -1,12 +1,13 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using RTS.RTSGameObject.Unit;
 
 namespace RTS.RTSGameObject.Subsystem
 {
-    public class InstantRepairDeviceScript : SpecialAbilitySubsystemBaseScript
+    public class WeaponDisruptDeviceScript : SpecialAbilitySubsystemBaseScript
     {
-        public float repairAmount;
+        public float attackPowerReduceAmount;
 
         // Start is called before the first frame update
         void Start()
@@ -23,13 +24,13 @@ namespace RTS.RTSGameObject.Subsystem
             }
         }
 
-        public override bool Use()
+        public override bool Use(GameObject target)
         {
             if (timer < coolDown)
             {
                 return false;
             }
-            Host.Repair(repairAmount, 0, 0, 0, Host.gameObject);
+            target.GetComponent<UnitBaseScript>().CreateDamage(0, attackPowerReduceAmount, 0, 0, Host.gameObject);
             timer = 0;
             return true;
         }

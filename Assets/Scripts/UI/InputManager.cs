@@ -35,9 +35,19 @@ namespace RTS.UI.Command
             LookAtWaitingNextKey,
             LookAtTarget,
             LookAtSpace,
-            UseNoSelectionSkill,
-            UseSelectionSkill,
-            UseToSpaceSkill
+            Skill1,
+            Skill2,
+            Skill3,
+            Skill4,
+            Skill5
+        }
+
+        public enum SkillCommandType
+        {
+            None,  // Not a skill
+            NoSelection,
+            SelectTarget,
+            SelectSpace
         }
 
         public static class HotKeys
@@ -87,6 +97,7 @@ namespace RTS.UI.Command
         public MousePosition CurrentMousePosition { get; private set; } = MousePosition.None;
         public CommandActionState CurrentCommandActionState { get; set; } = CommandActionState.NoAction;
         public CommandActionState LastCommandActionState { get; private set; } = CommandActionState.NoAction;
+        public SkillCommandType CurrentSkillType { get; set; } = SkillCommandType.None;
 
         void Awake()
         {

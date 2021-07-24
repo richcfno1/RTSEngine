@@ -9799,9 +9799,9 @@ MonoBehaviour:
   maxAttackPower: 100
   maxDefencePower: 100
   maxMovePower: 100
-  recoverAttackPower: 0.05
-  recoverDefencePower: 0.05
-  recoverMovePower: 0.05
+  recoverAttackPower: 5
+  recoverDefencePower: 5
+  recoverMovePower: 5
   buildPrice: 0
   buildTime: 0
   agentMoveSpeed: 20

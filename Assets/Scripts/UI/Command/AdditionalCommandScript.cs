@@ -87,6 +87,26 @@ namespace RTS.UI.Command
                     {
                         InputManager.InputManagerInstance.CurrentCommandActionState = InputManager.CommandActionState.FollowWaitingNextKey;
                     }
+                    else if (Input.GetKeyDown(InputManager.HotKeys.Skill1))
+                    {
+                        InputManager.InputManagerInstance.CurrentCommandActionState = InputManager.CommandActionState.Skill1;
+                    }
+                    else if (Input.GetKeyDown(InputManager.HotKeys.Skill2))
+                    {
+                        InputManager.InputManagerInstance.CurrentCommandActionState = InputManager.CommandActionState.Skill2;
+                    }
+                    else if (Input.GetKeyDown(InputManager.HotKeys.Skill3))
+                    {
+                        InputManager.InputManagerInstance.CurrentCommandActionState = InputManager.CommandActionState.Skill3;
+                    }
+                    else if (Input.GetKeyDown(InputManager.HotKeys.Skill4))
+                    {
+                        InputManager.InputManagerInstance.CurrentCommandActionState = InputManager.CommandActionState.Skill4;
+                    }
+                    else if (Input.GetKeyDown(InputManager.HotKeys.Skill5))
+                    {
+                        InputManager.InputManagerInstance.CurrentCommandActionState = InputManager.CommandActionState.Skill5;
+                    }
                 }
                 switch (InputManager.InputManagerInstance.CurrentCommandActionState)
                 {
@@ -153,6 +173,21 @@ namespace RTS.UI.Command
                         break;
                     case InputManager.CommandActionState.LookAtSpace:
                         LookAtSpace();
+                        break;
+                    case InputManager.CommandActionState.Skill1:
+                        UseSkill(indexOfSkillButtons, 0);
+                        break;
+                    case InputManager.CommandActionState.Skill2:
+                        UseSkill(indexOfSkillButtons, 1);
+                        break;
+                    case InputManager.CommandActionState.Skill3:
+                        UseSkill(indexOfSkillButtons, 2);
+                        break;
+                    case InputManager.CommandActionState.Skill4:
+                        UseSkill(indexOfSkillButtons, 3);
+                        break;
+                    case InputManager.CommandActionState.Skill5:
+                        UseSkill(indexOfSkillButtons, 4);
                         break;
                 }
                 UpdateTargetDisplayUI();
@@ -510,6 +545,67 @@ namespace RTS.UI.Command
             }
         }
 
+        private void UseSkill(int numberOfSkills, int index)
+        {
+            if (index >= numberOfSkills)
+            {
+                InputManager.InputManagerInstance.CurrentCommandActionState = InputManager.CommandActionState.NoAction;
+                return;
+            }
+            string skillType = showingAbilities.Keys.ToList()[index];
+            float maxCoolDown = 0;
+            foreach (SpecialAbilityBaseScript i in showingAbilities[skillType])
+            {
+                maxCoolDown = maxCoolDown > i.GetCoolDownPercent() ? maxCoolDown : i.GetCoolDownPercent();
+            }
+            Debug.Log($"Using skill{skillType} with CD = {maxCoolDown}");
+
+            if (showingAbilities[skillType].FirstOrDefault(x => x.GetType() == typeof(NoSelectionSpecialAbilityScript)) != default)
+            {
+                UseNoSelectionSkill(showingAbilities[skillType].Where(x => x.GetType() == typeof(NoSelectionSpecialAbilityScript)).ToList());
+            }
+            else if (showingAbilities[skillType].FirstOrDefault(x => x.GetType() == typeof(SelectTargetSpecialAbilityScript)) != default)
+            {
+                UseSelectTargetSkill(showingAbilities[skillType].Where(x => x.GetType() == typeof(SelectTargetSpecialAbilityScript)).ToList());
+            }
+            else if (false)
+            {
+                UseSelectSpaceSkill(skillType);
+            }
+        }
+
+        private void UseNoSelectionSkill(List<SpecialAbilityBaseScript> abilities)
+        {
+            foreach (SpecialAbilityBaseScript i in abilities)
+            {
+                NoSelectionSpecialAbilityScript temp = (NoSelectionSpecialAbilityScript)i;
+                temp.UseAbility();
+            }
+            InputManager.InputManagerInstance.CurrentCommandActionState = InputManager.CommandActionState.NoAction;
+        }
+
+        private void UseSelectTargetSkill(List<SpecialAbilityBaseScript> abilities)
+        {
+            if (Input.GetKeyDown(InputManager.HotKeys.SelectTarget))
+            {
+                RTSGameObjectBaseScript target = InputManager.InputManagerInstance.PointedRTSGameObject;
+                if (target != null && ((SelectTargetSpecialAbilityScript)abilities.FirstOrDefault()).possibleTargetTags.Contains(target.tag))
+                {
+                    foreach (SpecialAbilityBaseScript i in abilities)
+                    {
+                        SelectTargetSpecialAbilityScript temp = (SelectTargetSpecialAbilityScript)i;
+                        temp.UseAbility(target.gameObject);
+                    }
+                }
+                InputManager.InputManagerInstance.CurrentCommandActionState = InputManager.CommandActionState.NoAction;
+            }
+        }
+
+        private void UseSelectSpaceSkill(string key)
+        {
+
+        }
+
         public void OnStopButtonClicked()
         {
             InputManager.InputManagerInstance.CurrentCommandActionState = InputManager.CommandActionState.Stop;
@@ -543,6 +639,31 @@ namespace RTS.UI.Command
         public void OnLookAtSpaceButtonClicked()
         {
             InputManager.InputManagerInstance.CurrentCommandActionState = InputManager.CommandActionState.LookAtSpace;
+        }
+
+        public void OnSkill1ButtonClicked()
+        {
+            InputManager.InputManagerInstance.CurrentCommandActionState = InputManager.CommandActionState.Skill1;
+        }
+
+        public void OnSkill2ButtonClicked()
+        {
+            InputManager.InputManagerInstance.CurrentCommandActionState = InputManager.CommandActionState.Skill2;
+        }
+
+        public void OnSkill3ButtonClicked()
+        {
+            InputManager.InputManagerInstance.CurrentCommandActionState = InputManager.CommandActionState.Skill3;
+        }
+
+        public void OnSkill4ButtonClicked()
+        {
+            InputManager.InputManagerInstance.CurrentCommandActionState = InputManager.CommandActionState.Skill4;
+        }
+
+        public void OnSkill5ButtonClicked()
+        {
+            InputManager.InputManagerInstance.CurrentCommandActionState = InputManager.CommandActionState.Skill5;
         }
     }
 }
