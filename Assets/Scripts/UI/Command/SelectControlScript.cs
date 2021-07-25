@@ -256,7 +256,10 @@ namespace RTS.UI.Command
         {
             if (MainSelectedGameObject != null)
             {
-                return MainSelectedGameObject.GetComponent<UnitBaseScript>().SpecialAbilityList;
+                if (MainSelectedGameObject.GetComponent<UnitBaseScript>() != null)
+                {
+                    return MainSelectedGameObject.GetComponent<UnitBaseScript>().SpecialAbilityList;
+                }
             }
             else if (MainSelectedType != default)
             {

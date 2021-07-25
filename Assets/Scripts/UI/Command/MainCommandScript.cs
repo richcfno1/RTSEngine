@@ -52,6 +52,7 @@ namespace RTS.UI.Command
                                 break;
                             case InputManager.MousePosition.SelfUnit:
                             case InputManager.MousePosition.FriendUnit:
+                            case InputManager.MousePosition.NeutrualUnit:
                                 InputManager.InputManagerInstance.CurrentCommandActionState = InputManager.CommandActionState.MainCommandFollow;
                                 break;
                             case InputManager.MousePosition.EnemyUnit:
@@ -200,6 +201,16 @@ namespace RTS.UI.Command
                     navigationUI = null;
                 }
                 ClearAllTargetDisplayUI();
+            }
+        }
+
+        public void ClearAllUIWhenStop()
+        {
+            ClearAllTargetDisplayUI();
+            if (navigationUI != null)
+            {
+                navigationUI.Destroy();
+                navigationUI = null;
             }
         }
     }

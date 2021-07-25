@@ -15,6 +15,14 @@ namespace RTS
 {
     public class GameManager : MonoBehaviour
     {
+        public enum PlayerRelation
+        {
+            Self,
+            Friend,
+            Neutrual,
+            Enemy
+        }
+
         public struct PlayerData
         {
             public int index;
@@ -285,6 +293,19 @@ namespace RTS
                 }
             }
             return result;
+        }
+
+        public PlayerRelation GetPlayerRelation(int playerIndex1, int playerIndex2)
+        {
+            // TODO: Extend enemy to friend neutrual enemy
+            if (playerIndex1 == playerIndex2)
+            {
+                return PlayerRelation.Self;
+            }
+            else
+            {
+                return PlayerRelation.Enemy;
+            }
         }
 
         public void OnGameObjectCreated(GameObject self)

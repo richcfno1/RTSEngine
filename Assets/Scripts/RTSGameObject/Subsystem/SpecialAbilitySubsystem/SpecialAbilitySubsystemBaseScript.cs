@@ -15,12 +15,11 @@ namespace RTS.RTSGameObject.Subsystem
             return true;
         }
 
-        public virtual bool Use(Object target)
+        public virtual bool Use(GameObject target)
         {
             return true;
         }
-
-        public virtual bool Use(GameObject target)
+        public virtual bool Use(Vector3 target)
         {
             return true;
         }

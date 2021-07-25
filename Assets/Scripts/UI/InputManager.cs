@@ -15,6 +15,7 @@ namespace RTS.UI.Command
             UI,
             SelfUnit,
             FriendUnit,
+            NeutrualUnit,
             EnemyUnit
         }
 
@@ -170,6 +171,7 @@ namespace RTS.UI.Command
                         CurrentMousePosition = MousePosition.SelfUnit;
                         PointedRTSGameObject = temp;
                     }
+                    // TODO: Extend enemy to friend neutrual enemy
                     else
                     {
                         CurrentMousePosition = MousePosition.EnemyUnit;

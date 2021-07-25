@@ -118,14 +118,24 @@ namespace RTS.UI.Command
                                 i.GetComponent<UnitBaseScript>().Stop();
                             }
                         }
+                        ClearAllTargetDisplayUI();
+                        if (navigationUI != null)
+                        {
+                            navigationUI.Destroy();
+                            navigationUI = null;
+                        }
+                        GetComponent<MainCommandScript>().ClearAllUIWhenStop();
                         InputManager.InputManagerInstance.CurrentCommandActionState = InputManager.CommandActionState.NoAction;
                         break;
                     case InputManager.CommandActionState.AttackWaitingNextKey:
                         switch (InputManager.InputManagerInstance.CurrentMousePosition)
                         {
                             case InputManager.MousePosition.None:
+                            case InputManager.MousePosition.SelfUnit:
+                            case InputManager.MousePosition.FriendUnit:
                                 InputManager.InputManagerInstance.CurrentMouseTexture = InputManager.MouseTexture.Command;
                                 break;
+                            case InputManager.MousePosition.NeutrualUnit:
                             case InputManager.MousePosition.EnemyUnit:
                                 InputManager.InputManagerInstance.CurrentMouseTexture = InputManager.MouseTexture.ValidTarget;
                                 break;
@@ -149,6 +159,7 @@ namespace RTS.UI.Command
                                 break;
                             case InputManager.MousePosition.SelfUnit:
                             case InputManager.MousePosition.FriendUnit:
+                            case InputManager.MousePosition.NeutrualUnit:
                             case InputManager.MousePosition.EnemyUnit:
                                 InputManager.InputManagerInstance.CurrentMouseTexture = InputManager.MouseTexture.ValidTarget;
                                 break;
@@ -172,6 +183,7 @@ namespace RTS.UI.Command
                                 break;
                             case InputManager.MousePosition.SelfUnit:
                             case InputManager.MousePosition.FriendUnit:
+                            case InputManager.MousePosition.NeutrualUnit:
                             case InputManager.MousePosition.EnemyUnit:
                                 InputManager.InputManagerInstance.CurrentMouseTexture = InputManager.MouseTexture.ValidTarget;
                                 break;
@@ -244,6 +256,18 @@ namespace RTS.UI.Command
 
         private void AttackTarget()
         {
+            switch (InputManager.InputManagerInstance.CurrentMousePosition)
+            {
+                case InputManager.MousePosition.None:
+                case InputManager.MousePosition.SelfUnit:
+                case InputManager.MousePosition.FriendUnit:
+                    InputManager.InputManagerInstance.CurrentMouseTexture = InputManager.MouseTexture.Command;
+                    break;
+                case InputManager.MousePosition.NeutrualUnit:
+                case InputManager.MousePosition.EnemyUnit:
+                    InputManager.InputManagerInstance.CurrentMouseTexture = InputManager.MouseTexture.ValidTarget;
+                    break;
+            }
             if (Input.GetKeyDown(InputManager.HotKeys.SelectTarget))
             {
                 RTSGameObjectBaseScript attackTarget = InputManager.InputManagerInstance.PointedRTSGameObject;
@@ -364,6 +388,18 @@ namespace RTS.UI.Command
 
         private void Follow()
         {
+            switch (InputManager.InputManagerInstance.CurrentMousePosition)
+            {
+                case InputManager.MousePosition.None:
+                    InputManager.InputManagerInstance.CurrentMouseTexture = InputManager.MouseTexture.Command;
+                    break;
+                case InputManager.MousePosition.SelfUnit:
+                case InputManager.MousePosition.FriendUnit:
+                case InputManager.MousePosition.NeutrualUnit:
+                case InputManager.MousePosition.EnemyUnit:
+                    InputManager.InputManagerInstance.CurrentMouseTexture = InputManager.MouseTexture.ValidTarget;
+                    break;
+            }
             if (Input.GetKeyDown(InputManager.HotKeys.SelectTarget))
             {
                 RTSGameObjectBaseScript followTarget = InputManager.InputManagerInstance.PointedRTSGameObject;
@@ -474,6 +510,18 @@ namespace RTS.UI.Command
 
         private void LookAtTarget()
         {
+            switch (InputManager.InputManagerInstance.CurrentMousePosition)
+            {
+                case InputManager.MousePosition.None:
+                    InputManager.InputManagerInstance.CurrentMouseTexture = InputManager.MouseTexture.Command;
+                    break;
+                case InputManager.MousePosition.SelfUnit:
+                case InputManager.MousePosition.FriendUnit:
+                case InputManager.MousePosition.NeutrualUnit:
+                case InputManager.MousePosition.EnemyUnit:
+                    InputManager.InputManagerInstance.CurrentMouseTexture = InputManager.MouseTexture.ValidTarget;
+                    break;
+            }
             if (Input.GetKeyDown(InputManager.HotKeys.SelectTarget))
             {
                 RTSGameObjectBaseScript followTarget = InputManager.InputManagerInstance.PointedRTSGameObject;
@@ -605,9 +653,13 @@ namespace RTS.UI.Command
             {
                 UseSelectTargetSkill(showingAbilities[skillType].Where(x => x.GetType() == typeof(SelectTargetSpecialAbilityScript)).ToList());
             }
-            else if (false)
+            else if (showingAbilities[skillType].FirstOrDefault(x => x.GetType() == typeof(SelectSpaceSpecialAbilityScript)) != default)
             {
-                UseSelectSpaceSkill(skillType);
+                UseSelectSpaceSkill(showingAbilities[skillType].Where(x => x.GetType() == typeof(SelectSpaceSpecialAbilityScript)).ToList());
+            }
+            else
+            {
+                Debug.LogWarning($"Wrong type of special ability script: {showingAbilities[skillType].FirstOrDefault().GetType()}");
             }
         }
 
@@ -619,14 +671,22 @@ namespace RTS.UI.Command
                 temp.UseAbility();
             }
             InputManager.InputManagerInstance.CurrentCommandActionState = InputManager.CommandActionState.NoAction;
+            InputManager.InputManagerInstance.CurrentMouseTexture = InputManager.MouseTexture.Normal;
         }
 
         private void UseSelectTargetSkill(List<SpecialAbilityBaseScript> abilities)
         {
+            InputManager.InputManagerInstance.CurrentMouseTexture = InputManager.MouseTexture.Command;
+            RTSGameObjectBaseScript target = InputManager.InputManagerInstance.PointedRTSGameObject;
+            bool valid = false;
+            if (target != null && ((SelectTargetSpecialAbilityScript)abilities.FirstOrDefault()).possibleTargetTags.Contains(target.tag))
+            {
+                valid = true;
+                InputManager.InputManagerInstance.CurrentMouseTexture = InputManager.MouseTexture.ValidTarget;
+            }
             if (Input.GetKeyDown(InputManager.HotKeys.SelectTarget))
             {
-                RTSGameObjectBaseScript target = InputManager.InputManagerInstance.PointedRTSGameObject;
-                if (target != null && ((SelectTargetSpecialAbilityScript)abilities.FirstOrDefault()).possibleTargetTags.Contains(target.tag))
+                if (valid)
                 {
                     foreach (SpecialAbilityBaseScript i in abilities)
                     {
@@ -635,12 +695,88 @@ namespace RTS.UI.Command
                     }
                 }
                 InputManager.InputManagerInstance.CurrentCommandActionState = InputManager.CommandActionState.NoAction;
+                InputManager.InputManagerInstance.CurrentMouseTexture = InputManager.MouseTexture.Normal;
             }
         }
 
-        private void UseSelectSpaceSkill(string key)
+        private void UseSelectSpaceSkill(List<SpecialAbilityBaseScript> abilities)
         {
+            // This must be run first, or at the init time, set destination will also be called due to same keydown
+            if (navigationUI != null)
+            {
+                if (Input.GetKeyDown(InputManager.HotKeys.SetUnitMoveHeight))
+                {
+                    POINT p;
+                    GetCursorPos(out p);
+                    mousePositionX = p.X;
+                    mousePositionY = p.Y;
+                }
+                else if (Input.GetKeyUp(InputManager.HotKeys.SetUnitMoveHeight))
+                {
+                    SetCursorPos(mousePositionX, mousePositionY);
+                }
+                // If exist and get set height key, set height
+                if (Input.GetKey(InputManager.HotKeys.SetUnitMoveHeight))
+                {
+                    Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                    Vector3 center = SelectControlScript.SelectionControlInstance.FindCenter();
+                    Plane hPlane = new Plane(Vector3.Cross(center - destinationHorizontalPosition, Vector3.up), destinationHorizontalPosition);
+                    float distance;
+                    if (hPlane.Raycast(ray, out distance))
+                    {
+                        destinationVerticalDistance = (ray.GetPoint(distance) - destinationHorizontalPosition).y;
+                    }
+                }
+                // Or move in horizontal plane
+                else
+                {
+                    Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                    Vector3 center = SelectControlScript.SelectionControlInstance.FindCenter();
+                    Plane hPlane = new Plane(Vector3.up, center);
+                    float distance;
+                    if (hPlane.Raycast(ray, out distance))
+                    {
+                        destinationHorizontalPosition = ray.GetPoint(distance);
+                        destinationHorizontalDistance = (destinationHorizontalPosition - center).magnitude;
+                    }
+                }
+                // If exist and get end key, move
+                if (Input.GetKeyDown(InputManager.HotKeys.MainCommand))
+                {
+                    List<UnitBaseScript> allAgents = new List<UnitBaseScript>();
+                    foreach (GameObject i in SelectControlScript.SelectionControlInstance.GetAllGameObjectsAsList())
+                    {
+                        if (i.GetComponent<UnitBaseScript>() != null)
+                        {
+                            allAgents.Add(i.GetComponent<UnitBaseScript>());
+                        }
+                    }
+                    ClearAllTargetDisplayUI();
+                    Vector3 destination = destinationHorizontalPosition + new Vector3(0, destinationVerticalDistance, 0);
 
+                    foreach (SpecialAbilityBaseScript i in abilities)
+                    {
+                        SelectSpaceSpecialAbilityScript temp = (SelectSpaceSpecialAbilityScript)i;
+                        temp.UseAbility(destination);
+                    }
+                    navigationUI.Destroy();
+                    navigationUI = null;
+                    InputManager.InputManagerInstance.CurrentCommandActionState = InputManager.CommandActionState.NoAction;
+                    InputManager.InputManagerInstance.CurrentMouseTexture = InputManager.MouseTexture.Normal;
+                }
+                else
+                {
+                    navigationUI.Update(destinationHorizontalDistance, destinationHorizontalPosition, destinationVerticalDistance);
+                }
+            }
+            // If not exist, create, this is the first time of move control, so test where the cursor is and if it is able to do such action
+            else
+            {
+                destinationHorizontalDistance = 0;
+                destinationVerticalDistance = 0;
+                destinationHorizontalPosition = new Vector3();
+                navigationUI = new NavigationUI(navigationUIBasePrefab, navigationUICirclePrefab, navigationUILinePrefab, Color.yellow);
+            }
         }
 
         public void OnStopButtonClicked()

@@ -224,11 +224,6 @@ namespace RTS.UI.Command
         protected int mousePositionX = 0;
         protected int mousePositionY = 0;
 
-        public void ClearTargetDisplayUI()
-        {
-            ClearAllTargetDisplayUI();
-        }
-
         protected IEnumerator ClearTargetDisplayUIWithWaitTime(float waitTime)
         {
             yield return new WaitForSeconds(waitTime);
