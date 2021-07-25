@@ -587,7 +587,6 @@ namespace RTS.RTSGameObject.Unit
                         {
                             // Disable collider
                             List<Collider> allColliders = new List<Collider>();
-                            allColliders.AddRange(GetComponents<Collider>());
                             allColliders.AddRange(GetComponentsInChildren<Collider>());
                             allColliders.RemoveAll(x => x.gameObject.layer == 11);
                             foreach (Collider i in allColliders)
@@ -615,7 +614,6 @@ namespace RTS.RTSGameObject.Unit
                         {
                             // Enable collider
                             List<Collider> allColliders = new List<Collider>();
-                            allColliders.AddRange(GetComponents<Collider>());
                             allColliders.AddRange(GetComponentsInChildren<Collider>());
                             allColliders.RemoveAll(x => x.gameObject.layer == 11);
                             foreach (Collider i in allColliders)
@@ -658,7 +656,7 @@ namespace RTS.RTSGameObject.Unit
         {
             Vector3 direction = (to - from).normalized;
             float distance = (to - from).magnitude;
-            List<Collider> toIgnore = new List<Collider>() { GetComponent<Collider>() };
+            List<Collider> toIgnore = new List<Collider>();
             toIgnore.AddRange(GetComponentsInChildren<Collider>());
             foreach (Vector3 i in agentCorners)
             {
@@ -681,7 +679,7 @@ namespace RTS.RTSGameObject.Unit
         {
             Vector3 direction = (to - from).normalized;
             float distance = (to - from).magnitude;
-            List<Collider> toIgnore = new List<Collider>() { GetComponent<Collider>() };
+            List<Collider> toIgnore = new List<Collider>();
             toIgnore.AddRange(GetComponentsInChildren<Collider>());
             List<RTSGameObjectBaseScript> avoidInfo = new List<RTSGameObjectBaseScript>();
             foreach (Vector3 i in agentCorners)

@@ -36,6 +36,12 @@ namespace RTS.UI.Command
                 else
                 {
                     skillButtons[indexOfSkillButtons].GetComponent<Image>().sprite = i.Value.FirstOrDefault().specialAbilityIcon;
+                    float maxCoolDown = 0;
+                    foreach (SpecialAbilityBaseScript j in i.Value)
+                    {
+                        maxCoolDown = maxCoolDown > j.GetCoolDownPercent() ? maxCoolDown : j.GetCoolDownPercent();
+                    }
+                    skillButtons[indexOfSkillButtons].GetComponentsInChildren<Image>()[1].fillAmount = 1 - maxCoolDown;
                 }
                 indexOfSkillButtons++;
             }
@@ -641,12 +647,6 @@ namespace RTS.UI.Command
                 return;
             }
             string skillType = showingAbilities.Keys.ToList()[index];
-            float maxCoolDown = 0;
-            foreach (SpecialAbilityBaseScript i in showingAbilities[skillType])
-            {
-                maxCoolDown = maxCoolDown > i.GetCoolDownPercent() ? maxCoolDown : i.GetCoolDownPercent();
-            }
-            Debug.Log($"Using skill{skillType} with CD = {maxCoolDown}");
 
             if (showingAbilities[skillType].FirstOrDefault(x => x.GetType() == typeof(NoSelectionSpecialAbilityScript)) != default)
             {

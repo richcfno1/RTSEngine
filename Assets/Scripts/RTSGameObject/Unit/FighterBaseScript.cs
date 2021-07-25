@@ -505,7 +505,6 @@ namespace RTS.RTSGameObject.Unit
                         {
                             // Disable collider
                             List<Collider> allColliders = new List<Collider>();
-                            allColliders.AddRange(GetComponents<Collider>());
                             allColliders.AddRange(GetComponentsInChildren<Collider>());
                             allColliders.RemoveAll(x => x.gameObject.layer == 11);
                             foreach (Collider i in allColliders)
@@ -532,7 +531,6 @@ namespace RTS.RTSGameObject.Unit
                         {
                             // Enable collider
                             List<Collider> allColliders = new List<Collider>();
-                            allColliders.AddRange(GetComponents<Collider>());
                             allColliders.AddRange(GetComponentsInChildren<Collider>());
                             allColliders.RemoveAll(x => x.gameObject.layer == 11);
                             foreach (Collider i in allColliders)
