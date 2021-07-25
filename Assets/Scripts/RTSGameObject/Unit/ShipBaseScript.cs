@@ -1,6 +1,7 @@
 using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
+using RTS.Ability.SpecialAbility;
 
 namespace RTS.RTSGameObject.Unit
 {
@@ -559,8 +560,25 @@ namespace RTS.RTSGameObject.Unit
                             }
                         }
                         return;
-                    case ActionType.UseSpecialAbility:
-                        Debug.LogWarning("Unimplemented: UseSpecialAbility");
+                    case ActionType.UseNoSelectionSpecialAbility:
+                        foreach (NoSelectionSpecialAbilityScript i in (List<NoSelectionSpecialAbilityScript>)action.targets[0])
+                        {
+                            i.UseAbility();
+                        }
+                        ActionQueue.RemoveFirst();
+                        return;
+                    case ActionType.UseSelectTargetSpecialAbility:
+                        foreach (SelectTargetSpecialAbilityScript i in (List<SelectTargetSpecialAbilityScript>)action.targets[0])
+                        {
+                            i.UseAbility((GameObject)action.targets[1]);
+                        }
+                        ActionQueue.RemoveFirst();
+                        return;
+                    case ActionType.UseSelectSpaceSpecialAbility:
+                        foreach (SelectSpaceSpecialAbilityScript i in (List<SelectSpaceSpecialAbilityScript>)action.targets[0])
+                        {
+                            i.UseAbility((Vector3)action.targets[1]);
+                        }
                         ActionQueue.RemoveFirst();
                         return;
                     case ActionType.ForcedMove:

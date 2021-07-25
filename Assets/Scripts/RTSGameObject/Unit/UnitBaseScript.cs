@@ -37,7 +37,9 @@ namespace RTS.RTSGameObject.Unit
             KeepInRangeAndLookAt,  // Follow a gameobject with offset and try to head to it. Ship and fighter will act in different ways
             Attack,  // Set attack target
             AttackAndMove,  // Move to a position, but when there ia a enemy nearby, call attack
-            UseSpecialAbility,  // Use a special ability, NOT IMPLEMENTED!
+            UseNoSelectionSpecialAbility,  // Use a special ability
+            UseSelectTargetSpecialAbility,  // Use a special ability
+            UseSelectSpaceSpecialAbility,  // Use a special ability
             // Deploy called only
             ForcedMove
         }
@@ -57,6 +59,9 @@ namespace RTS.RTSGameObject.Unit
              *                                 [3] = float distance to trigger "headto", when smaller than this value, unit will call "headto"
              * Attack: size = 1: [0] = GameObject target
              * AttackAndMove: size = 1: [0] = Vector3 destination
+             * UseNoSelectionSpecialAbility: size = 1: [0] = List<NoSelectionSpecialAbility>
+             * UseNoSelectionSpecialAbility: size = 2: [0] = List<NoSelectionSpecialAbility> [1] = GameObject target
+             * UseNoSelectionSpecialAbility: size = 2: [0] = List<NoSelectionSpecialAbility> [1] = Vector3 target
              * UseSpecialAbility: Undecided
              */
         }
@@ -469,6 +474,111 @@ namespace RTS.RTSGameObject.Unit
                 {
                     actionType = ActionType.AttackAndMove,
                     targets = new List<object>() { destination }
+                });
+            }
+        }
+
+        public virtual void UseNoSelectionSpecialAbility(List<NoSelectionSpecialAbilityScript> abilities, bool clearQueue = true, bool addToEnd = true)
+        {
+            if (clearQueue)
+            {
+                ActionQueue.Clear();
+                moveBeacons.Clear();
+            }
+            if (addToEnd)
+            {
+                ActionQueue.AddLast(new UnitAction
+                {
+                    actionType = ActionType.UseNoSelectionSpecialAbility,
+                    targets = new List<object>() { abilities }
+                });
+                ActionQueue.AddLast(new UnitAction
+                {
+                    actionType = ActionType.Stop,
+                    targets = new List<object>()
+                });
+            }
+            else
+            {
+                ActionQueue.AddFirst(new UnitAction
+                {
+                    actionType = ActionType.Stop,
+                    targets = new List<object>()
+                });
+                ActionQueue.AddFirst(new UnitAction
+                {
+                    actionType = ActionType.UseNoSelectionSpecialAbility,
+                    targets = new List<object>() { abilities }
+                });
+            }
+        }
+
+        public virtual void UseSelectTargetSpecialAbility(List<NoSelectionSpecialAbilityScript> abilities, GameObject target, bool clearQueue = true, bool addToEnd = true)
+        {
+            if (clearQueue)
+            {
+                ActionQueue.Clear();
+                moveBeacons.Clear();
+            }
+            if (addToEnd)
+            {
+                ActionQueue.AddLast(new UnitAction
+                {
+                    actionType = ActionType.UseSelectTargetSpecialAbility,
+                    targets = new List<object>() { abilities, target }
+                });
+                ActionQueue.AddLast(new UnitAction
+                {
+                    actionType = ActionType.Stop,
+                    targets = new List<object>()
+                });
+            }
+            else
+            {
+                ActionQueue.AddFirst(new UnitAction
+                {
+                    actionType = ActionType.Stop,
+                    targets = new List<object>()
+                });
+                ActionQueue.AddFirst(new UnitAction
+                {
+                    actionType = ActionType.UseSelectTargetSpecialAbility,
+                    targets = new List<object>() { abilities, target }
+                });
+            }
+        }
+
+        public virtual void UseSelectSpaceSpecialAbility(List<NoSelectionSpecialAbilityScript> abilities, Vector3 target, bool clearQueue = true, bool addToEnd = true)
+        {
+            if (clearQueue)
+            {
+                ActionQueue.Clear();
+                moveBeacons.Clear();
+            }
+            if (addToEnd)
+            {
+                ActionQueue.AddLast(new UnitAction
+                {
+                    actionType = ActionType.UseSelectSpaceSpecialAbility,
+                    targets = new List<object>() { abilities, target }
+                });
+                ActionQueue.AddLast(new UnitAction
+                {
+                    actionType = ActionType.Stop,
+                    targets = new List<object>()
+                });
+            }
+            else
+            {
+                ActionQueue.AddFirst(new UnitAction
+                {
+                    actionType = ActionType.Stop,
+                    targets = new List<object>()
+                });
+                ActionQueue.AddFirst(new UnitAction
+                {
+                    actionType = ActionType.UseSelectSpaceSpecialAbility,
+                    targets = new List<object>() { abilities, target }
                 });
             }
         }
