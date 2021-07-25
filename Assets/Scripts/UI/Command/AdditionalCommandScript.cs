@@ -373,7 +373,8 @@ namespace RTS.UI.Command
                 }
                 else
                 {
-                    navigationUI.Update(destinationHorizontalDistance, destinationHorizontalPosition, destinationVerticalDistance);
+                    navigationUI.Update(SelectControlScript.SelectionControlInstance.FindCenter(), 
+                        destinationHorizontalDistance, destinationHorizontalPosition, destinationVerticalDistance);
                 }
             }
             // If not exist, create, this is the first time of move control, so test where the cursor is and if it is able to do such action
@@ -495,7 +496,8 @@ namespace RTS.UI.Command
                 }
                 else
                 {
-                    navigationUI.Update(destinationHorizontalDistance, destinationHorizontalPosition, destinationVerticalDistance);
+                    navigationUI.Update(SelectControlScript.SelectionControlInstance.FindCenter(), 
+                        destinationHorizontalDistance, destinationHorizontalPosition, destinationVerticalDistance);
                 }
             }
             // If not exist, create, this is the first time of move control, so test where the cursor is and if it is able to do such action
@@ -617,7 +619,8 @@ namespace RTS.UI.Command
                 }
                 else
                 {
-                    navigationUI.Update(destinationHorizontalDistance, destinationHorizontalPosition, destinationVerticalDistance);
+                    navigationUI.Update(SelectControlScript.SelectionControlInstance.FindCenter(), 
+                        destinationHorizontalDistance, destinationHorizontalPosition, destinationVerticalDistance);
                 }
             }
             // If not exist, create, this is the first time of move control, so test where the cursor is and if it is able to do such action
@@ -766,7 +769,13 @@ namespace RTS.UI.Command
                 }
                 else
                 {
-                    navigationUI.Update(destinationHorizontalDistance, destinationHorizontalPosition, destinationVerticalDistance);
+                    Vector3 center = new Vector3();
+                    foreach (SpecialAbilityBaseScript i in abilities)
+                    {
+                        center += i.Host.transform.position;
+                    }
+                    center /= abilities.Count;
+                    navigationUI.Update(center, destinationHorizontalDistance, destinationHorizontalPosition, destinationVerticalDistance);
                 }
             }
             // If not exist, create, this is the first time of move control, so test where the cursor is and if it is able to do such action

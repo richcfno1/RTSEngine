@@ -49,10 +49,8 @@ namespace RTS.UI.Command
                 Cursor.visible = false;
             }
 
-            public void Update(float destinationHorizontalDistance, Vector3 destinationHorizontalPosition, float destinationVerticalDistance)
+            public void Update(Vector3 center, float destinationHorizontalDistance, Vector3 destinationHorizontalPosition, float destinationVerticalDistance)
             {
-                Vector3 center = SelectControlScript.SelectionControlInstance.FindCenter();
-
                 if (center.x == Mathf.Infinity)
                 {
                     Destroy();

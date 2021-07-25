@@ -30,7 +30,7 @@ namespace RTS.UI.Command
                     // Note: current we only have 3 cursor texture, and adding valid texture for main command 
                     //       may make player confusing, especially when they press A and LMB to attack target, 
                     //       then command state back to main command, and cursor is still valid texture. 
-                    //       However, at this point player need RMB to command attack. THIS IS BAD.
+                    //       However, at this point player need RMB to command another attack. THIS IS BAD.
                     //switch (InputManager.InputManagerInstance.CurrentMousePosition)
                     //{
                     //    case InputManager.MousePosition.None:
@@ -133,7 +133,7 @@ namespace RTS.UI.Command
                             }
                             else
                             {
-                                navigationUI.Update(destinationHorizontalDistance, destinationHorizontalPosition, destinationVerticalDistance);
+                                navigationUI.Update(SelectControlScript.SelectionControlInstance.FindCenter(), destinationHorizontalDistance, destinationHorizontalPosition, destinationVerticalDistance);
                             }
                         }
                         // If not exist, create, this is the first time of move control, so test where the cursor is and if it is able to do such action
