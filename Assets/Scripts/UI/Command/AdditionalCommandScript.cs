@@ -650,14 +650,50 @@ namespace RTS.UI.Command
 
             if (showingAbilities[skillType].FirstOrDefault(x => x.GetType() == typeof(NoSelectionSpecialAbilityScript)) != default)
             {
+                //Dictionary<UnitBaseScript, List<NoSelectionSpecialAbilityScript>> unitToSpcialAbilityList = new Dictionary<UnitBaseScript, List<NoSelectionSpecialAbilityScript>>();
+                //foreach (SpecialAbilityBaseScript i in showingAbilities[skillType])
+                //{
+                //    if (unitToSpcialAbilityList.ContainsKey(i.Host))
+                //    {
+                //        unitToSpcialAbilityList[i.Host].Add((NoSelectionSpecialAbilityScript)i);
+                //    }
+                //    else
+                //    {
+                //        unitToSpcialAbilityList.Add(i.Host, new List<NoSelectionSpecialAbilityScript>() { (NoSelectionSpecialAbilityScript)i });
+                //    }
+                //}
                 UseNoSelectionSkill(showingAbilities[skillType].Where(x => x.GetType() == typeof(NoSelectionSpecialAbilityScript)).ToList());
             }
             else if (showingAbilities[skillType].FirstOrDefault(x => x.GetType() == typeof(SelectTargetSpecialAbilityScript)) != default)
             {
+                //Dictionary<UnitBaseScript, List<SelectTargetSpecialAbilityScript>> unitToSpcialAbilityList = new Dictionary<UnitBaseScript, List<SelectTargetSpecialAbilityScript>>();
+                //foreach (SpecialAbilityBaseScript i in showingAbilities[skillType])
+                //{
+                //    if (unitToSpcialAbilityList.ContainsKey(i.Host))
+                //    {
+                //        unitToSpcialAbilityList[i.Host].Add((SelectTargetSpecialAbilityScript)i);
+                //    }
+                //    else
+                //    {
+                //        unitToSpcialAbilityList.Add(i.Host, new List<SelectTargetSpecialAbilityScript>() { (SelectTargetSpecialAbilityScript)i });
+                //    }
+                //}
                 UseSelectTargetSkill(showingAbilities[skillType].Where(x => x.GetType() == typeof(SelectTargetSpecialAbilityScript)).ToList());
             }
             else if (showingAbilities[skillType].FirstOrDefault(x => x.GetType() == typeof(SelectSpaceSpecialAbilityScript)) != default)
             {
+                //Dictionary<UnitBaseScript, List<SelectSpaceSpecialAbilityScript>> unitToSpcialAbilityList = new Dictionary<UnitBaseScript, List<SelectSpaceSpecialAbilityScript>>();
+                //foreach (SpecialAbilityBaseScript i in showingAbilities[skillType])
+                //{
+                //    if (unitToSpcialAbilityList.ContainsKey(i.Host))
+                //    {
+                //        unitToSpcialAbilityList[i.Host].Add((SelectSpaceSpecialAbilityScript)i);
+                //    }
+                //    else
+                //    {
+                //        unitToSpcialAbilityList.Add(i.Host, new List<SelectSpaceSpecialAbilityScript>() { (SelectSpaceSpecialAbilityScript)i });
+                //    }
+                //}
                 UseSelectSpaceSkill(showingAbilities[skillType].Where(x => x.GetType() == typeof(SelectSpaceSpecialAbilityScript)).ToList());
             }
             else

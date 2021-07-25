@@ -479,24 +479,15 @@ namespace RTS.RTSGameObject.Unit
                         }
                         return;
                     case ActionType.UseNoSelectionSpecialAbility:
-                        foreach (NoSelectionSpecialAbilityScript i in (List<NoSelectionSpecialAbilityScript>)action.targets[0])
-                        {
-                            i.UseAbility();
-                        }
+                        ((NoSelectionSpecialAbilityScript)action.targets[0]).ParseSpecialAbility();
                         ActionQueue.RemoveFirst();
                         return;
                     case ActionType.UseSelectTargetSpecialAbility:
-                        foreach (SelectTargetSpecialAbilityScript i in (List<SelectTargetSpecialAbilityScript>)action.targets[0])
-                        {
-                            i.UseAbility((GameObject)action.targets[1]);
-                        }
+                        ((SelectTargetSpecialAbilityScript)action.targets[0]).ParseSpecialAbility((GameObject)action.targets[1]);
                         ActionQueue.RemoveFirst();
                         return;
                     case ActionType.UseSelectSpaceSpecialAbility:
-                        foreach (SelectSpaceSpecialAbilityScript i in (List<SelectSpaceSpecialAbilityScript>)action.targets[0])
-                        {
-                            i.UseAbility((Vector3)action.targets[1]);
-                        }
+                        ((SelectSpaceSpecialAbilityScript)action.targets[0]).ParseSpecialAbility((Vector3)action.targets[1]);
                         ActionQueue.RemoveFirst();
                         return;
                     case ActionType.ForcedMove:

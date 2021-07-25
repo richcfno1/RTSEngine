@@ -10,7 +10,7 @@ namespace RTS.Ability.SpecialAbility
         public List<string> possibleTargetTags;
         public List<GameManager.PlayerRelation> possibleRelations;
 
-        public virtual void UseAbility(GameObject target)
+        public virtual void ParseSpecialAbility(GameObject target)
         {
             if (possibleTargetTags.Contains(target.tag) && (Host.transform.position - target.transform.position).magnitude <= distance)
             {
@@ -20,6 +20,11 @@ namespace RTS.Ability.SpecialAbility
                     supportedBy.Use(target);
                 }
             }
+        }
+
+        public virtual void UseAbility(GameObject target, bool clearQueue = true, bool addToEnd = true)
+        {
+            Host.UseSelectTargetSpecialAbility(this, target, clearQueue, addToEnd);
         }
     }
 }

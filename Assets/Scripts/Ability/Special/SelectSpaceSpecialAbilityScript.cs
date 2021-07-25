@@ -8,12 +8,17 @@ namespace RTS.Ability.SpecialAbility
     {
         public float distance;
 
-        public virtual void UseAbility(Vector3 target)
+        public virtual void ParseSpecialAbility(Vector3 target)
         {
             if ((Host.transform.position - target).magnitude <= distance)
             {
                 supportedBy.Use(target);
             }
+        }
+
+        public virtual void UseAbility(Vector3 target, bool clearQueue = true, bool addToEnd = true)
+        {
+            Host.UseSelectSpaceSpecialAbility(this, target, clearQueue, addToEnd);
         }
     }
 }
