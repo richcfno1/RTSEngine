@@ -111,6 +111,7 @@ namespace RTS.UI.Command
         void Start()
         {
             Cursor.SetCursor(normalCursorTexture, Vector2.zero, CursorMode.Auto);
+            Cursor.lockState = CursorLockMode.Confined;
 
             graphicRaycaster = GetComponent<GraphicRaycaster>();
             eventSystem = GetComponent<EventSystem>();
