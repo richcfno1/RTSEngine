@@ -83,8 +83,7 @@ namespace RTS.UI.Command
                             if (Input.GetKey(InputManager.HotKeys.SetUnitMoveHeight))
                             {
                                 Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-                                Vector3 center = SelectControlScript.SelectionControlInstance.FindCenter();
-                                Plane hPlane = new Plane(Vector3.Cross(center - destinationHorizontalPosition, Vector3.up), destinationHorizontalPosition);
+                                Plane hPlane = new Plane(Camera.main.transform.forward, destinationHorizontalPosition);
                                 float distance;
                                 if (hPlane.Raycast(ray, out distance))
                                 {

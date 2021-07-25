@@ -219,6 +219,7 @@ namespace RTS.UI.Command
         protected float destinationVerticalDistance = 0;
         protected Vector3 destinationHorizontalPosition = new Vector3();
 
+        // For user32.dll
         protected int mousePositionX = 0;
         protected int mousePositionY = 0;
 
