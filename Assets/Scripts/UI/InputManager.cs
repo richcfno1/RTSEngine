@@ -69,6 +69,19 @@ namespace RTS.UI.Command
             public static KeyCode Select8 = KeyCode.F8;
             public static KeyCode Select9 = KeyCode.F9;
             public static KeyCode Select10 = KeyCode.F10;
+            // Team select
+            public static KeyCode GroupKey = KeyCode.LeftControl;
+            public static KeyCode GroupAddKey = KeyCode.LeftShift;
+            public static KeyCode Group1 = KeyCode.Alpha1;
+            public static KeyCode Group2 = KeyCode.Alpha2;
+            public static KeyCode Group3 = KeyCode.Alpha3;
+            public static KeyCode Group4 = KeyCode.Alpha4;
+            public static KeyCode Group5 = KeyCode.Alpha5;
+            public static KeyCode Group6 = KeyCode.Alpha6;
+            public static KeyCode Group7 = KeyCode.Alpha7;
+            public static KeyCode Group8 = KeyCode.Alpha8;
+            public static KeyCode Group9 = KeyCode.Alpha9;
+            public static KeyCode Group10 = KeyCode.Alpha0;
 
             // Action
             // Base mouse action (without button)

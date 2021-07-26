@@ -19,6 +19,7 @@ namespace RTS.UI.Command
         public GameObject MainSelectedGameObject { get; private set; } = null;
         public bool SelectedChanged { get; private set; } = false;
         public bool SelectedOwnUnits { get; private set; } = false;
+        public List<List<GameObject>> UnitGroup { get; private set; } = Enumerable.Repeat(new List<GameObject>(), 10).ToList();
 
         private int selfIndex;
         private Vector3 mouseStartPosition;
@@ -200,6 +201,8 @@ namespace RTS.UI.Command
                         MainSelectedType = tempSortedTypes[selectSpecificIndex];
                     }
                 }
+
+
             }
             else
             {
@@ -228,6 +231,64 @@ namespace RTS.UI.Command
                         MainSelectedGameObject = temp;
                     }
                 }
+            }
+
+            int groupIndex = -1;
+            if (Input.GetKeyDown(InputManager.HotKeys.Group1))
+            {
+                groupIndex = 0;
+            }
+            if (Input.GetKeyDown(InputManager.HotKeys.Group2))
+            {
+                groupIndex = 1;
+            }
+            if (Input.GetKeyDown(InputManager.HotKeys.Group3))
+            {
+                groupIndex = 2;
+            }
+            if (Input.GetKeyDown(InputManager.HotKeys.Group4))
+            {
+                groupIndex = 3;
+            }
+            if (Input.GetKeyDown(InputManager.HotKeys.Group5))
+            {
+                groupIndex = 4;
+            }
+            if (Input.GetKeyDown(InputManager.HotKeys.Group6))
+            {
+                groupIndex = 5;
+            }
+            if (Input.GetKeyDown(InputManager.HotKeys.Group7))
+            {
+                groupIndex = 6;
+            }
+            if (Input.GetKeyDown(InputManager.HotKeys.Group8))
+            {
+                groupIndex = 7;
+            }
+            if (Input.GetKeyDown(InputManager.HotKeys.Group9))
+            {
+                groupIndex = 8;
+            }
+            if (Input.GetKeyDown(InputManager.HotKeys.Group10))
+            {
+                groupIndex = 9;
+            }
+            if (groupIndex != -1)
+            {
+                if (SelectedOwnUnits)
+                {
+                    if (Input.GetKey(InputManager.HotKeys.GroupKey))
+                    {
+                        UnitGroup[groupIndex].Clear();
+                        UnitGroup[groupIndex] = GetAllGameObjectsAsList();
+                    }
+                    else if (Input.GetKey(InputManager.HotKeys.GroupAddKey))
+                    {
+                        UnitGroup[groupIndex].AddRange(GetAllGameObjectsAsList());
+                    }
+                }
+                SetSelectedGameObjects(UnitGroup[groupIndex]);
             }
         }
 
