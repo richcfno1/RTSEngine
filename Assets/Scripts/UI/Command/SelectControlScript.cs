@@ -282,10 +282,14 @@ namespace RTS.UI.Command
                     {
                         UnitGroup[groupIndex].Clear();
                         UnitGroup[groupIndex] = GetAllGameObjectsAsList();
+                        UnitGroup[groupIndex].Sort((x, y) => x.GetComponent<RTSGameObjectBaseScript>().Index.
+                            CompareTo(y.GetComponent<RTSGameObjectBaseScript>().Index));
                     }
                     else if (Input.GetKey(InputManager.HotKeys.GroupAddKey))
                     {
                         UnitGroup[groupIndex].AddRange(GetAllGameObjectsAsList());
+                        UnitGroup[groupIndex].Sort((x, y) => x.GetComponent<RTSGameObjectBaseScript>().Index.
+                            CompareTo(y.GetComponent<RTSGameObjectBaseScript>().Index));
                     }
                 }
                 SetSelectedGameObjects(UnitGroup[groupIndex]);
