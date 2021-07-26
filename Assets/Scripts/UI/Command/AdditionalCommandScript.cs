@@ -715,7 +715,10 @@ namespace RTS.UI.Command
             InputManager.InputManagerInstance.CurrentMouseTexture = InputManager.MouseTexture.Command;
             RTSGameObjectBaseScript target = InputManager.InputManagerInstance.PointedRTSGameObject;
             bool valid = false;
-            if (target != null && ((SelectTargetSpecialAbilityScript)abilities.FirstOrDefault()).possibleTargetTags.Contains(target.tag))
+            if (target != null && ((SelectTargetSpecialAbilityScript)abilities.FirstOrDefault()).possibleTargetTags.Contains(target.tag) &&
+                ((SelectTargetSpecialAbilityScript)abilities.FirstOrDefault()).possibleRelations.Contains(
+                GameManager.GameManagerInstance.GetPlayerRelation(abilities.FirstOrDefault().Host.BelongTo, 
+                target.GetComponent<RTSGameObjectBaseScript>().BelongTo)))
             {
                 valid = true;
                 InputManager.InputManagerInstance.CurrentMouseTexture = InputManager.MouseTexture.ValidTarget;

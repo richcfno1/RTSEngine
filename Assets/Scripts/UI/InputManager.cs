@@ -58,6 +58,17 @@ namespace RTS.UI.Command
             public static KeyCode SelectAllUnit = KeyCode.Q;
             public static KeyCode SelectSameType = KeyCode.W;  // Also support select main selected
             public static KeyCode MoveMainSelectTypeToNext = KeyCode.Tab;
+            // Select specific unit or type in select panel
+            public static KeyCode Select1 = KeyCode.F1;
+            public static KeyCode Select2 = KeyCode.F2;
+            public static KeyCode Select3 = KeyCode.F3;
+            public static KeyCode Select4 = KeyCode.F4;
+            public static KeyCode Select5 = KeyCode.F5;
+            public static KeyCode Select6 = KeyCode.F6;
+            public static KeyCode Select7 = KeyCode.F7;
+            public static KeyCode Select8 = KeyCode.F8;
+            public static KeyCode Select9 = KeyCode.F9;
+            public static KeyCode Select10 = KeyCode.F10;
 
             // Action
             // Base mouse action (without button)

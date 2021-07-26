@@ -74,3 +74,4 @@ MonoBehaviour:
   distance: 1000
   possibleTargetTags:
   - Ship
+  possibleRelations: 03000000

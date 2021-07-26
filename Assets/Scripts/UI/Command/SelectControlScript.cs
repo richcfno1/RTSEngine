@@ -107,6 +107,8 @@ namespace RTS.UI.Command
             List<string> toRemoveKey = new List<string>();
             foreach (KeyValuePair<string, List<GameObject>> i in SelectedGameObjects)
             {
+                i.Value.Sort((x, y) => x.GetComponent<RTSGameObjectBaseScript>().Index.
+                    CompareTo(y.GetComponent<RTSGameObjectBaseScript>().Index));
                 List<GameObject> toRemoveValue = new List<GameObject>();
                 // Check objects with same type
                 foreach (GameObject j in i.Value)
@@ -130,12 +132,55 @@ namespace RTS.UI.Command
                 SelectedGameObjects.Remove(i);
             }
 
+            if (MainSelectedType == null || !SelectedGameObjects.Keys.Contains(MainSelectedType))
+            {
+                MainSelectedType = SelectedGameObjects.Keys.FirstOrDefault();
+            }
+
+            int selectSpecificIndex = -1;
+            if (Input.GetKeyDown(InputManager.HotKeys.Select1))
+            {
+                selectSpecificIndex = 0;
+            }
+            if (Input.GetKeyDown(InputManager.HotKeys.Select2))
+            {
+                selectSpecificIndex = 1;
+            }
+            if (Input.GetKeyDown(InputManager.HotKeys.Select3))
+            {
+                selectSpecificIndex = 2;
+            }
+            if (Input.GetKeyDown(InputManager.HotKeys.Select4))
+            {
+                selectSpecificIndex = 3;
+            }
+            if (Input.GetKeyDown(InputManager.HotKeys.Select5))
+            {
+                selectSpecificIndex = 4;
+            }
+            if (Input.GetKeyDown(InputManager.HotKeys.Select6))
+            {
+                selectSpecificIndex = 5;
+            }
+            if (Input.GetKeyDown(InputManager.HotKeys.Select7))
+            {
+                selectSpecificIndex = 6;
+            }
+            if (Input.GetKeyDown(InputManager.HotKeys.Select8))
+            {
+                selectSpecificIndex = 7;
+            }
+            if (Input.GetKeyDown(InputManager.HotKeys.Select9))
+            {
+                selectSpecificIndex = 8;
+            }
+            if (Input.GetKeyDown(InputManager.HotKeys.Select10))
+            {
+                selectSpecificIndex = 9;
+            }
+
             if (SelectedGameObjects.Keys.Count > 1)
             {
-                if (MainSelectedType == null || !SelectedGameObjects.Keys.Contains(MainSelectedType))
-                {
-                    MainSelectedType = SelectedGameObjects.Keys.FirstOrDefault();
-                }
                 if (Input.GetKeyDown(InputManager.HotKeys.MoveMainSelectTypeToNext))
                 {
                     List<string> tempSortedTypes = SelectedGameObjects.Keys.ToList();
@@ -143,19 +188,45 @@ namespace RTS.UI.Command
                     index = index >= tempSortedTypes.Count ? 0 : index;
                     MainSelectedType = tempSortedTypes[index];
                 }
+                if (selectSpecificIndex != -1 && selectSpecificIndex < SelectedGameObjects.Keys.Count)
+                {
+                    List<string> tempSortedTypes = SelectedGameObjects.Keys.ToList();
+                    if (MainSelectedType == tempSortedTypes[selectSpecificIndex])
+                    {
+                        SetSelectedGameObjects(SelectedGameObjects[MainSelectedType]);
+                    }
+                    else
+                    {
+                        MainSelectedType = tempSortedTypes[selectSpecificIndex];
+                    }
+                }
             }
             else
             {
                 List<GameObject> tempAllGameObjects = GetAllGameObjectsAsList();
-                if (MainSelectedGameObject == null)
-                {
-                    MainSelectedGameObject = tempAllGameObjects.FirstOrDefault();
-                }
                 if (Input.GetKeyDown(InputManager.HotKeys.MoveMainSelectTypeToNext))
                 {
-                    int index = tempAllGameObjects.IndexOf(MainSelectedGameObject) + 1;
-                    index = index >= tempAllGameObjects.Count ? 0 : index;
-                    MainSelectedGameObject = tempAllGameObjects[index];
+                    if (MainSelectedGameObject == null)
+                    {
+                        MainSelectedGameObject = tempAllGameObjects.FirstOrDefault();
+                    }
+                    else
+                    {
+                        int index = tempAllGameObjects.IndexOf(MainSelectedGameObject) + 1;
+                        MainSelectedGameObject = index >= tempAllGameObjects.Count ? null : tempAllGameObjects[index];
+                    }
+                }
+                if (selectSpecificIndex != -1 && selectSpecificIndex < tempAllGameObjects.Count)
+                {
+                    GameObject temp = tempAllGameObjects[selectSpecificIndex];
+                    if (MainSelectedGameObject == temp)
+                    {
+                        SetSelectedGameObjects(new List<GameObject>() { MainSelectedGameObject });
+                    }
+                    else
+                    {
+                        MainSelectedGameObject = temp;
+                    }
                 }
             }
         }
@@ -243,11 +314,7 @@ namespace RTS.UI.Command
             List<GameObject> result = new List<GameObject>();
             foreach (KeyValuePair<string, List<GameObject>> i in SelectedGameObjects)
             {
-                // Check objects with same type
-                foreach (GameObject j in i.Value)
-                {
-                    result.Add(j);
-                }
+                result.AddRange(i.Value);
             }
             return result;
         }
