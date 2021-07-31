@@ -9796,9 +9796,11 @@ MonoBehaviour:
     anchor: {fileID: 3824726096340282299}
     subsystemScale: 1
     subsystem: {fileID: 3404472462374229839}
-  searchStepDistance: 20
-  searchStepMaxDistance: 100
-  searchMaxRandomNumber: 10
+  searchStepDistance: 40
+  searchStepMaxDistance: 200
+  searchMaxRandomNumber: 5
+  nextSearchPending: 0.1
+  visionRange: 0
   autoEngageDistance: 300
   maxAttackPower: 100
   maxDefencePower: 100

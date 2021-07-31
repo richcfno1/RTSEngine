@@ -1,0 +1,178 @@
+{
+  "initPlayerData": [
+    {
+      "index": 0,
+      "name": "Nature"
+    },
+    {
+      "index": 1,
+      "name": "RC"
+    }
+  ],
+  "initUnitLibraryData": [
+    {
+      "unitTypeName": "StandardFrigate",
+      "baseTypeName": "Frigate1",
+      "properties": {},
+      "subsystems": {
+        "TurretAnchor1": "Turret1",
+        "TurretAnchor2": "Turret1",
+        "TurretAnchor3": "LaserTurret1",
+        "TurretAnchor4": "Turret1",
+        "TurretAnchor5": "Turret1",
+        "TurretAnchor6": "LaserTurret1"
+      },
+      "commonAbilities": {
+        "Move": [ "Frigate1" ],
+        "Attack": [ "TurretAnchor1", "TurretAnchor2", "TurretAnchor3", "TurretAnchor4", "TurretAnchor5", "TurretAnchor6" ],
+        "Carrier": [  ]
+      },
+      "scripts": {
+        "Test": "if (Time() > 5 and not flag) then flag = true\n Test({ unitType=\"StandardFrigate\", position={x=0.0,y=100.0,z=0.0}, belongsTo=1 })\n HelloWorld() end"
+      }
+    },
+    {
+      "unitTypeName": "StandardFighter",
+      "baseTypeName": "Fighter2",
+      "properties": {},
+      "subsystems": {},
+      "commonAbilities": { 
+        "Move": [ "Fighter2" ],
+        "Attack": [ "AxisWeaponAnchor1", "AxisWeaponAnchor2" ] 
+      }
+    },
+    {
+      "unitTypeName": "TargetShip",
+      "baseTypeName": "Battleship1",
+      "properties": {},
+      "subsystems": {},
+      "commonAbilities": {
+        "Move": [ "Battleship1" ],
+        "Attack": [  ],
+        "Carrier": [  ]
+      }
+    }
+  ],
+  "initUnitData": [
+    {
+      "type": "StandardFrigate",
+      "belongTo": 0,
+      "position": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "rotation": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "w": 0.0
+      }
+    },
+    {
+      "type": "StandardFrigate",
+      "belongTo": 0,
+      "position": {
+        "x": 100.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "rotation": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "w": 0.0
+      }
+    },
+    {
+      "type": "StandardFrigate",
+      "belongTo": 0,
+      "position": {
+        "x": -100.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "rotation": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "w": 0.0
+      }
+    },
+    {
+      "type": "StandardFrigate",
+      "belongTo": 0,
+      "position": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 100.0
+      },
+      "rotation": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "w": 0.0
+      }
+    },
+    {
+      "type": "StandardFrigate",
+      "belongTo": 0,
+      "position": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": -100.0
+      },
+      "rotation": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "w": 0.0
+      }
+    },
+    {
+      "type": "StandardFrigate",
+      "belongTo": 0,
+      "position": {
+        "x": 0.0,
+        "y": 100.0,
+        "z": 0.0
+      },
+      "rotation": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "w": 0.0
+      }
+    },
+    {
+      "type": "StandardFrigate",
+      "belongTo": 0,
+      "position": {
+        "x": 0.0,
+        "y": -100.0,
+        "z": 0.0
+      },
+      "rotation": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "w": 0.0
+      }
+    },
+    {
+      "type": "TargetShip",
+      "belongTo": 1,
+      "position": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 500.0
+      },
+      "rotation": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "w": 0.0
+      }
+    }
+  ]
+}

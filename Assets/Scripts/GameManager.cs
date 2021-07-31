@@ -62,6 +62,7 @@ namespace RTS
             public string playerName;
             public float playerMoney;
             public List<int> playerGameObjects = new List<int>();
+            public List<int> playerUnits = new List<int>();
         }
 
         public static GameManager GameManagerInstance { get; private set; }
@@ -78,6 +79,7 @@ namespace RTS
         private Dictionary<int, Player> allPlayers = new Dictionary<int, Player>();
         private Dictionary<int, GameObject> allGameObjectsDict = new Dictionary<int, GameObject>();
         private List<GameObject> allGameObjectsList = new List<GameObject>();
+        private List<GameObject> allUnitList = new List<GameObject>();
 
         void Awake()
         {
@@ -104,6 +106,8 @@ namespace RTS
         // Update is called once per frame
         void Update()
         {
+            SetVision();
+
             // Debug use
             if (Input.GetKeyDown(KeyCode.O))
             {
@@ -111,10 +115,47 @@ namespace RTS
                 recordData -= 25;
                 Debug.Log(recordData / 25);
             }
+            if (Input.GetKeyDown(KeyCode.L))
+            {
+                InstantiateUnit("StandardFrigate", new Vector3(recordData, 500, recordData + recordData2), new Quaternion(), GameObject.Find("RTSGameObject").transform, 1);
+                recordData -= 25;
+                Debug.Log(recordData / 25);
+            }
             if (Input.GetKeyDown(KeyCode.P))
             {
                 recordData = 0;
                 recordData2 = -25;
+            }
+        }
+
+        private void SetVision()
+        {
+            foreach (KeyValuePair<int, Player> i in allPlayers)
+            {
+                foreach (int iUnit in i.Value.playerUnits)
+                {
+                    allGameObjectsDict[iUnit].GetComponent<UnitBaseScript>().VisibleTo.Clear();
+                    // For every unit of player i, determine with every other players' unit
+                    foreach (KeyValuePair<int, Player> j in allPlayers)
+                    {
+                        if (i.Key == j.Key)
+                        {
+                            allGameObjectsDict[iUnit].GetComponent<UnitBaseScript>().VisibleTo.Add(i.Key);
+                            continue;
+                        }
+                        foreach (int jUnit in j.Value.playerUnits)
+                        {
+                            GameObject observer = allGameObjectsDict[jUnit];
+                            GameObject observed = allGameObjectsDict[iUnit];
+                            if ((observer.transform.position - observed.transform.position).magnitude <=
+                                observer.GetComponent<UnitBaseScript>().visionRange)
+                            {
+                                allGameObjectsDict[iUnit].GetComponent<UnitBaseScript>().VisibleTo.Add(j.Key);
+                                break;
+                            }
+                        }
+                    }
+                }
             }
         }
 
@@ -273,11 +314,13 @@ namespace RTS
                 }
             }
 
-            // Set belonging
+            // Set belonging and index
             result.GetComponent<RTSGameObjectBaseScript>().BelongTo = belongTo;
             foreach (RTSGameObjectBaseScript i in result.GetComponentsInChildren<RTSGameObjectBaseScript>())
             {
                 i.BelongTo = belongTo;
+                i.Index = gameObjectIndexCounter;
+                gameObjectIndexCounter++;
             }
             return result;
         }
@@ -313,15 +356,21 @@ namespace RTS
             // TODO: LUA
 
             // Index
-            self.GetComponent<RTSGameObjectBaseScript>().Index = gameObjectIndexCounter;
-            allGameObjectsDict.Add(gameObjectIndexCounter, self);
+            int gameObjectIndex = self.GetComponent<RTSGameObjectBaseScript>().Index;
+            allGameObjectsDict.Add(gameObjectIndex, self);
             allGameObjectsList.Add(self);
+            if (self.GetComponent<UnitBaseScript>() != null)
+            {
+                allUnitList.Add(self);
+            }
 
             // Player
             int playerIndex = self.GetComponent<RTSGameObjectBaseScript>().BelongTo;
-            allPlayers[playerIndex].playerGameObjects.Add(gameObjectIndexCounter);
-
-            gameObjectIndexCounter++;
+            allPlayers[playerIndex].playerGameObjects.Add(gameObjectIndex);
+            if (self.GetComponent<UnitBaseScript>() != null)
+            {
+                allPlayers[playerIndex].playerUnits.Add(gameObjectIndex);
+            }
         }
 
         public void OnGameObjectDamaged(GameObject self, GameObject other)
@@ -344,10 +393,18 @@ namespace RTS
             int gameObjectIndex = self.GetComponent<RTSGameObjectBaseScript>().Index;
             allGameObjectsDict.Remove(gameObjectIndex);
             allGameObjectsList.Remove(self);
+            if (self.GetComponent<UnitBaseScript>() != null)
+            {
+                allUnitList.Remove(self);
+            }
 
             // Player
             int playerIndex = self.GetComponent<RTSGameObjectBaseScript>().BelongTo;
             allPlayers[playerIndex].playerGameObjects.Remove(gameObjectIndex);
+            if (self.GetComponent<UnitBaseScript>() != null)
+            {
+                allPlayers[playerIndex].playerUnits.Remove(gameObjectIndex);
+            }
         }
 
         public ref List<GameObject> GetAllGameObjects()

@@ -45,6 +45,7 @@ namespace RTS.RTSGameObject.Unit
             if (HP <= 0)
             {
                 OnDestroyedAction();
+                return;
             }
             curAttackPower = Mathf.Clamp(curAttackPower + recoverAttackPower * Time.fixedDeltaTime, 0, maxAttackPower);
             curDefencePower = Mathf.Clamp(curDefencePower + recoverDefencePower * Time.fixedDeltaTime, 0, maxDefencePower);
@@ -54,6 +55,7 @@ namespace RTS.RTSGameObject.Unit
             // Do not play physcial simulation here, this is a spaceship!
             thisBody.velocity = Vector3.zero;
             thisBody.angularVelocity = Vector3.zero;
+            searchTimer += Time.fixedDeltaTime;
 
             // In aggressive status, when detect a nearby enemy, call attack ability
             if (AttackAbility != null && CurrentFireControlStatus == FireControlStatus.Aggressive && autoEngageTarget == null && 
@@ -622,26 +624,6 @@ namespace RTS.RTSGameObject.Unit
             }
         }
 
-        protected override void OnCreatedAction()
-        {
-            base.OnCreatedAction();
-            AttackPower = 1;
-            DefencePower = 1;
-            MovePower = 1;
-        }
-
-        protected override void OnDestroyedAction()
-        {
-            foreach (AnchorData i in subsyetemAnchors)
-            {
-                if (i.subsystem != null)
-                {
-                    GameManager.GameManagerInstance.OnGameObjectDestroyed(i.subsystem, lastDamagedBy);
-                }
-            }
-            base.OnDestroyedAction();
-        }
-
         // Pathfinder
         private float TestObstacle(Vector3 from, Vector3 to)
         {
@@ -701,6 +683,11 @@ namespace RTS.RTSGameObject.Unit
         // Return value is modified destination
         private Vector3 FindPath(Vector3 from, Vector3 to)
         {
+            if (searchTimer < nextSearchPending)
+            {
+                Debug.Log("Search pending");
+                return finalPosition;
+            }
             List<Vector3> result = new List<Vector3>();
             List<Collider> intersectObjects = new List<Collider>(Physics.OverlapBox(to, NavigationCollider.size, transform.rotation));
             float nextStepDistance = searchStepDistance;
@@ -761,6 +748,7 @@ namespace RTS.RTSGameObject.Unit
                 if (!find)
                 {
                     Debug.Log("Out of search limitation when determine path");
+                    searchTimer = 0;
                     result.Clear();
                 }
                 else

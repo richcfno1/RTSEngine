@@ -80,6 +80,11 @@ namespace RTS.RTSGameObject.Unit
         public float searchStepMaxDistance;
         [Tooltip("The number of points tested in each sphere.")]
         public float searchMaxRandomNumber;
+        [Tooltip("The wait time to search again if previous search failed.")]
+        public float nextSearchPending;
+
+        [Header("Vision Range")]
+        public float visionRange;
 
         [Header("Fire Control")]
         public float autoEngageDistance;
@@ -109,6 +114,9 @@ namespace RTS.RTSGameObject.Unit
         public float DefencePower { get { return curDefencePower / maxDefencePower; } set { curDefencePower = value * maxDefencePower; } }
         public float MovePower { get { return curMovePower / maxMovePower; } set { curMovePower = value * maxMovePower; } }
         public Dictionary<string, float> PropertyDictionary { get; set; } = new Dictionary<string, float>();
+
+        public List<int> VisibleTo { get; set; } = new List<int>();
+
         public FireControlStatus CurrentFireControlStatus { get; set; } = FireControlStatus.Neutral;
         public LinkedList<UnitAction> ActionQueue { get; protected set; } = new LinkedList<UnitAction>();
 
@@ -123,10 +131,34 @@ namespace RTS.RTSGameObject.Unit
 
         protected GameObject autoEngageTarget = null;
 
+        protected float searchTimer = 0;
         protected Vector3 finalPosition;
         protected Vector3 finalRotationTarget;  // Where to look at
         protected List<Vector3> moveBeacons = new List<Vector3>();
         protected bool isApproaching = true;
+
+        protected override void OnCreatedAction()
+        {
+            base.OnCreatedAction();
+            AttackPower = 1;
+            DefencePower = 1;
+            MovePower = 1;
+        }
+
+        protected override void OnDestroyedAction()
+        {
+            foreach (AnchorData i in subsyetemAnchors)
+            {
+                if (i.subsystem != null)
+                {
+                    // Since OnDestroyedAction() of subsystem won't destroy the subsystem and report to GameManager, 
+                    // Unit must do it for every subsystem. OnDestroyedAction() of subsystem is used when HP <= 0, 
+                    // but subsystem will only be destroyed when unit is destroyed
+                    GameManager.GameManagerInstance.OnGameObjectDestroyed(i.subsystem, lastDamagedBy);
+                }
+            }
+            base.OnDestroyedAction();
+        }
 
         public override void CreateDamage(float damage, float attackPowerReduce, float defencePowerReduce, float movePowerReduce, GameObject from)
         {

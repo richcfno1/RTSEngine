@@ -59,7 +59,8 @@ namespace RTS.RTSGameObject.Subsystem
                         Vector3 rayDirection = turretBarrels.forward;
                         if (Physics.Raycast(rayPosition, rayDirection, out hit, lockRange, ~pathfinderLayerMask))
                         {
-                            if (hit.collider.tag != "AimCollider" && (hit.collider.GetComponent<RTSGameObjectBaseScript>() == null || hit.collider.GetComponent<RTSGameObjectBaseScript>().BelongTo != BelongTo))
+                            if (hit.collider.tag != "AimCollider" && (hit.collider.GetComponent<RTSGameObjectBaseScript>() == null || 
+                                hit.collider.GetComponent<RTSGameObjectBaseScript>().BelongTo != BelongTo))
                             {
                                 Fire(shootCount);
                                 shootCount++;

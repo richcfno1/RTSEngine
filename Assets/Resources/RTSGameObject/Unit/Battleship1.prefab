@@ -237,7 +237,7 @@ MonoBehaviour:
   objectScale: 4
   objectType: 4
   typeID: Battleship1
-  maxHP: 5000
+  maxHP: 1e+9
   NavigationCollider: {fileID: 2409526594866830836}
   onDestroyedEffect: {fileID: 0}
   radius: 30
@@ -249,6 +249,7 @@ MonoBehaviour:
   searchStepDistance: 50
   searchStepMaxDistance: 200
   searchMaxRandomNumber: 10
+  visionRange: 0
   autoEngageDistance: 1000
   maxAttackPower: 5000
   maxDefencePower: 5000

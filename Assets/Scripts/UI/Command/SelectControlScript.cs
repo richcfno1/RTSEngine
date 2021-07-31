@@ -108,8 +108,6 @@ namespace RTS.UI.Command
             List<string> toRemoveKey = new List<string>();
             foreach (KeyValuePair<string, List<GameObject>> i in SelectedGameObjects)
             {
-                i.Value.Sort((x, y) => x.GetComponent<RTSGameObjectBaseScript>().Index.
-                    CompareTo(y.GetComponent<RTSGameObjectBaseScript>().Index));
                 List<GameObject> toRemoveValue = new List<GameObject>();
                 // Check objects with same type
                 foreach (GameObject j in i.Value)
@@ -133,7 +131,13 @@ namespace RTS.UI.Command
                 SelectedGameObjects.Remove(i);
             }
 
-            if (MainSelectedType == null || !SelectedGameObjects.Keys.Contains(MainSelectedType))
+            foreach (KeyValuePair<string, List<GameObject>> i in SelectedGameObjects)
+            {
+                i.Value.Sort((x, y) => x.GetComponent<RTSGameObjectBaseScript>().Index.
+                    CompareTo(y.GetComponent<RTSGameObjectBaseScript>().Index));
+            }
+
+                if (MainSelectedType == null || !SelectedGameObjects.Keys.Contains(MainSelectedType))
             {
                 MainSelectedType = SelectedGameObjects.Keys.FirstOrDefault();
             }
@@ -398,6 +402,10 @@ namespace RTS.UI.Command
                 SortedDictionary<string, List<SpecialAbilityBaseScript>> result = new SortedDictionary<string, List<SpecialAbilityBaseScript>>();
                 foreach (GameObject i in SelectedGameObjects[MainSelectedType])
                 {
+                    if (i.GetComponent<UnitBaseScript>() == null)
+                    {
+                        return new SortedDictionary<string, List<SpecialAbilityBaseScript>>();
+                    }
                     foreach (KeyValuePair<string, List<SpecialAbilityBaseScript>> j in i.GetComponent<UnitBaseScript>().SpecialAbilityList)
                     {
                         if (result.ContainsKey(j.Key))
