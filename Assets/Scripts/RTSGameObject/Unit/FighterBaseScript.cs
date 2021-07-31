@@ -2,6 +2,7 @@ using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 using RTS.Ability.SpecialAbility;
+using RTS.Helper;
 
 namespace RTS.RTSGameObject.Unit
 {
@@ -572,16 +573,6 @@ namespace RTS.RTSGameObject.Unit
                     }
                 }
             }
-            //Vector3 direction = (to - from).normalized;
-            //List<Collider> toIgnore = new List<Collider>(Physics.OverlapSphere(from, agentRadius));
-            //RaycastHit[] hits = Physics.CapsuleCastAll(from, from + direction * agentRadius * 5, agentRadius, direction, direction.magnitude);
-            //foreach (RaycastHit i in hits)
-            //{
-            //    if (!toIgnore.Contains(i.collider) && !i.collider.CompareTag("Bullet"))
-            //    {
-            //        return (i.collider.ClosestPoint(from) - from).magnitude;
-            //    }
-            //}
             return 0;
         }
 
@@ -634,7 +625,7 @@ namespace RTS.RTSGameObject.Unit
                 {
                     for (int i = 0; i < searchMaxRandomNumber; i++)
                     {
-                        middle = obstaclePosition + nextStepDistance * new Vector3(Random.value * 2 - 1, Random.value * 2 - 1, Random.value * 2 - 1).normalized;
+                        middle = obstaclePosition + nextStepDistance * UnitVectorHelper.RandomTangent(direction);
                         intersectObjects = new List<Collider>(Physics.OverlapBox(middle, NavigationCollider.size, transform.rotation));
                         intersectObjects.RemoveAll(x => x.CompareTag("Bullet"));
                         if (intersectObjects.Count == 0 && TestObstacle(middle, to) == 0 && TestObstacle(from, middle) == 0)

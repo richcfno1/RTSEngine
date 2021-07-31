@@ -78,7 +78,10 @@ namespace RTS.RTSGameObject.Subsystem
                             }
                         }
                     }
-                    DetermineFireTarget();
+                    else
+                    {
+                        DetermineFireTarget();
+                    }
                     timer = 0;
                 }
                 else
@@ -127,6 +130,7 @@ namespace RTS.RTSGameObject.Subsystem
                     }
                 }
             }
+
             List<Collider> allPossibleTargets = new List<Collider>(Physics.OverlapSphere(transform.position, lockRange, ~pathfinderLayerMask));
             List<Collider> filteredPossibleTargets = new List<Collider>();
             foreach (string i in possibleTargetTags)
@@ -137,6 +141,7 @@ namespace RTS.RTSGameObject.Subsystem
                 x.GetComponent<RTSGameObjectBaseScript>().BelongTo != BelongTo).ToList();
             filteredPossibleTargets.Sort((x, y) => Comparer.Default.Compare(
                 (x.transform.position - transform.position).sqrMagnitude, (y.transform.position - transform.position).sqrMagnitude));
+
             foreach (Collider i in filteredPossibleTargets)
             {
                 RaycastHit hit;

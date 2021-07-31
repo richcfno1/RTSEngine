@@ -106,7 +106,7 @@ namespace RTS
         // Update is called once per frame
         void Update()
         {
-            SetVision();
+            //SetVision();
 
             // Debug use
             if (Input.GetKeyDown(KeyCode.O))
@@ -121,10 +121,16 @@ namespace RTS
                 recordData -= 25;
                 Debug.Log(recordData / 25);
             }
+            if (Input.GetKeyDown(KeyCode.I))
+            {
+                InstantiateUnit("StandardFrigate", new Vector3(recordData - 500, 500, recordData + recordData2), new Quaternion(), GameObject.Find("RTSGameObject").transform, 2);
+                recordData -= 25;
+                Debug.Log(recordData / 25);
+            }
             if (Input.GetKeyDown(KeyCode.P))
             {
                 recordData = 0;
-                recordData2 = -25;
+                recordData2 -= 25;
             }
         }
 

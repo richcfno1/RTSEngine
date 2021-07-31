@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace RTS.Helper
 {
-    public class UnitDistanceCalculator
+    public class UnitVectorHelper
     {
         public static float DetermineUnitDistance(GameObject from, GameObject to, bool ignoreFromSize = true, bool ignoreToSize = true)
         {
@@ -15,6 +15,11 @@ namespace RTS.Helper
             Vector3 fromPoint = ignoreFromSize ? from.transform.position : from.GetComponent<Collider>().ClosestPoint(to.transform.position);
             Vector3 toPoint = ignoreToSize ? to.transform.position : to.GetComponent<Collider>().ClosestPoint(from.transform.position);
             return (toPoint - fromPoint).magnitude;
+        }
+        public static Vector3 RandomTangent(Vector3 vector)
+        {
+            return (Quaternion.FromToRotation(Vector3.forward, vector) * 
+                (Quaternion.AngleAxis(Random.Range(0f, 360f), Vector3.forward) * Vector3.right)).normalized;
         }
     }
 }

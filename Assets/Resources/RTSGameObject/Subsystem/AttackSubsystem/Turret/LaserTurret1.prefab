@@ -330,7 +330,6 @@ MonoBehaviour:
   type: 2
   repairPercentRequired: 0.5
   supportedCommonAbility: 02000000
-  supportedSepcialAbility: 
   coolDown: 0.1
   lockRange: 200
   possibleTargetTags:
@@ -345,7 +344,7 @@ MonoBehaviour:
   elevation: 90
   depression: 15
   showArcs: 0
-  showDebugRay: 1
+  showDebugRay: 0
   laserRenderer: {fileID: 6039840074901208093}
   laserStartPosition:
   - {fileID: 6039840074901208092}

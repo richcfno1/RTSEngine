@@ -20,8 +20,11 @@ namespace RTS.UI.GroupPanel
             amount.text = $"{thisGroup.Count}";
             if (thisGroup.Count != 0)
             {
-                icon.sprite = Resources.Load<RTSGameObjectData>(GameManager.GameManagerInstance.
-                    gameObjectLibrary[thisGroup[0].GetComponent<RTSGameObjectBaseScript>().typeID]).icon;
+                if (thisGroup[0] != null)
+                {
+                    icon.sprite = Resources.Load<RTSGameObjectData>(GameManager.GameManagerInstance.
+                        gameObjectLibrary[thisGroup[0].GetComponent<RTSGameObjectBaseScript>().typeID]).icon;
+                }
             }
         }
 

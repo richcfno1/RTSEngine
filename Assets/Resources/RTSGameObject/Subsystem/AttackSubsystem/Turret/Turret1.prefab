@@ -119,7 +119,6 @@ MonoBehaviour:
   type: 2
   repairPercentRequired: 0.5
   supportedCommonAbility: 02000000
-  supportedSepcialAbility: 
   coolDown: 2
   lockRange: 200
   possibleTargetTags:
@@ -134,8 +133,8 @@ MonoBehaviour:
   rightTraverse: 60
   elevation: 90
   depression: 5
-  showArcs: 1
-  showDebugRay: 1
+  showArcs: 0
+  showDebugRay: 0
   bullet: {fileID: 200688503556163643, guid: 18c4861f8f235184ba3004c333b41113, type: 3}
   bulletStartPosition:
   - {fileID: 5170811280945999704}

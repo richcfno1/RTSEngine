@@ -7,6 +7,10 @@
     {
       "index": 1,
       "name": "RC"
+    },
+    {
+      "index": 2,
+      "name": "Enemy1"
     }
   ],
   "initUnitLibraryData": [

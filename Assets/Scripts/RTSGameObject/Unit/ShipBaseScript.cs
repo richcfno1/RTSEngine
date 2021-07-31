@@ -2,6 +2,7 @@ using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 using RTS.Ability.SpecialAbility;
+using RTS.Helper;
 
 namespace RTS.RTSGameObject.Unit
 {
@@ -627,6 +628,7 @@ namespace RTS.RTSGameObject.Unit
         // Pathfinder
         private float TestObstacle(Vector3 from, Vector3 to)
         {
+            UnityEngine.Profiling.Profiler.BeginSample("Ship - TestObstacle");
             Vector3 direction = (to - from).normalized;
             float distance = (to - from).magnitude;
             List<Collider> toIgnore = new List<Collider>();
@@ -685,7 +687,7 @@ namespace RTS.RTSGameObject.Unit
         {
             if (searchTimer < nextSearchPending)
             {
-                Debug.Log("Search pending");
+                //Debug.Log("Search pending");
                 return finalPosition;
             }
             List<Vector3> result = new List<Vector3>();
@@ -714,7 +716,7 @@ namespace RTS.RTSGameObject.Unit
             }
             if (!find)
             {
-                Debug.Log("Out of search limitation when determine alternative destination");
+                //Debug.Log("Out of search limitation when determine alternative destination");
             }
             result.Add(to);
             float obstacleDistance = TestObstacle(from, to);
@@ -733,8 +735,7 @@ namespace RTS.RTSGameObject.Unit
                 {
                     for (int i = 0; i < searchMaxRandomNumber; i++)
                     {
-                        middle = obstaclePosition + nextStepDistance * (searchDirectionInPlane1 * UnityEngine.Random.value +
-                            searchDirectionInPlane2 * UnityEngine.Random.value).normalized;
+                        middle = obstaclePosition + nextStepDistance * UnitVectorHelper.RandomTangent(direction);
                         intersectObjects = new List<Collider>(Physics.OverlapBox(middle, NavigationCollider.size, transform.rotation));
                         intersectObjects.RemoveAll(x => x.CompareTag("Bullet"));
                         if (intersectObjects.Count == 0 && TestObstacle(middle, to) == 0 && TestObstacle(from, middle) == 0)
@@ -747,7 +748,7 @@ namespace RTS.RTSGameObject.Unit
                 }
                 if (!find)
                 {
-                    Debug.Log("Out of search limitation when determine path");
+                    //Debug.Log("Out of search limitation when determine path");
                     searchTimer = 0;
                     result.Clear();
                 }
