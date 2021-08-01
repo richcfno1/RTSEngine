@@ -10,7 +10,24 @@ namespace RTS.Rendering
         private readonly Dictionary<string, Action<MaterialPropertyBlock>> setters;
         private readonly Dictionary<string, Material> instances;
 
-        public static MaterialsManager Instance { get; } = new MaterialsManager();
+        public MaterialsManager()
+        {
+            materials = new Dictionary<string, SerializableMaterial>();
+            setters = new Dictionary<string, Action<MaterialPropertyBlock>>();
+            instances = new Dictionary<string, Material>();
+        }
+
+        public void Test()
+        {
+            RegisterMaterial("test", new SerializableMaterial
+            {
+                shader = "Custom/RTSDefault",
+                values = new Dictionary<string, Value>
+                {
+                    ["_Color"] = new Value { type = Value.Type.Color, value = Color.red }
+                }
+            });
+        }
 
         public void Reset()
         {
@@ -22,6 +39,7 @@ namespace RTS.Rendering
                 }
             }
             instances.Clear();
+            setters.Clear();
             materials.Clear();
         }
 

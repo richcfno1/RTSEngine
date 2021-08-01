@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using UnityEngine;
 
 namespace RTS.Rendering
@@ -11,7 +12,7 @@ namespace RTS.Rendering
         private MaterialPropertyBlock properties;
 
         // Use this for initialization
-        void Start()
+        void Awake()
         {
             renderer = GetComponent<Renderer>();
             properties = new MaterialPropertyBlock();
@@ -22,6 +23,13 @@ namespace RTS.Rendering
             renderer.sharedMaterial = Materials.GetMaterial(id);
             renderer.GetPropertyBlock(properties);
             var setter = Materials.GetPropertySetter(id);
+            setter(properties);
+            renderer.SetPropertyBlock(properties);
+        }
+
+        public void SetProperties(Action<MaterialPropertyBlock> setter)
+        {
+            renderer.GetPropertyBlock(properties);
             setter(properties);
             renderer.SetPropertyBlock(properties);
         }

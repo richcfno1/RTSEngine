@@ -90,6 +90,9 @@ namespace RTS
         {
             GameManagerInstance = this;
             ScriptSystem = new ScriptSystem();
+            MaterialsManager = new MaterialsManager();
+            // 添加一个测试材质
+            MaterialsManager.Test();
             gameObjectLibrary = JsonConvert.DeserializeObject<Dictionary<string, string>>(gameObjectLibraryAsset.text);
 
             if (debugInitDataAsset != null)
@@ -233,6 +236,13 @@ namespace RTS
 
             // Ship
             GameObject result = Instantiate(Resources.Load<GameObject>(gameObjectLibrary[libraryData.baseTypeName]), position, rotation, parent);
+            var resultRenderer = result.AddComponent<RTSGameObjectRenderer>();
+            // 设置一个测试材质
+            resultRenderer.SetMaterial("test");
+            if (UnityEngine.Random.Range(0, 10) >= 5)
+            {
+                resultRenderer.SetProperties(p => p.SetColor("_Color", Color.green));
+            }
             if (result.GetComponent<UnitBaseScript>() != null)
             {
                 UnitBaseScript unitScript = result.GetComponent<UnitBaseScript>();
