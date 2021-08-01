@@ -53,6 +53,7 @@ namespace RTS
 
         public struct GameInitData
         {
+            public float mapRadius;
             public List<PlayerData> initPlayerData;
             public List<UnitLibraryData> initUnitLibraryData;
             public List<UnitData> initUnitData;
@@ -72,9 +73,10 @@ namespace RTS
 
         public int selfIndex;
         public float visionProcessGap;
-        public TextAsset debugInitDataAsset;
+        public TextAsset initDataAsset;
 
         public TextAsset gameObjectLibraryAsset;
+        public float MapRadius { get; private set; } = 0;
         public Dictionary<string, string> gameObjectLibrary = new Dictionary<string, string>();
         public Dictionary<string, UnitLibraryData> unitLibrary = new Dictionary<string, UnitLibraryData>();
 
@@ -95,9 +97,9 @@ namespace RTS
             MaterialsManager.Test();
             gameObjectLibrary = JsonConvert.DeserializeObject<Dictionary<string, string>>(gameObjectLibraryAsset.text);
 
-            if (debugInitDataAsset != null)
+            if (initDataAsset != null)
             {
-                GameInitData initData = JsonConvert.DeserializeObject<GameInitData>(debugInitDataAsset.text);
+                GameInitData initData = JsonConvert.DeserializeObject<GameInitData>(initDataAsset.text);
                 InitFromInitData(initData);
             }
         }
@@ -189,6 +191,9 @@ namespace RTS
 
         private void InitFromInitData(GameInitData data)
         {
+            // Map radius
+            MapRadius = data.mapRadius;
+
             // Player
             foreach (PlayerData i in data.initPlayerData)
             {

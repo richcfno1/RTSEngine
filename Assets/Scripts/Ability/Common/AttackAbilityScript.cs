@@ -17,7 +17,7 @@ namespace RTS.Ability.CommonAbility
 
         private void Start()
         {
-            SetNeutral();
+            SetPassive();
         }
 
         public override bool CanUseAbility()

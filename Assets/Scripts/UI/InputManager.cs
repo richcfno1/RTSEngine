@@ -1,11 +1,12 @@
 using RTS.RTSGameObject;
+using RTS.UI.Command;
 using RTS.UI.CameraView;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-namespace RTS.UI.Command
+namespace RTS.UI
 {
     public class InputManager : MonoBehaviour
     {
@@ -107,6 +108,7 @@ namespace RTS.UI.Command
             public static KeyCode RotateCamera = KeyCode.Mouse2;
             public static KeyCode SetCameraHeight = KeyCode.LeftShift;
             public static KeyCode TrackSelectedUnits = KeyCode.V;
+            public static KeyCode TacticalView = KeyCode.Space;
         }
         public static InputManager InputManagerInstance { get; private set; }
 

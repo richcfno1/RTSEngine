@@ -7,13 +7,20 @@ namespace RTS.UI.CameraView
 {
     public class CameraControlScripts : MonoBehaviour
     {
+        public static CameraControlScripts CameraControlScriptsInstance { get; private set; }
         public Transform cameraCenter;
         public float zoomSpeedStandardDistance;
         public float shiftSpeed;
         public float zoomSpeed;
         public float rotateSpeed;
+        public bool TacticalView { get; private set; } = false;
 
         private bool isTracking = false;
+
+        void Awake()
+        {
+            CameraControlScriptsInstance = this;
+        }
 
         // Start is called before the first frame update
         void Start()
@@ -24,16 +31,27 @@ namespace RTS.UI.CameraView
         // Update is called once per frame
         void Update()
         {
+            if (Input.GetKeyDown(InputManager.HotKeys.TacticalView))
+            {
+                // zoom x0.1
+                if (TacticalView)
+                {
+
+                }
+                // zoom x10
+                else
+                {
+
+                }
+                TacticalView = !TacticalView;
+            }
+
             transform.LookAt(cameraCenter);
 
             // Move
-            if (!Input.GetKey(InputManager.HotKeys.RotateCamera))
+            if (!Input.GetKey(InputManager.HotKeys.RotateCamera) && !(Input.mousePosition.x < 0 || 
+                Input.mousePosition.x > Screen.width || Input.mousePosition.y < 0 || Input.mousePosition.y > Screen.height))
             {
-                if (Input.mousePosition.x < 0 || Input.mousePosition.x > Screen.width ||
-                    Input.mousePosition.y < 0 || Input.mousePosition.y > Screen.height)
-                {
-                    goto endOfCameraMove;
-                }
                 if (Input.mousePosition.x < 10 || Input.GetKey(KeyCode.LeftArrow))
                 {
                     cameraCenter.position -= transform.right * Time.deltaTime * shiftSpeed;
@@ -70,7 +88,6 @@ namespace RTS.UI.CameraView
                 }
             }
 
-        endOfCameraMove:
             // Zoom in and out
             if (Input.GetAxis("Mouse ScrollWheel") > 0 && !Input.GetKey(InputManager.HotKeys.SetCameraHeight))
             {
@@ -87,13 +104,20 @@ namespace RTS.UI.CameraView
             {
                 isTracking = true;
             }
-
-            isTracking = isTracking && SelectControlScript.SelectionControlInstance.GetAllGameObjectsAsList().Count != 0;
+            isTracking = isTracking && SelectControlScript.SelectionControlInstance.GetAllGameObjectsAsList().Count != 0 &&
+                !SelectControlScript.SelectionControlInstance.SelectedChanged;
 
             if (isTracking)
             {
                 cameraCenter.position = SelectControlScript.SelectionControlInstance.FindCenter();
             }
+
+            // check camera position
+            if (cameraCenter.position.magnitude > GameManager.GameManagerInstance.MapRadius)
+            {
+                cameraCenter.position = cameraCenter.position.normalized * GameManager.GameManagerInstance.MapRadius;
+            }
+
             if (Input.GetKey(InputManager.HotKeys.RotateCamera))
             {
                 transform.RotateAround(cameraCenter.position, Vector3.up, Input.GetAxis("Mouse X") * rotateSpeed * Time.deltaTime);

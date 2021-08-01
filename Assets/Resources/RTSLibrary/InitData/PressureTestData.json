@@ -1,4 +1,5 @@
 {
+  "mapRadius" : 10000.0,
   "initPlayerData": [
     {
       "index": 0,
