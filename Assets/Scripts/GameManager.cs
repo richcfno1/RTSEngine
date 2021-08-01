@@ -69,6 +69,7 @@ namespace RTS
         public ScriptSystem ScriptSystem { get; private set; }
 
         public int selfIndex;
+        public float visionProcessGap;
         public TextAsset debugInitDataAsset;
 
         public TextAsset gameObjectLibraryAsset;
@@ -79,7 +80,9 @@ namespace RTS
         private Dictionary<int, Player> allPlayers = new Dictionary<int, Player>();
         private Dictionary<int, GameObject> allGameObjectsDict = new Dictionary<int, GameObject>();
         private List<GameObject> allGameObjectsList = new List<GameObject>();
-        private List<GameObject> allUnitList = new List<GameObject>();
+        private Dictionary<int, GameObject> allUnitsListDict = new Dictionary<int, GameObject>();
+
+        private float timer = 0;
 
         void Awake()
         {
@@ -106,7 +109,12 @@ namespace RTS
         // Update is called once per frame
         void Update()
         {
-            //SetVision();
+            timer += Time.fixedDeltaTime;
+            if (timer > visionProcessGap)
+            {
+                timer = 0;
+                SetVision();
+            }
 
             // Debug use
             if (Input.GetKeyDown(KeyCode.O))
@@ -161,6 +169,15 @@ namespace RTS
                             }
                         }
                     }
+                }
+            }
+
+            foreach (KeyValuePair<int, GameObject> i in allUnitsListDict)
+            {
+                bool visible = i.Value.GetComponent<UnitBaseScript>().VisibleTo.Contains(selfIndex);
+                foreach (MeshRenderer j in i.Value.GetComponentsInChildren<MeshRenderer>())
+                {
+                    j.enabled = visible;
                 }
             }
         }
@@ -367,7 +384,7 @@ namespace RTS
             allGameObjectsList.Add(self);
             if (self.GetComponent<UnitBaseScript>() != null)
             {
-                allUnitList.Add(self);
+                allUnitsListDict.Add(gameObjectIndex, self);
             }
 
             // Player
@@ -401,7 +418,7 @@ namespace RTS
             allGameObjectsList.Remove(self);
             if (self.GetComponent<UnitBaseScript>() != null)
             {
-                allUnitList.Remove(self);
+                allUnitsListDict.Remove(gameObjectIndex);
             }
 
             // Player

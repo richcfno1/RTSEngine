@@ -9800,7 +9800,7 @@ MonoBehaviour:
   searchStepMaxDistance: 200
   searchMaxRandomNumber: 5
   nextSearchPending: 0.1
-  visionRange: 0
+  visionRange: 1000
   autoEngageDistance: 300
   maxAttackPower: 100
   maxDefencePower: 100

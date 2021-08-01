@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using RTS.RTSGameObject;
+using RTS.RTSGameObject.Unit;
+using RTS.RTSGameObject.Subsystem;
 
 namespace RTS.UI.CameraView
 {
@@ -20,21 +22,37 @@ namespace RTS.UI.CameraView
         public List<InfoData> infoPrefabs;
         public Transform Canvas;
 
+        private List<GameObject> visibleGameObjects = new List<GameObject>();
         private Dictionary<int, GameObject> allInfoBar = new Dictionary<int, GameObject>();  // RTSGO index -> Info
+
+        private float timer = 0;
 
         // Update is called once per frame
         void Update()
         {
-            // Draw unit Info
-            List<GameObject> visibleGameObjects = GameManager.GameManagerInstance.GetAllGameObjects().
-                Where(x => x != null && x.GetComponent<Renderer>() != null && x.GetComponent<Renderer>().enabled &&
-                x.GetComponent<Renderer>().isVisible).
-                Where(x =>
-                {
-                    float scale = DistanceAndDiameterToPixelSize((x.transform.position - transform.position).magnitude,
-                        x.GetComponent<RTSGameObjectBaseScript>().radius);
-                    return scale >= minInfoBarDisplaySize && scale <= maxInfoBarDisplaySize;
-                }).ToList();
+            timer += Time.fixedDeltaTime;
+            if (timer > GameManager.GameManagerInstance.visionProcessGap)
+            {
+                timer = 0;
+                visibleGameObjects = GameManager.GameManagerInstance.GetAllGameObjects().
+                    Where(x => x != null && x.GetComponent<MeshRenderer>() != null && x.GetComponent<MeshRenderer>().enabled &&
+                    x.GetComponent<MeshRenderer>().isVisible).
+                    Where(x =>
+                    {
+                        float scale = DistanceAndDiameterToPixelSize((x.transform.position - transform.position).magnitude,
+                            x.GetComponent<RTSGameObjectBaseScript>().radius);
+                        if (x.GetComponent<SubsystemBaseScript>() != null)
+                        {
+                            return scale >= minInfoBarDisplaySize && scale <= maxInfoBarDisplaySize;
+                        }
+                        return scale <= maxInfoBarDisplaySize;
+                    }).ToList();
+            }
+            else
+            {
+                visibleGameObjects.RemoveAll(x => x == null);
+            }
+            // Draw unit Info 
             List<int> allVisibleIndex = new List<int>();
             foreach (GameObject i in visibleGameObjects)
             {
@@ -58,6 +76,7 @@ namespace RTS.UI.CameraView
                     position.z = 0;
                     float scale = DistanceAndDiameterToPixelSize(
                         (i.transform.position - transform.position).magnitude, i.GetComponent<RTSGameObjectBaseScript>().radius);
+                    scale = scale > minInfoBarDisplaySize ? scale : minInfoBarDisplaySize;
                     GameObject newBar = allInfoBar[tempIndex];
                     newBar.transform.position = position;
                     newBar.transform.localScale = Vector3.one * scale;
@@ -69,6 +88,7 @@ namespace RTS.UI.CameraView
                     position.z = 0;
                     float scale = DistanceAndDiameterToPixelSize(
                         (i.transform.position - transform.position).magnitude, i.GetComponent<RTSGameObjectBaseScript>().radius);
+                    scale = scale > minInfoBarDisplaySize ? scale : minInfoBarDisplaySize;
                     GameObject newBar = Instantiate(tempPrefab, position, new Quaternion(), Canvas.transform);
                     newBar.transform.localScale = Vector3.one * scale;
                     newBar.GetComponent<CameraViewInfoScript>().hpdata.value = tempScript.HP / tempScript.maxHP;

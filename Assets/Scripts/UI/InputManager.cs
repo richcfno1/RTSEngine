@@ -247,18 +247,21 @@ namespace RTS.UI.Command
             {
                 return null;
             }
-            else if (hits.Count == 1 || !hits[0].collider.CompareTag("Ship"))
+            else if ((hits.Count == 1 || !hits[0].collider.CompareTag("Ship") || !hits[0].collider.CompareTag("Fighter")) && 
+                hits[0].collider.GetComponent<MeshRenderer>().enabled && hits[0].collider.GetComponent<MeshRenderer>().isVisible)
             {
                 return hits[0].collider.GetComponent<RTSGameObjectBaseScript>();
             }
-            else
+            else if (hits.Count > 1 && hits[1].collider.CompareTag("Subsystem") && 
+                hits[1].collider.GetComponent<MeshRenderer>().enabled && hits[1].collider.GetComponent<MeshRenderer>().isVisible)
             {
-                if (hits[1].collider.CompareTag("Subsystem"))
-                {
-                    return hits[1].collider.GetComponent<RTSGameObjectBaseScript>();
-                }
+                return hits[1].collider.GetComponent<RTSGameObjectBaseScript>();
+            }
+            else if (hits[0].collider.GetComponent<MeshRenderer>().enabled && hits[0].collider.GetComponent<MeshRenderer>().isVisible)
+            {
                 return hits[0].collider.GetComponent<RTSGameObjectBaseScript>();
             }
+            return null;
         }
     }
 }

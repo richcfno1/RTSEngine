@@ -347,7 +347,8 @@ namespace RTS.UI.Command
             {
                 for (int i = 0; i < allSelectableGameObjects.Count; i++)
                 {
-                    if (allSelectableGameObjects[i] == null)
+                    if (allSelectableGameObjects[i] == null || allSelectableGameObjects[i].GetComponent<MeshRenderer>() == null ||
+                        !allSelectableGameObjects[i].GetComponent<MeshRenderer>().enabled || !allSelectableGameObjects[i].GetComponent<MeshRenderer>().isVisible)
                     {
                         continue;
                     }
