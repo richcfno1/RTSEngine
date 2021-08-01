@@ -10,6 +10,7 @@ using RTS.Helper;
 using RTS.RTSGameObject;
 using RTS.RTSGameObject.Unit;
 using RTS.RTSGameObject.Subsystem;
+using RTS.Rendering;
 
 namespace RTS
 {
@@ -67,6 +68,7 @@ namespace RTS
 
         public static GameManager GameManagerInstance { get; private set; }
         public ScriptSystem ScriptSystem { get; private set; }
+        public MaterialsManager MaterialsManager { get; private set; }
 
         public int selfIndex;
         public float visionProcessGap;
