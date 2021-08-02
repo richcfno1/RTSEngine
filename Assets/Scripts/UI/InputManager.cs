@@ -1,6 +1,6 @@
 using RTS.RTSGameObject;
 using RTS.UI.Command;
-using RTS.UI.CameraView;
+using RTS.UI.TacticalView;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -173,10 +173,10 @@ namespace RTS.UI
                     CurrentMousePosition = MousePosition.UI;
                     break;
                 }
-                else if (result.gameObject.GetComponentInParent<CameraViewInfoScript>() != null)
+                else if (result.gameObject.GetComponentInParent<TacticalViewSingleIconScript>() != null)
                 {
-                    PointedRTSGameObject = result.gameObject.GetComponentInParent<CameraViewInfoScript>().bindObject;
-                    if (result.gameObject.GetComponentInParent<CameraViewInfoScript>().bindObject.BelongTo == 
+                    PointedRTSGameObject = result.gameObject.GetComponentInParent<TacticalViewSingleIconScript>().bindObject;
+                    if (result.gameObject.GetComponentInParent<TacticalViewSingleIconScript>().bindObject.BelongTo == 
                         GameManager.GameManagerInstance.selfIndex)
                     {
                         CurrentMousePosition = MousePosition.SelfUnit;

@@ -7,9 +7,9 @@ using RTS.RTSGameObject;
 using RTS.RTSGameObject.Unit;
 using RTS.RTSGameObject.Subsystem;
 
-namespace RTS.UI.CameraView
+namespace RTS.UI.TacticalView
 {
-    public class CameraViewScript : MonoBehaviour
+    public class TacticalViewScript : MonoBehaviour
     {
         [Serializable]
         public class InfoData
@@ -88,7 +88,7 @@ namespace RTS.UI.CameraView
                         GameObject newBar = allInfoBar[tempIndex];
                         newBar.transform.position = position;
                         newBar.transform.localScale = Vector3.one * scale;
-                        newBar.GetComponent<CameraViewInfoScript>().hpdata.value = tempScript.HP / tempScript.maxHP;
+                        newBar.GetComponent<TacticalViewSingleIconScript>().hpdata.value = tempScript.HP / tempScript.maxHP;
                     }
                     else
                     {
@@ -99,11 +99,11 @@ namespace RTS.UI.CameraView
                         scale = scale > minInfoBarDisplaySize ? scale : minInfoBarDisplaySize;
                         GameObject newBar = Instantiate(tempPrefab, position, new Quaternion(), Canvas.transform);
                         newBar.transform.localScale = Vector3.one * scale;
-                        newBar.GetComponent<CameraViewInfoScript>().hpdata.value = tempScript.HP / tempScript.maxHP;
+                        newBar.GetComponent<TacticalViewSingleIconScript>().hpdata.value = tempScript.HP / tempScript.maxHP;
                         Color tempColor = tempScript.BelongTo == GameManager.GameManagerInstance.selfIndex ? Color.green : Color.red;
                         tempColor.a = 0.5f;
-                        newBar.GetComponent<CameraViewInfoScript>().ChangeColor(tempColor);
-                        newBar.GetComponent<CameraViewInfoScript>().bindObject = i.GetComponent<RTSGameObjectBaseScript>();
+                        newBar.GetComponent<TacticalViewSingleIconScript>().ChangeColor(tempColor);
+                        newBar.GetComponent<TacticalViewSingleIconScript>().bindObject = i.GetComponent<RTSGameObjectBaseScript>();
                         allInfoBar.Add(tempIndex, newBar);
                     }
                 }

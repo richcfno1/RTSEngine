@@ -8,6 +8,8 @@ namespace RTS.RTSGameObject.Subsystem
         public float lockRange;
         public List<string> possibleTargetTags;
 
+        public bool AllowAutoFire { get; set; } = true;
+
         protected int pathfinderLayerMask = 1 << 11;
         protected float timer = 0;
 

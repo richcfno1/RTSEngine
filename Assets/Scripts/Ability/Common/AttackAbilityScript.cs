@@ -29,6 +29,7 @@ namespace RTS.Ability.CommonAbility
         {
             foreach (AttackSubsystemBaseScript i in SupportedBy)
             {
+                i.AllowAutoFire = false;
                 i.SetTarget(null);
             }
             Host.CurrentFireControlStatus = RTSGameObject.Unit.UnitBaseScript.FireControlStatus.Passive;
@@ -37,6 +38,7 @@ namespace RTS.Ability.CommonAbility
         {
             foreach (AttackSubsystemBaseScript i in SupportedBy)
             {
+                i.AllowAutoFire = true;
                 i.SetTarget(new List<object>());
             }
             Host.CurrentFireControlStatus = RTSGameObject.Unit.UnitBaseScript.FireControlStatus.Neutral;
@@ -45,6 +47,7 @@ namespace RTS.Ability.CommonAbility
         {
             foreach (AttackSubsystemBaseScript i in SupportedBy)
             {
+                i.AllowAutoFire = true;
                 i.SetTarget(new List<object>());
             }
             Host.CurrentFireControlStatus = RTSGameObject.Unit.UnitBaseScript.FireControlStatus.Aggressive;
@@ -58,6 +61,14 @@ namespace RTS.Ability.CommonAbility
         public void AttackAndMove(Vector3 destination, bool clearQueue = true, bool addToEnd = true)
         {
             Host.AttackAndMove(destination, clearQueue, addToEnd);
+        }
+
+        public void HandleAttackStop()
+        {
+            foreach (AttackSubsystemBaseScript i in SupportedBy)
+            {
+                i.SetTarget(new List<object>());
+            }
         }
 
         // This is called by unit to set action queue

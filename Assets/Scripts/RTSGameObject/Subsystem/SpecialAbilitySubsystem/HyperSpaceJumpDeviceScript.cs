@@ -37,6 +37,7 @@ namespace RTS.RTSGameObject.Subsystem
             {
                 return false;
             }
+            //Host.GetComponent<Rigidbody>().MovePosition(target);
             Host.transform.position = target;
             timer = 0;
             return true;

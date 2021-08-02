@@ -4,9 +4,9 @@ using UnityEngine;
 using UnityEngine.UI;
 using RTS.RTSGameObject;
 
-namespace RTS.UI.CameraView
+namespace RTS.UI.TacticalView
 {
-    public class CameraViewInfoScript : MonoBehaviour
+    public class TacticalViewSingleIconScript : MonoBehaviour
     {
         public Slider hpdata;
         [HideInInspector]

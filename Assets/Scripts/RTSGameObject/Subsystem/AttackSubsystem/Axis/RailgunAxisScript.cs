@@ -45,15 +45,36 @@ namespace RTS.RTSGameObject.Subsystem
                     Vector3 rayDirection = transform.forward;
                     if (Physics.Raycast(rayPosition, rayDirection, out hit, lockRange, ~pathfinderLayerMask))
                     {
-                        if (possibleTargetTags.Contains(hit.collider.tag) && (
-                            hit.collider.GetComponent<RTSGameObjectBaseScript>() == null || 
-                            hit.collider.GetComponent<RTSGameObjectBaseScript>().BelongTo != BelongTo))
+                        if (AllowAutoFire)
                         {
-                            Fire(shootCount);
-                            shootCount++;
-                            if (shootCount == bulletStartPosition.Count)
+                            if (possibleTargetTags.Contains(hit.collider.tag) && (
+                                hit.collider.GetComponent<RTSGameObjectBaseScript>() == null ||
+                                hit.collider.GetComponent<RTSGameObjectBaseScript>().BelongTo != BelongTo))
                             {
-                                shootCount = 0;
+                                Fire(shootCount);
+                                shootCount++;
+                                if (shootCount == bulletStartPosition.Count)
+                                {
+                                    shootCount = 0;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (subsystemTarget != null && subsystemTarget.Count > 0)
+                            {
+                                if ((GameObject)subsystemTarget[0] == hit.collider.gameObject && 
+                                    possibleTargetTags.Contains(hit.collider.tag) && (
+                                    hit.collider.GetComponent<RTSGameObjectBaseScript>() == null ||
+                                    hit.collider.GetComponent<RTSGameObjectBaseScript>().BelongTo != BelongTo))
+                                {
+                                    Fire(shootCount);
+                                    shootCount++;
+                                    if (shootCount == bulletStartPosition.Count)
+                                    {
+                                        shootCount = 0;
+                                    }
+                                }
                             }
                         }
                     }

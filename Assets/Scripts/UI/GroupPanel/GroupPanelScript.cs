@@ -7,12 +7,12 @@ namespace RTS.UI.GroupPanel
 {
     public class GroupPanelScript : MonoBehaviour
     {
-        public List<GroupInfoGridScript> allGrids;
+        public List<GroupSingleIconScript> allGrids;
 
         // Update is called once per frame
         void Update()
         {
-            foreach (GroupInfoGridScript i in allGrids)
+            foreach (GroupSingleIconScript i in allGrids)
             {
                 if (i.index < SelectControlScript.SelectionControlInstance.UnitGroup.Count &&
                     SelectControlScript.SelectionControlInstance.UnitGroup[i.index].Count > 0)

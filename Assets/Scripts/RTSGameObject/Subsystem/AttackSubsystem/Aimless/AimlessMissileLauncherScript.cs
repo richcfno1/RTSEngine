@@ -73,33 +73,41 @@ namespace RTS.RTSGameObject.Subsystem
         // Try to find a target by the order, compare angleY first, then check obstacles
         protected override void DetermineFireTarget()
         {
-            if (subsystemTarget == null)
+            if (AllowAutoFire)
             {
-                fireTarget = null;
-                return;
-            }
-            if (subsystemTarget.Count == 1 && (GameObject)subsystemTarget[0] != null && possibleTargetTags.Contains(((GameObject)subsystemTarget[0]).tag))
-            {
-                fireTarget = (GameObject)subsystemTarget[0];
-                return;
-            }
-            List<Collider> allPossibleTargets = new List<Collider>(Physics.OverlapSphere(transform.position, lockRange, ~pathfinderLayerMask));
-            List<Collider> filteredPossibleTargets = new List<Collider>();
-            foreach (string i in possibleTargetTags)
-            {
-                filteredPossibleTargets.AddRange(allPossibleTargets.Where(x => x.CompareTag(i)));
-            }
-            filteredPossibleTargets = filteredPossibleTargets.Where(x => x.GetComponent<RTSGameObjectBaseScript>() != null &&
-                x.GetComponent<RTSGameObjectBaseScript>().BelongTo != BelongTo).ToList();
-            filteredPossibleTargets.Sort((x, y) => Comparer.Default.Compare(
-                (x.transform.position - transform.position).sqrMagnitude, (y.transform.position - transform.position).sqrMagnitude));
-            if (filteredPossibleTargets.Count != 0)
-            {
-                fireTarget = filteredPossibleTargets[0].gameObject;
+                if (subsystemTarget != null && subsystemTarget.Count == 1 && (GameObject)subsystemTarget[0] != null && possibleTargetTags.Contains(((GameObject)subsystemTarget[0]).tag))
+                {
+                    fireTarget = (GameObject)subsystemTarget[0];
+                    return;
+                }
+                List<Collider> allPossibleTargets = new List<Collider>(Physics.OverlapSphere(transform.position, lockRange, ~pathfinderLayerMask));
+                List<Collider> filteredPossibleTargets = new List<Collider>();
+                foreach (string i in possibleTargetTags)
+                {
+                    filteredPossibleTargets.AddRange(allPossibleTargets.Where(x => x.CompareTag(i)));
+                }
+                filteredPossibleTargets = filteredPossibleTargets.Where(x => x.GetComponent<RTSGameObjectBaseScript>() != null &&
+                    x.GetComponent<RTSGameObjectBaseScript>().BelongTo != BelongTo).ToList();
+                filteredPossibleTargets.Sort((x, y) => Comparer.Default.Compare(
+                    (x.transform.position - transform.position).sqrMagnitude, (y.transform.position - transform.position).sqrMagnitude));
+                if (filteredPossibleTargets.Count != 0)
+                {
+                    fireTarget = filteredPossibleTargets[0].gameObject;
+                }
+                else
+                {
+                    fireTarget = null;
+                }
             }
             else
             {
+                if (subsystemTarget != null && subsystemTarget.Count == 1 && (GameObject)subsystemTarget[0] != null && possibleTargetTags.Contains(((GameObject)subsystemTarget[0]).tag))
+                {
+                    fireTarget = (GameObject)subsystemTarget[0];
+                    return;
+                }
                 fireTarget = null;
+                return;
             }
         }
     }

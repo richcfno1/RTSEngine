@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using RTS.Ability.SpecialAbility;
 using RTS.Helper;
+using RTS.RTSGameObject.Subsystem;
 
 namespace RTS.RTSGameObject.Unit
 {
@@ -80,6 +81,10 @@ namespace RTS.RTSGameObject.Unit
                 {
                     case ActionType.Stop:
                         ActionQueue.RemoveFirst();
+                        if (AttackAbility != null)
+                        {
+                            AttackAbility.HandleAttackStop();
+                        }
                         return;
                     case ActionType.Move:
                         // Ability check
@@ -278,8 +283,19 @@ namespace RTS.RTSGameObject.Unit
                             {
                                 if (Physics.RaycastAll(finalPosition, (keepInRangeTarget.transform.position - finalPosition).normalized,
                                     (keepInRangeTarget.transform.position - finalPosition).magnitude).
-                                    Where(x => !transform.GetComponentsInChildren<Collider>().Contains(x.collider) &&
-                                    !keepInRangeTarget.transform.GetComponentsInChildren<Collider>().Contains(x.collider)).ToArray().Length == 0)
+                                    Where(x =>
+                                    {
+                                        if (keepInRangeTarget.GetComponent<SubsystemBaseScript>() != null)
+                                        {
+                                            return !transform.GetComponentsInChildren<Collider>().Contains(x.collider) &&
+                                            !keepInRangeTarget.GetComponent<SubsystemBaseScript>().Host.transform.GetComponentsInChildren<Collider>().Contains(x.collider);
+                                        }
+                                        else
+                                        {
+                                            return !transform.GetComponentsInChildren<Collider>().Contains(x.collider) &&
+                                            !keepInRangeTarget.transform.GetComponentsInChildren<Collider>().Contains(x.collider);
+                                        }
+                                    }).ToList().Count == 0)
                                 {
                                     break;
                                 }

@@ -7,7 +7,7 @@ using RTS.RTSGameObject;
 
 namespace RTS.UI.GroupPanel
 {
-    public class GroupInfoGridScript : MonoBehaviour
+    public class GroupSingleIconScript : MonoBehaviour
     {
         public int index;
         public Text amount;

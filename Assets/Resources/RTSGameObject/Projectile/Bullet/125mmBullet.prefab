@@ -110,17 +110,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e217882438c2fe0409bab70770066816, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  objectScale: 0
+  objectType: 0
+  typeID: 
+  maxHP: 0
+  NavigationCollider: {fileID: 0}
+  onDestroyedEffect: {fileID: 0}
+  radius: 0
   damage: 50
   attackPowerReduce: 0
   defencePowerReduce: 0
   movePowerReduce: 0
+  target: {fileID: 0}
+  createdBy: {fileID: 0}
   moveSpeed: 400
   maxTime: 10
   isDestoryAtHit: 1
   hitEffect: {fileID: 2369021655912796706, guid: 0643096084fbfb940bd8ab33ba76f553, type: 3}
   moveDirection: {x: 0, y: 0, z: 0}
   toIgnore: []
-  createdBy: {fileID: 0}
 --- !u!54 &2401941064293332564
 Rigidbody:
   m_ObjectHideFlags: 0

@@ -19,6 +19,8 @@ namespace RTS.RTSGameObject.Projectile.Bullet
         [HideInInspector]
         public List<Collider> toIgnore = new List<Collider>();
 
+        private Vector3 lastPosition;
+
 
         // Start is called before the first frame update
         void Start()
@@ -35,6 +37,7 @@ namespace RTS.RTSGameObject.Projectile.Bullet
             {
                 OnDestroyedAction();
             }
+            lastPosition = thisRigidbody.position;
             thisRigidbody.MovePosition(thisRigidbody.position + moveDirection * Time.fixedDeltaTime * moveSpeed);
         }
 
@@ -66,7 +69,8 @@ namespace RTS.RTSGameObject.Projectile.Bullet
             }
             if (hitEffect != null)
             {
-                Instantiate(hitEffect, transform.position, new Quaternion());
+                
+                Instantiate(hitEffect, other.ClosestPoint(lastPosition), new Quaternion());
             }
             if (isDestoryAtHit)
             {

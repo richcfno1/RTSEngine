@@ -112,49 +112,65 @@ namespace RTS.RTSGameObject.Subsystem
         // Try to find a target by the order, compare angleY first, then check obstacles
         protected override void DetermineFireTarget()
         {
-            if (subsystemTarget == null)
+            if (AllowAutoFire)
             {
+                if (subsystemTarget != null && subsystemTarget.Count == 1 && (GameObject)subsystemTarget[0] != null && possibleTargetTags.Contains(((GameObject)subsystemTarget[0]).tag))
+                {
+                    GameObject target = (GameObject)subsystemTarget[0];
+                    RaycastHit hit;
+                    if (Physics.Raycast(transform.position, (target.transform.position - transform.position).normalized, out hit, (target.transform.position - transform.position).magnitude, ~pathfinderLayerMask))
+                    {
+                        if (hit.collider.tag != "AimCollider" && (hit.collider.GetComponent<RTSGameObjectBaseScript>() == null || hit.collider.GetComponent<RTSGameObjectBaseScript>().BelongTo != BelongTo))
+                        {
+                            fireTarget = target;
+                            return;
+                        }
+                    }
+                }
+
+                List<Collider> allPossibleTargets = new List<Collider>(Physics.OverlapSphere(transform.position, lockRange, ~pathfinderLayerMask));
+                List<Collider> filteredPossibleTargets = new List<Collider>();
+                foreach (string i in possibleTargetTags)
+                {
+                    filteredPossibleTargets.AddRange(allPossibleTargets.Where(x => x.CompareTag(i)));
+                }
+                filteredPossibleTargets = filteredPossibleTargets.Where(x => x.GetComponent<RTSGameObjectBaseScript>() != null &&
+                    x.GetComponent<RTSGameObjectBaseScript>().BelongTo != BelongTo).ToList();
+                filteredPossibleTargets.Sort((x, y) => Comparer.Default.Compare(
+                    (x.transform.position - transform.position).sqrMagnitude, (y.transform.position - transform.position).sqrMagnitude));
+
+                foreach (Collider i in filteredPossibleTargets)
+                {
+                    RaycastHit hit;
+                    if (Physics.Raycast(transform.position, (i.transform.position - transform.position).normalized, out hit, lockRange, ~pathfinderLayerMask))
+                    {
+                        if (hit.collider == i)
+                        {
+                            fireTarget = i.gameObject;
+                            return;
+                        }
+                    }
+                }
+                fireTarget = null;
+            }
+            else
+            {
+                if (subsystemTarget != null && subsystemTarget.Count == 1 && (GameObject)subsystemTarget[0] != null && possibleTargetTags.Contains(((GameObject)subsystemTarget[0]).tag))
+                {
+                    GameObject target = (GameObject)subsystemTarget[0];
+                    RaycastHit hit;
+                    if (Physics.Raycast(transform.position, (target.transform.position - transform.position).normalized, out hit, (target.transform.position - transform.position).magnitude, ~pathfinderLayerMask))
+                    {
+                        if (hit.collider.tag != "AimCollider" && (hit.collider.GetComponent<RTSGameObjectBaseScript>() == null || hit.collider.GetComponent<RTSGameObjectBaseScript>().BelongTo != BelongTo))
+                        {
+                            fireTarget = target;
+                            return;
+                        }
+                    }
+                }
                 fireTarget = null;
                 return;
             }
-            if (subsystemTarget.Count == 1 && (GameObject)subsystemTarget[0] != null && possibleTargetTags.Contains(((GameObject)subsystemTarget[0]).tag))
-            {
-                GameObject target = (GameObject)subsystemTarget[0];
-                RaycastHit hit;
-                if (Physics.Raycast(transform.position, (target.transform.position - transform.position).normalized, out hit, (target.transform.position - transform.position).magnitude, ~pathfinderLayerMask))
-                {
-                    if (hit.collider.tag != "AimCollider" && (hit.collider.GetComponent<RTSGameObjectBaseScript>() == null || hit.collider.GetComponent<RTSGameObjectBaseScript>().BelongTo != BelongTo))
-                    {
-                        fireTarget = target;
-                        return;
-                    }
-                }
-            }
-
-            List<Collider> allPossibleTargets = new List<Collider>(Physics.OverlapSphere(transform.position, lockRange, ~pathfinderLayerMask));
-            List<Collider> filteredPossibleTargets = new List<Collider>();
-            foreach (string i in possibleTargetTags)
-            {
-                filteredPossibleTargets.AddRange(allPossibleTargets.Where(x => x.CompareTag(i)));
-            }
-            filteredPossibleTargets = filteredPossibleTargets.Where(x => x.GetComponent<RTSGameObjectBaseScript>() != null &&
-                x.GetComponent<RTSGameObjectBaseScript>().BelongTo != BelongTo).ToList();
-            filteredPossibleTargets.Sort((x, y) => Comparer.Default.Compare(
-                (x.transform.position - transform.position).sqrMagnitude, (y.transform.position - transform.position).sqrMagnitude));
-
-            foreach (Collider i in filteredPossibleTargets)
-            {
-                RaycastHit hit;
-                if (Physics.Raycast(transform.position, (i.transform.position - transform.position).normalized, out hit, lockRange, ~pathfinderLayerMask))
-                {
-                    if (hit.collider == i)
-                    {
-                        fireTarget = i.gameObject;
-                        return;
-                    }
-                }
-            }
-            fireTarget = null;
         }
     }
 }

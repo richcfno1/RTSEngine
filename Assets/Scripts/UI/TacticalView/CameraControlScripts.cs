@@ -3,7 +3,7 @@ using System.Linq;
 using RTS.UI.Command;
 using System.Collections.Generic;
 
-namespace RTS.UI.CameraView
+namespace RTS.UI.TacticalView
 {
     public class CameraControlScripts : MonoBehaviour
     {
