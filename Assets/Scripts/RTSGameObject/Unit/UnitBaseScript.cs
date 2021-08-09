@@ -83,8 +83,11 @@ namespace RTS.RTSGameObject.Unit
         [Tooltip("The wait time to search again if previous search failed.")]
         public float nextSearchPending;
 
-        [Header("Vision Range")]
+        [Header("Vision")]
+        [Tooltip("Vision range.")]
         public float visionRange;
+        [Tooltip("Vision area ball.")]
+        public GameObject visionArea;
 
         [Header("Fire Control")]
         public float autoEngageDistance;

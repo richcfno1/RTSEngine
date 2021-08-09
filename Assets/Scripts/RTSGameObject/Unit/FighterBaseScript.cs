@@ -51,15 +51,17 @@ namespace RTS.RTSGameObject.Unit
             DefencePower = Mathf.Clamp01(DefencePower + recoverDefencePower * Time.fixedDeltaTime);
             MovePower = Mathf.Clamp01(MovePower + recoverMovePower * Time.fixedDeltaTime);
 
-            // Move
-            thisBody.velocity = Vector3.zero;
-            thisBody.angularVelocity = Vector3.zero;
-            searchTimer += Time.fixedDeltaTime;
+            // Vision
+            if (visionArea != null)
+            {
+                visionArea.transform.localScale = new Vector3(visionRange, visionRange, visionRange);
+            }
 
             // Action
             // Do not play physcial simulation here, this is a spaceship!
             thisBody.velocity = Vector3.zero;
             thisBody.angularVelocity = Vector3.zero;
+            searchTimer += Time.fixedDeltaTime;
 
             // In aggressive status, when detect a nearby enemy, call attack ability
             if (AttackAbility != null && CurrentFireControlStatus == FireControlStatus.Aggressive && autoEngageTarget == null &&

@@ -53,6 +53,12 @@ namespace RTS.RTSGameObject.Unit
             curDefencePower = Mathf.Clamp(curDefencePower + recoverDefencePower * Time.fixedDeltaTime, 0, maxDefencePower);
             curMovePower = Mathf.Clamp(curMovePower + recoverMovePower * Time.fixedDeltaTime, 0, maxMovePower);
 
+            // Vision
+            if (visionArea != null)
+            {
+                visionArea.transform.localScale = new Vector3(visionRange, visionRange, visionRange);
+            }
+
             // Action
             // Do not play physcial simulation here, this is a spaceship!
             thisBody.velocity = Vector3.zero;
