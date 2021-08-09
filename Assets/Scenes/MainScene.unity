@@ -2699,7 +2699,7 @@ Camera:
     width: 1
     height: 1
   near clip plane: 0.3
-  far clip plane: 10000
+  far clip plane: 100000
   field of view: 60
   orthographic: 0
   orthographic size: 5
@@ -3026,12 +3026,12 @@ GameObject:
   - component: {fileID: 800802614}
   - component: {fileID: 800802613}
   m_Layer: 9
-  m_Name: Plane
+  m_Name: VisionBackground
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &800802612
 Transform:
   m_ObjectHideFlags: 0
@@ -3040,7 +3040,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 800802611}
   m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 0, z: 9820}
+  m_LocalPosition: {x: 0, y: 0, z: 99820}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 2125966569}
@@ -8181,7 +8181,7 @@ Camera:
     width: 1
     height: 1
   near clip plane: 0.3
-  far clip plane: 10000
+  far clip plane: 100000
   field of view: 60
   orthographic: 0
   orthographic size: 5
@@ -8233,6 +8233,7 @@ MonoBehaviour:
   shiftSpeed: 200
   zoomSpeed: 1000
   rotateSpeed: 500
+  visionBackground: {fileID: 800802611}
 --- !u!114 &2125966571
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8296,4 +8297,3 @@ MonoBehaviour:
   - type: 7
     infoPrefab: {fileID: 8856398566437231610, guid: 7c6da25fd1690b341a279a74965dc3b4, type: 3}
   Canvas: {fileID: 837343067}
-  visionBackground: {fileID: 800802611}

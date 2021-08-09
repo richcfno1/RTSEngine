@@ -22,7 +22,6 @@ namespace RTS.UI.TacticalView
         public float maxInfoBarDisplaySize;
         public List<InfoData> infoPrefabs;
         public Transform Canvas;
-        public GameObject visionBackground;
 
         private List<GameObject> visibleGameObjects = new List<GameObject>();
         private Dictionary<int, GameObject> allInfoBar = new Dictionary<int, GameObject>();  // RTSGO index -> Info
@@ -31,9 +30,7 @@ namespace RTS.UI.TacticalView
 
         void Start()
         {
-            float frustumHeight = 2.0f * Camera.main.farClipPlane * Mathf.Tan(Camera.main.fieldOfView * 0.5f * Mathf.Deg2Rad);
-            float frustumWidth = frustumHeight * Camera.main.aspect;
-            visionBackground.transform.localScale = new Vector3(frustumWidth / 10, 1, frustumHeight / 10);
+
         }
 
         // Update is called once per frame

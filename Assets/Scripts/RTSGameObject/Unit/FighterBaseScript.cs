@@ -52,9 +52,9 @@ namespace RTS.RTSGameObject.Unit
             MovePower = Mathf.Clamp01(MovePower + recoverMovePower * Time.fixedDeltaTime);
 
             // Vision
-            if (visionArea != null)
+            if (visionArea != null && BelongTo == GameManager.GameManagerInstance.selfIndex)
             {
-                visionArea.transform.localScale = new Vector3(visionRange, visionRange, visionRange);
+                visionArea.transform.localScale = new Vector3(visionRange, visionRange, visionRange) * 2;
             }
 
             // Action
