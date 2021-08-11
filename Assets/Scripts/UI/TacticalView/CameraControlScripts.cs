@@ -13,6 +13,8 @@ namespace RTS.UI.TacticalView
         public float shiftSpeed;
         public float zoomSpeed;
         public float rotateSpeed;
+
+        public GameObject tacticalViewBase;
         public GameObject visionBackground;
 
         public bool TacticalView { get; private set; } = false;
@@ -30,6 +32,7 @@ namespace RTS.UI.TacticalView
             float frustumHeight = 2.0f * Camera.main.farClipPlane * Mathf.Tan(Camera.main.fieldOfView * 0.5f * Mathf.Deg2Rad);
             float frustumWidth = frustumHeight * Camera.main.aspect;
             visionBackground.transform.localScale = new Vector3(frustumWidth / 10, 1, frustumHeight / 10);
+            tacticalViewBase.transform.localScale = Vector3.one * GameManager.GameManagerInstance.MapRadius * 2;
         }
 
         // Update is called once per frame
@@ -41,12 +44,14 @@ namespace RTS.UI.TacticalView
                 if (TacticalView)
                 {
                     visionBackground.SetActive(false);
+                    tacticalViewBase.SetActive(false);
                     transform.position = cameraCenter.position + (transform.position - cameraCenter.position) * 0.1f;
                 }
                 // zoom x10
                 else
                 {
                     visionBackground.SetActive(true);
+                    tacticalViewBase.SetActive(true);
                     transform.position = cameraCenter.position + (transform.position - cameraCenter.position) * 10;
                 }
                 TacticalView = !TacticalView;

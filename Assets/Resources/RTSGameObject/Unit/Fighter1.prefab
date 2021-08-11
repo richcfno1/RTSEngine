@@ -9807,6 +9807,9 @@ MonoBehaviour:
   searchStepDistance: 20
   searchStepMaxDistance: 100
   searchMaxRandomNumber: 10
+  nextSearchPending: 0
+  visionRange: 0
+  visionArea: {fileID: 0}
   autoEngageDistance: 0
   maxAttackPower: 50
   maxDefencePower: 50
@@ -9816,7 +9819,7 @@ MonoBehaviour:
   recoverMovePower: 5
   buildPrice: 0
   buildTime: 5
-  agentMoveSpeed: 40
+  agentMoveSpeed: 500
   agentRotateSpeed: 180
 --- !u!54 &6615391078702848229
 Rigidbody:
