@@ -715,6 +715,7 @@ namespace RTS.RTSGameObject.Unit
             }
             List<Vector3> result = new List<Vector3>();
             List<Collider> intersectObjects = new List<Collider>(Physics.OverlapBox(to, NavigationCollider.size, transform.rotation));
+            intersectObjects.RemoveAll(x => x.CompareTag("Bullet"));
             float nextStepDistance = searchStepDistance;
             bool find = intersectObjects.Count == 0;
             if (intersectObjects.Count != 0)
@@ -723,8 +724,7 @@ namespace RTS.RTSGameObject.Unit
                 {
                     for (int i = 0; i < searchMaxRandomNumber; i++)
                     {
-                        Vector3 newDestination = to + nextStepDistance *
-                            new Vector3(UnityEngine.Random.value * 2 - 1, UnityEngine.Random.value * 2 - 1, UnityEngine.Random.value * 2 - 1).normalized;
+                        Vector3 newDestination = to + nextStepDistance * new Vector3(Random.value * 2 - 1, Random.value * 2 - 1, Random.value * 2 - 1).normalized;
                         intersectObjects = new List<Collider>(Physics.OverlapBox(newDestination, NavigationCollider.size, transform.rotation));
                         intersectObjects.RemoveAll(x => x.CompareTag("Bullet"));
                         if (intersectObjects.Count == 0)
@@ -748,10 +748,6 @@ namespace RTS.RTSGameObject.Unit
                 Vector3 direction = (to - from).normalized;
                 Vector3 obstaclePosition = from + obstacleDistance * direction;
                 Vector3 middle = new Vector3();
-                Plane tempPlane = new Plane(direction, obstaclePosition);
-                Vector3 searchDirectionInPlane1 = tempPlane.ClosestPointOnPlane(to + new Vector3(0, 1, 0)) - obstaclePosition;
-                searchDirectionInPlane1 = searchDirectionInPlane1.normalized;
-                Vector3 searchDirectionInPlane2 = Vector3.Cross(direction, searchDirectionInPlane1).normalized;
                 nextStepDistance = searchStepDistance;
                 find = false;
                 while (nextStepDistance <= searchStepMaxDistance && !find)
@@ -771,7 +767,7 @@ namespace RTS.RTSGameObject.Unit
                 }
                 if (!find)
                 {
-                    //Debug.Log("Out of search limitation when determine path");
+                    //Debug.Log("Out of search limitation");
                     searchTimer = 0;
                     result.Clear();
                 }

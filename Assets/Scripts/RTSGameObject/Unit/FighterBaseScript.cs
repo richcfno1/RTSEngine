@@ -19,6 +19,9 @@ namespace RTS.RTSGameObject.Unit
         private float slowDownRadius;
         private Rigidbody thisBody;
 
+        private Vector3 currentMoveVelocity;
+        private Vector3 currentRotateVelocity;
+
         // Start is called before the first frame update
         void Start()
         {
@@ -606,10 +609,10 @@ namespace RTS.RTSGameObject.Unit
             List<Collider> intersectObjects = new List<Collider>(Physics.OverlapBox(to, NavigationCollider.size, transform.rotation));
             intersectObjects.RemoveAll(x => x.CompareTag("Bullet"));
             float nextStepDistance = searchStepDistance;
-            bool find = false;
+            bool isDestinationAvaliable = intersectObjects.Count == 0;
             if (intersectObjects.Count != 0)
             {
-                while (nextStepDistance <= searchStepMaxDistance && !find)
+                while (nextStepDistance <= searchStepMaxDistance && !isDestinationAvaliable)
                 {
                     for (int i = 0; i < searchMaxRandomNumber; i++)
                     {
@@ -619,14 +622,14 @@ namespace RTS.RTSGameObject.Unit
                         if (intersectObjects.Count == 0)
                         {
                             finalPosition = to = newDestination;
-                            find = true;
+                            isDestinationAvaliable = true;
                             break;
                         }
                     }
                     nextStepDistance += searchStepDistance;
                 }
             }
-            if (!find)
+            if (!isDestinationAvaliable)
             {
                 //Debug.Log("Out of search limitation when determine alternative destination");
             }
@@ -638,7 +641,7 @@ namespace RTS.RTSGameObject.Unit
                 Vector3 obstaclePosition = from + obstacleDistance * direction;
                 Vector3 middle = new Vector3();
                 nextStepDistance = searchStepDistance;
-                find = false;
+                bool find = false;
                 while (nextStepDistance <= searchStepMaxDistance && !find)
                 {
                     for (int i = 0; i < searchMaxRandomNumber; i++)
@@ -654,7 +657,7 @@ namespace RTS.RTSGameObject.Unit
                     }
                     nextStepDistance += searchStepDistance;
                 }
-                if (nextStepDistance > searchStepMaxDistance)
+                if (!find)
                 {
                     //Debug.Log("Out of search limitation");
                     searchTimer = 0;
