@@ -62,7 +62,7 @@ namespace RTS.UI.SelectedPanel
                 }
                 else
                 {
-                    GetComponent<GridLayoutGroup>().cellSize = new Vector2(240, 80);
+                    GetComponent<GridLayoutGroup>().cellSize = new Vector2(120, 40);
                     if (lastSelectedType != SelectedType.SameType)
                     {
                         ClearAll();
@@ -132,7 +132,7 @@ namespace RTS.UI.SelectedPanel
             }
             else if (allSelected.Count > 1)
             {
-                GetComponent<GridLayoutGroup>().cellSize = new Vector2(240, 80);
+                GetComponent<GridLayoutGroup>().cellSize = new Vector2(120, 40);
                 if (lastSelectedType != SelectedType.Multi)
                 {
                     ClearAll();
