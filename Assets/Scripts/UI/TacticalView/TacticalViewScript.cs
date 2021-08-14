@@ -45,9 +45,10 @@ namespace RTS.UI.TacticalView
                     x.GetComponent<MeshRenderer>().isVisible).
                     Where(x =>
                     {
+                        // Show all unit
                         if (CameraControlScripts.CameraControlScriptsInstance.TacticalView)
                         {
-                            return true;
+                            return x.GetComponent<UnitBaseScript>() != null;
                         }
                         float scale = DistanceAndDiameterToPixelSize((x.transform.position - transform.position).magnitude,
                             x.GetComponent<RTSGameObjectBaseScript>().radius);

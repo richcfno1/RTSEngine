@@ -9803,11 +9803,10 @@ MonoBehaviour:
   maxErrorDistance: 5
   maxErrorAngle: 0.1
   slowDownDistance: 50
-  lockRotationZ: 1
+  lockRotationZ: 0
   searchStepDistance: 40
   searchStepMaxDistance: 200
   searchMaxRandomNumber: 5
-  nextSearchPending: 0.1
   maxDetectDistance: 200
   visionRange: 1000
   visionArea: {fileID: 7126123169486451625}

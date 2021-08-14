@@ -56,7 +56,7 @@ namespace RTS.RTSGameObject.Unit
 
             if (lockRotationZ)
             {
-                transform.rotation = Quaternion.Euler(transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.y, 0);
+                thisBody.MoveRotation(Quaternion.Euler(thisBody.rotation.eulerAngles.x, thisBody.rotation.eulerAngles.y, 0));
             }
 
             // Action
@@ -423,7 +423,7 @@ namespace RTS.RTSGameObject.Unit
         private void ApplyRotation(Vector3 targetPosition)
         {
             Vector3 rotateDirection = (targetPosition - thisBody.position).normalized;
-            transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(rotateDirection), Time.fixedDeltaTime * maxRotationSpeed);
+            thisBody.MoveRotation(Quaternion.RotateTowards(thisBody.rotation, Quaternion.LookRotation(rotateDirection), Time.fixedDeltaTime * maxRotationSpeed));
         }
 
         // Variable finalPosition must be valid
