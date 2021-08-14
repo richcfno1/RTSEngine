@@ -63,6 +63,7 @@ namespace RTS.RTSGameObject.Unit
              * UseNoSelectionSpecialAbility: size = 2: [0] = NoSelectionSpecialAbility [1] = GameObject target
              * UseNoSelectionSpecialAbility: size = 2: [0] = NoSelectionSpecialAbility [1] = Vector3 target
              * UseSpecialAbility: Undecided
+             * ForcedMove: size = 2: [0] = Vector3 destination [1] = float speed
              */
         }
 
@@ -73,7 +74,24 @@ namespace RTS.RTSGameObject.Unit
             "This also means fighter should not have anchor data without subsystem gameobject.")]
         public List<AnchorData> subsyetemAnchors;
 
-        [Header("Path finder")]
+        [Header("Movement")]
+        [Tooltip("Multiplier for all forces.")]
+        public float forceMultiplier;
+        [Tooltip("Force for move.")]
+        public float maxForce;
+        [Tooltip("Rotation limitation.")]
+        public float maxRotationSpeed;
+        [Tooltip("Allowed error distance.")]
+        public float maxErrorDistance;
+        [Tooltip("Allowed error angel.")]
+        public float maxErrorAngle;
+        [Tooltip("Slowdown distance.")]
+        public float slowDownDistance;
+        [Tooltip("Lock rotation in Z.")]
+        public bool lockRotationZ;
+
+
+        [Header("Pathfinder")]
         [Tooltip("The radius difference between each search sphere.")]
         public float searchStepDistance;
         [Tooltip("The max radius of search sphere.")]
@@ -82,6 +100,8 @@ namespace RTS.RTSGameObject.Unit
         public float searchMaxRandomNumber;
         [Tooltip("The wait time to search again if previous search failed.")]
         public float nextSearchPending;
+        [Tooltip("Pathfinder distance.")]
+        public float maxDetectDistance;
 
         [Header("Vision")]
         [Tooltip("Vision range.")]
@@ -134,11 +154,15 @@ namespace RTS.RTSGameObject.Unit
 
         protected GameObject autoEngageTarget = null;
 
-        protected float searchTimer = 0;
         protected Vector3 finalPosition;
         protected Vector3 finalRotationTarget;  // Where to look at
         protected List<Vector3> moveBeacons = new List<Vector3>();
         protected bool isApproaching = true;
+
+        protected readonly List<Vector3> agentCorners = new List<Vector3>();
+        protected Rigidbody thisBody;
+        protected List<Collider> allColliders;
+
 
         protected override void OnCreatedAction()
         {
@@ -619,7 +643,7 @@ namespace RTS.RTSGameObject.Unit
         }
 
         // This function should only be called when deploy the unit
-        public virtual void ForcedMove(Vector3 destination, bool clearQueue = true, bool addToEnd = true)
+        public virtual void ForcedMove(Vector3 destination, float speed, bool clearQueue = true, bool addToEnd = true)
         {
             if (clearQueue)
             {
@@ -631,7 +655,7 @@ namespace RTS.RTSGameObject.Unit
                 ActionQueue.AddLast(new UnitAction
                 {
                     actionType = ActionType.ForcedMove,
-                    targets = new List<object>() { destination }
+                    targets = new List<object>() { destination, speed }
                 });
                 ActionQueue.AddLast(new UnitAction
                 {
@@ -649,7 +673,7 @@ namespace RTS.RTSGameObject.Unit
                 ActionQueue.AddFirst(new UnitAction
                 {
                     actionType = ActionType.ForcedMove,
-                    targets = new List<object>() { destination }
+                    targets = new List<object>() { destination, speed }
                 });
             }
         }

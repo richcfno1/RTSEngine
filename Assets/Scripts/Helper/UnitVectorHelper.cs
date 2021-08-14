@@ -17,6 +17,14 @@ namespace RTS.Helper
             return (toPoint - fromPoint).magnitude;
         }
 
+        public static Vector3 VectorClamp(Vector3 value, Vector3 min, Vector3 max)
+        {
+            return new Vector3(
+                Mathf.Clamp(value.x, min.x, max.x),
+                Mathf.Clamp(value.y, min.y, max.y),
+                Mathf.Clamp(value.z, min.z, max.z));
+        }
+
         // For a given vector, find a vector which is orthogonal to it.
         public static Vector3 RandomTangent(Vector3 vector)
         {
@@ -38,20 +46,20 @@ namespace RTS.Helper
             }
         }
 
-        public static List<Vector3> GetFourSurfaceTagent(Vector3 vector)
+        public static List<Vector3> GetFourSurfaceTagent(Vector3 vector, float distance)
         {
             Vector3 vector1 = NormalSurfaceTangent(vector);
             Vector3 vector2 = Vector3.Cross(vector, vector1).normalized;
             return new List<Vector3>()
             {
-                vector1,
-                -vector1,
-                vector2,
-                -vector2
+                vector1 * distance,
+                -vector1 * distance,
+                vector2 * distance,
+                -vector2 * distance
             };
         }
 
-        public static List<Vector3> GetEightSurfaceTagent(Vector3 vector)
+        public static List<Vector3> GetEightSurfaceTagent(Vector3 vector, float distance)
         {
             Vector3 vector1 = NormalSurfaceTangent(vector);
             Vector3 vector2 = Vector3.Cross(vector, vector1).normalized;
@@ -59,14 +67,27 @@ namespace RTS.Helper
             Vector3 vector4 = (vector1 - vector2).normalized;
             return new List<Vector3>()
             {
-                vector1,
-                -vector1,
-                vector2,
-                -vector2,
-                vector3,
-                -vector3,
-                vector4,
-                -vector4
+                vector1 * distance,
+                -vector1 * distance,
+                vector2 * distance,
+                -vector2 * distance,
+                vector3 * distance,
+                -vector3 * distance,
+                vector4 * distance,
+                -vector4 * distance
+            };
+        }
+
+        public static List<Vector3> GetSixAroundPoint(Vector3 center, float distance)
+        {
+            return new List<Vector3>()
+            {
+                center + Vector3.up * distance,
+                center - Vector3.up * distance,
+                center + Vector3.right * distance,
+                center - Vector3.right * distance,
+                center + Vector3.forward * distance,
+                center - Vector3.forward * distance
             };
         }
     }

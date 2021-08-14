@@ -8,24 +8,11 @@ using RTS.RTSGameObject.Subsystem;
 namespace RTS.RTSGameObject.Unit
 {
     public class ShipBaseScript : UnitBaseScript
-    {
-        [Header("Move")]
-        [Tooltip("Move speed.")]
-        public float agentMoveSpeed;
-        [Tooltip("Rotate speed.")]
-        public float agentRotateSpeed;
-        [Tooltip("The limitation of max velocity change.")]
-        public float agentAccelerateLimit;
-
-        private List<Vector3> agentCorners = new List<Vector3>();
-        private float lastFrameSpeedAdjust = 0;
-        private Vector3 lastFrameMoveDirection = new Vector3();
-        private Rigidbody thisBody;
-
-        // Start is called before the first frame update
+    {// Start is called before the first frame update
         void Start()
         {
             OnCreatedAction();
+
             Vector3 min = NavigationCollider.center - NavigationCollider.size * 0.5f;
             Vector3 max = NavigationCollider.center + NavigationCollider.size * 0.5f;
             agentCorners.Add(Vector3.zero);
@@ -37,21 +24,26 @@ namespace RTS.RTSGameObject.Unit
             agentCorners.Add(new Vector3(max.x, min.y, max.z));
             agentCorners.Add(new Vector3(max.x, max.y, min.z));
             agentCorners.Add(new Vector3(max.x, max.y, max.z));
+
             finalPosition = transform.position;
             thisBody = GetComponent<Rigidbody>();
+            allColliders = GetComponentsInChildren<Collider>().ToList();
         }
 
         // Update is called once per frame
         void FixedUpdate()
         {
+            SetSeed();
             if (HP <= 0)
             {
                 OnDestroyedAction();
                 return;
             }
-            curAttackPower = Mathf.Clamp(curAttackPower + recoverAttackPower * Time.fixedDeltaTime, 0, maxAttackPower);
-            curDefencePower = Mathf.Clamp(curDefencePower + recoverDefencePower * Time.fixedDeltaTime, 0, maxDefencePower);
-            curMovePower = Mathf.Clamp(curMovePower + recoverMovePower * Time.fixedDeltaTime, 0, maxMovePower);
+
+            // Recover
+            AttackPower = Mathf.Clamp01(AttackPower + recoverAttackPower * Time.fixedDeltaTime);
+            DefencePower = Mathf.Clamp01(DefencePower + recoverDefencePower * Time.fixedDeltaTime);
+            MovePower = Mathf.Clamp01(MovePower + recoverMovePower * Time.fixedDeltaTime);
 
             // Vision
             if (visionArea != null && BelongTo == GameManager.GameManagerInstance.selfIndex)
@@ -59,12 +51,12 @@ namespace RTS.RTSGameObject.Unit
                 visionArea.transform.localScale = new Vector3(visionRange, visionRange, visionRange) * 2;
             }
 
-            // Action
-            // Do not play physcial simulation here, this is a spaceship!
-            thisBody.velocity = Vector3.zero;
-            thisBody.angularVelocity = Vector3.zero;
-            searchTimer += Time.fixedDeltaTime;
+            if (lockRotationZ)
+            {
+                transform.rotation = Quaternion.Euler(transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.y, 0);
+            }
 
+            // Action
             // In aggressive status, when detect a nearby enemy, call attack ability
             if (AttackAbility != null && CurrentFireControlStatus == FireControlStatus.Aggressive && autoEngageTarget == null && 
                 (ActionQueue.Count == 0 || ActionQueue.First().actionType != ActionType.ForcedMove))
@@ -102,59 +94,11 @@ namespace RTS.RTSGameObject.Unit
                             return;
                         }
                         // Action implementation
-                        finalPosition = (Vector3)action.targets[0];
-                        if (thisBody.position != finalPosition)
+                        finalPosition = TestObstacleAround((Vector3)action.targets[0]);
+                        if (MoveToFinalPosition())
                         {
-                            // Moving
-                            if (TestObstacle(thisBody.position, finalPosition) == 0)
-                            {
-                                moveBeacons.Clear();
-                                moveBeacons.Add(finalPosition);
-                            }
-                            if (moveBeacons.Count != 0)
-                            {
-                                Vector3 moveVector = moveBeacons[0] - thisBody.position;
-                                Vector3 rotateDirection = moveVector.normalized;
-                                rotateDirection.y = 0;
-                                thisBody.rotation = Quaternion.RotateTowards(thisBody.rotation, Quaternion.LookRotation(rotateDirection), Time.fixedDeltaTime * agentRotateSpeed);
-                                float moveSpeedAdjust = Mathf.Cos(Mathf.Deg2Rad * Quaternion.Angle(thisBody.rotation, Quaternion.LookRotation(rotateDirection)));
-                                moveSpeedAdjust = (moveSpeedAdjust + 1) / 2;
-                                lastFrameSpeedAdjust = Mathf.Cos(Mathf.Deg2Rad * Quaternion.Angle(thisBody.rotation, Quaternion.LookRotation(lastFrameMoveDirection)));
-                                lastFrameSpeedAdjust = (lastFrameSpeedAdjust + 1) / 2;
-                                moveSpeedAdjust = Mathf.Clamp(moveSpeedAdjust, 0, lastFrameSpeedAdjust + agentAccelerateLimit);
-                                float moveDistance = agentMoveSpeed * Time.fixedDeltaTime * moveSpeedAdjust * MovePower;
-
-                                lastFrameSpeedAdjust = moveSpeedAdjust;
-                                lastFrameMoveDirection = (moveVector * moveDistance).normalized;
-                                if (moveVector.magnitude <= moveDistance)
-                                {
-                                    if (!TestObstacleAndPush(thisBody.position, moveBeacons[0]))
-                                    {
-                                        ActionQueue.First().targets[0] = FindPath(thisBody.position, finalPosition);
-                                        return;
-                                    }
-                                    thisBody.position = moveBeacons[0];
-                                    moveBeacons.RemoveAt(0);
-                                }
-                                else
-                                {
-                                    if (!TestObstacleAndPush(thisBody.position, thisBody.position + moveVector.normalized * moveDistance))
-                                    {
-                                        ActionQueue.First().targets[0] = FindPath(thisBody.position, finalPosition);
-                                        return;
-                                    }
-                                    thisBody.position += moveVector.normalized * moveDistance;
-                                }
-                            }
-                            else
-                            {
-                                ActionQueue.First().targets[0] = FindPath(thisBody.position, finalPosition);
-                            }
-                        }
-                        else
-                        {
-                            lastFrameSpeedAdjust = 0;
                             ActionQueue.RemoveFirst();
+                            moveBeacons.Clear();
                         }
                         return;
                     case ActionType.LookAt:
@@ -170,10 +114,8 @@ namespace RTS.RTSGameObject.Unit
                         }
                         // Action implementation
                         finalRotationTarget = (Vector3)action.targets[0];
-                        thisBody.rotation = Quaternion.RotateTowards(thisBody.rotation,
-                            Quaternion.LookRotation((finalRotationTarget - thisBody.position).normalized),
-                            Time.fixedDeltaTime * agentRotateSpeed);
-                        if (Vector3.Angle(transform.forward, (finalRotationTarget - thisBody.position).normalized) <= 0.1f)
+                        ApplyRotation(finalRotationTarget);
+                        if (Vector3.Angle(transform.forward, (finalRotationTarget - thisBody.position).normalized) <= maxErrorAngle)
                         {
                             ActionQueue.RemoveFirst();
                         }
@@ -197,9 +139,7 @@ namespace RTS.RTSGameObject.Unit
                         else
                         {
                             finalRotationTarget = ((GameObject)action.targets[0]).transform.position;
-                            thisBody.rotation = Quaternion.RotateTowards(thisBody.rotation,
-                                Quaternion.LookRotation((finalRotationTarget - thisBody.position).normalized),
-                                Time.fixedDeltaTime * agentRotateSpeed);
+                            ApplyRotation(finalRotationTarget);
                         }
                         return;
                     case ActionType.Follow:
@@ -222,67 +162,9 @@ namespace RTS.RTSGameObject.Unit
                         }
                         else
                         {
-                            if ((thisBody.position - followTarget.transform.position).magnitude < ((Vector3)action.targets[1]).magnitude)
-                            {
-                                finalPosition = thisBody.position;
-                            }
-                            else
-                            {
-                                finalPosition = followTarget.transform.position + (Vector3)action.targets[1];
-                            }
-                            finalPosition = followTarget.transform.position + (Vector3)action.targets[1];
-                            if (thisBody.position != finalPosition)
-                            {
-                                // Moving
-                                if (TestObstacle(thisBody.position, finalPosition) == 0)
-                                {
-                                    moveBeacons.Clear();
-                                    moveBeacons.Add(finalPosition);
-                                }
-                                if (moveBeacons.Count != 0)
-                                {
-                                    Vector3 moveVector = moveBeacons[0] - thisBody.position;
-                                    Vector3 rotateDirection = moveVector.normalized;
-                                    rotateDirection.y = 0;
-                                    thisBody.rotation = Quaternion.RotateTowards(thisBody.rotation, Quaternion.LookRotation(rotateDirection), Time.fixedDeltaTime * agentRotateSpeed);
-                                    float moveSpeedAdjust = Mathf.Cos(Mathf.Deg2Rad * Quaternion.Angle(thisBody.rotation, Quaternion.LookRotation(rotateDirection)));
-                                    moveSpeedAdjust = (moveSpeedAdjust + 1) / 2;
-                                    lastFrameSpeedAdjust = Mathf.Cos(Mathf.Deg2Rad * Quaternion.Angle(thisBody.rotation, Quaternion.LookRotation(lastFrameMoveDirection)));
-                                    lastFrameSpeedAdjust = (lastFrameSpeedAdjust + 1) / 2;
-                                    moveSpeedAdjust = Mathf.Clamp(moveSpeedAdjust, 0, lastFrameSpeedAdjust + agentAccelerateLimit);
-                                    float moveDistance = agentMoveSpeed * Time.fixedDeltaTime * moveSpeedAdjust * MovePower;
-
-                                    lastFrameSpeedAdjust = moveSpeedAdjust;
-                                    lastFrameMoveDirection = (moveVector * moveDistance).normalized;
-                                    if (moveVector.magnitude <= moveDistance)
-                                    {
-                                        if (!TestObstacleAndPush(thisBody.position, moveBeacons[0]))
-                                        {
-                                            ActionQueue.First().targets[1] = FindPath(thisBody.position, finalPosition) - followTarget.transform.position;
-                                            return;
-                                        }
-                                        thisBody.position = moveBeacons[0];
-                                        moveBeacons.RemoveAt(0);
-                                    }
-                                    else
-                                    {
-                                        if (!TestObstacleAndPush(thisBody.position, thisBody.position + moveVector.normalized * moveDistance))
-                                        {
-                                            ActionQueue.First().targets[1] = FindPath(thisBody.position, finalPosition) - followTarget.transform.position;
-                                            return;
-                                        }
-                                        thisBody.position += moveVector.normalized * moveDistance;
-                                    }
-                                }
-                                else
-                                {
-                                    ActionQueue.First().targets[1] = FindPath(thisBody.position, finalPosition) - followTarget.transform.position;
-                                }
-                            }
-                            else
-                            {
-                                lastFrameSpeedAdjust = 0;
-                            }
+                            finalPosition = TestObstacleAround(followTarget.transform.position + (Vector3)action.targets[1]);
+                            action.targets[1] = finalPosition - followTarget.transform.position;
+                            MoveToFinalPosition();
                         }
                         return;
                     case ActionType.KeepInRange:
@@ -343,59 +225,7 @@ namespace RTS.RTSGameObject.Unit
                                         ((float)action.targets[1] + (float)action.targets[2]) / 2;
                                 }
                             }
-
-                            if (thisBody.position != finalPosition)
-                            {
-                                // Moving
-                                if (TestObstacle(thisBody.position, finalPosition) == 0)
-                                {
-                                    moveBeacons.Clear();
-                                    moveBeacons.Add(finalPosition);
-                                }
-                                if (moveBeacons.Count != 0)
-                                {
-                                    Vector3 moveVector = moveBeacons[0] - thisBody.position;
-                                    Vector3 rotateDirection = moveVector.normalized;
-                                    rotateDirection.y = 0;
-                                    thisBody.rotation = Quaternion.RotateTowards(thisBody.rotation, Quaternion.LookRotation(rotateDirection), Time.fixedDeltaTime * agentRotateSpeed);
-                                    float moveSpeedAdjust = Mathf.Cos(Mathf.Deg2Rad * Quaternion.Angle(thisBody.rotation, Quaternion.LookRotation(rotateDirection)));
-                                    moveSpeedAdjust = (moveSpeedAdjust + 1) / 2;
-                                    lastFrameSpeedAdjust =  Mathf.Cos(Mathf.Deg2Rad * Quaternion.Angle(thisBody.rotation, Quaternion.LookRotation(lastFrameMoveDirection)));
-                                    lastFrameSpeedAdjust = (lastFrameSpeedAdjust + 1) / 2;
-                                    moveSpeedAdjust = Mathf.Clamp(moveSpeedAdjust, 0, lastFrameSpeedAdjust + agentAccelerateLimit);
-                                    float moveDistance = agentMoveSpeed * Time.fixedDeltaTime * moveSpeedAdjust * MovePower;
-
-                                    lastFrameSpeedAdjust = moveSpeedAdjust;
-                                    lastFrameMoveDirection = (moveVector * moveDistance).normalized;
-                                    if (moveVector.magnitude <= moveDistance)
-                                    {
-                                        if (!TestObstacleAndPush(thisBody.position, moveBeacons[0]))
-                                        {
-                                            FindPath(thisBody.position, finalPosition);
-                                            return;
-                                        }
-                                        thisBody.position = moveBeacons[0];
-                                        moveBeacons.RemoveAt(0);
-                                    }
-                                    else
-                                    {
-                                        if (!TestObstacleAndPush(thisBody.position, thisBody.position + moveVector.normalized * moveDistance))
-                                        {
-                                            FindPath(thisBody.position, finalPosition);
-                                            return;
-                                        }
-                                        thisBody.position += moveVector.normalized * moveDistance;
-                                    }
-                                }
-                                else
-                                {
-                                    FindPath(thisBody.position, finalPosition);
-                                }
-                            }
-                            else
-                            {
-                                lastFrameSpeedAdjust = 0;
-                            }
+                            MoveToFinalPosition();
                         }
                         return;
                     case ActionType.KeepInRangeAndLookAt:
@@ -429,66 +259,13 @@ namespace RTS.RTSGameObject.Unit
                             {
                                 finalPosition = keepInRangeAndHeadToTarget.transform.position + 
                                     ((Vector3)action.targets[1]).normalized * ((float)action.targets[3]);
-
-                                if (thisBody.position != finalPosition)
-                                {
-                                    // Moving
-                                    if (TestObstacle(thisBody.position, finalPosition) == 0)
-                                    {
-                                        moveBeacons.Clear();
-                                        moveBeacons.Add(finalPosition);
-                                    }
-                                    if (moveBeacons.Count != 0)
-                                    {
-                                        Vector3 moveVector = moveBeacons[0] - thisBody.position;
-                                        Vector3 rotateDirection = moveVector.normalized;
-                                        rotateDirection.y = 0;
-                                        thisBody.rotation = Quaternion.RotateTowards(thisBody.rotation, Quaternion.LookRotation(rotateDirection), Time.fixedDeltaTime * agentRotateSpeed);
-                                        float moveSpeedAdjust = Mathf.Cos(Mathf.Deg2Rad * Quaternion.Angle(thisBody.rotation, Quaternion.LookRotation(rotateDirection)));
-                                        moveSpeedAdjust = (moveSpeedAdjust + 1) / 2;
-                                        lastFrameSpeedAdjust = Mathf.Cos(Mathf.Deg2Rad * Quaternion.Angle(thisBody.rotation, Quaternion.LookRotation(lastFrameMoveDirection)));
-                                        lastFrameSpeedAdjust = (lastFrameSpeedAdjust + 1) / 2;
-                                        moveSpeedAdjust = Mathf.Clamp(moveSpeedAdjust, 0, lastFrameSpeedAdjust + agentAccelerateLimit);
-                                        float moveDistance = agentMoveSpeed * Time.fixedDeltaTime * moveSpeedAdjust * MovePower;
-
-                                        lastFrameSpeedAdjust = moveSpeedAdjust;
-                                        lastFrameMoveDirection = (moveVector * moveDistance).normalized;
-                                        if (moveVector.magnitude <= moveDistance)
-                                        {
-                                            if (!TestObstacleAndPush(thisBody.position, moveBeacons[0]))
-                                            {
-                                                ActionQueue.First().targets[1] = FindPath(thisBody.position, finalPosition) - keepInRangeAndHeadToTarget.transform.position;
-                                                return;
-                                            }
-                                            thisBody.position = moveBeacons[0];
-                                            moveBeacons.RemoveAt(0);
-                                        }
-                                        else
-                                        {
-                                            if (!TestObstacleAndPush(thisBody.position, thisBody.position + moveVector.normalized * moveDistance))
-                                            {
-                                                ActionQueue.First().targets[1] = FindPath(thisBody.position, finalPosition) - keepInRangeAndHeadToTarget.transform.position;
-                                                return;
-                                            }
-                                            thisBody.position += moveVector.normalized * moveDistance;
-                                        }
-                                    }
-                                    else
-                                    {
-                                        ActionQueue.First().targets[1] = FindPath(thisBody.position, finalPosition) - keepInRangeAndHeadToTarget.transform.position;
-                                    }
-                                }
-                                else
-                                {
-                                    lastFrameSpeedAdjust = 0;
-                                }
+                                action.targets[1] = finalPosition - keepInRangeAndHeadToTarget.transform.position;
+                                MoveToFinalPosition();
                             }
                             else
                             {
                                 finalRotationTarget = keepInRangeAndHeadToTarget.transform.position;
-                                thisBody.rotation = Quaternion.RotateTowards(thisBody.rotation, 
-                                    Quaternion.LookRotation((finalRotationTarget - thisBody.position).normalized), 
-                                    Time.fixedDeltaTime * agentRotateSpeed);
+                                ApplyRotation(finalRotationTarget);
                             }
                         }
                         return;
@@ -515,63 +292,17 @@ namespace RTS.RTSGameObject.Unit
                             ActionQueue.RemoveFirst();
                             return;
                         }
+
                         if (MoveAbility != null && MoveAbility.CanUseAbility())
                         {
-                            finalPosition = (Vector3)action.targets[0];
-                            if (thisBody.position != finalPosition)
+                            finalPosition = TestObstacleAround((Vector3)action.targets[0]);
+                            if (MoveToFinalPosition())
                             {
-                                // Moving
-                                if (TestObstacle(thisBody.position, finalPosition) == 0)
-                                {
-                                    moveBeacons.Clear();
-                                    moveBeacons.Add(finalPosition);
-                                }
-                                if (moveBeacons.Count != 0)
-                                {
-                                    Vector3 moveVector = moveBeacons[0] - thisBody.position;
-                                    Vector3 rotateDirection = moveVector.normalized;
-                                    rotateDirection.y = 0;
-                                    thisBody.rotation = Quaternion.RotateTowards(thisBody.rotation, Quaternion.LookRotation(rotateDirection), Time.fixedDeltaTime * agentRotateSpeed);
-                                    float moveSpeedAdjust = Mathf.Cos(Mathf.Deg2Rad * Quaternion.Angle(thisBody.rotation, Quaternion.LookRotation(rotateDirection)));
-                                    moveSpeedAdjust = (moveSpeedAdjust + 1) / 2;
-                                    lastFrameSpeedAdjust = Mathf.Cos(Mathf.Deg2Rad * Quaternion.Angle(thisBody.rotation, Quaternion.LookRotation(lastFrameMoveDirection)));
-                                    lastFrameSpeedAdjust = (lastFrameSpeedAdjust + 1) / 2;
-                                    moveSpeedAdjust = Mathf.Clamp(moveSpeedAdjust, 0, lastFrameSpeedAdjust + agentAccelerateLimit);
-                                    float moveDistance = agentMoveSpeed * Time.fixedDeltaTime * moveSpeedAdjust * MovePower;
-
-                                    lastFrameSpeedAdjust = moveSpeedAdjust;
-                                    lastFrameMoveDirection = (moveVector * moveDistance).normalized;
-                                    if (moveVector.magnitude <= moveDistance)
-                                    {
-                                        if (!TestObstacleAndPush(thisBody.position, moveBeacons[0]))
-                                        {
-                                            ActionQueue.First().targets[0] = FindPath(thisBody.position, finalPosition);
-                                            return;
-                                        }
-                                        thisBody.position = moveBeacons[0];
-                                        moveBeacons.RemoveAt(0);
-                                    }
-                                    else
-                                    {
-                                        if (!TestObstacleAndPush(thisBody.position, thisBody.position + moveVector.normalized * moveDistance))
-                                        {
-                                            ActionQueue.First().targets[0] = FindPath(thisBody.position, finalPosition);
-                                            return;
-                                        }
-                                        thisBody.position += moveVector.normalized * moveDistance;
-                                    }
-                                }
-                                else
-                                {
-                                    ActionQueue.First().targets[0] = FindPath(thisBody.position, finalPosition);
-                                }
-                            }
-                            else
-                            {
-                                lastFrameSpeedAdjust = 0;
                                 ActionQueue.RemoveFirst();
+                                moveBeacons.Clear();
                             }
                         }
+
                         if (AttackAbility != null && AttackAbility.CanUseAbility())
                         {
                             if (AttackAbility != null && autoEngageTarget == null)
@@ -600,6 +331,7 @@ namespace RTS.RTSGameObject.Unit
                         return;
                     case ActionType.ForcedMove:
                         finalPosition = (Vector3)action.targets[0];
+                        float speed = (float)action.targets[1];
                         if (thisBody.position != finalPosition)
                         {
                             // Disable collider
@@ -614,9 +346,8 @@ namespace RTS.RTSGameObject.Unit
                             // Move
                             Vector3 moveVector = finalPosition - thisBody.position;
                             Vector3 rotateDirection = moveVector.normalized;
-                            rotateDirection.y = 0;  // Consider to allow rotation in y?
-                            thisBody.rotation = Quaternion.RotateTowards(thisBody.rotation, Quaternion.LookRotation(rotateDirection), Time.fixedDeltaTime * agentRotateSpeed);
-                            float moveDistance = agentMoveSpeed * Time.fixedDeltaTime * MovePower;
+                            thisBody.rotation = Quaternion.RotateTowards(thisBody.rotation, Quaternion.LookRotation(rotateDirection), Mathf.Infinity);
+                            float moveDistance = speed * Time.fixedDeltaTime * MovePower;
 
                             if (moveVector.magnitude <= moveDistance)
                             {
@@ -637,7 +368,7 @@ namespace RTS.RTSGameObject.Unit
                             {
                                 i.enabled = false;
                             }
-                            
+
                             ActionQueue.RemoveFirst();
                         }
                         return;
@@ -648,20 +379,120 @@ namespace RTS.RTSGameObject.Unit
             }
         }
 
-        // Pathfinder
-        private float TestObstacle(Vector3 from, Vector3 to)
+        // Physical movement
+        private void ApplyForce(Vector3 targetPosition, bool allowSlowDown = true)
         {
-            UnityEngine.Profiling.Profiler.BeginSample("Ship - TestObstacle");
+            Vector3 moveVector = targetPosition - thisBody.position;
+            float appliedForce = Mathf.Lerp(0, maxForce,
+                allowSlowDown ? Mathf.Clamp01(moveVector.magnitude / slowDownDistance) : 1);
+            float moveSpeedAdjust = Mathf.Cos(Mathf.Deg2Rad * 
+                Quaternion.Angle(thisBody.rotation, Quaternion.LookRotation(moveVector.normalized)));
+            moveSpeedAdjust = (moveSpeedAdjust + 1) / 2;
+            thisBody.AddForce(moveVector.normalized * appliedForce * forceMultiplier * moveSpeedAdjust);
+        }
+
+        private void ApplyRotation(Vector3 targetPosition)
+        {
+            Vector3 rotateDirection = (targetPosition - thisBody.position).normalized;
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(rotateDirection), Time.fixedDeltaTime * maxRotationSpeed);
+        }
+
+        // Variable finalPosition must be valid
+        // Return true if arrive beacon
+        private bool MoveToFinalPosition(bool allowSlowDown = true)
+        {
+            if (Vector3.Distance(thisBody.position, finalPosition) > slowDownDistance)
+            {
+                // Try to move directly
+                if (TestObstacleInPath(thisBody.position, finalPosition, maxDetectDistance) == 0)
+                {
+                    moveBeacons.Clear();
+                    moveBeacons.Add(finalPosition);
+                }
+                // Ensure there are no obstacles in front of the unit and a valid path exist 
+                if (moveBeacons.Count == 0 || TestObstacleInPath(thisBody.position, moveBeacons[0], maxDetectDistance) != 0)
+                {
+                    FindPath(thisBody.position, finalPosition);
+                }
+                else
+                {
+                    ApplyRotation(moveBeacons[0]);
+                    ApplyForce(moveBeacons[0], moveBeacons.Count == 1);
+                }
+            }
+            else if (allowSlowDown && Vector3.Distance(thisBody.position, finalPosition) > maxErrorDistance)
+            {
+                // Try to move directly
+                if (TestObstacleInPath(thisBody.position, finalPosition, maxDetectDistance) == 0)
+                {
+                    moveBeacons.Clear();
+                    moveBeacons.Add(finalPosition);
+                }
+                // Ensure there are no obstacles in front of the unit and a valid path exist 
+                if (moveBeacons.Count == 0 || TestObstacleInPath(thisBody.position, moveBeacons[0], maxDetectDistance) != 0)
+                {
+                    FindPath(thisBody.position, finalPosition);
+                }
+                else
+                {
+                    ApplyRotation(moveBeacons[0]);
+                    ApplyForce(moveBeacons[0]);
+                }
+            }
+            else if (!allowSlowDown)
+            {
+                ApplyRotation(moveBeacons[0]);
+                ApplyForce(moveBeacons[0], false);
+            }
+            else
+            {
+                return true;
+            }
+            return false;
+        }
+
+        // Pathfinder
+        // Return an alternative position if original cannot be reached
+        private Vector3 TestObstacleAround(Vector3 position)
+        {
+            Vector3 result = position;
+            List<Collider> intersectObjects = new List<Collider>(Physics.OverlapBox(position, NavigationCollider.size, transform.rotation));
+            intersectObjects.RemoveAll(x => allColliders.Contains(x));
+            intersectObjects.RemoveAll(x => x.CompareTag("Bullet"));
+            intersectObjects.RemoveAll(x => x.GetComponent<RTSGameObjectBaseScript>() == null);
+            intersectObjects.RemoveAll(x => x.GetComponent<RTSGameObjectBaseScript>().objectScale < objectScale);
+            float nextStepDistance = searchStepDistance;
+            bool isDestinationAvaliable = intersectObjects.Count == 0;
+            while (nextStepDistance <= searchStepMaxDistance && !isDestinationAvaliable)
+            {
+                foreach (Vector3 i in UnitVectorHelper.GetSixAroundPoint(position, nextStepDistance))
+                {
+                    intersectObjects = new List<Collider>(Physics.OverlapBox(i, NavigationCollider.size, transform.rotation));
+                    intersectObjects.RemoveAll(x => x.CompareTag("Bullet"));
+                    intersectObjects.RemoveAll(x => x.GetComponent<RTSGameObjectBaseScript>() == null);
+                    intersectObjects.RemoveAll(x => x.GetComponent<RTSGameObjectBaseScript>().objectScale < objectScale);
+                    if (intersectObjects.Count == 0)
+                    {
+                        result = i;
+                        isDestinationAvaliable = true;
+                        break;
+                    }
+                }
+                nextStepDistance += searchStepDistance;
+            }
+            return result;
+        }
+
+        private float TestObstacleInPath(Vector3 from, Vector3 to, float maxDistance = Mathf.Infinity)
+        {
             Vector3 direction = (to - from).normalized;
-            float distance = (to - from).magnitude;
-            List<Collider> toIgnore = new List<Collider>();
-            toIgnore.AddRange(GetComponentsInChildren<Collider>());
+            float distance = Mathf.Min((to - from).magnitude, maxDistance);
             foreach (Vector3 i in agentCorners)
             {
                 RaycastHit hit;
                 if (Physics.Raycast(from - transform.position + transform.TransformPoint(i), direction, out hit, distance))
                 {
-                    if (!toIgnore.Contains(hit.collider) && hit.collider.GetComponentInParent<RTSGameObjectBaseScript>() != null)
+                    if (!allColliders.Contains(hit.collider) && hit.collider.GetComponentInParent<RTSGameObjectBaseScript>() != null)
                     {
                         if (objectScale <= hit.collider.GetComponentInParent<RTSGameObjectBaseScript>().objectScale)
                         {
@@ -673,91 +504,28 @@ namespace RTS.RTSGameObject.Unit
             return 0;
         }
 
-        private bool TestObstacleAndPush(Vector3 from, Vector3 to)
+        private void FindPath(Vector3 from, Vector3 to)
         {
-            Vector3 direction = (to - from).normalized;
-            float distance = (to - from).magnitude;
-            List<Collider> toIgnore = new List<Collider>();
-            toIgnore.AddRange(GetComponentsInChildren<Collider>());
-            List<RTSGameObjectBaseScript> avoidInfo = new List<RTSGameObjectBaseScript>();
-            foreach (Vector3 i in agentCorners)
-            {
-                RaycastHit hit;
-                if (Physics.Raycast(from - transform.position + transform.TransformPoint(i), direction, out hit, distance * NavigationCollider.size.magnitude))
-                {
-                    if (!toIgnore.Contains(hit.collider))
-                    {
-                        if (hit.collider.GetComponentInParent<RTSGameObjectBaseScript>() == null)
-                        {
-                            continue;
-                        }
-                        if (objectScale <= hit.collider.GetComponentInParent<RTSGameObjectBaseScript>().objectScale)
-                        {
-                            return false;
-                        }
-                        else
-                        {
-                            avoidInfo.Add(hit.collider.GetComponentInParent<RTSGameObjectBaseScript>());
-                        }
-                    }
-                }
-            }
-            return true;
-        }
-
-        // Return value is modified destination
-        private Vector3 FindPath(Vector3 from, Vector3 to)
-        {
-            if (searchTimer < nextSearchPending)
-            {
-                //Debug.Log("Search pending");
-                return finalPosition;
-            }
             List<Vector3> result = new List<Vector3>();
-            List<Collider> intersectObjects = new List<Collider>(Physics.OverlapBox(to, NavigationCollider.size, transform.rotation));
-            intersectObjects.RemoveAll(x => x.CompareTag("Bullet"));
-            float nextStepDistance = searchStepDistance;
-            bool find = intersectObjects.Count == 0;
-            if (intersectObjects.Count != 0)
-            {
-                while (nextStepDistance <= searchStepMaxDistance && !find)
-                {
-                    for (int i = 0; i < searchMaxRandomNumber; i++)
-                    {
-                        Vector3 newDestination = to + nextStepDistance * new Vector3(Random.value * 2 - 1, Random.value * 2 - 1, Random.value * 2 - 1).normalized;
-                        intersectObjects = new List<Collider>(Physics.OverlapBox(newDestination, NavigationCollider.size, transform.rotation));
-                        intersectObjects.RemoveAll(x => x.CompareTag("Bullet"));
-                        if (intersectObjects.Count == 0)
-                        {
-                            finalPosition = to = newDestination;
-                            find = true;
-                            break;
-                        }
-                    }
-                    nextStepDistance += searchStepDistance;
-                }
-            }
-            if (!find)
-            {
-                //Debug.Log("Out of search limitation when determine alternative destination");
-            }
             result.Add(to);
-            float obstacleDistance = TestObstacle(from, to);
+            float obstacleDistance = TestObstacleInPath(from, to, maxDetectDistance);
             if (obstacleDistance != 0)
             {
                 Vector3 direction = (to - from).normalized;
                 Vector3 obstaclePosition = from + obstacleDistance * direction;
                 Vector3 middle = new Vector3();
-                nextStepDistance = searchStepDistance;
-                find = false;
+                float nextStepDistance = searchStepDistance;
+                bool find = false;
                 while (nextStepDistance <= searchStepMaxDistance && !find)
                 {
-                    for (int i = 0; i < searchMaxRandomNumber; i++)
+                    foreach (Vector3 i in UnitVectorHelper.GetEightSurfaceTagent(direction, nextStepDistance))
                     {
-                        middle = obstaclePosition + nextStepDistance * UnitVectorHelper.RandomTangent(direction);
-                        intersectObjects = new List<Collider>(Physics.OverlapBox(middle, NavigationCollider.size, transform.rotation));
+                        middle = i + obstaclePosition;
+                        List<Collider> intersectObjects = new List<Collider>(Physics.OverlapBox(middle, NavigationCollider.size, transform.rotation));
                         intersectObjects.RemoveAll(x => x.CompareTag("Bullet"));
-                        if (intersectObjects.Count == 0 && TestObstacle(middle, to) == 0 && TestObstacle(from, middle) == 0)
+                        intersectObjects.RemoveAll(x => x.GetComponent<RTSGameObjectBaseScript>() == null);
+                        intersectObjects.RemoveAll(x => x.GetComponent<RTSGameObjectBaseScript>().objectScale < objectScale);
+                        if (intersectObjects.Count == 0 && TestObstacleInPath(middle, to) == 0 && TestObstacleInPath(from, middle) == 0)
                         {
                             find = true;
                             break;
@@ -767,9 +535,8 @@ namespace RTS.RTSGameObject.Unit
                 }
                 if (!find)
                 {
-                    //Debug.Log("Out of search limitation");
-                    searchTimer = 0;
-                    result.Clear();
+                    Vector3 avoidancePosition = transform.position + transform.up * 100;
+                    result.Insert(0, avoidancePosition);
                 }
                 else
                 {
@@ -777,7 +544,6 @@ namespace RTS.RTSGameObject.Unit
                 }
             }
             moveBeacons = result;
-            return finalPosition;
         }
     }
 }

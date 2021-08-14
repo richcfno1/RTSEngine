@@ -14,6 +14,7 @@ namespace RTS.RTSGameObject.Subsystem
         public List<Vector3> deployPath;
         public float recallTime;
         public List<Vector3> recallPath;
+        public float deployAndRecallSpeed;
 
         [HideInInspector]
         public Dictionary<string, List<GameObject>> deployedUnits = new Dictionary<string, List<GameObject>>();
@@ -79,7 +80,7 @@ namespace RTS.RTSGameObject.Subsystem
             foreach (Vector3 i in deployPath)
             {
                 offset += i;
-                temp.GetComponent<UnitBaseScript>().ForcedMove(transform.TransformPoint(i), false);
+                temp.GetComponent<UnitBaseScript>().ForcedMove(transform.TransformPoint(i), deployAndRecallSpeed, false);
             }
             if (temp.GetComponent<UnitBaseScript>().MoveAbility != null)
             {

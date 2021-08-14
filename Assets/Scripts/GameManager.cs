@@ -70,6 +70,7 @@ namespace RTS
         public static GameManager GameManagerInstance { get; private set; }
         public ScriptSystem ScriptSystem { get; private set; }
         public MaterialsManager MaterialsManager { get; private set; }
+        public int FrameCount { get; private set; } = 0;
 
         public int selfIndex;
         public float visionProcessGap;
@@ -111,6 +112,11 @@ namespace RTS
         void Start()
         {
 
+        }
+
+        void FixedUpdate()
+        {
+            FrameCount++;
         }
 
         // Update is called once per frame

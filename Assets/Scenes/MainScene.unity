@@ -4073,7 +4073,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   selfIndex: 0
   visionProcessGap: 0.05
-  initDataAsset: {fileID: 4900000, guid: 49fc18f04eff1f84f89f5fa39e0aedf1, type: 3}
+  initDataAsset: {fileID: 4900000, guid: 11058aecd6815a8439af14e9a6a8203c, type: 3}
   gameObjectLibraryAsset: {fileID: 4900000, guid: 5ec89fe72628a7c40a36c1707bbc0df1, type: 3}
 --- !u!1 &1090193759
 GameObject:

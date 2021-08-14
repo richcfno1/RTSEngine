@@ -85,5 +85,12 @@ namespace RTS.RTSGameObject
             HP = Mathf.Clamp(HP + amount, 0, maxHP);
             lastDamagedBy = from;
         }
+
+        // Must call this function if using random in fixedupdate
+        // For frame synchronization
+        protected void SetSeed()
+        {
+            Random.InitState(GameManager.GameManagerInstance.FrameCount + Index);
+        }
     }
 }
