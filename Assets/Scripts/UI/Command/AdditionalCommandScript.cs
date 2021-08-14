@@ -10,8 +10,17 @@ namespace RTS.UI.Command
 {
     public class AdditionalCommandScript : CommandBaseScript
     {
+        [Header("Additional Command")]
         public List<Button> buttons;
         public List<Button> skillButtons;  // size shoule bd 5 with order E R D F C
+
+        [Header("Fire Control State")]
+        public Button aggressiveButton;
+        public Image aggressiveButtonEnabledCover;
+        public Button neutralButton;
+        public Image neutralButtonEnabledCover;
+        public Button passiveButton;
+        public Image passiveButtonEnabledCover;
 
         private SortedDictionary<string, List<SpecialAbilityBaseScript>> showingAbilities = new SortedDictionary<string, List<SpecialAbilityBaseScript>>();
 
@@ -51,6 +60,44 @@ namespace RTS.UI.Command
             }
             // At this point, indexOfSkillButtons will be the amount of valid skill button.
 
+            // Update firecontrol showing
+            if (SelectControlScript.SelectionControlInstance.SelectedOwnUnits)
+            {
+                aggressiveButton.interactable = true;
+                aggressiveButtonEnabledCover.enabled = false;
+                neutralButton.interactable = true;
+                neutralButtonEnabledCover.enabled = false;
+                passiveButton.interactable = true;
+                passiveButtonEnabledCover.enabled = false;
+                foreach (GameObject i in SelectControlScript.SelectionControlInstance.GetAllGameObjectsAsList())
+                {
+                    if (i.GetComponent<UnitBaseScript>() != null)
+                    {
+                        switch (i.GetComponent<UnitBaseScript>().CurrentFireControlStatus)
+                        {
+                            case UnitBaseScript.FireControlStatus.Aggressive:
+                                aggressiveButtonEnabledCover.enabled = true;
+                                break;
+                            case UnitBaseScript.FireControlStatus.Neutral:
+                                neutralButtonEnabledCover.enabled = true;
+                                break;
+                            case UnitBaseScript.FireControlStatus.Passive:
+                                passiveButtonEnabledCover.enabled = true;
+                                break;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                aggressiveButton.interactable = false;
+                aggressiveButtonEnabledCover.enabled = false;
+                neutralButton.interactable = false;
+                neutralButtonEnabledCover.enabled = false;
+                passiveButton.interactable = false;
+                passiveButtonEnabledCover.enabled = false;
+            }
+
             // Command
             if (SelectControlScript.SelectionControlInstance.SelectedOwnUnits)
             {
@@ -79,7 +126,8 @@ namespace RTS.UI.Command
                     OnStopButtonClicked();
                 }
                 if (InputManager.InputManagerInstance.CurrentCommandActionState == InputManager.CommandActionState.NoAction &&
-                    InputManager.InputManagerInstance.LastCommandActionState == InputManager.CommandActionState.NoAction)
+                    InputManager.InputManagerInstance.LastCommandActionState == InputManager.CommandActionState.NoAction &&
+                    !Input.GetKey(InputManager.HotKeys.FireControlKey))
                 {
                     if (Input.GetKeyDown(InputManager.HotKeys.Attack))
                     {
@@ -112,6 +160,21 @@ namespace RTS.UI.Command
                     else if (Input.GetKeyDown(InputManager.HotKeys.Skill5))
                     {
                         InputManager.InputManagerInstance.CurrentCommandActionState = InputManager.CommandActionState.Skill5;
+                    }
+                }
+                else if (Input.GetKey(InputManager.HotKeys.FireControlKey))
+                {
+                    if (Input.GetKeyDown(InputManager.HotKeys.Aggressive))
+                    {
+                        SetAggressive();
+                    }
+                    else if (Input.GetKeyDown(InputManager.HotKeys.Neutral))
+                    {
+                        SetNeutral();
+                    }
+                    else if (Input.GetKeyDown(InputManager.HotKeys.Passive))
+                    {
+                        SetPassive();
                     }
                 }
                 switch (InputManager.InputManagerInstance.CurrentCommandActionState)
@@ -845,64 +908,145 @@ namespace RTS.UI.Command
             }
         }
 
+        public void SetAggressive()
+        {
+            if (!SelectControlScript.SelectionControlInstance.SelectedOwnUnits)
+            {
+                return;
+            }
+            foreach (GameObject i in SelectControlScript.SelectionControlInstance.GetAllGameObjectsAsList())
+            {
+                if (i.GetComponent<UnitBaseScript>() != null && i.GetComponent<UnitBaseScript>().AttackAbility != null)
+                {
+                    i.GetComponent<UnitBaseScript>().AttackAbility.SetAggressive();
+                }
+            }
+        }
+
+        public void SetNeutral()
+        {
+            if (!SelectControlScript.SelectionControlInstance.SelectedOwnUnits)
+            {
+                return;
+            }
+            foreach (GameObject i in SelectControlScript.SelectionControlInstance.GetAllGameObjectsAsList())
+            {
+                if (i.GetComponent<UnitBaseScript>() != null && i.GetComponent<UnitBaseScript>().AttackAbility != null)
+                {
+                    i.GetComponent<UnitBaseScript>().AttackAbility.SetNeutral();
+                }
+            }
+        }
+
+        public void SetPassive()
+        {
+            if (!SelectControlScript.SelectionControlInstance.SelectedOwnUnits)
+            {
+                return;
+            }
+            foreach (GameObject i in SelectControlScript.SelectionControlInstance.GetAllGameObjectsAsList())
+            {
+                if (i.GetComponent<UnitBaseScript>() != null && i.GetComponent<UnitBaseScript>().AttackAbility != null)
+                {
+                    i.GetComponent<UnitBaseScript>().AttackAbility.SetPassive();
+                }
+            }
+        }
+
         public void OnStopButtonClicked()
         {
-            InputManager.InputManagerInstance.CurrentCommandActionState = InputManager.CommandActionState.Stop;
+            if (!Input.GetKey(InputManager.HotKeys.FireControlKey))
+            {
+                InputManager.InputManagerInstance.CurrentCommandActionState = InputManager.CommandActionState.Stop;
+            }
         }
 
         public void OnAttackTargetButtonClicked()
         {
-            InputManager.InputManagerInstance.CurrentCommandActionState = InputManager.CommandActionState.AttackTarget;
+            if (!Input.GetKey(InputManager.HotKeys.FireControlKey))
+            {
+                InputManager.InputManagerInstance.CurrentCommandActionState = InputManager.CommandActionState.AttackTarget;
+            }
         }
 
         public void OnAttackMovingButtonClicked()
         {
-            InputManager.InputManagerInstance.CurrentCommandActionState = InputManager.CommandActionState.AttackMoving;
+            if (!Input.GetKey(InputManager.HotKeys.FireControlKey))
+            {
+                InputManager.InputManagerInstance.CurrentCommandActionState = InputManager.CommandActionState.AttackMoving;
+            }
         }
 
         public void OnFollowButtonClicked()
         {
-            InputManager.InputManagerInstance.CurrentCommandActionState = InputManager.CommandActionState.FollowTarget;
+            if (!Input.GetKey(InputManager.HotKeys.FireControlKey))
+            {
+                InputManager.InputManagerInstance.CurrentCommandActionState = InputManager.CommandActionState.FollowTarget;
+            }
         }
 
         public void OnMoveButtonClicked()
         {
-            InputManager.InputManagerInstance.CurrentCommandActionState = InputManager.CommandActionState.Move;
+            if (!Input.GetKey(InputManager.HotKeys.FireControlKey))
+            {
+                InputManager.InputManagerInstance.CurrentCommandActionState = InputManager.CommandActionState.Move;
+            }
         }
 
         public void OnLookAtTargetButtonClicked()
         {
-            InputManager.InputManagerInstance.CurrentCommandActionState = InputManager.CommandActionState.LookAtTarget;
+            if (!Input.GetKey(InputManager.HotKeys.FireControlKey))
+            {
+                InputManager.InputManagerInstance.CurrentCommandActionState = InputManager.CommandActionState.LookAtTarget;
+            }
         }
 
         public void OnLookAtSpaceButtonClicked()
         {
-            InputManager.InputManagerInstance.CurrentCommandActionState = InputManager.CommandActionState.LookAtSpace;
+            if (!Input.GetKey(InputManager.HotKeys.FireControlKey))
+            {
+                InputManager.InputManagerInstance.CurrentCommandActionState = InputManager.CommandActionState.LookAtSpace;
+            }
         }
 
         public void OnSkill1ButtonClicked()
         {
-            InputManager.InputManagerInstance.CurrentCommandActionState = InputManager.CommandActionState.Skill1;
+            if (!Input.GetKey(InputManager.HotKeys.FireControlKey))
+            {
+                InputManager.InputManagerInstance.CurrentCommandActionState = InputManager.CommandActionState.Skill1;
+            }
         }
 
         public void OnSkill2ButtonClicked()
         {
-            InputManager.InputManagerInstance.CurrentCommandActionState = InputManager.CommandActionState.Skill2;
+            if (!Input.GetKey(InputManager.HotKeys.FireControlKey))
+            {
+                InputManager.InputManagerInstance.CurrentCommandActionState = InputManager.CommandActionState.Skill2;
+            }
         }
 
         public void OnSkill3ButtonClicked()
         {
-            InputManager.InputManagerInstance.CurrentCommandActionState = InputManager.CommandActionState.Skill3;
+            if (!Input.GetKey(InputManager.HotKeys.FireControlKey))
+            {
+                InputManager.InputManagerInstance.CurrentCommandActionState = InputManager.CommandActionState.Skill3;
+            }
         }
 
         public void OnSkill4ButtonClicked()
         {
-            InputManager.InputManagerInstance.CurrentCommandActionState = InputManager.CommandActionState.Skill4;
+            if (!Input.GetKey(InputManager.HotKeys.FireControlKey))
+            {
+                InputManager.InputManagerInstance.CurrentCommandActionState = InputManager.CommandActionState.Skill4;
+            }
         }
 
         public void OnSkill5ButtonClicked()
         {
-            InputManager.InputManagerInstance.CurrentCommandActionState = InputManager.CommandActionState.Skill5;
+            if (!Input.GetKey(InputManager.HotKeys.FireControlKey))
+            {
+                InputManager.InputManagerInstance.CurrentCommandActionState = InputManager.CommandActionState.Skill5;
+            }
         }
     }
 }

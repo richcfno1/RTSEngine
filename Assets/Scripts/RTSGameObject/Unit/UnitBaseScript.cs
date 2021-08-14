@@ -138,7 +138,7 @@ namespace RTS.RTSGameObject.Unit
 
         public List<int> VisibleTo { get; set; } = new List<int>();
 
-        public FireControlStatus CurrentFireControlStatus { get; set; } = FireControlStatus.Neutral;
+        public FireControlStatus CurrentFireControlStatus { get; set; } = FireControlStatus.Passive;
         public LinkedList<UnitAction> ActionQueue { get; protected set; } = new LinkedList<UnitAction>();
 
         public MoveAbilityScript MoveAbility { get; set; } = null;

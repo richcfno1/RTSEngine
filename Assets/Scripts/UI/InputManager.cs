@@ -103,6 +103,11 @@ namespace RTS.UI
             public static KeyCode Skill3 = KeyCode.D;
             public static KeyCode Skill4 = KeyCode.F;
             public static KeyCode Skill5 = KeyCode.C;
+            // Unit Fire Control
+            public static KeyCode FireControlKey = KeyCode.LeftControl;
+            public static KeyCode Aggressive = KeyCode.A;
+            public static KeyCode Neutral = KeyCode.S;
+            public static KeyCode Passive = KeyCode.D;
 
             // Camera
             public static KeyCode RotateCamera = KeyCode.Mouse2;
