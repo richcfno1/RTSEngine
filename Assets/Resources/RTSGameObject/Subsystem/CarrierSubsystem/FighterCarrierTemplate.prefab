@@ -53,13 +53,13 @@ MonoBehaviour:
   type: 8
   repairPercentRequired: 0
   supportedCommonAbility: 03000000
-  supportedSepcialAbility: 
   products:
   - ScopeDrone
   carrierCapacity: 2
   deployTime: 3
   deployPath:
-  - {x: 10, y: 0, z: 0}
+  - {x: 30, y: 0, z: 0}
   recallTime: 5
   recallPath:
-  - {x: -10, y: 0, z: 0}
+  - {x: -30, y: 0, z: 0}
+  deployAndRecallSpeed: 40
