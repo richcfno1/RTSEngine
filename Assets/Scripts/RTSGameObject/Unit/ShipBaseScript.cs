@@ -28,6 +28,8 @@ namespace RTS.RTSGameObject.Unit
             finalPosition = transform.position;
             thisBody = GetComponent<Rigidbody>();
             allColliders = GetComponentsInChildren<Collider>().ToList();
+
+            radius = NavigationCollider.size.magnitude / 2;
         }
 
         // Update is called once per frame
@@ -225,6 +227,7 @@ namespace RTS.RTSGameObject.Unit
                                         ((float)action.targets[1] + (float)action.targets[2]) / 2;
                                 }
                             }
+                            FindPath(thisBody.position, finalPosition);
                             MoveToFinalPosition();
                         }
                         return;
@@ -259,13 +262,44 @@ namespace RTS.RTSGameObject.Unit
                             {
                                 finalPosition = keepInRangeAndHeadToTarget.transform.position + 
                                     ((Vector3)action.targets[1]).normalized * ((float)action.targets[3]);
+                                for (int i = 0; i < searchMaxRandomNumber; i++)
+                                {
+                                    if (Physics.RaycastAll(finalPosition, (keepInRangeAndHeadToTarget.transform.position - finalPosition).normalized,
+                                        (keepInRangeAndHeadToTarget.transform.position - finalPosition).magnitude).
+                                        Where(x =>
+                                        {
+                                            if (keepInRangeAndHeadToTarget.GetComponent<SubsystemBaseScript>() != null)
+                                            {
+                                                return !transform.GetComponentsInChildren<Collider>().Contains(x.collider) &&
+                                                    !keepInRangeAndHeadToTarget.GetComponent<SubsystemBaseScript>().Host.transform.GetComponentsInChildren<Collider>().Contains(x.collider);
+                                            }
+                                            else
+                                            {
+                                                return !transform.GetComponentsInChildren<Collider>().Contains(x.collider) &&
+                                                    !keepInRangeAndHeadToTarget.transform.GetComponentsInChildren<Collider>().Contains(x.collider);
+                                            }
+                                        }).ToList().Count == 0)
+                                    {
+                                        break;
+                                    }
+                                    else
+                                    {
+                                        finalPosition = keepInRangeAndHeadToTarget.transform.position +
+                                            new Vector3(Random.Range(-1, 1), Random.Range(-1, 1), Random.Range(-1, 1)).normalized *
+                                            (float)action.targets[3];
+                                    }
+                                }
                                 action.targets[1] = finalPosition - keepInRangeAndHeadToTarget.transform.position;
+                                FindPath(thisBody.position, finalPosition);
                                 MoveToFinalPosition();
                             }
                             else
                             {
                                 finalRotationTarget = keepInRangeAndHeadToTarget.transform.position;
                                 ApplyRotation(finalRotationTarget);
+                                finalPosition = thisBody.position + keepInRangeAndHeadToTarget.GetComponent<Rigidbody>().velocity;
+                                FindPath(thisBody.position, finalPosition);
+                                ApplyForce(finalPosition, false);
                             }
                         }
                         return;

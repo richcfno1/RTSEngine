@@ -278,10 +278,20 @@ namespace RTS.UI.Command
                 // Find a list of detination where perpendicular to "forward direction", then adjust its center to destinationForEachClass
                 List<Vector3> destinationForFighters = new List<Vector3>();
                 Vector3 tempDestination = destinationForEachClass;
-                foreach (UnitBaseScript i in allFighters)
+                int maxNumberInSameLine = 15;
+                int lineCounter = 0;
+                int unitGapDistance = 20;
+                for (int i = 0; i < allFighters.Count; i++)
                 {
-                    destinationForFighters.Add(tempDestination);
-                    tempDestination += right * 20;
+                    int lineIndex = i % maxNumberInSameLine;
+                    destinationForFighters.Add(tempDestination + 
+                        (lineIndex % 2 == 0 ? -1 : 1) * right * unitGapDistance * ((lineIndex + 1) / 2));
+                    lineCounter++;
+                    if (lineCounter == maxNumberInSameLine)
+                    {
+                        lineCounter = 0;
+                        tempDestination += Vector3.up * unitGapDistance;
+                    }
                 }
                 Vector3 destinationForFightersCenter = new Vector3();
                 foreach (Vector3 i in destinationForFighters)
@@ -324,10 +334,20 @@ namespace RTS.UI.Command
                 // Find a list of detination where perpendicular to "forward direction", then adjust its center to destinationForEachClass
                 List<Vector3> destinationForFrigates = new List<Vector3>();
                 Vector3 tempDestination = destinationForEachClass;
-                foreach (UnitBaseScript i in allFrigates)
+                int maxNumberInSameLine = 5;
+                int lineCounter = 0;
+                int unitGapDistance = 60;
+                for (int i = 0; i < allFrigates.Count; i++)
                 {
-                    destinationForFrigates.Add(tempDestination);
-                    tempDestination += right * 60;
+                    int lineIndex = i % maxNumberInSameLine;
+                    destinationForFrigates.Add(tempDestination +
+                        (lineIndex % 2 == 0 ? -1 : 1) * right * unitGapDistance * ((lineIndex + 1) / 2));
+                    lineCounter++;
+                    if (lineCounter == maxNumberInSameLine)
+                    {
+                        lineCounter = 0;
+                        tempDestination += Vector3.up * unitGapDistance;
+                    }
                 }
                 Vector3 destinationForFrigatesCenter = new Vector3();
                 foreach (Vector3 i in destinationForFrigates)
@@ -370,10 +390,20 @@ namespace RTS.UI.Command
                 // Find a list of detination where perpendicular to "forward direction", then adjust its center to destinationForEachClass
                 List<Vector3> destinationForCruisers = new List<Vector3>();
                 Vector3 tempDestination = destinationForEachClass;
-                foreach (UnitBaseScript i in allCruisers)
+                int maxNumberInSameLine = 3;
+                int lineCounter = 0;
+                int unitGapDistance = 100;
+                for (int i = 0; i < allCruisers.Count; i++)
                 {
-                    destinationForCruisers.Add(tempDestination);
-                    tempDestination += right * 100;
+                    int lineIndex = i % maxNumberInSameLine;
+                    destinationForCruisers.Add(tempDestination +
+                        (lineIndex % 2 == 0 ? -1 : 1) * right * unitGapDistance * ((lineIndex + 1) / 2));
+                    lineCounter++;
+                    if (lineCounter == maxNumberInSameLine)
+                    {
+                        lineCounter = 0;
+                        tempDestination += Vector3.up * unitGapDistance;
+                    }
                 }
                 Vector3 destinationForCruisersCenter = new Vector3();
                 foreach (Vector3 i in destinationForCruisers)
@@ -416,10 +446,20 @@ namespace RTS.UI.Command
                 // Find a list of detination where perpendicular to "forward direction", then adjust its center to destinationForEachClass
                 List<Vector3> destinationForBattleships = new List<Vector3>();
                 Vector3 tempDestination = destinationForEachClass;
-                foreach (UnitBaseScript i in allBattleships)
+                int maxNumberInSameLine = 3;
+                int lineCounter = 0;
+                int unitGapDistance = 160;
+                for (int i = 0; i < allBattleships.Count; i++)
                 {
-                    destinationForBattleships.Add(tempDestination);
-                    tempDestination += right * 160;
+                    int lineIndex = i % maxNumberInSameLine;
+                    destinationForBattleships.Add(tempDestination +
+                        (lineIndex % 2 == 0 ? -1 : 1) * right * unitGapDistance * ((lineIndex + 1) / 2));
+                    lineCounter++;
+                    if (lineCounter == maxNumberInSameLine)
+                    {
+                        lineCounter = 0;
+                        tempDestination += Vector3.up * unitGapDistance;
+                    }
                 }
                 Vector3 destinationForBattleshipsCenter = new Vector3();
                 foreach (Vector3 i in destinationForBattleships)
@@ -462,10 +502,20 @@ namespace RTS.UI.Command
                 // Find a list of detination where perpendicular to "forward direction", then adjust its center to destinationForEachClass
                 List<Vector3> destinationForMotherships = new List<Vector3>();
                 Vector3 tempDestination = destinationForEachClass;
-                foreach (UnitBaseScript i in allMotherships)
+                int maxNumberInSameLine = 2;
+                int lineCounter = 0;
+                int unitGapDistance = 240;
+                for (int i = 0; i < allMotherships.Count; i++)
                 {
-                    destinationForMotherships.Add(tempDestination);
-                    tempDestination += right * 240;
+                    int lineIndex = i % maxNumberInSameLine;
+                    destinationForMotherships.Add(tempDestination +
+                        (lineIndex % 2 == 0 ? -1 : 1) * right * unitGapDistance * ((lineIndex + 1) / 2));
+                    lineCounter++;
+                    if (lineCounter == maxNumberInSameLine)
+                    {
+                        lineCounter = 0;
+                        tempDestination += Vector3.up * unitGapDistance;
+                    }
                 }
                 Vector3 destinationForMothershipsCenter = new Vector3();
                 foreach (Vector3 i in destinationForMotherships)

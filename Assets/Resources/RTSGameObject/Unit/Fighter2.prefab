@@ -9800,11 +9800,18 @@ MonoBehaviour:
     anchor: {fileID: 1675775746079455219}
     subsystemScale: 5
     subsystem: {fileID: 6371312778263202576}
-  searchStepDistance: 40
-  searchStepMaxDistance: 200
-  searchMaxRandomNumber: 5
-  nextSearchPending: 0.1
-  visionRange: 0
+  forceMultiplier: 100
+  maxForce: 200
+  maxRotationSpeed: 180
+  maxErrorDistance: 2
+  maxErrorAngle: 0.1
+  slowDownDistance: 20
+  lockRotationZ: 1
+  searchStepDistance: 10
+  searchStepMaxDistance: 50
+  searchMaxRandomNumber: 10
+  maxDetectDistance: 200
+  visionRange: 400
   visionArea: {fileID: 0}
   autoEngageDistance: 200
   maxAttackPower: 50
@@ -9815,17 +9822,6 @@ MonoBehaviour:
   recoverMovePower: 2
   buildPrice: 0
   buildTime: 0
-  agentMoveSpeed: 50
-  agentRotateSpeed: 180
-  forceMultiplier: 100
-  maxForce: 200
-  maxRotationSpeed: 180
-  maxTorque: {x: 75, y: 75, z: 75}
-  maxErrorDistance: 2
-  maxErrorAngle: 0.1
-  maxDetectDistance: 100
-  slowDownDistance: 20
-  lockRotationZ: 1
 --- !u!54 &2810542142947895704
 Rigidbody:
   m_ObjectHideFlags: 0

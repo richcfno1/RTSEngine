@@ -279,24 +279,35 @@ namespace RTS.UI.Command
                 RTSGameObjectBaseScript attackTarget = InputManager.InputManagerInstance.PointedRTSGameObject;
                 if (attackTarget != null && attackTarget.BelongTo != GameManager.GameManagerInstance.selfIndex)
                 {
-                    ClearAllTargetDisplayUI();
+                    List<UnitBaseScript> allAgents = new List<UnitBaseScript>();
                     foreach (GameObject i in SelectControlScript.SelectionControlInstance.GetAllGameObjectsAsList())
                     {
                         if (i.GetComponent<UnitBaseScript>() != null)
                         {
-                            if (i.GetComponent<UnitBaseScript>().AttackAbility != null)
-                            {
-                                i.GetComponent<UnitBaseScript>().AttackAbility.Attack(attackTarget.gameObject);
-                                CreateGOToGOUI(i, attackTarget.gameObject, Color.red);
-                            }
-                            else if (i.GetComponent<UnitBaseScript>().MoveAbility != null)
-                            {
-                                i.GetComponent<UnitBaseScript>().MoveAbility.Follow(attackTarget.gameObject);
-                                CreateGOToGOUI(i, attackTarget.gameObject, Color.green);
-                            }
+                            allAgents.Add(i.GetComponent<UnitBaseScript>());
                         }
                     }
-                    StartCoroutine(ClearTargetDisplayUIWithWaitTime(displayTime));
+                    ClearAllTargetDisplayUI();
+                    Vector3 destination = attackTarget.transform.position + attackTarget.radius * 2 *
+                        (SelectControlScript.SelectionControlInstance.FindCenter() - attackTarget.transform.position).normalized;
+                    foreach (KeyValuePair<UnitBaseScript, Vector3> i in FindDestination(allAgents, destination, destination -
+                        SelectControlScript.SelectionControlInstance.FindCenter()))
+                    {
+                        if (i.Key != null)
+                        {
+                            if (i.Key.AttackAbility != null)
+                            {
+                                i.Key.AttackAbility.Attack(attackTarget.gameObject);
+                                CreateGOToGOUI(i.Key.gameObject, attackTarget.gameObject, Color.red);
+                            }
+                            else if (i.Key.MoveAbility != null)
+                            {
+                                i.Key.MoveAbility.Follow(attackTarget.gameObject, i.Value - attackTarget.transform.position);
+                            }
+                            CreateGOToGOUI(i.Key.gameObject, attackTarget.gameObject, Color.green);
+                        }
+                        StartCoroutine(ClearTargetDisplayUIWithWaitTime(displayTime));
+                    }
                 }
                 InputManager.InputManagerInstance.CurrentCommandActionState = InputManager.CommandActionState.NoAction;
                 InputManager.InputManagerInstance.CurrentMouseTexture = InputManager.MouseTexture.Normal;
@@ -411,16 +422,27 @@ namespace RTS.UI.Command
                 RTSGameObjectBaseScript followTarget = InputManager.InputManagerInstance.PointedRTSGameObject;
                 if (followTarget != null)
                 {
-                    ClearAllTargetDisplayUI();
+                    List<UnitBaseScript> allAgents = new List<UnitBaseScript>();
                     foreach (GameObject i in SelectControlScript.SelectionControlInstance.GetAllGameObjectsAsList())
                     {
                         if (i.GetComponent<UnitBaseScript>() != null)
                         {
-                            if (i.GetComponent<UnitBaseScript>().MoveAbility != null)
+                            allAgents.Add(i.GetComponent<UnitBaseScript>());
+                        }
+                    }
+                    ClearAllTargetDisplayUI();
+                    Vector3 destination = followTarget.transform.position + followTarget.radius * 2 *
+                        (SelectControlScript.SelectionControlInstance.FindCenter() - followTarget.transform.position);
+                    foreach (KeyValuePair<UnitBaseScript, Vector3> i in FindDestination(allAgents, destination, destination -
+                        SelectControlScript.SelectionControlInstance.FindCenter()))
+                    {
+                        if (i.Key != null)
+                        {
+                            if (i.Key.MoveAbility != null)
                             {
-                                i.GetComponent<UnitBaseScript>().MoveAbility.Follow(followTarget.gameObject);
+                                i.Key.MoveAbility.Follow(followTarget.gameObject, i.Value - followTarget.transform.position);
                             }
-                            CreateGOToGOUI(i, followTarget.gameObject, Color.green);
+                            CreateGOToGOUI(i.Key.gameObject, followTarget.gameObject, Color.green);
                         }
                         StartCoroutine(ClearTargetDisplayUIWithWaitTime(displayTime));
                     }
@@ -530,8 +552,8 @@ namespace RTS.UI.Command
             }
             if (Input.GetKeyDown(InputManager.HotKeys.SelectTarget))
             {
-                RTSGameObjectBaseScript followTarget = InputManager.InputManagerInstance.PointedRTSGameObject;
-                if (followTarget != null)
+                RTSGameObjectBaseScript lookAtTarget = InputManager.InputManagerInstance.PointedRTSGameObject;
+                if (lookAtTarget != null)
                 {
                     ClearAllTargetDisplayUI();
                     foreach (GameObject i in SelectControlScript.SelectionControlInstance.GetAllGameObjectsAsList())
@@ -540,9 +562,9 @@ namespace RTS.UI.Command
                         {
                             if (i.GetComponent<UnitBaseScript>().MoveAbility != null)
                             {
-                                i.GetComponent<UnitBaseScript>().MoveAbility.LookAtTarget(followTarget.gameObject);
+                                i.GetComponent<UnitBaseScript>().MoveAbility.LookAtTarget(lookAtTarget.gameObject);
                             }
-                            CreateGOToGOUI(i, followTarget.gameObject, Color.yellow);
+                            CreateGOToGOUI(i, lookAtTarget.gameObject, Color.yellow);
                         }
                         StartCoroutine(ClearTargetDisplayUIWithWaitTime(displayTime));
                     }

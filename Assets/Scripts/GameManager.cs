@@ -138,7 +138,7 @@ namespace RTS
             }
             if (Input.GetKeyDown(KeyCode.L))
             {
-                InstantiateUnit("StandardFrigate", new Vector3(recordData, 500, recordData + recordData2), new Quaternion(), GameObject.Find("RTSGameObject").transform, 1);
+                InstantiateUnit("StandardFighter", new Vector3(recordData, 500, recordData + recordData2), new Quaternion(), GameObject.Find("RTSGameObject").transform, 0);
                 recordData -= 25;
                 Debug.Log(recordData / 25);
             }

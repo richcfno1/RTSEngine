@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using RTS.RTSGameObject.Projectile.Missile;
+using RTS.Helper;
 
 namespace RTS.RTSGameObject.Subsystem
 {
@@ -40,7 +41,7 @@ namespace RTS.RTSGameObject.Subsystem
             {
                 if (timer >= coolDown / missileStartPosition.Count / Host.AttackPower)
                 {
-                    if (fireTarget != null && (transform.position - fireTarget.transform.position).magnitude <= lockRange)
+                    if (fireTarget != null && UnitVectorHelper.DetermineUnitDistance(gameObject, fireTarget, false, false) <= lockRange)
                     {
                         Fire(bulletCount);
                         bulletCount++;
@@ -101,7 +102,8 @@ namespace RTS.RTSGameObject.Subsystem
             }
             else
             {
-                if (subsystemTarget != null && subsystemTarget.Count == 1 && (GameObject)subsystemTarget[0] != null && possibleTargetTags.Contains(((GameObject)subsystemTarget[0]).tag))
+                if (subsystemTarget != null && subsystemTarget.Count != 0 && 
+                    (GameObject)subsystemTarget[0] != null && possibleTargetTags.Contains(((GameObject)subsystemTarget[0]).tag))
                 {
                     fireTarget = (GameObject)subsystemTarget[0];
                     return;

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using RTS.RTSGameObject.Projectile.Bullet;
+using RTS.Helper;
 
 namespace RTS.RTSGameObject.Subsystem
 {
@@ -52,7 +53,7 @@ namespace RTS.RTSGameObject.Subsystem
                 RotateTurret();
                 if (timer >= coolDown / bulletStartPosition.Count / Host.AttackPower)
                 {
-                    if (fireTarget != null && (transform.position - fireTarget.transform.position).magnitude <= lockRange)
+                    if (fireTarget != null && UnitVectorHelper.DetermineUnitDistance(gameObject, fireTarget, false, false) <= lockRange)
                     {
                         RaycastHit hit;
                         Vector3 rayPosition = turretBarrels.position;

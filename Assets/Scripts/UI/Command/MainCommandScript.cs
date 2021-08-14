@@ -148,16 +148,27 @@ namespace RTS.UI.Command
                         RTSGameObjectBaseScript followTarget = InputManager.InputManagerInstance.PointedRTSGameObject;
                         if (followTarget != null && followTarget.BelongTo == GameManager.GameManagerInstance.selfIndex)
                         {
-                            ClearAllTargetDisplayUI();
+                            List<UnitBaseScript> allAgents = new List<UnitBaseScript>();
                             foreach (GameObject i in SelectControlScript.SelectionControlInstance.GetAllGameObjectsAsList())
                             {
                                 if (i.GetComponent<UnitBaseScript>() != null)
                                 {
-                                    if (i.GetComponent<UnitBaseScript>().MoveAbility != null)
+                                    allAgents.Add(i.GetComponent<UnitBaseScript>());
+                                }
+                            }
+                            ClearAllTargetDisplayUI();
+                            Vector3 destination = followTarget.transform.position + followTarget.radius * 2 *
+                                (SelectControlScript.SelectionControlInstance.FindCenter() - followTarget.transform.position).normalized;
+                            foreach (KeyValuePair<UnitBaseScript, Vector3> i in FindDestination(allAgents, destination, destination -
+                                SelectControlScript.SelectionControlInstance.FindCenter()))
+                            {
+                                if (i.Key != null)
+                                {
+                                    if (i.Key.MoveAbility != null)
                                     {
-                                        i.GetComponent<UnitBaseScript>().MoveAbility.Follow(followTarget.gameObject);
+                                        i.Key.MoveAbility.Follow(followTarget.gameObject, i.Value - followTarget.transform.position);
                                     }
-                                    CreateGOToGOUI(i, followTarget.gameObject, Color.green);
+                                    CreateGOToGOUI(i.Key.gameObject, followTarget.gameObject, Color.green);
                                 }
                                 StartCoroutine(ClearTargetDisplayUIWithWaitTime(displayTime));
                             }

@@ -98,8 +98,6 @@ namespace RTS.RTSGameObject.Unit
         public float searchStepMaxDistance;
         [Tooltip("The number of points tested in each sphere.")]
         public float searchMaxRandomNumber;
-        [Tooltip("The wait time to search again if previous search failed.")]
-        public float nextSearchPending;
         [Tooltip("Pathfinder distance.")]
         public float maxDetectDistance;
 
@@ -322,7 +320,7 @@ namespace RTS.RTSGameObject.Unit
         public virtual void Follow(GameObject target, bool clearQueue = true, bool addToEnd = true)
         {
             // Distance determination
-            float distance = target.GetComponent<Collider>().bounds.size.magnitude + GetComponent<Collider>().bounds.size.magnitude;
+            float distance = target.GetComponent<RTSGameObjectBaseScript>().radius - radius * 2;
             distance /= 2;
             Vector3 offset = (transform.position - target.transform.position).normalized * distance;
             if (clearQueue)
@@ -361,7 +359,7 @@ namespace RTS.RTSGameObject.Unit
         public virtual void Follow(GameObject target, Vector3 offset, bool clearQueue = true, bool addToEnd = true)
         {
             // Distance determination
-            float distance = target.GetComponent<Collider>().bounds.size.magnitude + GetComponent<Collider>().bounds.size.magnitude;
+            float distance = target.GetComponent<RTSGameObjectBaseScript>().radius - radius * 2;
             distance /= 2;
             if (clearQueue)
             {
@@ -398,6 +396,8 @@ namespace RTS.RTSGameObject.Unit
 
         public virtual void KeepInRange(GameObject target, float upperBound, float lowerBound, bool clearQueue = true, bool addToEnd = true)
         {
+            // Distance determination
+            float distance = target.GetComponent<RTSGameObjectBaseScript>().radius - radius * 2;
             if (clearQueue)
             {
                 ActionQueue.Clear();
@@ -408,7 +408,7 @@ namespace RTS.RTSGameObject.Unit
                 ActionQueue.AddLast(new UnitAction
                 {
                     actionType = ActionType.KeepInRange,
-                    targets = new List<object>() { target, upperBound, lowerBound }
+                    targets = new List<object>() { target, upperBound + distance, lowerBound + distance }
                 });
                 ActionQueue.AddLast(new UnitAction
                 {
@@ -426,7 +426,7 @@ namespace RTS.RTSGameObject.Unit
                 ActionQueue.AddFirst(new UnitAction
                 {
                     actionType = ActionType.KeepInRange,
-                    targets = new List<object>() { target, upperBound, lowerBound }
+                    targets = new List<object>() { target, upperBound + distance, lowerBound + distance }
                 });
             }
         }
@@ -434,6 +434,8 @@ namespace RTS.RTSGameObject.Unit
         public virtual void KeepInRangeAndLookAt(GameObject target, Vector3 offset, float upperBound, 
             float lowerBound, bool clearQueue = true, bool addToEnd = true)
         {
+            // Distance determination
+            float distance = target.GetComponent<RTSGameObjectBaseScript>().radius - radius * 2;
             if (clearQueue)
             {
                 ActionQueue.Clear();
@@ -444,7 +446,7 @@ namespace RTS.RTSGameObject.Unit
                 ActionQueue.AddLast(new UnitAction
                 {
                     actionType = ActionType.KeepInRangeAndLookAt,
-                    targets = new List<object>() { target, offset, upperBound, lowerBound }
+                    targets = new List<object>() { target, offset, upperBound + distance, lowerBound + distance }
                 });
                 ActionQueue.AddLast(new UnitAction
                 {
@@ -462,7 +464,7 @@ namespace RTS.RTSGameObject.Unit
                 ActionQueue.AddFirst(new UnitAction
                 {
                     actionType = ActionType.KeepInRangeAndLookAt,
-                    targets = new List<object>() { target, offset, upperBound, lowerBound }
+                    targets = new List<object>() { target, offset, upperBound + distance, lowerBound + distance }
                 });
             }
         }

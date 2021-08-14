@@ -9804,11 +9804,18 @@ MonoBehaviour:
   onDestroyedEffect: {fileID: 5508734696245866625, guid: 1b6e346305eb28a4fa9a6e2453c446d6, type: 3}
   radius: 5
   subsyetemAnchors: []
-  searchStepDistance: 20
-  searchStepMaxDistance: 100
+  forceMultiplier: 100
+  maxForce: 300
+  maxRotationSpeed: 180
+  maxErrorDistance: 2
+  maxErrorAngle: 0.1
+  slowDownDistance: 20
+  lockRotationZ: 1
+  searchStepDistance: 10
+  searchStepMaxDistance: 50
   searchMaxRandomNumber: 10
-  nextSearchPending: 0
-  visionRange: 0
+  maxDetectDistance: 200
+  visionRange: 2000
   visionArea: {fileID: 0}
   autoEngageDistance: 0
   maxAttackPower: 50
@@ -9819,8 +9826,6 @@ MonoBehaviour:
   recoverMovePower: 5
   buildPrice: 0
   buildTime: 5
-  agentMoveSpeed: 500
-  agentRotateSpeed: 180
 --- !u!54 &6615391078702848229
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -9829,9 +9834,9 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7274105634280561773}
   serializedVersion: 2
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
+  m_Mass: 100
+  m_Drag: 5
+  m_AngularDrag: 2
   m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0

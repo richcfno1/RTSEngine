@@ -47,7 +47,7 @@ namespace RTS.RTSGameObject
         [Tooltip("The effect played when the object is destroyed.")]
         public GameObject onDestroyedEffect;
         [Header("Information Bar Calculation")]
-        [Tooltip("Radius (xz plane) of RTS game object")]
+        [Tooltip("Radius (xz plane) of RTS game object. If this is a unit, recalculate at init")]
         public float radius;
 
         // Set when instantiate

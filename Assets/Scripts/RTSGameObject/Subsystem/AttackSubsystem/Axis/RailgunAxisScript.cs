@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using RTS.RTSGameObject.Projectile.Bullet;
+using System.Linq;
 
 namespace RTS.RTSGameObject.Subsystem
 {
@@ -63,10 +64,11 @@ namespace RTS.RTSGameObject.Subsystem
                         {
                             if (subsystemTarget != null && subsystemTarget.Count > 0)
                             {
-                                if ((GameObject)subsystemTarget[0] == hit.collider.gameObject && 
-                                    possibleTargetTags.Contains(hit.collider.tag) && (
-                                    hit.collider.GetComponent<RTSGameObjectBaseScript>() == null ||
-                                    hit.collider.GetComponent<RTSGameObjectBaseScript>().BelongTo != BelongTo))
+                                if ((GameObject)subsystemTarget[0] == hit.collider.gameObject ||
+                                    ((GameObject)subsystemTarget[0]).GetComponentsInParent<RTSGameObjectBaseScript>()
+                                    .Contains(hit.collider.gameObject.GetComponent<RTSGameObjectBaseScript>()) ||
+                                    ((GameObject)subsystemTarget[0]).GetComponentsInChildren<RTSGameObjectBaseScript>()
+                                    .Contains(hit.collider.gameObject.GetComponent<RTSGameObjectBaseScript>()))
                                 {
                                     Fire(shootCount);
                                     shootCount++;
