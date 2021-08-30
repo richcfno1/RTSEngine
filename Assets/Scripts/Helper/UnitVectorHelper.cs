@@ -90,5 +90,24 @@ namespace RTS.Helper
                 center - Vector3.forward * distance
             };
         }
+
+        // http://paulbourke.net/geometry/circlesphere/
+        public static bool CollisionBetweenLineAndSphere(Vector3 from, Vector3 to, Vector3 center, float radius)
+        {
+            float a = Mathf.Pow(to.x - from.x, 2) + Mathf.Pow(to.y - from.y, 2) + Mathf.Pow(to.z - from.z, 2);
+            float b = 2 * ((to.x - from.x) * (from.x - center.x) + (to.y - from.y) * (from.y - center.y) + (to.z - from.z) * (from.z - center.z));
+            float c = Mathf.Pow(center.x, 2) + Mathf.Pow(center.y, 2) + Mathf.Pow(center.z, 2) +
+                Mathf.Pow(from.x, 2) + Mathf.Pow(from.y, 2) + Mathf.Pow(from.z, 2) -
+                2 * (center.x * from.x + center.y * from.y + center.z * from.z) - radius * radius;
+            return b * b - 4 * a * c >= 0;
+        }
+
+        public static bool CollisionBetwenTwoUnitPath(Vector3 unit1Position, float unit1Velocity, float unit1Radius, Vector3 unit1Destination,
+            Vector3 unit2Position, Vector3 unit2Velocity, float unit2Radius)
+        {
+            Vector3 relativeVelocity = (unit1Destination - unit1Position).normalized * unit1Velocity - unit2Velocity;
+            float time = (unit1Destination - unit1Position).magnitude / unit1Velocity;
+            return CollisionBetweenLineAndSphere(unit1Position, unit1Position + relativeVelocity * time, unit2Position, unit1Radius + unit2Radius);
+        }
     }
 }

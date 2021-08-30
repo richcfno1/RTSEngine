@@ -4,6 +4,7 @@ using UnityEngine;
 using RTS.Ability.CommonAbility;
 using RTS.Ability.SpecialAbility;
 using RTS.RTSGameObject.Subsystem;
+using RTS.Helper;
 
 namespace RTS.RTSGameObject.Unit
 {
@@ -100,6 +101,8 @@ namespace RTS.RTSGameObject.Unit
         public float searchMaxRandomNumber;
         [Tooltip("Pathfinder distance.")]
         public float maxDetectDistance;
+        [Tooltip("Display debug path trace in game.")]
+        public bool displayDebugPath;
 
         [Header("Vision")]
         [Tooltip("Vision range.")]
@@ -160,7 +163,33 @@ namespace RTS.RTSGameObject.Unit
         protected readonly List<Vector3> agentCorners = new List<Vector3>();
         protected Rigidbody thisBody;
         protected List<Collider> allColliders;
+        protected float estimatedMaxSpeed;
 
+        private LineRenderer debugLineRender;
+
+        void Awake()
+        {
+            if (displayDebugPath)
+            {
+                debugLineRender = gameObject.AddComponent<LineRenderer>();
+                debugLineRender.startWidth = debugLineRender.endWidth = 5;
+            }
+        }
+
+        void Update()
+        {
+            if (displayDebugPath)
+            {
+                Vector3[] array = new Vector3[moveBeacons.Count + 1];
+                array[0] = transform.position;
+                debugLineRender.positionCount = moveBeacons.Count + 1;
+                for (int i = 0; i < moveBeacons.Count; i++)
+                {
+                    array[i + 1] = moveBeacons[i];
+                }
+                debugLineRender.SetPositions(array);
+            }    
+        }
 
         protected override void OnCreatedAction()
         {
@@ -678,6 +707,156 @@ namespace RTS.RTSGameObject.Unit
                     targets = new List<object>() { destination, speed }
                 });
             }
+        }
+
+        // Pathfinder
+        // Return an alternative position if original cannot be reached
+        protected Vector3 TestObstacleAround(Vector3 position, bool considerObstacleVelocity = true)
+        {
+            Vector3 result = position;
+            List<Collider> intersectObjects = new List<Collider>(Physics.OverlapBox(position, NavigationCollider.size, transform.rotation));
+            intersectObjects.RemoveAll(x => allColliders.Contains(x));
+            intersectObjects.RemoveAll(x => x.CompareTag("Bullet"));
+            intersectObjects.RemoveAll(x => x.GetComponent<RTSGameObjectBaseScript>() == null);
+            intersectObjects.RemoveAll(x => x.GetComponent<RTSGameObjectBaseScript>().objectScale < objectScale);
+            float nextStepDistance = searchStepDistance;
+            bool isDestinationAvaliable = intersectObjects.Count == 0;
+            if (considerObstacleVelocity && intersectObjects.Count != 0)
+            {
+                isDestinationAvaliable = true;
+                foreach (Collider j in intersectObjects)
+                {
+                    if (j.GetComponentInParent<Rigidbody>() != null)
+                    {
+                        if (UnitVectorHelper.CollisionBetwenTwoUnitPath(thisBody.position, estimatedMaxSpeed, radius, position,
+                            j.transform.position, j.GetComponentInParent<Rigidbody>().velocity,
+                            j.GetComponentInParent<RTSGameObjectBaseScript>().radius))
+                        {
+                            isDestinationAvaliable = false;
+                            break;
+                        }
+                    }
+                }
+            }
+            while (nextStepDistance <= searchStepMaxDistance && !isDestinationAvaliable)
+            {
+                foreach (Vector3 i in UnitVectorHelper.GetSixAroundPoint(position, nextStepDistance))
+                {
+                    intersectObjects = new List<Collider>(Physics.OverlapBox(i, NavigationCollider.size, transform.rotation));
+                    intersectObjects.RemoveAll(x => x.CompareTag("Bullet"));
+                    intersectObjects.RemoveAll(x => x.GetComponent<RTSGameObjectBaseScript>() == null);
+                    intersectObjects.RemoveAll(x => x.GetComponent<RTSGameObjectBaseScript>().objectScale < objectScale);
+                    if (considerObstacleVelocity)
+                    {
+                        bool tempResult = true;
+                        foreach (Collider j in intersectObjects)
+                        {
+                            if (j.GetComponentInParent<Rigidbody>() != null)
+                            {
+                                if (UnitVectorHelper.CollisionBetwenTwoUnitPath(thisBody.position, estimatedMaxSpeed, radius, position,
+                                    j.transform.position, j.GetComponentInParent<Rigidbody>().velocity,
+                                    j.GetComponentInParent<RTSGameObjectBaseScript>().radius))
+                                {
+                                    tempResult = false;
+                                    break;
+                                }
+                            }
+                        }
+                        if (tempResult)
+                        {
+                            result = i;
+                            isDestinationAvaliable = true;
+                            break;
+                        }
+                    }
+                    else
+                    {
+                        if (intersectObjects.Count == 0)
+                        {
+                            result = i;
+                            isDestinationAvaliable = true;
+                            break;
+                        }
+                    }
+                }
+                nextStepDistance += searchStepDistance;
+            }
+            return result;
+        }
+
+        protected float TestObstacleInPath(Vector3 from, Vector3 to, float maxDistance = Mathf.Infinity, bool considerObstacleVelocity = true)
+        {
+            Vector3 direction = (to - from).normalized;
+            float distance = Mathf.Min((to - from).magnitude, maxDistance);
+            foreach (Vector3 i in agentCorners)
+            {
+                RaycastHit hit;
+                if (Physics.Raycast(from - transform.position + transform.TransformPoint(i), direction, out hit, distance))
+                {
+                    if (!allColliders.Contains(hit.collider) && hit.collider.GetComponentInParent<RTSGameObjectBaseScript>() != null)
+                    {
+                        if (objectScale <= hit.collider.GetComponentInParent<RTSGameObjectBaseScript>().objectScale)
+                        {
+                            if (considerObstacleVelocity && hit.collider.GetComponentInParent<Rigidbody>() != null)
+                            {
+                                if (UnitVectorHelper.CollisionBetwenTwoUnitPath(from, estimatedMaxSpeed, radius, to,
+                                    hit.collider.transform.position, hit.collider.GetComponentInParent<Rigidbody>().velocity,
+                                    hit.collider.GetComponentInParent<RTSGameObjectBaseScript>().radius))
+                                {
+                                    return (hit.collider.ClosestPoint(from) - from).magnitude;
+                                }
+                            }
+                            else
+                            {
+                                return (hit.collider.ClosestPoint(from) - from).magnitude;
+                            }
+                        }
+                    }
+                }
+            }
+            return 0;
+        }
+
+        protected void FindPath(Vector3 from, Vector3 to)
+        {
+            List<Vector3> result = new List<Vector3>();
+            result.Add(to);
+            float obstacleDistance = TestObstacleInPath(from, to, maxDetectDistance);
+            if (obstacleDistance != 0)
+            {
+                Vector3 direction = (to - from).normalized;
+                Vector3 obstaclePosition = from + obstacleDistance * direction;
+                Vector3 middle = new Vector3();
+                float nextStepDistance = searchStepDistance;
+                bool find = false;
+                while (nextStepDistance <= searchStepMaxDistance && !find)
+                {
+                    foreach (Vector3 i in UnitVectorHelper.GetEightSurfaceTagent(direction, nextStepDistance))
+                    {
+                        middle = i + obstaclePosition;
+                        List<Collider> intersectObjects = new List<Collider>(Physics.OverlapBox(middle, NavigationCollider.size, transform.rotation));
+                        intersectObjects.RemoveAll(x => x.CompareTag("Bullet"));
+                        intersectObjects.RemoveAll(x => x.GetComponent<RTSGameObjectBaseScript>() == null);
+                        intersectObjects.RemoveAll(x => x.GetComponent<RTSGameObjectBaseScript>().objectScale < objectScale);
+                        if (intersectObjects.Count == 0 && TestObstacleInPath(middle, to) == 0 && TestObstacleInPath(from, middle) == 0)
+                        {
+                            find = true;
+                            break;
+                        }
+                    }
+                    nextStepDistance += searchStepDistance;
+                }
+                if (!find)
+                {
+                    Vector3 avoidancePosition = transform.position + transform.up * 100;
+                    result.Insert(0, avoidancePosition);
+                }
+                else
+                {
+                    result.Insert(0, middle);
+                }
+            }
+            moveBeacons = result;
         }
     }
 }
