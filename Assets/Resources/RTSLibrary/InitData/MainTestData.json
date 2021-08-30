@@ -16,7 +16,7 @@
   },
   "initRTSGameObjectLua": {
     "Fighter1": {
-      "OnCreated": "LogText({text=TestPassTable()[\"TestKey1\"]})"
+      "OnCreated": "LogText({text=\"RTSGO: \" .. self[\"type\"] .. \" with index: \" .. self[\"index\"] .. \" was created!\"})"
     },
     "Fighter2": {
       "OnCreated": "LogText({text=\"Fighter2 Created\"})"
@@ -41,7 +41,7 @@
         "Carrier": [ "FighterDeployAnchor1" ]
       },
       "scripts": {
-        "Test": "if (Time() > 5 and not flag) then flag = true\n Test({ unitType=\"StandardFrigate\", position={x=0.0,y=100.0,z=0.0}, belongsTo=1 })\n HelloWorld() end",
+        "Test": "if (Time() > 5 and not flag) then flag = true\n Test({ unitType=\"StandardFrigate\", position={x=0.0,y=100.0,z=0.0}, belongTo=1 })\n HelloWorld() end",
         "OnCreated": "LogText({text=\"StandardFrigate Created\"})",
         "OnDamaged": "LogText({text=\"StandardFrigate Damaged\"})",
         "OnRepaired": "LogText({text=\"StandardFrigate Repaired\"})",

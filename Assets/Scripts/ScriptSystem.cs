@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using Neo.IronLua;
 using System;
+using RTS.RTSGameObject;
+using RTS.RTSGameObject.Unit;
 
 namespace RTS
 {
@@ -16,7 +18,8 @@ namespace RTS
 
         private GameManager gameManager;
         private GameObject masterGameObject;
-        private Dictionary<Type, Func<LuaTable, string, object>> converters;
+        private Dictionary<Type, Func<LuaTable, string, object>> luaToCSConverters;
+        private Dictionary<Type, Func<object, LuaTable>> cSToLuaConverters;
         private Lua lua;
         private LuaCompileOptions compileOptions;
         private LuaGlobal env;
@@ -25,21 +28,23 @@ namespace RTS
         {
             gameManager = GameManager.GameManagerInstance;
             masterGameObject = GameObject.Find("RTSGameObject");
-            converters = new Dictionary<Type, Func<LuaTable, string, object>>();
-            AddConverter(GetVector3);
+            luaToCSConverters = new Dictionary<Type, Func<LuaTable, string, object>>();
+            cSToLuaConverters = new Dictionary<Type, Func<object, LuaTable>>();
+            AddLuaToCSConverter<Vector3>(GetVector3);
+            AddCSToLuaConverter<Vector3>(SetVector3);
+            AddLuaToCSConverter<Quaternion>(GetQuaternion);
+            AddCSToLuaConverter<Quaternion>(SetQuaternion);
             lua = new Lua(LuaIntegerType.Int32, LuaFloatType.Float);
             compileOptions = new LuaCompileOptions { /* ... */};
             env = lua.CreateEnvironment();
+
             Register("Time", _ => Time.timeSinceLevelLoad);
             Register("LogicalFrame", _ => GameManager.GameManagerInstance.FrameCount);
-            Register("TestPassTable", _ =>
-            {
-                LuaTable temp = new LuaTable();
-                temp.Add("TestKey1", "TestValue1");
-                return temp;
-            });
+
             Register(nameof(Test), Test);
             Register(nameof(HelloWorld), HelloWorld);
+
+            Register(nameof(TestGetTable), TestGetTable);
             Register(nameof(LogText), LogText);
         }
 
@@ -55,6 +60,25 @@ namespace RTS
         public void ExecuteScript(Script script)
         {
             script.script.Run(env);
+        }
+
+        public void SetRTSGameObjectInfo(string name, RTSGameObjectBaseScript gameObject)
+        {
+            LuaTable temp = new LuaTable();
+            temp.Add("index", gameObject.Index);
+            temp.Add("belongTo", gameObject.BelongTo);
+            temp.Add("type", gameObject.typeID);
+            if (gameObject.GetComponent<UnitBaseScript>() != null)
+            {
+                temp.Add("unitType", gameObject.GetComponent<UnitBaseScript>().UnitTypeID);
+            }
+            temp.Add("position", gameObject.transform.position);
+            temp.Add("rotation", gameObject.transform.rotation);
+            if (gameObject.GetComponent<Rigidbody>() != null)
+            {
+                temp.Add("velocity", gameObject.GetComponent<Rigidbody>().velocity);
+            }
+            env[name] = temp;
         }
 
         // Function register
@@ -75,16 +99,21 @@ namespace RTS
             {
                 // TODO
             }
-            if (converters.TryGetValue(typeof(T), out var converter))
+            if (luaToCSConverters.TryGetValue(typeof(T), out var converter))
             {
                 return (T)converter(table, name);
             }
             return (T)Convert.ChangeType(table[name], typeof(T));
         }
 
-        void AddConverter<T>(Func<LuaTable, string, T> converter)
+        void AddLuaToCSConverter<T>(Func<LuaTable, string, T> converter)
         {
-            converters.Add(typeof(T), (t, k) => (object)converter(t, k));
+            luaToCSConverters.Add(typeof(T), (t, k) => (object)converter(t, k));
+        }
+
+        void AddCSToLuaConverter<T>(Func<T, LuaTable> converter)
+        {
+            cSToLuaConverters.Add(typeof(T), t => converter((T)t));
         }
 
         // Data types:
@@ -97,12 +126,41 @@ namespace RTS
             return new Vector3(x, y, z);
         }
 
+        LuaTable SetVector3(Vector3 value)
+        {
+            LuaTable temp = new LuaTable();
+            temp.Add("x", value.x);
+            temp.Add("y", value.y);
+            temp.Add("z", value.z);
+            return temp;
+        }
+
+        Quaternion GetQuaternion(LuaTable table, string name)
+        {
+            var quaternion = GetArgument<LuaTable>(table, name);
+            var x = GetArgument<float>(quaternion, "x");
+            var y = GetArgument<float>(quaternion, "y");
+            var z = GetArgument<float>(quaternion, "z");
+            var w = GetArgument<float>(quaternion, "w");
+            return new Quaternion(x, y, z, w);
+        }
+
+        LuaTable SetQuaternion(Quaternion value)
+        {
+            LuaTable temp = new LuaTable();
+            temp.Add("x", value.x);
+            temp.Add("y", value.y);
+            temp.Add("z", value.z);
+            temp.Add("w", value.w);
+            return temp;
+        }
+
         // Debug lua functions
         void Test(LuaTable arguments)
         {
             var unitType = GetArgument<string>(arguments, "unitType");
             var position = GetArgument<Vector3>(arguments, "position");
-            var belongsTo = GetArgument<int>(arguments, "belongsTo");
+            var belongsTo = GetArgument<int>(arguments, "belongTo");
             gameManager.InstantiateUnit(unitType, position, Quaternion.identity, masterGameObject.transform, belongsTo);
         }
 
@@ -112,6 +170,15 @@ namespace RTS
         }
 
         // Default lua functions
+        LuaTable TestGetTable (LuaTable arguments)
+        {
+            LuaTable result = new LuaTable();
+            result.Add("intValue", 123321);
+            result.Add("stringValue", "abc");
+            result.Add("vector3Value", cSToLuaConverters[typeof(Vector3)](Vector3.one));
+            return result;
+        }
+
         void LogText(LuaTable arguments)
         {
             string text = GetArgument<string>(arguments, "text");

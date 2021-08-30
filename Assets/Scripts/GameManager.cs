@@ -55,8 +55,13 @@ namespace RTS
         {
             public float mapRadius;
             public List<PlayerData> initPlayerData;
+
+            // Important notes for lua:
+            // Global lus is called by game manager no matter
+
             public Dictionary<string, string> initGlobalLua;
             public Dictionary<string, Dictionary<string, string>> initRTSGameObjectLua;
+
             public List<UnitLibraryData> initUnitLibraryData;
             public List<UnitData> initUnitData;
         }
@@ -428,6 +433,7 @@ namespace RTS
         public void OnGameObjectCreated(GameObject self)
         {
             // Lua
+            ScriptSystem.SetRTSGameObjectInfo("self", self.GetComponent<RTSGameObjectBaseScript>());
             if (gameObjectLua.TryGetValue(self.GetComponent<RTSGameObjectBaseScript>().typeID, out Dictionary<string, string> matchedLua))
             {
                 if (matchedLua.TryGetValue("OnCreated", out string code))
@@ -473,6 +479,8 @@ namespace RTS
         public void OnGameObjectDamaged(GameObject self, GameObject other)
         {
             // Lua
+            ScriptSystem.SetRTSGameObjectInfo("self", self.GetComponent<RTSGameObjectBaseScript>());
+            ScriptSystem.SetRTSGameObjectInfo("other", other.GetComponent<RTSGameObjectBaseScript>());
             if (gameObjectLua.TryGetValue(self.GetComponent<RTSGameObjectBaseScript>().typeID, out Dictionary<string, string> matchedLua))
             {
                 if (matchedLua.TryGetValue("OnDamaged", out string code))
@@ -495,6 +503,8 @@ namespace RTS
         public void OnGameObjectRepaired(GameObject self, GameObject other)
         {
             // Lua
+            ScriptSystem.SetRTSGameObjectInfo("self", self.GetComponent<RTSGameObjectBaseScript>());
+            ScriptSystem.SetRTSGameObjectInfo("other", other.GetComponent<RTSGameObjectBaseScript>());
             if (gameObjectLua.TryGetValue(self.GetComponent<RTSGameObjectBaseScript>().typeID, out Dictionary<string, string> matchedLua))
             {
                 if (matchedLua.TryGetValue("OnRepaired", out string code))
@@ -517,6 +527,8 @@ namespace RTS
         public void OnGameObjectDestroyed(GameObject self, GameObject other)
         {
             // Lua
+            ScriptSystem.SetRTSGameObjectInfo("self", self.GetComponent<RTSGameObjectBaseScript>());
+            ScriptSystem.SetRTSGameObjectInfo("other", other.GetComponent<RTSGameObjectBaseScript>());
             if (gameObjectLua.TryGetValue(self.GetComponent<RTSGameObjectBaseScript>().typeID, out Dictionary<string, string> matchedLua))
             {
                 if (matchedLua.TryGetValue("OnDestroyed", out string code))
