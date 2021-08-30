@@ -86,6 +86,10 @@ namespace RTS
         private Dictionary<int, GameObject> allGameObjectsDict = new Dictionary<int, GameObject>();
         private List<GameObject> allGameObjectsList = new List<GameObject>();
         private Dictionary<int, GameObject> allUnitsListDict = new Dictionary<int, GameObject>();
+        private List<GameObject> allUnitsList = new List<GameObject>();
+
+        // TESTING SOLUTION FOR ENEMY SEARCHING
+        public Dictionary<int, List<GameObject>> enemyUnitsTable = new Dictionary<int, List<GameObject>>();
 
         private float timer = 0;
 
@@ -144,7 +148,7 @@ namespace RTS
             }
             if (Input.GetKeyDown(KeyCode.I))
             {
-                InstantiateUnit("StandardFrigate", new Vector3(recordData - 500, 500, recordData + recordData2), new Quaternion(), GameObject.Find("RTSGameObject").transform, 2);
+                InstantiateUnit("StandardFrigate", new Vector3(recordData, 0, recordData + recordData2), new Quaternion(), GameObject.Find("RTSGameObject").transform, 1);
                 recordData -= 25;
                 Debug.Log(recordData / 25);
             }
@@ -208,6 +212,7 @@ namespace RTS
                     playerName = i.name,
                     playerGameObjects = new List<int>()
                 });
+                enemyUnitsTable[i.index] = new List<GameObject>();
             }
 
             // UnitLibary
@@ -405,10 +410,6 @@ namespace RTS
             int gameObjectIndex = self.GetComponent<RTSGameObjectBaseScript>().Index;
             allGameObjectsDict.Add(gameObjectIndex, self);
             allGameObjectsList.Add(self);
-            if (self.GetComponent<UnitBaseScript>() != null)
-            {
-                allUnitsListDict.Add(gameObjectIndex, self);
-            }
 
             // Player
             int playerIndex = self.GetComponent<RTSGameObjectBaseScript>().BelongTo;
@@ -416,7 +417,18 @@ namespace RTS
             if (self.GetComponent<UnitBaseScript>() != null)
             {
                 allPlayers[playerIndex].playerUnits.Add(gameObjectIndex);
+                allUnitsListDict.Add(gameObjectIndex, self);
+                allUnitsList.Add(self);
+                // TODO: relation check
+                foreach (KeyValuePair<int, Player> i in allPlayers)
+                {
+                    if (i.Key != playerIndex)
+                    {
+                        enemyUnitsTable[i.Key].Add(self);
+                    }
+                }
             }
+
         }
 
         public void OnGameObjectDamaged(GameObject self, GameObject other)
@@ -439,10 +451,6 @@ namespace RTS
             int gameObjectIndex = self.GetComponent<RTSGameObjectBaseScript>().Index;
             allGameObjectsDict.Remove(gameObjectIndex);
             allGameObjectsList.Remove(self);
-            if (self.GetComponent<UnitBaseScript>() != null)
-            {
-                allUnitsListDict.Remove(gameObjectIndex);
-            }
 
             // Player
             int playerIndex = self.GetComponent<RTSGameObjectBaseScript>().BelongTo;
@@ -450,12 +458,23 @@ namespace RTS
             if (self.GetComponent<UnitBaseScript>() != null)
             {
                 allPlayers[playerIndex].playerUnits.Remove(gameObjectIndex);
+                allUnitsListDict.Remove(gameObjectIndex);
+                allUnitsList.Remove(self);
+                foreach (KeyValuePair<int, Player> i in allPlayers)
+                {
+                    enemyUnitsTable[i.Key].Remove(self);
+                }
             }
         }
 
         public ref List<GameObject> GetAllGameObjects()
         {
             return ref allGameObjectsList;
+        }
+
+        public ref List<GameObject> GetAllUnits()
+        {
+            return ref allUnitsList;
         }
     }
 }

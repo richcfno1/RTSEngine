@@ -9811,9 +9811,11 @@ MonoBehaviour:
   searchStepMaxDistance: 50
   searchMaxRandomNumber: 10
   maxDetectDistance: 200
+  displayDebugPath: 0
   visionRange: 400
   visionArea: {fileID: 0}
   autoEngageDistance: 200
+  autoEngageGap: 0.5
   maxAttackPower: 50
   maxDefencePower: 50
   maxMovePower: 50

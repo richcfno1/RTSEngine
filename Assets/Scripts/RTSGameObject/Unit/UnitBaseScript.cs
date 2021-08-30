@@ -111,7 +111,10 @@ namespace RTS.RTSGameObject.Unit
         public GameObject visionArea;
 
         [Header("Fire Control")]
+        [Tooltip("Auto engage enemy distance.")]
         public float autoEngageDistance;
+        [Tooltip("Time gap to search enemy.")]
+        public float autoEngageGap;
 
         [Header("Modifier")]
         [Tooltip("Similar to HP, which can influence attack.")]
@@ -164,6 +167,8 @@ namespace RTS.RTSGameObject.Unit
         protected Rigidbody thisBody;
         protected List<Collider> allColliders;
         protected float estimatedMaxSpeed;
+
+        protected float timer = 0;
 
         private LineRenderer debugLineRender;
 

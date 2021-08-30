@@ -261,7 +261,7 @@ namespace RTS.UI.Command
             allTargetDisplayUI.Clear();
         }
 
-        protected Dictionary<UnitBaseScript, Vector3> FindDestination(List<UnitBaseScript> allAgents, Vector3 destination, Vector3 forwardDirection)
+        protected Dictionary<UnitBaseScript, Vector3> FindDestination(List<UnitBaseScript> allAgents, Vector3 destination, Vector3 forwardDirection, bool addOffsetToFirstLine = false)
         {
             Dictionary<UnitBaseScript, Vector3> temp = new Dictionary<UnitBaseScript, Vector3>();
             Vector3 destinationForEachClass = destination;
@@ -270,7 +270,7 @@ namespace RTS.UI.Command
             List<UnitBaseScript> allFighters = allAgents.FindAll(x => x.objectScale == RTSGameObjectBaseScript.ObjectScale.Fighter);
             if (allFighters.Count != 0)
             {
-                if (destinationForEachClass != destination)
+                if (destinationForEachClass != destination || addOffsetToFirstLine)
                 {
                     destinationForEachClass -= forwardDirection.normalized * 10;
                 }
@@ -326,7 +326,7 @@ namespace RTS.UI.Command
             List<UnitBaseScript> allFrigates = allAgents.FindAll(x => x.objectScale == RTSGameObjectBaseScript.ObjectScale.Frigate);
             if (allFrigates.Count != 0)
             {
-                if (destinationForEachClass != destination)
+                if (destinationForEachClass != destination || addOffsetToFirstLine)
                 {
                     destinationForEachClass -= forwardDirection.normalized * 30;
                 }
@@ -382,7 +382,7 @@ namespace RTS.UI.Command
             List<UnitBaseScript> allCruisers = allAgents.FindAll(x => x.objectScale == RTSGameObjectBaseScript.ObjectScale.Cruiser);
             if (allCruisers.Count != 0)
             {
-                if (destinationForEachClass != destination)
+                if (destinationForEachClass != destination || addOffsetToFirstLine)
                 {
                     destinationForEachClass -= forwardDirection.normalized * 50;
                 }
@@ -438,7 +438,7 @@ namespace RTS.UI.Command
             List<UnitBaseScript> allBattleships = allAgents.FindAll(x => x.objectScale == RTSGameObjectBaseScript.ObjectScale.Battleship);
             if (allBattleships.Count != 0)
             {
-                if (destinationForEachClass != destination)
+                if (destinationForEachClass != destination || addOffsetToFirstLine)
                 {
                     destinationForEachClass -= forwardDirection.normalized * 80;
                 }
@@ -494,7 +494,7 @@ namespace RTS.UI.Command
             List<UnitBaseScript> allMotherships = allAgents.FindAll(x => x.objectScale == RTSGameObjectBaseScript.ObjectScale.Mothership);
             if (allMotherships.Count != 0)
             {
-                if (destinationForEachClass != destination)
+                if (destinationForEachClass != destination || addOffsetToFirstLine)
                 {
                     destinationForEachClass -= forwardDirection.normalized * 120;
                 }

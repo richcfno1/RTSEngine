@@ -60,17 +60,26 @@ namespace RTS.RTSGameObject.Unit
             }
 
             // Action
+            timer += Time.fixedDeltaTime;
             // In aggressive status, when detect a nearby enemy, call attack ability
-            if (AttackAbility != null && CurrentFireControlStatus == FireControlStatus.Aggressive && autoEngageTarget == null &&
+            if (timer >= autoEngageGap && AttackAbility != null && CurrentFireControlStatus == FireControlStatus.Aggressive && autoEngageTarget == null &&
                 (ActionQueue.Count == 0 || ActionQueue.First().actionType != ActionType.ForcedMove))
             {
-                Collider temp = Physics.OverlapSphere(transform.position, autoEngageDistance).
-                    FirstOrDefault(x => x.GetComponent<UnitBaseScript>() != null && x.GetComponent<UnitBaseScript>().BelongTo != BelongTo);
+                GameObject temp = null;
+                foreach (GameObject i in GameManager.GameManagerInstance.enemyUnitsTable[BelongTo])
+                {
+                    if ((i.transform.position - transform.position).magnitude <= autoEngageDistance)
+                    {
+                        temp = i;
+                        break;
+                    }
+                }
                 if (temp != null)
                 {
-                    Attack(temp.gameObject);
-                    autoEngageTarget = temp.gameObject;
+                    Attack(temp);
+                    autoEngageTarget = temp;
                 }
+                timer = 0;
             }
 
             if (ActionQueue.Count != 0)

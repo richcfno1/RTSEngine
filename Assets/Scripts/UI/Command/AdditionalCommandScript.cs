@@ -354,7 +354,7 @@ namespace RTS.UI.Command
                     Vector3 destination = attackTarget.transform.position + attackTarget.radius * 2 *
                         (SelectControlScript.SelectionControlInstance.FindCenter() - attackTarget.transform.position).normalized;
                     foreach (KeyValuePair<UnitBaseScript, Vector3> i in FindDestination(allAgents, destination, destination -
-                        SelectControlScript.SelectionControlInstance.FindCenter()))
+                        SelectControlScript.SelectionControlInstance.FindCenter(), true))
                     {
                         if (i.Key != null)
                         {
@@ -497,7 +497,7 @@ namespace RTS.UI.Command
                     Vector3 destination = followTarget.transform.position + followTarget.radius * 2 *
                         (SelectControlScript.SelectionControlInstance.FindCenter() - followTarget.transform.position);
                     foreach (KeyValuePair<UnitBaseScript, Vector3> i in FindDestination(allAgents, destination, destination -
-                        SelectControlScript.SelectionControlInstance.FindCenter()))
+                        SelectControlScript.SelectionControlInstance.FindCenter(), true))
                     {
                         if (i.Key != null)
                         {
