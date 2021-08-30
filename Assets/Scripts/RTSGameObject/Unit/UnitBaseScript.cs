@@ -5,6 +5,7 @@ using RTS.Ability.CommonAbility;
 using RTS.Ability.SpecialAbility;
 using RTS.RTSGameObject.Subsystem;
 using RTS.Helper;
+using System.Linq;
 
 namespace RTS.RTSGameObject.Unit
 {
@@ -113,7 +114,7 @@ namespace RTS.RTSGameObject.Unit
         [Header("Fire Control")]
         [Tooltip("Auto engage enemy distance.")]
         public float autoEngageDistance;
-        [Tooltip("Time gap to search enemy.")]
+        [Tooltip("Time gap between search enemy.")]
         public float autoEngageGap;
 
         [Header("Modifier")]
@@ -163,7 +164,7 @@ namespace RTS.RTSGameObject.Unit
         protected List<Vector3> moveBeacons = new List<Vector3>();
         protected bool isApproaching = true;
 
-        protected readonly List<Vector3> agentCorners = new List<Vector3>();
+        protected readonly List<Vector3> agentDetectRayStartOffset = new List<Vector3>();
         protected Rigidbody thisBody;
         protected List<Collider> allColliders;
         protected float estimatedMaxSpeed;
@@ -179,6 +180,59 @@ namespace RTS.RTSGameObject.Unit
                 debugLineRender = gameObject.AddComponent<LineRenderer>();
                 debugLineRender.startWidth = debugLineRender.endWidth = 5;
             }
+        }
+
+        void Start()
+        {
+            OnCreatedAction();
+
+            Vector3 min = NavigationCollider.center - NavigationCollider.size * 0.5f;
+            Vector3 max = NavigationCollider.center + NavigationCollider.size * 0.5f;
+            agentDetectRayStartOffset.Add(Vector3.zero);
+
+            agentDetectRayStartOffset.Add(new Vector3(min.x, min.y, min.z));
+            agentDetectRayStartOffset.Add(new Vector3(min.x * 0.5f, min.y * 0.5f, min.z * 0.5f));
+            agentDetectRayStartOffset.Add(new Vector3(min.x * 1.1f, min.y * 1.1f, min.z * 1.1f));
+
+            agentDetectRayStartOffset.Add(new Vector3(min.x, min.y, min.z));
+            agentDetectRayStartOffset.Add(new Vector3(min.x * 0.5f, min.y * 0.5f, min.z * 0.5f));
+            agentDetectRayStartOffset.Add(new Vector3(min.x * 1.1f, min.y * 1.1f, min.z * 1.1f));
+
+            agentDetectRayStartOffset.Add(new Vector3(min.x, min.y, max.z));
+            agentDetectRayStartOffset.Add(new Vector3(min.x * 0.5f, min.y * 0.5f, max.z * 0.5f));
+            agentDetectRayStartOffset.Add(new Vector3(min.x * 1.1f, min.y * 1.1f, max.z * 1.1f));
+
+            agentDetectRayStartOffset.Add(new Vector3(min.x, max.y, min.z));
+            agentDetectRayStartOffset.Add(new Vector3(min.x * 0.5f, max.y * 0.5f, min.z * 0.5f));
+            agentDetectRayStartOffset.Add(new Vector3(min.x * 1.1f, max.y * 1.1f, min.z * 1.1f));
+
+            agentDetectRayStartOffset.Add(new Vector3(min.x, max.y, max.z));
+            agentDetectRayStartOffset.Add(new Vector3(min.x * 0.5f, max.y * 0.5f, max.z * 0.5f));
+            agentDetectRayStartOffset.Add(new Vector3(min.x * 1.1f, max.y * 1.1f, max.z * 1.1f));
+
+            agentDetectRayStartOffset.Add(new Vector3(max.x, min.y, min.z));
+            agentDetectRayStartOffset.Add(new Vector3(max.x * 0.5f, min.y * 0.5f, min.z * 0.5f));
+            agentDetectRayStartOffset.Add(new Vector3(max.x * 1.1f, min.y * 1.1f, min.z * 1.1f));
+
+            agentDetectRayStartOffset.Add(new Vector3(max.x, min.y, max.z));
+            agentDetectRayStartOffset.Add(new Vector3(max.x * 0.5f, min.y * 0.5f, max.z * 0.5f));
+            agentDetectRayStartOffset.Add(new Vector3(max.x * 1.1f, min.y * 1.1f, max.z * 1.1f));
+
+            agentDetectRayStartOffset.Add(new Vector3(max.x, max.y, min.z));
+            agentDetectRayStartOffset.Add(new Vector3(max.x * 0.5f, max.y * 0.5f, min.z * 0.5f));
+            agentDetectRayStartOffset.Add(new Vector3(max.x * 1.1f, max.y * 1.1f, min.z * 1.1f));
+
+            agentDetectRayStartOffset.Add(new Vector3(max.x, max.y, max.z));
+            agentDetectRayStartOffset.Add(new Vector3(max.x * 0.5f, max.y * 0.5f, max.z * 0.5f));
+            agentDetectRayStartOffset.Add(new Vector3(max.x * 1.1f, max.y * 1.1f, max.z * 1.1f));
+
+
+            finalPosition = transform.position;
+            thisBody = GetComponent<Rigidbody>();
+            allColliders = GetComponentsInChildren<Collider>().ToList();
+            estimatedMaxSpeed = ((maxForce * forceMultiplier / thisBody.drag) - Time.fixedDeltaTime * maxForce * forceMultiplier) / thisBody.mass;
+
+            radius = NavigationCollider.size.magnitude / 2;
         }
 
         void Update()
@@ -793,7 +847,7 @@ namespace RTS.RTSGameObject.Unit
         {
             Vector3 direction = (to - from).normalized;
             float distance = Mathf.Min((to - from).magnitude, maxDistance);
-            foreach (Vector3 i in agentCorners)
+            foreach (Vector3 i in agentDetectRayStartOffset)
             {
                 RaycastHit hit;
                 if (Physics.Raycast(from - transform.position + transform.TransformPoint(i), direction, out hit, distance))

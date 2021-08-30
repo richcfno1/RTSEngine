@@ -8,31 +8,6 @@ namespace RTS.RTSGameObject.Unit
 {
     public class FighterBaseScript : UnitBaseScript
     {
-        // Start is called before the first frame update
-        void Start()
-        {
-            OnCreatedAction();
-
-            Vector3 min = NavigationCollider.center - NavigationCollider.size * 0.5f;
-            Vector3 max = NavigationCollider.center + NavigationCollider.size * 0.5f;
-            agentCorners.Add(Vector3.zero);
-            agentCorners.Add(new Vector3(min.x, min.y, min.z));
-            agentCorners.Add(new Vector3(min.x, min.y, max.z));
-            agentCorners.Add(new Vector3(min.x, max.y, min.z));
-            agentCorners.Add(new Vector3(min.x, max.y, max.z));
-            agentCorners.Add(new Vector3(max.x, min.y, min.z));
-            agentCorners.Add(new Vector3(max.x, min.y, max.z));
-            agentCorners.Add(new Vector3(max.x, max.y, min.z));
-            agentCorners.Add(new Vector3(max.x, max.y, max.z));
-
-            finalPosition = transform.position;
-            thisBody = GetComponent<Rigidbody>();
-            allColliders = GetComponentsInChildren<Collider>().ToList();
-            estimatedMaxSpeed = ((maxForce * forceMultiplier / thisBody.drag) - Time.fixedDeltaTime * maxForce * forceMultiplier) / thisBody.mass;
-
-            radius = NavigationCollider.size.magnitude / 2;
-        }
-
         // Update is called once per frame
         void FixedUpdate()
         {
@@ -339,15 +314,23 @@ namespace RTS.RTSGameObject.Unit
 
                         if (AttackAbility != null && AttackAbility.CanUseAbility())
                         {
-                            if (AttackAbility != null && autoEngageTarget == null)
+                            if (timer >= autoEngageGap && AttackAbility != null && autoEngageTarget == null)
                             {
-                                Collider temp = Physics.OverlapSphere(transform.position, autoEngageDistance).
-                                    FirstOrDefault(x => x.GetComponent<UnitBaseScript>() != null && x.GetComponent<UnitBaseScript>().BelongTo != BelongTo);
+                                GameObject temp = null;
+                                foreach (GameObject i in GameManager.GameManagerInstance.enemyUnitsTable[BelongTo])
+                                {
+                                    if ((i.transform.position - transform.position).magnitude <= autoEngageDistance)
+                                    {
+                                        temp = i;
+                                        break;
+                                    }
+                                }
                                 if (temp != null)
                                 {
-                                    Attack(temp.gameObject);
-                                    autoEngageTarget = temp.gameObject;
+                                    Attack(temp);
+                                    autoEngageTarget = temp;
                                 }
+                                timer = 0;
                             }
                         }
                         return;
