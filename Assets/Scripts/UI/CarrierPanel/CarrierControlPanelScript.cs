@@ -119,7 +119,7 @@ namespace RTS.UI.CarrierPanel
                         {
                             temp = Instantiate(carrierStatusGridPrefab, carrierStatusList);
                             Sprite icon = Resources.Load<RTSGameObjectData>(GameManager.GameManagerInstance.
-                                gameObjectLibrary[GameManager.GameManagerInstance.unitLibrary[i].baseTypeName]).icon;
+                                GameObjectLibrary[GameManager.GameManagerInstance.UnitLibrary[i].baseTypeName]).icon;
                             temp.GetComponent<CarrierStatusGridScript>().InitStatusGrid(i, icon, this);
                             allCarrierStatusGrids.Add(i, temp);
                         }

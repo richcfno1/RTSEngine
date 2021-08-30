@@ -23,7 +23,7 @@ namespace RTS.UI.GroupPanel
                 if (thisGroup[0] != null)
                 {
                     icon.sprite = Resources.Load<RTSGameObjectData>(GameManager.GameManagerInstance.
-                        gameObjectLibrary[thisGroup[0].GetComponent<RTSGameObjectBaseScript>().typeID]).icon;
+                        GameObjectLibrary[thisGroup[0].GetComponent<RTSGameObjectBaseScript>().typeID]).icon;
                 }
             }
         }

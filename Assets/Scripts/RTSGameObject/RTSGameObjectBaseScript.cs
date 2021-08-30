@@ -78,12 +78,14 @@ namespace RTS.RTSGameObject
         {
             HP = Mathf.Clamp(HP - damage, 0, maxHP);
             lastDamagedBy = from;
+            GameManager.GameManagerInstance.OnGameObjectDamaged(gameObject, from);
         }
 
         public virtual void Repair(float amount, float attackPowerRecover, float defencePowerRecover, float movePowerRecover, GameObject from)
         {
             HP = Mathf.Clamp(HP + amount, 0, maxHP);
             lastDamagedBy = from;
+            GameManager.GameManagerInstance.OnGameObjectRepaired(gameObject, from);
         }
 
         // Must call this function if using random in fixedupdate

@@ -57,10 +57,10 @@ namespace RTS.RTSGameObject.Subsystem
             if (!isProducing && produceQueue.Count != 0)
             {
                 string unitType = produceQueue.Peek();
-                string baseTypeName = GameManager.GameManagerInstance.unitLibrary[unitType].baseTypeName;
+                string baseTypeName = GameManager.GameManagerInstance.UnitLibrary[unitType].baseTypeName;
                 isProducing = true;
                 StartCoroutine(FinishProduceAfter(unitType, Resources.Load<GameObject>(
-                    GameManager.GameManagerInstance.gameObjectLibrary[baseTypeName]).GetComponent<UnitBaseScript>().buildTime));
+                    GameManager.GameManagerInstance.GameObjectLibrary[baseTypeName]).GetComponent<UnitBaseScript>().buildTime));
             }
             if (!isDeploying && deployQueue.Count != 0)
             {
@@ -152,7 +152,7 @@ namespace RTS.RTSGameObject.Subsystem
             }
             if (count + produceQueue.Count < carrierCapacity)
             {
-                if (products.Contains(type) && GameManager.GameManagerInstance.unitLibrary.ContainsKey(type))
+                if (products.Contains(type) && GameManager.GameManagerInstance.UnitLibrary.ContainsKey(type))
                 {
                     produceQueue.Enqueue(type);
                     return true;

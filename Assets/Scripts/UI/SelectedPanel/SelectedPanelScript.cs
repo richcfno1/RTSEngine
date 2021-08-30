@@ -51,7 +51,7 @@ namespace RTS.UI.SelectedPanel
                             selectedDetaillGrid = Instantiate(detailGridPrefab, transform).GetComponent<SelectedDetailGridScript>();
                         }
                         selectedDetaillGrid.icon.sprite = Resources.Load<RTSGameObjectData>(GameManager.GameManagerInstance.
-                            gameObjectLibrary[allSelectedList[0].GetComponent<RTSGameObjectBaseScript>().typeID]).icon;
+                            GameObjectLibrary[allSelectedList[0].GetComponent<RTSGameObjectBaseScript>().typeID]).icon;
                         selectedDetaillGrid.UpdateDetailGrid(allSelectedList[0]);
                         lastSelectedType = SelectedType.Single;
                     }
@@ -83,7 +83,7 @@ namespace RTS.UI.SelectedPanel
                         {
                             GameObject temp = Instantiate(infoGridPrefab, transform);
                             temp.GetComponent<SelectedInfoGridScript>().icon.sprite = Resources.Load<RTSGameObjectData>(
-                                GameManager.GameManagerInstance.gameObjectLibrary[i.GetComponent<RTSGameObjectBaseScript>().typeID]).icon;
+                                GameManager.GameManagerInstance.GameObjectLibrary[i.GetComponent<RTSGameObjectBaseScript>().typeID]).icon;
                             temp.GetComponent<Button>().onClick.AddListener(
                                 () => { SelectControlScript.SelectionControlInstance.SetMainSelectedGameObject(i); });
                             temp.GetComponent<SelectedInfoGridScript>().UpdateInfoGrid(i);
@@ -147,7 +147,7 @@ namespace RTS.UI.SelectedPanel
                     {
                         GameObject temp = Instantiate(infoGridPrefab, transform);
                         temp.GetComponent<SelectedInfoGridScript>().icon.sprite = Resources.Load<RTSGameObjectData>(
-                            GameManager.GameManagerInstance.gameObjectLibrary[GameManager.GameManagerInstance.unitLibrary[i.Key].baseTypeName]).icon;
+                            GameManager.GameManagerInstance.GameObjectLibrary[GameManager.GameManagerInstance.UnitLibrary[i.Key].baseTypeName]).icon;
                         temp.GetComponent<Button>().onClick.AddListener(
                                 () => { SelectControlScript.SelectionControlInstance.SetMainSelectedType(i.Key); });
                         temp.GetComponent<SelectedInfoGridScript>().UpdateInfoGrid(i.Value);
