@@ -25,7 +25,7 @@ namespace RTS.RTSGameObject.Projectile.Bullet
         // Start is called before the first frame update
         void Start()
         {
-            thisRigidbody = GetComponent<Rigidbody>();
+            thisBody = GetComponent<Rigidbody>();
         }
 
         // Update is called once per frame
@@ -37,8 +37,8 @@ namespace RTS.RTSGameObject.Projectile.Bullet
             {
                 OnDestroyedAction();
             }
-            lastPosition = thisRigidbody.position;
-            thisRigidbody.MovePosition(thisRigidbody.position + moveDirection * Time.fixedDeltaTime * moveSpeed);
+            lastPosition = thisBody.position;
+            thisBody.MovePosition(thisBody.position + moveDirection * Time.fixedDeltaTime * moveSpeed);
         }
 
         void OnTriggerEnter(Collider other)

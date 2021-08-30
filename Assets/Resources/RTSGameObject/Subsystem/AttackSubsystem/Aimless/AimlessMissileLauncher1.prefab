@@ -149,7 +149,6 @@ MonoBehaviour:
   type: 2
   repairPercentRequired: 0.5
   supportedCommonAbility: 02000000
-  supportedSepcialAbility: 
   coolDown: 20
   lockRange: 500
   possibleTargetTags:

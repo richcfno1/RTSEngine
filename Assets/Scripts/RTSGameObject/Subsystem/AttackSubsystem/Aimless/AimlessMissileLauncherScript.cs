@@ -69,6 +69,7 @@ namespace RTS.RTSGameObject.Subsystem
             tempScript.target = fireTarget;
             tempScript.createdBy = Host.gameObject;
             tempScript.BelongTo = BelongTo;
+            tempScript.timeBeforeEnableCollider = 0.5f;
         }
 
         // Try to find a target by the order, compare angleY first, then check obstacles
