@@ -16,11 +16,11 @@ namespace RTS
             public LuaChunk script;
         }
 
-        private GameManager gameManager;
-        private GameObject masterGameObject;
-        private Lua lua;
-        private LuaCompileOptions compileOptions;
-        private LuaGlobal env;
+        private readonly GameManager gameManager;
+        private readonly GameObject masterGameObject;
+        private readonly Lua lua;
+        private readonly LuaCompileOptions compileOptions;
+        private readonly LuaGlobal env;
 
         public ScriptSystem()
         {
@@ -58,13 +58,14 @@ namespace RTS
             LuaTable temp = new LuaTable();
             temp.Add("index", gameObject.Index);
             temp.Add("belongTo", gameObject.BelongTo);
+            temp.Add("luaTag", gameObject.LuaTag);
             temp.Add("type", gameObject.typeID);
+            temp.Add("position", gameObject.transform.position);
+            temp.Add("rotation", gameObject.transform.rotation);
             if (gameObject.GetComponent<UnitBaseScript>() != null)
             {
                 temp.Add("unitType", gameObject.GetComponent<UnitBaseScript>().UnitTypeID);
             }
-            temp.Add("position", gameObject.transform.position);
-            temp.Add("rotation", gameObject.transform.rotation);
             if (gameObject.GetComponent<Rigidbody>() != null)
             {
                 temp.Add("velocity", gameObject.GetComponent<Rigidbody>().velocity);
@@ -100,7 +101,7 @@ namespace RTS
             var unitType = GetArgument<string>(arguments, "unitType");
             var position = GetArgument<Vector3>(arguments, "position");
             var belongsTo = GetArgument<int>(arguments, "belongTo");
-            gameManager.InstantiateUnit(unitType, position, Quaternion.identity, masterGameObject.transform, belongsTo);
+            gameManager.InstantiateUnit(unitType, position, Quaternion.identity, masterGameObject.transform, belongsTo, new Dictionary<string, string>());
         }
 
 

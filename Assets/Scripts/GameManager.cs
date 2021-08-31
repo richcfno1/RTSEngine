@@ -47,6 +47,7 @@ namespace RTS
         {
             public string type;
             public int belongTo;
+            public Dictionary<string, string> specialLuaTags;  // "" -> tag for unit "subsystem anchor name" -> tag for subsystem
             public SerializableVector3 position;
             public SerializableQuaternion rotation;
         }
@@ -166,19 +167,19 @@ namespace RTS
             // Debug use
             if (Input.GetKeyDown(KeyCode.O))
             {
-                InstantiateUnit("StandardFrigate", new Vector3(recordData, 0, recordData + recordData2), new Quaternion(), GameObject.Find("RTSGameObject").transform, 0);
+                InstantiateUnit("StandardFrigate", new Vector3(recordData, 0, recordData + recordData2), new Quaternion(), GameObject.Find("RTSGameObject").transform, 0, new Dictionary<string, string>());
                 recordData -= 25;
                 Debug.Log(recordData / 25);
             }
             if (Input.GetKeyDown(KeyCode.L))
             {
-                InstantiateUnit("StandardFighter", new Vector3(recordData, 500, recordData + recordData2), new Quaternion(), GameObject.Find("RTSGameObject").transform, 0);
+                InstantiateUnit("StandardFighter", new Vector3(recordData, 500, recordData + recordData2), new Quaternion(), GameObject.Find("RTSGameObject").transform, 0, new Dictionary<string, string>());
                 recordData -= 25;
                 Debug.Log(recordData / 25);
             }
             if (Input.GetKeyDown(KeyCode.I))
             {
-                InstantiateUnit("StandardFrigate", new Vector3(recordData, 0, recordData + recordData2), new Quaternion(), GameObject.Find("RTSGameObject").transform, 1);
+                InstantiateUnit("StandardFrigate", new Vector3(recordData, 0, recordData + recordData2), new Quaternion(), GameObject.Find("RTSGameObject").transform, 1, new Dictionary<string, string>());
                 recordData -= 25;
                 Debug.Log(recordData / 25);
             }
@@ -260,7 +261,7 @@ namespace RTS
             {
                 if (UnitLibrary.ContainsKey(i.type))
                 {
-                    InstantiateUnit(i.type, i.position, i.rotation, GameObject.Find("RTSGameObject").transform, i.belongTo);
+                    InstantiateUnit(i.type, i.position, i.rotation, GameObject.Find("RTSGameObject").transform, i.belongTo, i.specialLuaTags);
                 }
                 else
                 {
@@ -269,7 +270,7 @@ namespace RTS
             }
         }
 
-        public GameObject InstantiateUnit(string unitType, Vector3 position, Quaternion rotation, Transform parent, int belongTo)
+        public GameObject InstantiateUnit(string unitType, Vector3 position, Quaternion rotation, Transform parent, int belongTo, Dictionary<string, string> luaTags)
         {
             if (!UnitLibrary.ContainsKey(unitType))
             {
@@ -280,9 +281,9 @@ namespace RTS
 
             // Ship
             GameObject result = Instantiate(Resources.Load<GameObject>(GameObjectLibrary[libraryData.baseTypeName]), position, rotation, parent);
-            var resultRenderer = result.AddComponent<RTSGameObjectRenderer>();
 
             // 设置一个测试材质
+            var resultRenderer = result.AddComponent<RTSGameObjectRenderer>();
             resultRenderer.SetMaterial("test");
             if (UnityEngine.Random.Range(0, 10) >= 5)
             {
@@ -295,6 +296,12 @@ namespace RTS
                 unitScript.UnitTypeID = unitType;
                 unitScript.PropertyDictionary = libraryData.properties;
 
+                // Apply lua tag
+                if (luaTags.TryGetValue("", out string unitTag))
+                {
+                    unitScript.LuaTag = unitTag;
+                }
+
                 // Init subsystem
                 foreach (UnitBaseScript.AnchorData anchorData in unitScript.subsyetemAnchors)
                 {
@@ -302,6 +309,11 @@ namespace RTS
                     if (anchorData.subsystem != null)
                     {
                         anchorData.subsystem.GetComponent<SubsystemBaseScript>().Host = unitScript;
+                        // Apply lua tag
+                        if (luaTags.TryGetValue(anchorData.anchorName, out string subsystemTag))
+                        {
+                            anchorData.subsystem.GetComponent<SubsystemBaseScript>().LuaTag = subsystemTag;
+                        }
                     }
                     else if (libraryData.subsystems.ContainsKey(anchorData.anchorName) && anchorData.subsystem == null)
                     {
@@ -316,6 +328,11 @@ namespace RTS
                         {
                             anchorData.subsystem = temp;
                             subsystemScript.Host = unitScript;
+                        }
+                        // Apply lua tag
+                        if (luaTags.TryGetValue(anchorData.anchorName, out string subsystemTag))
+                        {
+                            subsystemScript.LuaTag = subsystemTag;
                         }
                     }
                 }

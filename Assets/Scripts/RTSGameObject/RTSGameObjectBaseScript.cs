@@ -54,6 +54,7 @@ namespace RTS.RTSGameObject
         public int Index { get; set; } = -1;
         public int BelongTo { get; set; } = 0;
         public float HP { get; set; }
+        public string LuaTag { get; set; }
 
         protected GameObject lastDamagedBy = null;
         protected GameObject lastRepairedBy = null;
