@@ -452,13 +452,13 @@ namespace RTS
         public void OnGameObjectCreated(GameObject self)
         {
             // Lua
-            ScriptSystem.SetRTSGameObjectInfo("self", self.GetComponent<RTSGameObjectBaseScript>());
+            LuaTable selfTable = ScriptSystem.SetRTSGameObjectInfo(self.GetComponent<RTSGameObjectBaseScript>());
             if (gameObjectLua.TryGetValue(self.GetComponent<RTSGameObjectBaseScript>().typeID, out Dictionary<string, string> matchedLua))
             {
                 if (matchedLua.TryGetValue("OnCreated", out string code))
                 {
-                    var script = ScriptSystem.CreateScript("OnCreated", code);
-                    ScriptSystem.ExecuteScript(script);
+                    var script = ScriptSystem.CreateScript("OnCreated", code, new KeyValuePair<string, Type>("self", typeof(LuaTable)));
+                    ScriptSystem.ExecuteScript(script, selfTable);
                 }
             }
             if (self.GetComponent<UnitBaseScript>() != null)
@@ -466,8 +466,8 @@ namespace RTS
                 UnitLibraryData libraryData = UnitLibrary[self.GetComponent<UnitBaseScript>().UnitTypeID];
                 if (libraryData.scripts != null && libraryData.scripts.TryGetValue("OnCreated", out var code))
                 {
-                    var script = ScriptSystem.CreateScript("OnCreated", code);
-                    ScriptSystem.ExecuteScript(script);
+                    var script = ScriptSystem.CreateScript("OnCreated", code, new KeyValuePair<string, Type>("self", typeof(LuaTable)));
+                    ScriptSystem.ExecuteScript(script, selfTable);
                 }
             }
             // Index
@@ -498,14 +498,15 @@ namespace RTS
         public void OnGameObjectDamaged(GameObject self, GameObject other)
         {
             // Lua
-            ScriptSystem.SetRTSGameObjectInfo("self", self.GetComponent<RTSGameObjectBaseScript>());
-            ScriptSystem.SetRTSGameObjectInfo("other", other != null ? other.GetComponent<RTSGameObjectBaseScript>() : null);
+            LuaTable selfTable = ScriptSystem.SetRTSGameObjectInfo(self.GetComponent<RTSGameObjectBaseScript>());
+            LuaTable otherTable = ScriptSystem.SetRTSGameObjectInfo(other != null ? other.GetComponent<RTSGameObjectBaseScript>() : null);
             if (gameObjectLua.TryGetValue(self.GetComponent<RTSGameObjectBaseScript>().typeID, out Dictionary<string, string> matchedLua))
             {
                 if (matchedLua.TryGetValue("OnDamaged", out string code))
                 {
-                    var script = ScriptSystem.CreateScript("OnDamaged", code);
-                    ScriptSystem.ExecuteScript(script);
+                    var script = ScriptSystem.CreateScript("OnDamaged", code,
+                        new KeyValuePair<string, Type>("self", typeof(LuaTable)), new KeyValuePair<string, Type>("other", typeof(LuaTable)));
+                    ScriptSystem.ExecuteScript(script, selfTable, otherTable);
                 }
             }
             if (self.GetComponent<UnitBaseScript>() != null)
@@ -513,8 +514,9 @@ namespace RTS
                 UnitLibraryData libraryData = UnitLibrary[self.GetComponent<UnitBaseScript>().UnitTypeID];
                 if (libraryData.scripts != null && libraryData.scripts.TryGetValue("OnDamaged", out var code))
                 {
-                    var script = ScriptSystem.CreateScript("OnDamaged", code);
-                    ScriptSystem.ExecuteScript(script);
+                    var script = ScriptSystem.CreateScript("OnDamaged", code,
+                        new KeyValuePair<string, Type>("self", typeof(LuaTable)), new KeyValuePair<string, Type>("other", typeof(LuaTable)));
+                    ScriptSystem.ExecuteScript(script, selfTable, otherTable);
                 }
             }
         }
@@ -522,14 +524,15 @@ namespace RTS
         public void OnGameObjectRepaired(GameObject self, GameObject other)
         {
             // Lua
-            ScriptSystem.SetRTSGameObjectInfo("self", self.GetComponent<RTSGameObjectBaseScript>());
-            ScriptSystem.SetRTSGameObjectInfo("other", other != null ? other.GetComponent<RTSGameObjectBaseScript>() : null);
+            LuaTable selfTable = ScriptSystem.SetRTSGameObjectInfo(self.GetComponent<RTSGameObjectBaseScript>());
+            LuaTable otherTable = ScriptSystem.SetRTSGameObjectInfo(other != null ? other.GetComponent<RTSGameObjectBaseScript>() : null);
             if (gameObjectLua.TryGetValue(self.GetComponent<RTSGameObjectBaseScript>().typeID, out Dictionary<string, string> matchedLua))
             {
                 if (matchedLua.TryGetValue("OnRepaired", out string code))
                 {
-                    var script = ScriptSystem.CreateScript("OnRepaired", code);
-                    ScriptSystem.ExecuteScript(script);
+                    var script = ScriptSystem.CreateScript("OnRepaired", code,
+                        new KeyValuePair<string, Type>("self", typeof(LuaTable)), new KeyValuePair<string, Type>("other", typeof(LuaTable)));
+                    ScriptSystem.ExecuteScript(script, selfTable, otherTable);
                 }
             }
             if (self.GetComponent<UnitBaseScript>() != null)
@@ -537,8 +540,9 @@ namespace RTS
                 UnitLibraryData libraryData = UnitLibrary[self.GetComponent<UnitBaseScript>().UnitTypeID];
                 if (libraryData.scripts != null && libraryData.scripts.TryGetValue("OnRepaired", out var code))
                 {
-                    var script = ScriptSystem.CreateScript("OnRepaired", code);
-                    ScriptSystem.ExecuteScript(script);
+                    var script = ScriptSystem.CreateScript("OnRepaired", code,
+                        new KeyValuePair<string, Type>("self", typeof(LuaTable)), new KeyValuePair<string, Type>("other", typeof(LuaTable)));
+                    ScriptSystem.ExecuteScript(script, selfTable, otherTable);
                 }
             }
         }
@@ -546,14 +550,15 @@ namespace RTS
         public void OnGameObjectDestroyed(GameObject self, GameObject other)
         {
             // Lua
-            ScriptSystem.SetRTSGameObjectInfo("self", self.GetComponent<RTSGameObjectBaseScript>());
-            ScriptSystem.SetRTSGameObjectInfo("other", other != null ? other.GetComponent<RTSGameObjectBaseScript>() : null);
+            LuaTable selfTable = ScriptSystem.SetRTSGameObjectInfo(self.GetComponent<RTSGameObjectBaseScript>());
+            LuaTable otherTable = ScriptSystem.SetRTSGameObjectInfo(other != null ? other.GetComponent<RTSGameObjectBaseScript>() : null);
             if (gameObjectLua.TryGetValue(self.GetComponent<RTSGameObjectBaseScript>().typeID, out Dictionary<string, string> matchedLua))
             {
                 if (matchedLua.TryGetValue("OnDestroyed", out string code))
                 {
-                    var script = ScriptSystem.CreateScript("OnDestroyed", code);
-                    ScriptSystem.ExecuteScript(script);
+                    var script = ScriptSystem.CreateScript("OnDestroyed", code,
+                        new KeyValuePair<string, Type>("self", typeof(LuaTable)), new KeyValuePair<string, Type>("other", typeof(LuaTable)));
+                    ScriptSystem.ExecuteScript(script, selfTable, otherTable);
                 }
             }
             if (self.GetComponent<UnitBaseScript>() != null)
@@ -561,8 +566,9 @@ namespace RTS
                 UnitLibraryData libraryData = UnitLibrary[self.GetComponent<UnitBaseScript>().UnitTypeID];
                 if (libraryData.scripts != null && libraryData.scripts.TryGetValue("OnDestroyed", out var code))
                 {
-                    var script = ScriptSystem.CreateScript("OnDestroyed", code);
-                    ScriptSystem.ExecuteScript(script);
+                    var script = ScriptSystem.CreateScript("OnDestroyed", code,
+                        new KeyValuePair<string, Type>("self", typeof(LuaTable)), new KeyValuePair<string, Type>("other", typeof(LuaTable)));
+                    ScriptSystem.ExecuteScript(script, selfTable, otherTable);
                 }
             }
             // Index

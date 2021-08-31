@@ -37,28 +37,29 @@ namespace RTS
             Register(nameof(HelloWorld), HelloWorld);
             Register(nameof(InitSFFromLuaTest), InitSFFromLuaTest);
 
+            Register(nameof(DebugText), DebugText);
             Register(nameof(LogText), LogText);
         }
 
-        public Script CreateScript(string description, string code)
+        public Script CreateScript(string description, string code, params KeyValuePair<string, Type>[] arguments)
         {
             return new Script
             {
                 name = description,
-                script = lua.CompileChunk(code, description, compileOptions)
+                script = lua.CompileChunk(code, description, compileOptions, arguments)
             };
         }
 
-        public void ExecuteScript(Script script)
+        public void ExecuteScript(Script script, params object[] arguments)
         {
-            script.script.Run(env);
+            env.DoChunk(script.script, arguments);
         }
 
-        public void SetRTSGameObjectInfo(string name, RTSGameObjectBaseScript gameObject)
+        public LuaTable SetRTSGameObjectInfo(RTSGameObjectBaseScript gameObject)
         {
             if (gameObject == null)
             {
-                return;
+                return null;
             }
             LuaTable temp = new LuaTable();
             temp.Add("index", gameObject.Index);
@@ -75,7 +76,7 @@ namespace RTS
             {
                 temp.Add("velocity", gameObject.GetComponent<Rigidbody>().velocity);
             }
-            env[name] = temp;
+            return temp;
         }
 
         // Function register
@@ -111,6 +112,12 @@ namespace RTS
 
 
         // Default lua functions
+        void DebugText(LuaTable arguments)
+        {
+            string text = GetArgument<string>(arguments, "text");
+            Debug.Log(text);
+        }
+
         void LogText(LuaTable arguments)
         {
             string text = GetArgument<string>(arguments, "text");
