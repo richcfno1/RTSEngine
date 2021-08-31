@@ -81,7 +81,7 @@ namespace RTS
         public ScriptSystem ScriptSystem { get; private set; }
         public MaterialsManager MaterialsManager { get; private set; }
 
-        [Header("Game Global Setting")]
+        [Header("Game Global Setting")] 
         [Tooltip("RTS game object library.")]
         public TextAsset gameObjectLibraryAsset;
         [Tooltip("The time gap between each vision checking.")]
@@ -297,7 +297,7 @@ namespace RTS
                 unitScript.PropertyDictionary = libraryData.properties;
 
                 // Apply lua tag
-                if (luaTags.TryGetValue("", out string unitTag))
+                if (luaTags != null && luaTags.TryGetValue("", out string unitTag))
                 {
                     unitScript.LuaTag = unitTag;
                 }
@@ -310,7 +310,7 @@ namespace RTS
                     {
                         anchorData.subsystem.GetComponent<SubsystemBaseScript>().Host = unitScript;
                         // Apply lua tag
-                        if (luaTags.TryGetValue(anchorData.anchorName, out string subsystemTag))
+                        if (luaTags != null && luaTags.TryGetValue(anchorData.anchorName, out string subsystemTag))
                         {
                             anchorData.subsystem.GetComponent<SubsystemBaseScript>().LuaTag = subsystemTag;
                         }
@@ -330,7 +330,7 @@ namespace RTS
                             subsystemScript.Host = unitScript;
                         }
                         // Apply lua tag
-                        if (luaTags.TryGetValue(anchorData.anchorName, out string subsystemTag))
+                        if (luaTags != null && luaTags.TryGetValue(anchorData.anchorName, out string subsystemTag))
                         {
                             subsystemScript.LuaTag = subsystemTag;
                         }
@@ -499,7 +499,7 @@ namespace RTS
         {
             // Lua
             ScriptSystem.SetRTSGameObjectInfo("self", self.GetComponent<RTSGameObjectBaseScript>());
-            ScriptSystem.SetRTSGameObjectInfo("other", other.GetComponent<RTSGameObjectBaseScript>());
+            ScriptSystem.SetRTSGameObjectInfo("other", other != null ? other.GetComponent<RTSGameObjectBaseScript>() : null);
             if (gameObjectLua.TryGetValue(self.GetComponent<RTSGameObjectBaseScript>().typeID, out Dictionary<string, string> matchedLua))
             {
                 if (matchedLua.TryGetValue("OnDamaged", out string code))
@@ -523,7 +523,7 @@ namespace RTS
         {
             // Lua
             ScriptSystem.SetRTSGameObjectInfo("self", self.GetComponent<RTSGameObjectBaseScript>());
-            ScriptSystem.SetRTSGameObjectInfo("other", other.GetComponent<RTSGameObjectBaseScript>());
+            ScriptSystem.SetRTSGameObjectInfo("other", other != null ? other.GetComponent<RTSGameObjectBaseScript>() : null);
             if (gameObjectLua.TryGetValue(self.GetComponent<RTSGameObjectBaseScript>().typeID, out Dictionary<string, string> matchedLua))
             {
                 if (matchedLua.TryGetValue("OnRepaired", out string code))
@@ -547,7 +547,7 @@ namespace RTS
         {
             // Lua
             ScriptSystem.SetRTSGameObjectInfo("self", self.GetComponent<RTSGameObjectBaseScript>());
-            ScriptSystem.SetRTSGameObjectInfo("other", other.GetComponent<RTSGameObjectBaseScript>());
+            ScriptSystem.SetRTSGameObjectInfo("other", other != null ? other.GetComponent<RTSGameObjectBaseScript>() : null);
             if (gameObjectLua.TryGetValue(self.GetComponent<RTSGameObjectBaseScript>().typeID, out Dictionary<string, string> matchedLua))
             {
                 if (matchedLua.TryGetValue("OnDestroyed", out string code))

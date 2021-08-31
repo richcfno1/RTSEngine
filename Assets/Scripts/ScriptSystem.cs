@@ -5,6 +5,7 @@ using Neo.IronLua;
 using System;
 using RTS.RTSGameObject;
 using RTS.RTSGameObject.Unit;
+using RTS.UI;
 
 namespace RTS
 {
@@ -55,6 +56,10 @@ namespace RTS
 
         public void SetRTSGameObjectInfo(string name, RTSGameObjectBaseScript gameObject)
         {
+            if (gameObject == null)
+            {
+                return;
+            }
             LuaTable temp = new LuaTable();
             temp.Add("index", gameObject.Index);
             temp.Add("belongTo", gameObject.BelongTo);
@@ -109,7 +114,8 @@ namespace RTS
         void LogText(LuaTable arguments)
         {
             string text = GetArgument<string>(arguments, "text");
-            Debug.Log(text);
+            float displayTime = GetArgument<float>(arguments, "displayTime");
+            LogPanelScript.LogPanelScriptInstance.DisplayText(text, displayTime);
         }
     }
 }

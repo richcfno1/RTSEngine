@@ -89,6 +89,7 @@ namespace RTS.RTSGameObject.Projectile.Missile
                 debugLineRender.startWidth = debugLineRender.endWidth = 2;
             }
         }
+
         private IEnumerator EnableCollider(float waitTime)
         {
             yield return new WaitForSeconds(waitTime);

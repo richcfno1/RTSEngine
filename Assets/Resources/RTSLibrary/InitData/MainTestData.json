@@ -11,15 +11,15 @@
     }
   ],
   "initGlobalLua": {
-    "Start": "LogText({text=\"Wow, this must be first frame!\"})",
-    "Update": "LogText({text=\"Updating frame...\"})"
+    "Start": "LogText({text=\"Wow, this must be first frame!\", displayTime=2.0})",
+    "Update": ""
   },
   "initRTSGameObjectLua": {
     "Fighter1": {
-      "OnCreated": "LogText({text=\"RTSGO: \" .. self[\"type\"] .. \" with index: \" .. self[\"index\"] .. \" was created at positionX \" .. tostring(self[\"position\"]:x) .. \"!\"})"
+      "OnCreated": "LogText({text=\"RTSGO: \" .. self[\"type\"] .. \" with index: \" .. self[\"index\"] .. \" was created at positionX \" .. tostring(self[\"position\"]:x) .. \"!\", displayTime=2.0})"
     },
     "Fighter2": {
-      "OnCreated": "position = clr.UnityEngine.Vector3(0, 100, 0)\n LogText({text=tostring(position:y)})"
+      "OnCreated": "position = clr.UnityEngine.Vector3(0, 100, 0)\n LogText({text=tostring(position:y), displayTime=2.0})"
     }
   },
   "initUnitLibraryData": [
@@ -41,10 +41,10 @@
         "Carrier": [ "FighterDeployAnchor1" ]
       },
       "scripts": {
-        "OnCreated": "LogText({text=\"StandardFrigate Created\"}) \n if (Time() > 5 and not flag) then flag = true\n InitSFFromLuaTest({ unitType=\"StandardFrigate\", position=clr.UnityEngine.Vector3(0, 100, 0), belongTo=1 })\n HelloWorld() end",
-        "OnDamaged": "LogText({text=\"StandardFrigate Damaged\"})",
-        "OnRepaired": "LogText({text=\"StandardFrigate Repaired\"})",
-        "OnDestroyed": "LogText({text=\"StandardFrigate Destroyed\"})"
+        "OnCreated": "LogText({text=\"StandardFrigate Created\", displayTime=2.0})",
+        "OnDamaged": "LogText({text=\"StandardFrigate Damaged\", displayTime=2.0})",
+        "OnRepaired": "LogText({text=\"StandardFrigate Repaired\", displayTime=2.0})",
+        "OnDestroyed": "LogText({text=\"StandardFrigate Destroyed\", displayTime=2.0})"
       }
     },
     {
@@ -98,6 +98,9 @@
     {
       "type": "StandardCruiser",
       "belongTo": 0,
+      "specialLuaTags": {
+        "": "MyCruiser"
+      },
       "position": {
         "x": 0.0,
         "y": 0.0,
