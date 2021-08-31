@@ -190,6 +190,8 @@ namespace RTS.RTSGameObject.Unit
             Vector3 max = NavigationCollider.center + NavigationCollider.size * 0.5f;
             agentDetectRayStartOffset.Add(Vector3.zero);
 
+            // Detect agent
+
             agentDetectRayStartOffset.Add(new Vector3(min.x, min.y, min.z));
             agentDetectRayStartOffset.Add(new Vector3(min.x * 0.5f, min.y * 0.5f, min.z * 0.5f));
             agentDetectRayStartOffset.Add(new Vector3(min.x * 1.1f, min.y * 1.1f, min.z * 1.1f));

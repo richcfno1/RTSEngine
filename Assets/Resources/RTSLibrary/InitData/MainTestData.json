@@ -16,10 +16,10 @@
   },
   "initRTSGameObjectLua": {
     "Fighter1": {
-      "OnCreated": "LogText({text=\"RTSGO: \" .. self[\"type\"] .. \" with index: \" .. self[\"index\"] .. \" was created!\"})"
+      "OnCreated": "LogText({text=\"RTSGO: \" .. self[\"type\"] .. \" with index: \" .. self[\"index\"] .. \" was created at positionX \" .. tostring(self[\"position\"]:x) .. \"!\"})"
     },
     "Fighter2": {
-      "OnCreated": "LogText({text=\"Fighter2 Created\"})"
+      "OnCreated": "position = clr.UnityEngine.Vector3(0, 100, 0)\n LogText({text=tostring(position:y)})"
     }
   },
   "initUnitLibraryData": [
@@ -41,8 +41,7 @@
         "Carrier": [ "FighterDeployAnchor1" ]
       },
       "scripts": {
-        "Test": "if (Time() > 5 and not flag) then flag = true\n Test({ unitType=\"StandardFrigate\", position={x=0.0,y=100.0,z=0.0}, belongTo=1 })\n HelloWorld() end",
-        "OnCreated": "LogText({text=\"StandardFrigate Created\"})",
+        "OnCreated": "LogText({text=\"StandardFrigate Created\"}) \n if (Time() > 5 and not flag) then flag = true\n InitSFFromLuaTest({ unitType=\"StandardFrigate\", position=clr.UnityEngine.Vector3(0, 100, 0), belongTo=1 })\n HelloWorld() end",
         "OnDamaged": "LogText({text=\"StandardFrigate Damaged\"})",
         "OnRepaired": "LogText({text=\"StandardFrigate Repaired\"})",
         "OnDestroyed": "LogText({text=\"StandardFrigate Destroyed\"})"

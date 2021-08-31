@@ -57,7 +57,9 @@ namespace RTS
             public List<PlayerData> initPlayerData;
 
             // Important notes for lua:
-            // Global lus is called by game manager no matter
+            // Global lua is called by game manager with two entry keys: Start and Update (similar to Unity Start and Update)
+            // All RTSGO and combined controllable unit have 4 entry keys: OnCreated OnDamaged OnRepaired OnDestroyed
+            // Obviously there will be more than those 6 keys in future
 
             public Dictionary<string, string> initGlobalLua;
             public Dictionary<string, Dictionary<string, string>> initRTSGameObjectLua;
