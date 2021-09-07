@@ -340,7 +340,7 @@ namespace RTS.UI.Command
             if (Input.GetKeyDown(InputManager.HotKeys.SelectTarget))
             {
                 RTSGameObjectBaseScript attackTarget = InputManager.InputManagerInstance.PointedRTSGameObject;
-                if (attackTarget != null && attackTarget.BelongTo != GameManager.GameManagerInstance.selfIndex)
+                if (attackTarget != null && attackTarget.BelongTo != GameManager.GameManagerInstance.SelfIndex)
                 {
                     List<UnitBaseScript> allAgents = new List<UnitBaseScript>();
                     foreach (GameObject i in SelectControlScript.SelectionControlInstance.GetAllGameObjectsAsList())

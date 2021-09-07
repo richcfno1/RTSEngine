@@ -103,7 +103,7 @@ namespace RTS.UI.TacticalView
                     GameObject newBar = Instantiate(tempPrefab, position, new Quaternion(), Canvas.transform);
                     newBar.transform.localScale = Vector3.one * scale;
                     newBar.GetComponent<TacticalViewSingleIconScript>().hpdata.value = tempScript.HP / tempScript.maxHP;
-                    Color tempColor = tempScript.BelongTo == GameManager.GameManagerInstance.selfIndex ? Color.green : Color.red;
+                    Color tempColor = tempScript.BelongTo == GameManager.GameManagerInstance.SelfIndex ? Color.green : Color.red;
                     tempColor.a = 0.5f;
                     newBar.GetComponent<TacticalViewSingleIconScript>().ChangeColor(tempColor);
                     newBar.GetComponent<TacticalViewSingleIconScript>().bindObject = i.GetComponent<RTSGameObjectBaseScript>();

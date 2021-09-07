@@ -252,6 +252,20 @@ namespace RTS.RTSGameObject.Unit
             }    
         }
 
+        void FixedUpdate()
+        {
+            // Vision
+            if (visionArea != null && BelongTo == GameManager.GameManagerInstance.SelfIndex)
+            {
+                visionArea.transform.localScale = new Vector3(visionRange, visionRange, visionRange) * 2;
+            }
+
+            if (lockRotationZ)
+            {
+                thisBody.MoveRotation(Quaternion.Euler(thisBody.rotation.eulerAngles.x, thisBody.rotation.eulerAngles.y, 0));
+            }
+        }
+
         protected override void OnCreatedAction()
         {
             base.OnCreatedAction();

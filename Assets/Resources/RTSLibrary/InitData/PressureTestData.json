@@ -14,6 +14,18 @@
       "name": "Enemy1"
     }
   ],
+  "initGlobalLua": {
+    "Start": "LogText({text=\"Wow, this must be first frame!\", displayTime=2.0})",
+    "Update": ""
+  },
+  "initRTSGameObjectLua": {
+    "Fighter1": {
+      "OnCreated": "LogText({text=\"RTSGO: \" .. self[\"type\"] .. \" with index: \" .. self[\"index\"] .. \" was created at positionX \" .. tostring(self[\"position\"]:x) .. \"!\", displayTime=2.0})"
+    },
+    "Fighter2": {
+      "OnCreated": "position = clr.UnityEngine.Vector3(0, 100, 0)\n LogText({text=tostring(position:y), displayTime=2.0})"
+    }
+  },
   "initUnitLibraryData": [
     {
       "unitTypeName": "StandardFrigate",

@@ -182,7 +182,7 @@ namespace RTS.UI
                 {
                     PointedRTSGameObject = result.gameObject.GetComponentInParent<TacticalViewSingleIconScript>().bindObject;
                     if (result.gameObject.GetComponentInParent<TacticalViewSingleIconScript>().bindObject.BelongTo == 
-                        GameManager.GameManagerInstance.selfIndex)
+                        GameManager.GameManagerInstance.SelfIndex)
                     {
                         CurrentMousePosition = MousePosition.SelfUnit;
                     }
@@ -198,7 +198,7 @@ namespace RTS.UI
                 RTSGameObjectBaseScript temp = SingleSelectionHelper();
                 if (temp != null)
                 {
-                    if (temp.BelongTo == GameManager.GameManagerInstance.selfIndex)
+                    if (temp.BelongTo == GameManager.GameManagerInstance.SelfIndex)
                     {
                         CurrentMousePosition = MousePosition.SelfUnit;
                         PointedRTSGameObject = temp;

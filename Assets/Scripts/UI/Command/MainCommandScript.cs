@@ -146,7 +146,7 @@ namespace RTS.UI.Command
                         break;
                     case InputManager.CommandActionState.MainCommandFollow:
                         RTSGameObjectBaseScript followTarget = InputManager.InputManagerInstance.PointedRTSGameObject;
-                        if (followTarget != null && followTarget.BelongTo == GameManager.GameManagerInstance.selfIndex)
+                        if (followTarget != null && followTarget.BelongTo == GameManager.GameManagerInstance.SelfIndex)
                         {
                             List<UnitBaseScript> allAgents = new List<UnitBaseScript>();
                             foreach (GameObject i in SelectControlScript.SelectionControlInstance.GetAllGameObjectsAsList())
@@ -177,7 +177,7 @@ namespace RTS.UI.Command
                         break;
                     case InputManager.CommandActionState.MainCommandAttack:
                         RTSGameObjectBaseScript attackTarget = InputManager.InputManagerInstance.PointedRTSGameObject;
-                        if (attackTarget != null && attackTarget.BelongTo != GameManager.GameManagerInstance.selfIndex)
+                        if (attackTarget != null && attackTarget.BelongTo != GameManager.GameManagerInstance.SelfIndex)
                         {
                             ClearAllTargetDisplayUI();
                             foreach (GameObject i in SelectControlScript.SelectionControlInstance.GetAllGameObjectsAsList())

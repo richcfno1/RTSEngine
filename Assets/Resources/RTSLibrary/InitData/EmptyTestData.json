@@ -1,0 +1,64 @@
+{
+  "mapRadius" : 10000.0,
+  "initPlayerData": [
+    {
+      "index": 0,
+      "name": "Nature"
+    },
+    {
+      "index": 1,
+      "name": "RC"
+    },
+    {
+      "index": 2,
+      "name": "Enemy1"
+    }
+  ],
+  "initGlobalLua": {
+    "Start": "LogText({text=\"Wow, this must be first frame!\", displayTime=2.0})",
+    "Update": ""
+  },
+  "initRTSGameObjectLua": {
+    "Fighter1": {
+      "OnCreated": "LogText({text=\"RTSGO: \" .. self[\"type\"] .. \" with index: \" .. self[\"index\"] .. \" was created at positionX \" .. tostring(self[\"position\"]:x) .. \"!\", displayTime=2.0})"
+    }
+  },
+  "initUnitLibraryData": [
+    {
+      "unitTypeName": "StandardFrigate",
+      "baseTypeName": "Frigate1",
+      "properties": {},
+      "subsystems": {
+        "TurretAnchor1": "Turret1",
+        "TurretAnchor2": "Turret1",
+        "TurretAnchor3": "LaserTurret1",
+        "TurretAnchor4": "Turret1",
+        "TurretAnchor5": "Turret1",
+        "TurretAnchor6": "LaserTurret1"
+      },
+      "commonAbilities": {
+        "Move": [ "Frigate1" ],
+        "Attack": [ "TurretAnchor1", "TurretAnchor2", "TurretAnchor3", "TurretAnchor4", "TurretAnchor5", "TurretAnchor6" ],
+        "Carrier": [  ]
+      },
+      "scripts": {}
+    }
+  ],
+  "initUnitData": [
+    {
+      "type": "StandardFrigate",
+      "belongTo": 0,
+      "position": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "rotation": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "w": 0.0
+      }
+    }
+  ]
+}

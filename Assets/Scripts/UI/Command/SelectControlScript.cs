@@ -21,7 +21,6 @@ namespace RTS.UI.Command
         public bool SelectedOwnUnits { get; private set; } = false;
         public List<List<GameObject>> UnitGroup { get; private set; } = Enumerable.Repeat(new List<GameObject>(), 10).ToList();
 
-        private int selfIndex;
         private Vector3 mouseStartPosition;
         private Vector3 mouseEndPosition;
         private bool mouseLeftUp;
@@ -38,7 +37,6 @@ namespace RTS.UI.Command
         // Start is called before the first frame update
         void Start()
         {
-            selfIndex = GameManager.GameManagerInstance.selfIndex;
             mouseStartPosition = Input.mousePosition;
         }
 
@@ -88,12 +86,12 @@ namespace RTS.UI.Command
             if (Input.GetKeyDown(InputManager.HotKeys.SelectAllUnit))
             {
                 SetSelectedGameObjects(GameManager.GameManagerInstance.GetGameObjectForPlayer(
-                    GameManager.GameManagerInstance.selfIndex).Where(x => x != null && x.GetComponent<UnitBaseScript>() != null).ToList());
+                    GameManager.GameManagerInstance.SelfIndex).Where(x => x != null && x.GetComponent<UnitBaseScript>() != null).ToList());
             }
 
             if (Input.GetKeyDown(InputManager.HotKeys.SelectSameType) && SelectedOwnUnits)
             {
-                List<GameObject> tempSameType = GameManager.GameManagerInstance.GetGameObjectForPlayer(GameManager.GameManagerInstance.selfIndex);
+                List<GameObject> tempSameType = GameManager.GameManagerInstance.GetGameObjectForPlayer(GameManager.GameManagerInstance.SelfIndex);
                 string targetType = MainSelectedType;
                 if (MainSelectedGameObject != null)
                 {
@@ -359,7 +357,7 @@ namespace RTS.UI.Command
                         (position2D.x <= mouseStartPosition.x && position2D.x >= mouseEndPosition.x && position2D.y <= mouseStartPosition.y && position2D.y >= mouseEndPosition.y))
                     {
                         if (allSelectableGameObjects[i].GetComponent<UnitBaseScript>() != null &&
-                            selfIndex == allSelectableGameObjects[i].GetComponent<UnitBaseScript>().BelongTo)
+                            GameManager.GameManagerInstance.SelfIndex == allSelectableGameObjects[i].GetComponent<UnitBaseScript>().BelongTo)
                         {
                             AddGameObject(allSelectableGameObjects[i]);
                             SelectedOwnUnits = true;
@@ -374,7 +372,7 @@ namespace RTS.UI.Command
                 if (selected != null)
                 {
                     AddGameObject(selected.gameObject);
-                    SelectedOwnUnits = selected.BelongTo == selfIndex && selected.GetComponent<UnitBaseScript>() != null;
+                    SelectedOwnUnits = selected.BelongTo == GameManager.GameManagerInstance.SelfIndex && selected.GetComponent<UnitBaseScript>() != null;
                 }
             }
         }
@@ -489,7 +487,7 @@ namespace RTS.UI.Command
             {
                 foreach (GameObject i in gameObjects)
                 {
-                    if (i != null && i.GetComponent<UnitBaseScript>() != null && selfIndex == i.GetComponent<UnitBaseScript>().BelongTo)
+                    if (i != null && i.GetComponent<UnitBaseScript>() != null && GameManager.GameManagerInstance.SelfIndex == i.GetComponent<UnitBaseScript>().BelongTo)
                     {
                         AddGameObject(i);
                         SelectedOwnUnits = true;
@@ -502,7 +500,7 @@ namespace RTS.UI.Command
                 if (selected != null)
                 {
                     AddGameObject(selected);
-                    SelectedOwnUnits = selected.GetComponent<RTSGameObjectBaseScript>().BelongTo == selfIndex
+                    SelectedOwnUnits = selected.GetComponent<RTSGameObjectBaseScript>().BelongTo == GameManager.GameManagerInstance.SelfIndex
                         && selected.GetComponent<UnitBaseScript>() != null;
                 }
             }

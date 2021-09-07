@@ -11,6 +11,7 @@ using RTS.RTSGameObject;
 using RTS.RTSGameObject.Unit;
 using RTS.RTSGameObject.Subsystem;
 using RTS.Rendering;
+using RTS.Network;
 
 namespace RTS
 {
@@ -88,11 +89,23 @@ namespace RTS
         public float visionProcessGap;
 
         [Header("Specific Game Rules")]
-        [Tooltip("Index of local player.")]
-        public int selfIndex;
         [Tooltip("Init game setting.")]
         public TextAsset initDataAsset;
 
+        public int SelfIndex 
+        { 
+            get 
+            { 
+                if (LocalPlayerScript.LocalPlayer != null)
+                {
+                    return LocalPlayerScript.LocalPlayer.PlayerIndex;
+                }
+                else
+                {
+                    return -1;
+                }
+            } 
+        }
         public int FrameCount { get; private set; } = 0;
         public float MapRadius { get; private set; } = 0;
         public Dictionary<string, string> GameObjectLibrary { get; private set; } = new Dictionary<string, string>();
@@ -222,7 +235,7 @@ namespace RTS
 
             foreach (KeyValuePair<int, GameObject> i in allUnitsListDict)
             {
-                bool visible = i.Value.GetComponent<UnitBaseScript>().VisibleTo.Contains(selfIndex);
+                bool visible = i.Value.GetComponent<UnitBaseScript>().VisibleTo.Contains(SelfIndex);
                 foreach (MeshRenderer j in i.Value.GetComponentsInChildren<MeshRenderer>())
                 {
                     j.enabled = visible;

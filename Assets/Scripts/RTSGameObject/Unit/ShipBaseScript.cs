@@ -23,17 +23,6 @@ namespace RTS.RTSGameObject.Unit
             DefencePower = Mathf.Clamp01(DefencePower + recoverDefencePower * Time.fixedDeltaTime);
             MovePower = Mathf.Clamp01(MovePower + recoverMovePower * Time.fixedDeltaTime);
 
-            // Vision
-            if (visionArea != null && BelongTo == GameManager.GameManagerInstance.selfIndex)
-            {
-                visionArea.transform.localScale = new Vector3(visionRange, visionRange, visionRange) * 2;
-            }
-
-            if (lockRotationZ)
-            {
-                thisBody.MoveRotation(Quaternion.Euler(thisBody.rotation.eulerAngles.x, thisBody.rotation.eulerAngles.y, 0));
-            }
-
             // Action
             timer += Time.fixedDeltaTime;
             // In aggressive status, when detect a nearby enemy, call attack ability
