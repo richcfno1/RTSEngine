@@ -59,7 +59,7 @@ namespace RTS.RTSGameObject.Subsystem
                     SetAimpoint(fireTarget.transform.position);
                 }
                 RotateTurret();
-                if (timer >= coolDown / laserStartPosition.Count / Host.AttackPower)
+                if (timer >= coolDown / laserStartPosition.Count / Host.AttackPowerRatio)
                 {
                     if (fireTarget != null && UnitVectorHelper.DetermineUnitDistance(gameObject, fireTarget, false, false) <= lockRange)
                     {

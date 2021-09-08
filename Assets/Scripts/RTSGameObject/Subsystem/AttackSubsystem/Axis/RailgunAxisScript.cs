@@ -39,7 +39,7 @@ namespace RTS.RTSGameObject.Subsystem
             }
             if (Active)
             {
-                if (timer >= coolDown / bulletStartPosition.Count / Host.AttackPower)
+                if (timer >= coolDown / bulletStartPosition.Count / Host.AttackPowerRatio)
                 {
                     RaycastHit hit;
                     Vector3 rayPosition = transform.position;

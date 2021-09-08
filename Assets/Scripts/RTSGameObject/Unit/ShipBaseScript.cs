@@ -19,9 +19,9 @@ namespace RTS.RTSGameObject.Unit
             }
 
             // Recover
-            AttackPower = Mathf.Clamp01(AttackPower + recoverAttackPower * Time.fixedDeltaTime);
-            DefencePower = Mathf.Clamp01(DefencePower + recoverDefencePower * Time.fixedDeltaTime);
-            MovePower = Mathf.Clamp01(MovePower + recoverMovePower * Time.fixedDeltaTime);
+            AttackPowerRatio = Mathf.Clamp01(AttackPowerRatio + recoverAttackPower * Time.fixedDeltaTime);
+            DefencePowerRatio = Mathf.Clamp01(DefencePowerRatio + recoverDefencePower * Time.fixedDeltaTime);
+            MovePowerRatio = Mathf.Clamp01(MovePowerRatio + recoverMovePower * Time.fixedDeltaTime);
 
             // Action
             timer += Time.fixedDeltaTime;
@@ -363,7 +363,7 @@ namespace RTS.RTSGameObject.Unit
                             Vector3 moveVector = finalPosition - thisBody.position;
                             Vector3 rotateDirection = moveVector.normalized;
                             thisBody.rotation = Quaternion.RotateTowards(thisBody.rotation, Quaternion.LookRotation(rotateDirection), Mathf.Infinity);
-                            float moveDistance = speed * Time.fixedDeltaTime * MovePower;
+                            float moveDistance = speed * Time.fixedDeltaTime * MovePowerRatio;
 
                             if (moveVector.magnitude <= moveDistance)
                             {

@@ -4664,6 +4664,10 @@ MonoBehaviour:
     NetworkPrefabs:
     - Prefab: {fileID: 1924526070251487409, guid: 14206b023dc213d4fbb1ef75b44084c8, type: 3}
       PlayerPrefab: 1
+    - Prefab: {fileID: 3465858396673310855, guid: 689b219cb466fb74cb13168079edba53, type: 3}
+      PlayerPrefab: 0
+    - Prefab: {fileID: 7274105634280561773, guid: 1d09ab5014734cd47ae28ea604d92490, type: 3}
+      PlayerPrefab: 0
     PlayerPrefabHash:
       id: 0
     CreatePlayerPrefab: 1
@@ -6015,7 +6019,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gameObjectLibraryAsset: {fileID: 4900000, guid: 5ec89fe72628a7c40a36c1707bbc0df1, type: 3}
   visionProcessGap: 0.5
-  selfIndex: 0
   initDataAsset: {fileID: 4900000, guid: 02b906b789ff88d4a93136eb04964b77, type: 3}
 --- !u!4 &1353037987
 Transform:

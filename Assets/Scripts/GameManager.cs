@@ -1,4 +1,5 @@
 using Neo.IronLua;
+using MLAPI;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -136,11 +137,12 @@ namespace RTS
             MaterialsManager.Test();
             GameObjectLibrary = JsonConvert.DeserializeObject<Dictionary<string, string>>(gameObjectLibraryAsset.text);
 
-            if (initDataAsset != null)
-            {
-                GameInitData initData = JsonConvert.DeserializeObject<GameInitData>(initDataAsset.text);
-                InitFromInitData(initData);
-            }
+            //if (initDataAsset != null)
+            //{
+            //    GameInitData initData = JsonConvert.DeserializeObject<GameInitData>(initDataAsset.text);
+            //    InitFromInitData(initData);
+            //    initDataAsset = null;
+            //}
         }
 
         private float recordData = 0;
@@ -158,6 +160,19 @@ namespace RTS
 
         void FixedUpdate()
         {
+            if (NetworkManager.Singleton.IsServer || NetworkManager.Singleton.IsClient)
+            {
+                if (initDataAsset != null)
+                {
+                    GameInitData initData = JsonConvert.DeserializeObject<GameInitData>(initDataAsset.text);
+                    InitFromInitData(initData);
+                    initDataAsset = null;
+                }
+            }
+            else
+            {
+                return;
+            }
             FrameCount++;
 
             timer += Time.fixedDeltaTime;
@@ -270,15 +285,18 @@ namespace RTS
             }
 
             // Instantiate units
-            foreach (UnitData i in data.initUnitData)
+            if (NetworkManager.Singleton.IsServer)
             {
-                if (UnitLibrary.ContainsKey(i.type))
+                foreach (UnitData i in data.initUnitData)
                 {
-                    InstantiateUnit(i.type, i.position, i.rotation, GameObject.Find("RTSGameObject").transform, i.belongTo, i.specialLuaTags);
-                }
-                else
-                {
-                    Debug.Log("Cannot find unit type" + i.type);
+                    if (UnitLibrary.ContainsKey(i.type))
+                    {
+                        InstantiateUnit(i.type, i.position, i.rotation, GameObject.Find("RTSGameObject").transform, i.belongTo, i.specialLuaTags);
+                    }
+                    else
+                    {
+                        Debug.Log("Cannot find unit type" + i.type);
+                    }
                 }
             }
         }

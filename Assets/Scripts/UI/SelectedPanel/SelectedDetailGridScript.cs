@@ -28,15 +28,15 @@ namespace RTS.UI.SelectedPanel
             {
                 typeName.text = tempUnitScript.UnitTypeID;
                 // Attack
-                if (tempUnitScript.AttackPower > 1)
+                if (tempUnitScript.AttackPowerRatio > 1)
                 {
-                    AttackUp.color = new Color(1, 1, 1, Mathf.Clamp01(tempUnitScript.AttackPower - 1 + 0.5f));
+                    AttackUp.color = new Color(1, 1, 1, Mathf.Clamp01(tempUnitScript.AttackPowerRatio - 1 + 0.5f));
                     AttackDown.color = new Color(1, 1, 1, 0);
                 }
-                else if (tempUnitScript.AttackPower < 1)
+                else if (tempUnitScript.AttackPowerRatio < 1)
                 {
                     AttackUp.color = new Color(1, 1, 1, 0);
-                    AttackDown.color = new Color(1, 1, 1, Mathf.Clamp01(1 - tempUnitScript.AttackPower + 0.5f));
+                    AttackDown.color = new Color(1, 1, 1, Mathf.Clamp01(1 - tempUnitScript.AttackPowerRatio + 0.5f));
                 }
                 else
                 {
@@ -44,15 +44,15 @@ namespace RTS.UI.SelectedPanel
                     AttackDown.color = new Color(1, 1, 1, 0);
                 }
                 // Defence
-                if (tempUnitScript.DefencePower > 1)
+                if (tempUnitScript.DefencePowerRatio > 1)
                 {
-                    DefenceUp.color = new Color(1, 1, 1, Mathf.Clamp01(tempUnitScript.DefencePower - 1 + 0.5f));
+                    DefenceUp.color = new Color(1, 1, 1, Mathf.Clamp01(tempUnitScript.DefencePowerRatio - 1 + 0.5f));
                     DefenceDown.color = new Color(1, 1, 1, 0);
                 }
-                else if (tempUnitScript.DefencePower < 1)
+                else if (tempUnitScript.DefencePowerRatio < 1)
                 {
                     DefenceUp.color = new Color(1, 1, 1, 0);
-                    DefenceDown.color = new Color(1, 1, 1, Mathf.Clamp01(1 - tempUnitScript.DefencePower + 0.5f));
+                    DefenceDown.color = new Color(1, 1, 1, Mathf.Clamp01(1 - tempUnitScript.DefencePowerRatio + 0.5f));
                 }
                 else
                 {
@@ -60,15 +60,15 @@ namespace RTS.UI.SelectedPanel
                     DefenceDown.color = new Color(1, 1, 1, 0);
                 }
                 // Move
-                if (tempUnitScript.MovePower > 1)
+                if (tempUnitScript.MovePowerRatio > 1)
                 {
-                    MoveUp.color = new Color(1, 1, 1, Mathf.Clamp01(tempUnitScript.MovePower - 1 + 0.5f));
+                    MoveUp.color = new Color(1, 1, 1, Mathf.Clamp01(tempUnitScript.MovePowerRatio - 1 + 0.5f));
                     MoveDown.color = new Color(1, 1, 1, 0);
                 }
-                else if (tempUnitScript.MovePower < 1)
+                else if (tempUnitScript.MovePowerRatio < 1)
                 {
                     MoveUp.color = new Color(1, 1, 1, 0);
-                    MoveDown.color = new Color(1, 1, 1, Mathf.Clamp01(1 - tempUnitScript.MovePower + 0.5f));
+                    MoveDown.color = new Color(1, 1, 1, Mathf.Clamp01(1 - tempUnitScript.MovePowerRatio + 0.5f));
                 }
                 else
                 {

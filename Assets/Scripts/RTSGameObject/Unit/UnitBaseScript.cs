@@ -1,3 +1,4 @@
+using MLAPI;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,6 +7,8 @@ using RTS.Ability.SpecialAbility;
 using RTS.RTSGameObject.Subsystem;
 using RTS.Helper;
 using System.Linq;
+using MLAPI.NetworkVariable;
+using MLAPI.NetworkVariable.Collections;
 
 namespace RTS.RTSGameObject.Unit
 {
@@ -136,11 +139,15 @@ namespace RTS.RTSGameObject.Unit
         public float buildTime;
 
         // Set when instantiate
-        public string UnitTypeID { get; set; }
+        public string UnitTypeID
+        {
+            get { return networkUnitTypeID.Value; }
+            set { networkUnitTypeID.Value = value; }
+        }
         // Three basic value which indicate the performance of ability
-        public float AttackPower { get { return curAttackPower / maxAttackPower; } set { curAttackPower = value * maxAttackPower; } }
-        public float DefencePower { get { return curDefencePower / maxDefencePower; } set { curDefencePower = value * maxDefencePower; } }
-        public float MovePower { get { return curMovePower / maxMovePower; } set { curMovePower = value * maxMovePower; } }
+        public float AttackPowerRatio { get { return AttackPowerValue / maxAttackPower; } set { AttackPowerValue = value * maxAttackPower; } }
+        public float DefencePowerRatio { get { return DefencePowerValue / maxDefencePower; } set { DefencePowerValue = value * maxDefencePower; } }
+        public float MovePowerRatio { get { return MovePowerValue / maxMovePower; } set { MovePowerValue = value * maxMovePower; } }
         public Dictionary<string, float> PropertyDictionary { get; set; } = new Dictionary<string, float>();
 
         public List<int> VisibleTo { get; set; } = new List<int>();
@@ -153,9 +160,21 @@ namespace RTS.RTSGameObject.Unit
         public CarrierAbilityScript CarrierAbility { get; set; } = null;
         public SortedDictionary<string, List<SpecialAbilityBaseScript>> SpecialAbilityList { get; set; } = new SortedDictionary<string, List<SpecialAbilityBaseScript>>();
 
-        protected float curAttackPower;
-        protected float curDefencePower;
-        protected float curMovePower;
+        protected float AttackPowerValue
+        {
+            get { return networkAttackPower.Value; }
+            set { networkAttackPower.Value = value; }
+        }
+        protected float DefencePowerValue
+        {
+            get { return networkDefencePower.Value; }
+            set { networkDefencePower.Value = value; }
+        }
+        protected float MovePowerValue
+        {
+            get { return networkMovePower.Value; }
+            set { networkMovePower.Value = value; }
+        }
 
         protected GameObject autoEngageTarget = null;
 
@@ -170,6 +189,12 @@ namespace RTS.RTSGameObject.Unit
         protected float estimatedMaxSpeed;
 
         protected float timer = 0;
+
+        private NetworkVariable<string> networkUnitTypeID = new NetworkVariable<string>("");
+        private NetworkVariable<float> networkAttackPower = new NetworkVariable<float>(0);
+        private NetworkVariable<float> networkDefencePower = new NetworkVariable<float>(0);
+        private NetworkVariable<float> networkMovePower = new NetworkVariable<float>(0);
+        private NetworkList<int> networkVisibleTo = new NetworkList<int>();
 
         private LineRenderer debugLineRender;
 
@@ -269,9 +294,9 @@ namespace RTS.RTSGameObject.Unit
         protected override void OnCreatedAction()
         {
             base.OnCreatedAction();
-            AttackPower = 1;
-            DefencePower = 1;
-            MovePower = 1;
+            AttackPowerRatio = 1;
+            DefencePowerRatio = 1;
+            MovePowerRatio = 1;
         }
 
         protected override void OnDestroyedAction()
@@ -283,7 +308,7 @@ namespace RTS.RTSGameObject.Unit
                     // Since OnDestroyedAction() of subsystem won't destroy the subsystem and report to GameManager, 
                     // Unit must do it for every subsystem. OnDestroyedAction() of subsystem is used when HP <= 0, 
                     // but subsystem will only be destroyed when unit is destroyed
-                    GameManager.GameManagerInstance.OnGameObjectDestroyed(i.subsystem, lastDamagedBy);
+                    GameManager.GameManagerInstance.OnGameObjectDestroyed(i.subsystem, LastDamagedBy);
                 }
             }
             base.OnDestroyedAction();
@@ -291,17 +316,17 @@ namespace RTS.RTSGameObject.Unit
 
         public override void CreateDamage(float damage, float attackPowerReduce, float defencePowerReduce, float movePowerReduce, GameObject from)
         {
-            curAttackPower = Mathf.Clamp(curAttackPower - attackPowerReduce, 0, maxAttackPower);
-            curDefencePower = Mathf.Clamp(curDefencePower - defencePowerReduce, 0, maxDefencePower);
-            curMovePower = Mathf.Clamp(curMovePower - movePowerReduce, 0, maxDefencePower);
-            base.CreateDamage(damage / DefencePower, attackPowerReduce, defencePowerReduce, movePowerReduce, from);
+            AttackPowerValue = Mathf.Clamp(AttackPowerValue - attackPowerReduce, 0, maxAttackPower);
+            DefencePowerValue = Mathf.Clamp(DefencePowerValue - defencePowerReduce, 0, maxDefencePower);
+            MovePowerValue = Mathf.Clamp(MovePowerValue - movePowerReduce, 0, maxDefencePower);
+            base.CreateDamage(damage / DefencePowerRatio, attackPowerReduce, defencePowerReduce, movePowerReduce, from);
         }
 
         public override void Repair(float amount, float attackPowerRecover, float defencePowerRecover, float movePowerRecover, GameObject from)
         {
-            curAttackPower = Mathf.Clamp(curAttackPower + attackPowerRecover, 0, maxAttackPower);
-            curDefencePower = Mathf.Clamp(curDefencePower + defencePowerRecover, 0, maxDefencePower);
-            curMovePower = Mathf.Clamp(curMovePower + movePowerRecover, 0, maxDefencePower);
+            AttackPowerValue = Mathf.Clamp(AttackPowerValue + attackPowerRecover, 0, maxAttackPower);
+            DefencePowerValue = Mathf.Clamp(DefencePowerValue + defencePowerRecover, 0, maxDefencePower);
+            MovePowerValue = Mathf.Clamp(MovePowerValue + movePowerRecover, 0, maxDefencePower);
             base.Repair(amount, attackPowerRecover, defencePowerRecover, movePowerRecover, from);
         }
 

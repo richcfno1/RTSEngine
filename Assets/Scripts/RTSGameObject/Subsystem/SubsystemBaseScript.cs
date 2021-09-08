@@ -58,7 +58,7 @@ namespace RTS.RTSGameObject.Subsystem
         public override void CreateDamage(float damage, float attackPowerReduce, float defencePowerReduce, float powerPowerReduce, GameObject from)
         {
             Host.CreateDamage(HP == 0 ? damage : 0, attackPowerReduce, defencePowerReduce, powerPowerReduce, from);
-            base.CreateDamage(damage / Host.DefencePower, attackPowerReduce, defencePowerReduce, powerPowerReduce, from);
+            base.CreateDamage(damage / Host.DefencePowerRatio, attackPowerReduce, defencePowerReduce, powerPowerReduce, from);
         }
         
         public override void Repair(float amount, float attackPowerRecover, float defencePowerRecover, float movePowerRecover, GameObject from)

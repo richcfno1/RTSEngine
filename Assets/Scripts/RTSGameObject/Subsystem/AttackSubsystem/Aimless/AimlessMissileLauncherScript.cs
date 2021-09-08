@@ -39,7 +39,7 @@ namespace RTS.RTSGameObject.Subsystem
             }
             if (Active)
             {
-                if (timer >= coolDown / missileStartPosition.Count / Host.AttackPower)
+                if (timer >= coolDown / missileStartPosition.Count / Host.AttackPowerRatio)
                 {
                     if (fireTarget != null && UnitVectorHelper.DetermineUnitDistance(gameObject, fireTarget, false, false) <= lockRange)
                     {
