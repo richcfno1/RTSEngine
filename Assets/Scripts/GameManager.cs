@@ -13,6 +13,7 @@ using RTS.RTSGameObject.Unit;
 using RTS.RTSGameObject.Subsystem;
 using RTS.Rendering;
 using RTS.Network;
+using MLAPI.NetworkVariable;
 
 namespace RTS
 {
@@ -107,22 +108,22 @@ namespace RTS
                 }
             } 
         }
-        public int FrameCount { get; private set; } = 0;
+        public int FrameCount { get; set; } = 0;
+
+        // Read from init data, so we dont need to sycn them
         public float MapRadius { get; private set; } = 0;
         public Dictionary<string, string> GameObjectLibrary { get; private set; } = new Dictionary<string, string>();
         public Dictionary<string, UnitLibraryData> UnitLibrary { get; private set; } = new Dictionary<string, UnitLibraryData>();
-
         private Dictionary<int, Player> allPlayers = new Dictionary<int, Player>();
         private Dictionary<string, string> globalLua = new Dictionary<string, string>();
         private Dictionary<string, Dictionary<string, string>> gameObjectLua = new Dictionary<string, Dictionary<string, string>>();
 
-        // RTSGO tracking
+        // RTSGO tracking sync by calculation
         private int gameObjectIndexCounter = 0;
         private Dictionary<int, GameObject> allGameObjectsDict = new Dictionary<int, GameObject>();
         private List<GameObject> allGameObjectsList = new List<GameObject>();
         private Dictionary<int, GameObject> allUnitsListDict = new Dictionary<int, GameObject>();
         private List<GameObject> allUnitsList = new List<GameObject>();
-
         // TESTING SOLUTION FOR ENEMY SEARCHING
         public Dictionary<int, List<GameObject>> enemyUnitsTable = new Dictionary<int, List<GameObject>>();
 
@@ -137,12 +138,19 @@ namespace RTS
             MaterialsManager.Test();
             GameObjectLibrary = JsonConvert.DeserializeObject<Dictionary<string, string>>(gameObjectLibraryAsset.text);
 
-            //if (initDataAsset != null)
-            //{
-            //    GameInitData initData = JsonConvert.DeserializeObject<GameInitData>(initDataAsset.text);
-            //    InitFromInitData(initData);
-            //    initDataAsset = null;
-            //}
+#if UNITY_EDITOR
+            NetworkManager.Singleton.StartHost();
+#else
+            NetworkManager.Singleton.StartClient();
+#endif
+
+
+
+            if (initDataAsset != null)
+            {
+                GameInitData initData = JsonConvert.DeserializeObject<GameInitData>(initDataAsset.text);
+                InitFromInitData(initData);
+            }
         }
 
         private float recordData = 0;
@@ -151,41 +159,33 @@ namespace RTS
         // Start is called before the first frame update
         void Start()
         {
-            if (globalLua.TryGetValue("Start", out string code))
+            if (NetworkManager.Singleton.IsServer)
             {
-                var script = ScriptSystem.CreateScript("Start", code);
-                ScriptSystem.ExecuteScript(script);
+                if (globalLua.TryGetValue("Start", out string code))
+                {
+                    var script = ScriptSystem.CreateScript("Start", code);
+                    ScriptSystem.ExecuteScript(script);
+                }
             }
         }
 
         void FixedUpdate()
         {
-            if (NetworkManager.Singleton.IsServer || NetworkManager.Singleton.IsClient)
+            if (NetworkManager.Singleton.IsServer)
             {
-                if (initDataAsset != null)
+                FrameCount++;
+                if (globalLua.TryGetValue("Update", out string code))
                 {
-                    GameInitData initData = JsonConvert.DeserializeObject<GameInitData>(initDataAsset.text);
-                    InitFromInitData(initData);
-                    initDataAsset = null;
+                    var script = ScriptSystem.CreateScript("Update", code);
+                    ScriptSystem.ExecuteScript(script);
                 }
-            }
-            else
-            {
-                return;
-            }
-            FrameCount++;
 
-            timer += Time.fixedDeltaTime;
-            if (timer > visionProcessGap)
-            {
-                timer = 0;
-                SetVision();
-            }
-
-            if (globalLua.TryGetValue("Update", out string code))
-            {
-                var script = ScriptSystem.CreateScript("Update", code);
-                ScriptSystem.ExecuteScript(script);
+                timer += Time.fixedDeltaTime;
+                if (timer > visionProcessGap)
+                {
+                    timer = 0;
+                    SetVision();
+                }
             }
         }
 
@@ -193,28 +193,31 @@ namespace RTS
         void Update()
         {
             // Debug use
-            if (Input.GetKeyDown(KeyCode.O))
+            if (NetworkManager.Singleton.IsServer)
             {
-                InstantiateUnit("StandardFrigate", new Vector3(recordData, 0, recordData + recordData2), new Quaternion(), GameObject.Find("RTSGameObject").transform, 0, new Dictionary<string, string>());
-                recordData -= 25;
-                Debug.Log(recordData / 25);
-            }
-            if (Input.GetKeyDown(KeyCode.L))
-            {
-                InstantiateUnit("StandardFighter", new Vector3(recordData, 500, recordData + recordData2), new Quaternion(), GameObject.Find("RTSGameObject").transform, 0, new Dictionary<string, string>());
-                recordData -= 25;
-                Debug.Log(recordData / 25);
-            }
-            if (Input.GetKeyDown(KeyCode.I))
-            {
-                InstantiateUnit("StandardFrigate", new Vector3(recordData, 0, recordData + recordData2), new Quaternion(), GameObject.Find("RTSGameObject").transform, 1, new Dictionary<string, string>());
-                recordData -= 25;
-                Debug.Log(recordData / 25);
-            }
-            if (Input.GetKeyDown(KeyCode.P))
-            {
-                recordData = 0;
-                recordData2 -= 25;
+                if (Input.GetKeyDown(KeyCode.O))
+                {
+                    InstantiateUnit("StandardFrigate", new Vector3(recordData, 0, recordData + recordData2), new Quaternion(), GameObject.Find("RTSGameObject").transform, 0, new Dictionary<string, string>());
+                    recordData -= 25;
+                    Debug.Log(recordData / 25);
+                }
+                if (Input.GetKeyDown(KeyCode.L))
+                {
+                    InstantiateUnit("StandardFighter", new Vector3(recordData, 500, recordData + recordData2), new Quaternion(), GameObject.Find("RTSGameObject").transform, 0, new Dictionary<string, string>());
+                    recordData -= 25;
+                    Debug.Log(recordData / 25);
+                }
+                if (Input.GetKeyDown(KeyCode.I))
+                {
+                    InstantiateUnit("StandardFrigate", new Vector3(recordData, 0, recordData + recordData2), new Quaternion(), GameObject.Find("RTSGameObject").transform, 1, new Dictionary<string, string>());
+                    recordData -= 25;
+                    Debug.Log(recordData / 25);
+                }
+                if (Input.GetKeyDown(KeyCode.P))
+                {
+                    recordData = 0;
+                    recordData2 -= 25;
+                }
             }
         }
 
@@ -284,9 +287,9 @@ namespace RTS
                 UnitLibrary.Add(i.unitTypeName, i);
             }
 
-            // Instantiate units
             if (NetworkManager.Singleton.IsServer)
             {
+                // Instantiate units
                 foreach (UnitData i in data.initUnitData)
                 {
                     if (UnitLibrary.ContainsKey(i.type))
@@ -483,24 +486,28 @@ namespace RTS
         public void OnGameObjectCreated(GameObject self)
         {
             // Lua
-            LuaTable selfTable = ScriptSystem.SetRTSGameObjectInfo(self.GetComponent<RTSGameObjectBaseScript>());
-            if (gameObjectLua.TryGetValue(self.GetComponent<RTSGameObjectBaseScript>().typeID, out Dictionary<string, string> matchedLua))
+            if (NetworkManager.Singleton.IsServer)
             {
-                if (matchedLua.TryGetValue("OnCreated", out string code))
+                LuaTable selfTable = ScriptSystem.SetRTSGameObjectInfo(self.GetComponent<RTSGameObjectBaseScript>());
+                if (gameObjectLua.TryGetValue(self.GetComponent<RTSGameObjectBaseScript>().typeID, out Dictionary<string, string> matchedLua))
                 {
-                    var script = ScriptSystem.CreateScript("OnCreated", code, new KeyValuePair<string, Type>("self", typeof(LuaTable)));
-                    ScriptSystem.ExecuteScript(script, selfTable);
+                    if (matchedLua.TryGetValue("OnCreated", out string code))
+                    {
+                        var script = ScriptSystem.CreateScript("OnCreated", code, new KeyValuePair<string, Type>("self", typeof(LuaTable)));
+                        ScriptSystem.ExecuteScript(script, selfTable);
+                    }
+                }
+                if (self.GetComponent<UnitBaseScript>() != null)
+                {
+                    UnitLibraryData libraryData = UnitLibrary[self.GetComponent<UnitBaseScript>().UnitTypeID];
+                    if (libraryData.scripts != null && libraryData.scripts.TryGetValue("OnCreated", out var code))
+                    {
+                        var script = ScriptSystem.CreateScript("OnCreated", code, new KeyValuePair<string, Type>("self", typeof(LuaTable)));
+                        ScriptSystem.ExecuteScript(script, selfTable);
+                    }
                 }
             }
-            if (self.GetComponent<UnitBaseScript>() != null)
-            {
-                UnitLibraryData libraryData = UnitLibrary[self.GetComponent<UnitBaseScript>().UnitTypeID];
-                if (libraryData.scripts != null && libraryData.scripts.TryGetValue("OnCreated", out var code))
-                {
-                    var script = ScriptSystem.CreateScript("OnCreated", code, new KeyValuePair<string, Type>("self", typeof(LuaTable)));
-                    ScriptSystem.ExecuteScript(script, selfTable);
-                }
-            }
+
             // Index
             int gameObjectIndex = self.GetComponent<RTSGameObjectBaseScript>().Index;
             allGameObjectsDict.Add(gameObjectIndex, self);
@@ -529,25 +536,28 @@ namespace RTS
         public void OnGameObjectDamaged(GameObject self, GameObject other)
         {
             // Lua
-            LuaTable selfTable = ScriptSystem.SetRTSGameObjectInfo(self.GetComponent<RTSGameObjectBaseScript>());
-            LuaTable otherTable = ScriptSystem.SetRTSGameObjectInfo(other != null ? other.GetComponent<RTSGameObjectBaseScript>() : null);
-            if (gameObjectLua.TryGetValue(self.GetComponent<RTSGameObjectBaseScript>().typeID, out Dictionary<string, string> matchedLua))
+            if (NetworkManager.Singleton.IsServer)
             {
-                if (matchedLua.TryGetValue("OnDamaged", out string code))
+                LuaTable selfTable = ScriptSystem.SetRTSGameObjectInfo(self.GetComponent<RTSGameObjectBaseScript>());
+                LuaTable otherTable = ScriptSystem.SetRTSGameObjectInfo(other != null ? other.GetComponent<RTSGameObjectBaseScript>() : null);
+                if (gameObjectLua.TryGetValue(self.GetComponent<RTSGameObjectBaseScript>().typeID, out Dictionary<string, string> matchedLua))
                 {
-                    var script = ScriptSystem.CreateScript("OnDamaged", code,
-                        new KeyValuePair<string, Type>("self", typeof(LuaTable)), new KeyValuePair<string, Type>("other", typeof(LuaTable)));
-                    ScriptSystem.ExecuteScript(script, selfTable, otherTable);
+                    if (matchedLua.TryGetValue("OnDamaged", out string code))
+                    {
+                        var script = ScriptSystem.CreateScript("OnDamaged", code,
+                            new KeyValuePair<string, Type>("self", typeof(LuaTable)), new KeyValuePair<string, Type>("other", typeof(LuaTable)));
+                        ScriptSystem.ExecuteScript(script, selfTable, otherTable);
+                    }
                 }
-            }
-            if (self.GetComponent<UnitBaseScript>() != null)
-            {
-                UnitLibraryData libraryData = UnitLibrary[self.GetComponent<UnitBaseScript>().UnitTypeID];
-                if (libraryData.scripts != null && libraryData.scripts.TryGetValue("OnDamaged", out var code))
+                if (self.GetComponent<UnitBaseScript>() != null)
                 {
-                    var script = ScriptSystem.CreateScript("OnDamaged", code,
-                        new KeyValuePair<string, Type>("self", typeof(LuaTable)), new KeyValuePair<string, Type>("other", typeof(LuaTable)));
-                    ScriptSystem.ExecuteScript(script, selfTable, otherTable);
+                    UnitLibraryData libraryData = UnitLibrary[self.GetComponent<UnitBaseScript>().UnitTypeID];
+                    if (libraryData.scripts != null && libraryData.scripts.TryGetValue("OnDamaged", out var code))
+                    {
+                        var script = ScriptSystem.CreateScript("OnDamaged", code,
+                            new KeyValuePair<string, Type>("self", typeof(LuaTable)), new KeyValuePair<string, Type>("other", typeof(LuaTable)));
+                        ScriptSystem.ExecuteScript(script, selfTable, otherTable);
+                    }
                 }
             }
         }
@@ -555,25 +565,28 @@ namespace RTS
         public void OnGameObjectRepaired(GameObject self, GameObject other)
         {
             // Lua
-            LuaTable selfTable = ScriptSystem.SetRTSGameObjectInfo(self.GetComponent<RTSGameObjectBaseScript>());
-            LuaTable otherTable = ScriptSystem.SetRTSGameObjectInfo(other != null ? other.GetComponent<RTSGameObjectBaseScript>() : null);
-            if (gameObjectLua.TryGetValue(self.GetComponent<RTSGameObjectBaseScript>().typeID, out Dictionary<string, string> matchedLua))
+            if (NetworkManager.Singleton.IsServer)
             {
-                if (matchedLua.TryGetValue("OnRepaired", out string code))
+                LuaTable selfTable = ScriptSystem.SetRTSGameObjectInfo(self.GetComponent<RTSGameObjectBaseScript>());
+                LuaTable otherTable = ScriptSystem.SetRTSGameObjectInfo(other != null ? other.GetComponent<RTSGameObjectBaseScript>() : null);
+                if (gameObjectLua.TryGetValue(self.GetComponent<RTSGameObjectBaseScript>().typeID, out Dictionary<string, string> matchedLua))
                 {
-                    var script = ScriptSystem.CreateScript("OnRepaired", code,
-                        new KeyValuePair<string, Type>("self", typeof(LuaTable)), new KeyValuePair<string, Type>("other", typeof(LuaTable)));
-                    ScriptSystem.ExecuteScript(script, selfTable, otherTable);
+                    if (matchedLua.TryGetValue("OnRepaired", out string code))
+                    {
+                        var script = ScriptSystem.CreateScript("OnRepaired", code,
+                            new KeyValuePair<string, Type>("self", typeof(LuaTable)), new KeyValuePair<string, Type>("other", typeof(LuaTable)));
+                        ScriptSystem.ExecuteScript(script, selfTable, otherTable);
+                    }
                 }
-            }
-            if (self.GetComponent<UnitBaseScript>() != null)
-            {
-                UnitLibraryData libraryData = UnitLibrary[self.GetComponent<UnitBaseScript>().UnitTypeID];
-                if (libraryData.scripts != null && libraryData.scripts.TryGetValue("OnRepaired", out var code))
+                if (self.GetComponent<UnitBaseScript>() != null)
                 {
-                    var script = ScriptSystem.CreateScript("OnRepaired", code,
-                        new KeyValuePair<string, Type>("self", typeof(LuaTable)), new KeyValuePair<string, Type>("other", typeof(LuaTable)));
-                    ScriptSystem.ExecuteScript(script, selfTable, otherTable);
+                    UnitLibraryData libraryData = UnitLibrary[self.GetComponent<UnitBaseScript>().UnitTypeID];
+                    if (libraryData.scripts != null && libraryData.scripts.TryGetValue("OnRepaired", out var code))
+                    {
+                        var script = ScriptSystem.CreateScript("OnRepaired", code,
+                            new KeyValuePair<string, Type>("self", typeof(LuaTable)), new KeyValuePair<string, Type>("other", typeof(LuaTable)));
+                        ScriptSystem.ExecuteScript(script, selfTable, otherTable);
+                    }
                 }
             }
         }
@@ -581,27 +594,31 @@ namespace RTS
         public void OnGameObjectDestroyed(GameObject self, GameObject other)
         {
             // Lua
-            LuaTable selfTable = ScriptSystem.SetRTSGameObjectInfo(self.GetComponent<RTSGameObjectBaseScript>());
-            LuaTable otherTable = ScriptSystem.SetRTSGameObjectInfo(other != null ? other.GetComponent<RTSGameObjectBaseScript>() : null);
-            if (gameObjectLua.TryGetValue(self.GetComponent<RTSGameObjectBaseScript>().typeID, out Dictionary<string, string> matchedLua))
+            if (NetworkManager.Singleton.IsServer)
             {
-                if (matchedLua.TryGetValue("OnDestroyed", out string code))
+                LuaTable selfTable = ScriptSystem.SetRTSGameObjectInfo(self.GetComponent<RTSGameObjectBaseScript>());
+                LuaTable otherTable = ScriptSystem.SetRTSGameObjectInfo(other != null ? other.GetComponent<RTSGameObjectBaseScript>() : null);
+                if (gameObjectLua.TryGetValue(self.GetComponent<RTSGameObjectBaseScript>().typeID, out Dictionary<string, string> matchedLua))
                 {
-                    var script = ScriptSystem.CreateScript("OnDestroyed", code,
-                        new KeyValuePair<string, Type>("self", typeof(LuaTable)), new KeyValuePair<string, Type>("other", typeof(LuaTable)));
-                    ScriptSystem.ExecuteScript(script, selfTable, otherTable);
+                    if (matchedLua.TryGetValue("OnDestroyed", out string code))
+                    {
+                        var script = ScriptSystem.CreateScript("OnDestroyed", code,
+                            new KeyValuePair<string, Type>("self", typeof(LuaTable)), new KeyValuePair<string, Type>("other", typeof(LuaTable)));
+                        ScriptSystem.ExecuteScript(script, selfTable, otherTable);
+                    }
+                }
+                if (self.GetComponent<UnitBaseScript>() != null)
+                {
+                    UnitLibraryData libraryData = UnitLibrary[self.GetComponent<UnitBaseScript>().UnitTypeID];
+                    if (libraryData.scripts != null && libraryData.scripts.TryGetValue("OnDestroyed", out var code))
+                    {
+                        var script = ScriptSystem.CreateScript("OnDestroyed", code,
+                            new KeyValuePair<string, Type>("self", typeof(LuaTable)), new KeyValuePair<string, Type>("other", typeof(LuaTable)));
+                        ScriptSystem.ExecuteScript(script, selfTable, otherTable);
+                    }
                 }
             }
-            if (self.GetComponent<UnitBaseScript>() != null)
-            {
-                UnitLibraryData libraryData = UnitLibrary[self.GetComponent<UnitBaseScript>().UnitTypeID];
-                if (libraryData.scripts != null && libraryData.scripts.TryGetValue("OnDestroyed", out var code))
-                {
-                    var script = ScriptSystem.CreateScript("OnDestroyed", code,
-                        new KeyValuePair<string, Type>("self", typeof(LuaTable)), new KeyValuePair<string, Type>("other", typeof(LuaTable)));
-                    ScriptSystem.ExecuteScript(script, selfTable, otherTable);
-                }
-            }
+           
             // Index
             int gameObjectIndex = self.GetComponent<RTSGameObjectBaseScript>().Index;
             allGameObjectsDict.Remove(gameObjectIndex);

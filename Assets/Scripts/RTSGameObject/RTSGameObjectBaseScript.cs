@@ -93,6 +93,22 @@ namespace RTS.RTSGameObject
         private NetworkVariable<GameObject> networkLastDamagedBy = new NetworkVariable<GameObject>();
         private NetworkVariable<GameObject> networkLastRepairedBy = new NetworkVariable<GameObject>();
 
+        private void OnNetworkInstantiate()
+        {
+            if (NetworkManager.Singleton != null && !NetworkManager.Singleton.IsServer)
+            {
+                OnCreatedAction();
+            }
+        }
+
+        void OnDestroy()
+        {
+            if (NetworkManager.Singleton != null && !NetworkManager.Singleton.IsServer)
+            {
+                OnDestroyedAction();
+            }
+        }
+
         protected virtual void OnCreatedAction()
         {
             GameManager.GameManagerInstance.OnGameObjectCreated(gameObject);

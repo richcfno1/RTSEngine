@@ -150,7 +150,11 @@ namespace RTS.RTSGameObject.Unit
         public float MovePowerRatio { get { return MovePowerValue / maxMovePower; } set { MovePowerValue = value * maxMovePower; } }
         public Dictionary<string, float> PropertyDictionary { get; set; } = new Dictionary<string, float>();
 
-        public List<int> VisibleTo { get; set; } = new List<int>();
+        public NetworkList<int> VisibleTo
+        {
+            get { return networkVisibleTo; }
+            set { networkVisibleTo = value; }
+        }
 
         public FireControlStatus CurrentFireControlStatus { get; set; } = FireControlStatus.Passive;
         public LinkedList<UnitAction> ActionQueue { get; protected set; } = new LinkedList<UnitAction>();
@@ -284,10 +288,12 @@ namespace RTS.RTSGameObject.Unit
             {
                 visionArea.transform.localScale = new Vector3(visionRange, visionRange, visionRange) * 2;
             }
-
-            if (lockRotationZ)
+            if (NetworkManager.Singleton.IsServer)
             {
-                thisBody.MoveRotation(Quaternion.Euler(thisBody.rotation.eulerAngles.x, thisBody.rotation.eulerAngles.y, 0));
+                if (lockRotationZ)
+                {
+                    thisBody.MoveRotation(Quaternion.Euler(thisBody.rotation.eulerAngles.x, thisBody.rotation.eulerAngles.y, 0));
+                }
             }
         }
 

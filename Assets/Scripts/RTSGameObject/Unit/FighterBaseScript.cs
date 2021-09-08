@@ -1,3 +1,4 @@
+using MLAPI;
 using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
@@ -11,6 +12,10 @@ namespace RTS.RTSGameObject.Unit
         // Update is called once per frame
         void FixedUpdate()
         {
+            if (!NetworkManager.Singleton.IsServer)
+            {
+                return;
+            }
             SetSeed();
             if (HP <= 0)
             {
