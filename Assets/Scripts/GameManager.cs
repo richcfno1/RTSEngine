@@ -93,6 +93,8 @@ namespace RTS
         [Header("Specific Game Rules")]
         [Tooltip("Init game setting.")]
         public TextAsset initDataAsset;
+        [Tooltip("Master object")]
+        public Transform masterObject;
 
         public int SelfIndex 
         { 
@@ -139,6 +141,7 @@ namespace RTS
             GameObjectLibrary = JsonConvert.DeserializeObject<Dictionary<string, string>>(gameObjectLibraryAsset.text);
 
 #if UNITY_EDITOR
+#else
             NetworkManager.Singleton.StartHost();
 #endif
 
@@ -193,19 +196,19 @@ namespace RTS
             {
                 if (Input.GetKeyDown(KeyCode.O))
                 {
-                    InstantiateUnit("StandardFrigate", new Vector3(recordData, 0, recordData + recordData2), new Quaternion(), GameObject.Find("RTSGameObject").transform, 0, new Dictionary<string, string>());
+                    InstantiateUnit("StandardFrigate", new Vector3(recordData, 0, recordData + recordData2), new Quaternion(), masterObject, 0, new Dictionary<string, string>());
                     recordData -= 25;
                     Debug.Log(recordData / 25);
                 }
                 if (Input.GetKeyDown(KeyCode.L))
                 {
-                    InstantiateUnit("StandardFighter", new Vector3(recordData, 500, recordData + recordData2), new Quaternion(), GameObject.Find("RTSGameObject").transform, 0, new Dictionary<string, string>());
+                    InstantiateUnit("StandardFighter", new Vector3(recordData, 500, recordData + recordData2), new Quaternion(), masterObject, 0, new Dictionary<string, string>());
                     recordData -= 25;
                     Debug.Log(recordData / 25);
                 }
                 if (Input.GetKeyDown(KeyCode.I))
                 {
-                    InstantiateUnit("StandardFrigate", new Vector3(recordData, 0, recordData + recordData2), new Quaternion(), GameObject.Find("RTSGameObject").transform, 1, new Dictionary<string, string>());
+                    InstantiateUnit("StandardFrigate", new Vector3(recordData, 0, recordData + recordData2), new Quaternion(), masterObject, 1, new Dictionary<string, string>());
                     recordData -= 25;
                     Debug.Log(recordData / 25);
                 }
@@ -290,7 +293,7 @@ namespace RTS
                 {
                     if (UnitLibrary.ContainsKey(i.type))
                     {
-                        InstantiateUnit(i.type, i.position, i.rotation, GameObject.Find("RTSGameObject").transform, i.belongTo, i.specialLuaTags);
+                        InstantiateUnit(i.type, i.position, i.rotation, masterObject, i.belongTo, i.specialLuaTags);
                     }
                     else
                     {
@@ -298,6 +301,14 @@ namespace RTS
                     }
                 }
             }
+        }
+
+        private void SetBelongAndIndex(GameObject i, int belongTo)
+        {
+            // Set belonging and index
+            i.GetComponent<RTSGameObjectBaseScript>().BelongTo = belongTo;
+            i.GetComponent<RTSGameObjectBaseScript>().Index = gameObjectIndexCounter;
+            gameObjectIndexCounter++;
         }
 
         public GameObject InstantiateUnit(string unitType, Vector3 position, Quaternion rotation, Transform parent, int belongTo, Dictionary<string, string> luaTags)
@@ -311,7 +322,7 @@ namespace RTS
 
             // Ship
             GameObject result = Instantiate(Resources.Load<GameObject>(GameObjectLibrary[libraryData.baseTypeName]), position, rotation, parent);
-
+            SetBelongAndIndex(result, belongTo);
             // 设置一个测试材质
             var resultRenderer = result.AddComponent<RTSGameObjectRenderer>();
             resultRenderer.SetMaterial("test");
@@ -320,9 +331,9 @@ namespace RTS
                 resultRenderer.SetProperties(p => p.SetColor("_Color", Color.green));
             }
 
-            if (result.GetComponent<UnitBaseScript>() != null)
+            UnitBaseScript unitScript = result.GetComponent<UnitBaseScript>();
+            if (unitScript != null)
             {
-                UnitBaseScript unitScript = result.GetComponent<UnitBaseScript>();
                 unitScript.UnitTypeID = unitType;
                 unitScript.PropertyDictionary = libraryData.properties;
 
@@ -358,12 +369,17 @@ namespace RTS
                         {
                             anchorData.subsystem = temp;
                             subsystemScript.Host = unitScript;
+                            subsystemScript.Anchor = anchorData.anchorName;
                         }
                         // Apply lua tag
                         if (luaTags != null && luaTags.TryGetValue(anchorData.anchorName, out string subsystemTag))
                         {
                             subsystemScript.LuaTag = subsystemTag;
                         }
+                    }
+                    if (anchorData.subsystem != null)
+                    {
+                        SetBelongAndIndex(anchorData.subsystem, belongTo);
                     }
                 }
 
@@ -442,18 +458,23 @@ namespace RTS
                 }
             }
 
-            // Set belonging and index
-            result.GetComponent<RTSGameObjectBaseScript>().BelongTo = belongTo;
-            foreach (RTSGameObjectBaseScript i in result.GetComponentsInChildren<RTSGameObjectBaseScript>())
+            // Client Spawn
+            result.GetComponent<NetworkObject>().Spawn();
+            result.GetComponent<RTSGameObjectBaseScript>().ServerInit(0, "");
+            if (unitScript != null)
             {
-                i.BelongTo = belongTo;
-                i.Index = gameObjectIndexCounter;
-                gameObjectIndexCounter++;
+                foreach (UnitBaseScript.AnchorData anchorData in unitScript.subsyetemAnchors)
+                {
+                    SubsystemBaseScript subsystemScript = anchorData.subsystem.GetComponent<SubsystemBaseScript>();
+                    subsystemScript.GetComponent<NetworkObject>().Spawn();
+                    subsystemScript.ServerInit(result.GetComponent<NetworkObject>().NetworkObjectId, anchorData.anchorName);
+                }
             }
+
             return result;
         }
 
-        public void InstantiateUnitClient(GameObject result)
+        public void InstantiateClientUnit(GameObject result)
         {
             UnitBaseScript unitScript = result.GetComponent<UnitBaseScript>();
             if (unitScript == null)
@@ -461,6 +482,7 @@ namespace RTS
                 return;
             }
             UnitLibraryData libraryData = UnitLibrary[unitScript.UnitTypeID];
+
             // Init common ability
             foreach (KeyValuePair<string, List<string>> ability in libraryData.commonAbilities)
             {

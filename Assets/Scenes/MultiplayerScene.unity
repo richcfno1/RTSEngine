@@ -4668,6 +4668,16 @@ MonoBehaviour:
       PlayerPrefab: 0
     - Prefab: {fileID: 7274105634280561773, guid: 1d09ab5014734cd47ae28ea604d92490, type: 3}
       PlayerPrefab: 0
+    - Prefab: {fileID: 4238861060343121605, guid: 927daee1a9b8f0148b14bfd9226d3e49, type: 3}
+      PlayerPrefab: 0
+    - Prefab: {fileID: 9222926407001398705, guid: 273be197696553e43b366a0874b4f13c, type: 3}
+      PlayerPrefab: 0
+    - Prefab: {fileID: 8465179500210456229, guid: 56d2fb07ee59ac8498e0c9208994737a, type: 3}
+      PlayerPrefab: 0
+    - Prefab: {fileID: 4153258078447466168, guid: 97c5f402184ee374b91bf00be89e1b89, type: 3}
+      PlayerPrefab: 0
+    - Prefab: {fileID: 2121049342510388811, guid: 3338623f932932540ba962553c1a1ef3, type: 3}
+      PlayerPrefab: 0
     PlayerPrefabHash:
       id: 0
     CreatePlayerPrefab: 1
@@ -6020,6 +6030,7 @@ MonoBehaviour:
   gameObjectLibraryAsset: {fileID: 4900000, guid: 5ec89fe72628a7c40a36c1707bbc0df1, type: 3}
   visionProcessGap: 0.5
   initDataAsset: {fileID: 4900000, guid: 02b906b789ff88d4a93136eb04964b77, type: 3}
+  masterObject: {fileID: 1423009701}
 --- !u!4 &1353037987
 Transform:
   m_ObjectHideFlags: 0

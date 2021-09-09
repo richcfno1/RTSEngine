@@ -1,3 +1,5 @@
+using MLAPI;
+using MLAPI.NetworkVariable;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -35,37 +37,53 @@ namespace RTS.RTSGameObject.Subsystem
         [Tooltip("When game is running in editor, draws a debug ray to show where the turret is aiming.")]
         public bool showDebugRay = true;
 
-        protected Vector3 aimPoint;
-        protected bool aiming = false;
-        protected bool atRest = false;
+        protected Vector3 AimPoint
+        {
+            get { return networkAimPoint.Value; }
+            set { networkAimPoint.Value = value; }
+        }
+        protected bool Aiming
+        {
+            get { return networkAiming.Value; }
+            set { networkAiming.Value = value; }
+        }
+        protected bool AtRest
+        {
+            get { return networkAtRest.Value; }
+            set { networkAtRest.Value = value; }
+        }
+
+        private NetworkVariable<Vector3> networkAimPoint = new NetworkVariable<Vector3>();
+        private NetworkVariable<bool> networkAiming = new NetworkVariable<bool>(false);
+        private NetworkVariable<bool> networkAtRest = new NetworkVariable<bool>(false);
 
         protected void SetAimpoint(Vector3 position)
         {
-            aiming = true;
-            aimPoint = position;
-            atRest = false;
+            Aiming = true;
+            AimPoint = position;
+            AtRest = false;
         }
 
         protected void SetIdle(bool idle)
         {
-            aiming = !idle;
+            Aiming = !idle;
 
-            if (aiming)
+            if (Aiming)
             {
-                atRest = false;
+                AtRest = false;
             }
         }
 
         protected void RotateTurret()
         {
-            if (aiming)
+            if (Aiming)
             {
                 RotateBase();
                 RotateBarrels();
             }
-            else if (!atRest)
+            else if (!AtRest)
             {
-                atRest = RotateToIdle();
+                AtRest = RotateToIdle();
             }
         }
 
@@ -76,7 +94,7 @@ namespace RTS.RTSGameObject.Subsystem
             if (turretBase != null)
             {
                 // Note, the local conversion has to come from the parent.
-                Vector3 localTargetPos = transform.InverseTransformPoint(aimPoint);
+                Vector3 localTargetPos = transform.InverseTransformPoint(AimPoint);
                 localTargetPos.y = 0.0f;
 
                 // Clamp target rotation by creating a limited rotation to the target.
@@ -107,7 +125,7 @@ namespace RTS.RTSGameObject.Subsystem
             if (turretBase != null && turretBarrels != null)
             {
                 // Note, the local conversion has to come from the parent.
-                Vector3 localTargetPos = turretBase.InverseTransformPoint(aimPoint);
+                Vector3 localTargetPos = turretBase.InverseTransformPoint(AimPoint);
                 localTargetPos.x = 0.0f;
 
                 // Clamp target rotation by creating a limited rotation to the target.

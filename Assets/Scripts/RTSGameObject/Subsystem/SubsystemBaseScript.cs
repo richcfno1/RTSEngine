@@ -1,3 +1,5 @@
+using MLAPI;
+using MLAPI.NetworkVariable;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -29,10 +31,27 @@ namespace RTS.RTSGameObject.Subsystem
         public List<CommonAbilityBaseScript.CommonAbilityType> supportedCommonAbility;
 
         // Set when instantiate
-        public UnitBaseScript Host { get; set; }
-        public bool Active { get; private set; }
+        public UnitBaseScript Host
+        {
+            get { return GameManager.GameManagerInstance.GetUnitByIndex(networkHost.Value); }
+            set { networkHost.Value = value.Index; }
+        }
+        public string Anchor
+        {
+            get { return networkAnchor.Value; }
+            set { networkAnchor.Value = value; }
+        }
+        public bool Active
+        {
+            get { return networkActive.Value; }
+            set { networkActive.Value = value; }
+        }
 
         protected List<object> subsystemTarget = new List<object>();
+
+        private NetworkVariable<int> networkHost = new NetworkVariable<int>(-1);
+        private NetworkVariable<string> networkAnchor = new NetworkVariable<string>("");
+        private NetworkVariable<bool> networkActive = new NetworkVariable<bool>(false);
 
         protected override void OnCreatedAction()
         {

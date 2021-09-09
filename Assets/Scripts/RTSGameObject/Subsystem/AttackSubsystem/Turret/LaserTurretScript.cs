@@ -1,3 +1,4 @@
+using MLAPI;
 using RTS.Helper;
 using System.Collections;
 using System.Collections.Generic;
@@ -27,19 +28,22 @@ namespace RTS.RTSGameObject.Subsystem
         public float movePowerReduce;
 
         private GameObject fireTarget;
-        private int shootCount;  // This is the counter which help to indicate which elements in bulletStartPosition should be used
+        private int shootCount = 0;  // This is the counter which help to indicate which elements in bulletStartPosition should be used
 
         // Start is called before the first frame update
         void Start()
         {
             OnCreatedAction();
-            shootCount = 0;
             laserRenderer.enabled = false;
         }
 
         // Update is called once per frame
         void FixedUpdate()
         {
+            if (!NetworkManager.Singleton.IsServer)
+            {
+                return;
+            }
             if (HP <= 0)
             {
                 OnDestroyedAction();

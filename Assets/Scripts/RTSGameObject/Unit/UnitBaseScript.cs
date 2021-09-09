@@ -9,6 +9,7 @@ using RTS.Helper;
 using System.Linq;
 using MLAPI.NetworkVariable;
 using MLAPI.NetworkVariable.Collections;
+using MLAPI.Messaging;
 
 namespace RTS.RTSGameObject.Unit
 {
@@ -292,11 +293,37 @@ namespace RTS.RTSGameObject.Unit
             }
         }
 
+
         protected override void OnCreatedAction()
         {
-            base.OnCreatedAction();
-            if (NetworkManager.Singleton.IsServer)
+            // Sync
+            if (NetworkManager.Singleton != null && !NetworkManager.Singleton.IsServer)
             {
+                Debug.Log("WOW2!");
+                foreach (GameObject i in GameManager.GameManagerInstance.GetAllUnits())
+                {
+                    if (i.GetComponent<NetworkObject>() != null && i.GetComponent<NetworkObject>().NetworkObjectId ==
+                        networkStartParentID.Value)
+                    {
+                        foreach (Transform j in i.GetComponentsInChildren<Transform>())
+                        {
+                            if (j.gameObject.name == networkStartDirectParentName.Value)
+                            {
+                                transform.SetParent(j);
+                                GameManager.GameManagerInstance.InstantiateClientUnit(gameObject);
+                                return;
+                            }
+                        }
+                    }
+                }
+                transform.SetParent(GameManager.GameManagerInstance.masterObject);
+                GameManager.GameManagerInstance.InstantiateClientUnit(gameObject);
+            }
+
+            GameManager.GameManagerInstance.OnGameObjectCreated(gameObject);
+            if (NetworkManager.Singleton != null && NetworkManager.Singleton.IsServer)
+            {
+                HP = maxHP;
                 AttackPowerRatio = 1;
                 DefencePowerRatio = 1;
                 MovePowerRatio = 1;

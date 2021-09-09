@@ -25,6 +25,25 @@
   },
   "initUnitLibraryData": [
     {
+      "unitTypeName": "StandardFrigate",
+      "baseTypeName": "Frigate1",
+      "properties": {},
+      "subsystems": {
+        "TurretAnchor1": "Turret1",
+        "TurretAnchor2": "Turret1",
+        "TurretAnchor3": "Turret1",
+        "TurretAnchor4": "Turret1",
+        "TurretAnchor5": "Turret1",
+        "TurretAnchor6": "Turret1"
+      },
+      "commonAbilities": {
+        "Move": [ "Frigate1" ],
+        "Attack": [ "TurretAnchor1", "TurretAnchor2", "TurretAnchor3", "TurretAnchor4", "TurretAnchor5", "TurretAnchor6" ],
+        "Carrier": [ ]
+      },
+      "scripts": {}
+    },
+    {
       "unitTypeName": "StandardFighter",
       "baseTypeName": "Fighter1",
       "properties": {},
@@ -84,8 +103,8 @@
       }
     },
     {
-      "type": "StandardFighter",
-      "belongTo": 1,
+      "type": "StandardFrigate",
+      "belongTo": 0,
       "position": {
         "x": 0.0,
         "y": 0.0,
@@ -99,8 +118,8 @@
       }
     },
     {
-      "type": "StandardFighter",
-      "belongTo": 1,
+      "type": "StandardFrigate",
+      "belongTo": 0,
       "position": {
         "x": 0.0,
         "y": 0.0,
