@@ -107,7 +107,7 @@ namespace RTS.Ability.CommonAbility
                 // call follow and head to
                 if (Host.MoveAbility != null)
                 {
-                    Host.MoveAbility.KeepInRangeAndLookAtServerRpc(target.GetComponent<RTSGameObjectBaseScript>().Index, 
+                    Host.MoveAbility.KeepInRangeAndLookAt(target.GetComponent<RTSGameObjectBaseScript>().Index, 
                         (transform.position - target.transform.position).normalized,
                         maxLockRange, minSuggestedFireDistance, false, false);
                 }
@@ -122,7 +122,7 @@ namespace RTS.Ability.CommonAbility
                 }
                 if (Host.MoveAbility != null)
                 {
-                    Host.MoveAbility.KeepInRangeServerRpc(target.GetComponent<RTSGameObjectBaseScript>().Index
+                    Host.MoveAbility.KeepInRange(target.GetComponent<RTSGameObjectBaseScript>().Index
                         , minLockRange, 0, false, false);
                 }
             }

@@ -33,35 +33,65 @@ namespace RTS.Ability.CommonAbility
             }
         }
 
-        [ServerRpc(RequireOwnership = false)]
-        public void LookAtTargetServerRpc(int targetIndex, bool clearQueue = true, bool addToEnd = true)
+        public void LookAtTarget(int targetIndex, bool clearQueue = true, bool addToEnd = true)
         {
-            Host.LookAtTarget(GameManager.GameManagerInstance.GetGameObjectByIndex(targetIndex), clearQueue, addToEnd);
+            if (NetworkManager.Singleton != null && NetworkManager.Singleton.IsServer)
+            {
+                Host.LookAtTarget(GameManager.GameManagerInstance.GetGameObjectByIndex(targetIndex), clearQueue, addToEnd);
+            }
+            else
+            {
+                LocalPlayerScript.LocalPlayer.LookAtTargetServerRpc(Host.Index, targetIndex, clearQueue, addToEnd);
+            }
         }
 
-        [ServerRpc(RequireOwnership = false)]
-        public void FollowServerRpc(int targetIndex, bool clearQueue = true, bool addToEnd = true)
+        public void Follow(int targetIndex, bool clearQueue = true, bool addToEnd = true)
         {
-            Host.Follow(GameManager.GameManagerInstance.GetGameObjectByIndex(targetIndex), clearQueue, addToEnd);
+            if (NetworkManager.Singleton != null && NetworkManager.Singleton.IsServer)
+            {
+                Host.Follow(GameManager.GameManagerInstance.GetGameObjectByIndex(targetIndex), clearQueue, addToEnd);
+            }
+            else
+            {
+                LocalPlayerScript.LocalPlayer.FollowServerRpc(Host.Index, targetIndex, clearQueue, addToEnd);
+            }
         }
 
-        [ServerRpc(RequireOwnership = false)]
-        public void FollowServerRpc(int targetIndex, Vector3 offset, bool clearQueue = true, bool addToEnd = true)
+        public void Follow(int targetIndex, Vector3 offset, bool clearQueue = true, bool addToEnd = true)
         {
-            Host.Follow(GameManager.GameManagerInstance.GetGameObjectByIndex(targetIndex), offset, clearQueue, addToEnd);
+            if (NetworkManager.Singleton != null && NetworkManager.Singleton.IsServer)
+            {
+                Host.Follow(GameManager.GameManagerInstance.GetGameObjectByIndex(targetIndex), offset, clearQueue, addToEnd);
+            }
+            else
+            {
+                LocalPlayerScript.LocalPlayer.FollowServerRpc(Host.Index, targetIndex, offset, clearQueue, addToEnd);
+            }
         }
 
-        [ServerRpc(RequireOwnership = false)]
-        public void KeepInRangeServerRpc(int targetIndex, float upperBound, float lowerBound, bool clearQueue = true, bool addToEnd = true)
+        public void KeepInRange(int targetIndex, float upperBound, float lowerBound, bool clearQueue = true, bool addToEnd = true)
         {
-            Host.KeepInRange(GameManager.GameManagerInstance.GetGameObjectByIndex(targetIndex), upperBound, lowerBound, clearQueue, addToEnd);
+            if (NetworkManager.Singleton != null && NetworkManager.Singleton.IsServer)
+            {
+                Host.KeepInRange(GameManager.GameManagerInstance.GetGameObjectByIndex(targetIndex), upperBound, lowerBound, clearQueue, addToEnd);
+            }
+            else
+            {
+                LocalPlayerScript.LocalPlayer.KeepInRangeServerRpc(Host.Index, targetIndex, upperBound, lowerBound, clearQueue, addToEnd);
+            }
         }
 
-        [ServerRpc(RequireOwnership = false)]
-        public void KeepInRangeAndLookAtServerRpc(int targetIndex, Vector3 offset, float upperBound,
+        public void KeepInRangeAndLookAt(int targetIndex, Vector3 offset, float upperBound,
             float lowerBound, bool clearQueue = true, bool addToEnd = true)
         {
-            Host.KeepInRangeAndLookAt(GameManager.GameManagerInstance.GetGameObjectByIndex(targetIndex), offset, upperBound, lowerBound, clearQueue, addToEnd);
+            if (NetworkManager.Singleton != null && NetworkManager.Singleton.IsServer)
+            {
+                Host.KeepInRangeAndLookAt(GameManager.GameManagerInstance.GetGameObjectByIndex(targetIndex), offset, upperBound, lowerBound, clearQueue, addToEnd);
+            }
+            else
+            {
+                LocalPlayerScript.LocalPlayer.KeepInRangeAndLookAtServerRpc(Host.Index, targetIndex, offset, upperBound, lowerBound, clearQueue, addToEnd);
+            }
         }
     }
 }

@@ -166,7 +166,7 @@ namespace RTS.UI.Command
                                 {
                                     if (i.Key.MoveAbility != null)
                                     {
-                                        i.Key.MoveAbility.FollowServerRpc(followTarget.Index, i.Value - followTarget.transform.position);
+                                        i.Key.MoveAbility.Follow(followTarget.Index, i.Value - followTarget.transform.position);
                                     }
                                     CreateGOToGOUI(i.Key.gameObject, followTarget.gameObject, Color.green);
                                 }
@@ -191,7 +191,7 @@ namespace RTS.UI.Command
                                     }
                                     else if (i.GetComponent<UnitBaseScript>().MoveAbility != null)
                                     {
-                                        i.GetComponent<UnitBaseScript>().MoveAbility.FollowServerRpc(attackTarget.Index);
+                                        i.GetComponent<UnitBaseScript>().MoveAbility.Follow(attackTarget.Index);
                                         CreateGOToGOUI(i, attackTarget.gameObject, Color.green);
                                     }
                                 }
