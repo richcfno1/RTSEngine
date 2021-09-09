@@ -85,7 +85,7 @@
     },
     {
       "type": "StandardFighter",
-      "belongTo": 0,
+      "belongTo": 1,
       "position": {
         "x": 0.0,
         "y": 0.0,
@@ -100,7 +100,7 @@
     },
     {
       "type": "StandardFighter",
-      "belongTo": 0,
+      "belongTo": 1,
       "position": {
         "x": 0.0,
         "y": 0.0,

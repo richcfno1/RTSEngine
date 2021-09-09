@@ -727,6 +727,16 @@ namespace RTS
             return null;
         }
 
+        public UnitBaseScript GetUnitByIndex(int index)
+        {
+            if (allUnitsListDict.ContainsKey(index))
+            {
+                return allGameObjectsDict[index].GetComponent<UnitBaseScript>();
+            }
+            return null;
+        }
+
+
         public ref List<GameObject> GetAllGameObjects()
         {
             return ref allGameObjectsList;

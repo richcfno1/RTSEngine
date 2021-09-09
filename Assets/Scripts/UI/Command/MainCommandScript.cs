@@ -121,7 +121,7 @@ namespace RTS.UI.Command
                                 {
                                     if (i.Key.MoveAbility != null)
                                     {
-                                        i.Key.MoveAbility.MoveServerRpc(i.Value);
+                                        i.Key.MoveAbility.Move(i.Value);
                                     }
                                     CreateGOToVectorUI(i.Key.gameObject, i.Value, Color.green);
                                 }

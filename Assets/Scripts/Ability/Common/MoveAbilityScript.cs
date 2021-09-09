@@ -1,23 +1,36 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using RTS.RTSGameObject.Subsystem;
+using RTS.Network;
+using MLAPI;
 using MLAPI.Messaging;
 
 namespace RTS.Ability.CommonAbility
 {
     public class MoveAbilityScript : CommonAbilityBaseScript
     {
-        [ServerRpc(RequireOwnership = false)]
-        public void MoveServerRpc(Vector3 destination, bool clearQueue = true, bool addToEnd = true)
+        public void Move(Vector3 destination, bool clearQueue = true, bool addToEnd = true)
         {
-            Host.Move(destination, clearQueue, addToEnd);
+            if (NetworkManager.Singleton != null && NetworkManager.Singleton.IsServer)
+            {
+                Host.Move(destination, clearQueue, addToEnd);
+            }
+            else
+            {
+                LocalPlayerScript.LocalPlayer.MoveServerRpc(Host.Index, destination, clearQueue, addToEnd);
+            }
         }
 
-        [ServerRpc(RequireOwnership = false)]
-        public void LookAtServerRpc(Vector3 target, bool clearQueue = true, bool addToEnd = true)
+        public void LookAt(Vector3 target, bool clearQueue = true, bool addToEnd = true)
         {
-            Host.LookAt(target, clearQueue, addToEnd);
+            if (NetworkManager.Singleton != null && NetworkManager.Singleton.IsServer)
+            {
+                Host.LookAt(target, clearQueue, addToEnd);
+            }
+            else
+            {
+                LocalPlayerScript.LocalPlayer.LookAtServerRpc(Host.Index, target, clearQueue, addToEnd);
+            }
         }
 
         [ServerRpc(RequireOwnership = false)]

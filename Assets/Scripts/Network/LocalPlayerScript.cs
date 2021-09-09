@@ -29,24 +29,45 @@ namespace RTS.Network
             get { return playerIndex.Value; }
             set { playerIndex.Value = value; }
         }
-        private NetworkVariable<int> playerIndex = new NetworkVariable<int>(-1);
+        private NetworkVariable<int> playerIndex = new NetworkVariable<int>(new NetworkVariableSettings()
+        {
+            WritePermission = NetworkVariablePermission.OwnerOnly,
+            ReadPermission = NetworkVariablePermission.Everyone
+        }, -1);
 
         public override void NetworkStart()
         {
-            if (int.TryParse(RTSNetworkManager.requiredlayerIndexText, out int value))
+            SetPlayerIndexClientRpc();
+        }
+
+        [ClientRpc]
+        public void SetPlayerIndexClientRpc()
+        {
+            if (IsOwner)
             {
-                PlayerIndex = value;
-            }
-            else
-            {
-                PlayerIndex = -1;
+                if (int.TryParse(RTSNetworkManager.requiredlayerIndexText, out int value))
+                {
+                    PlayerIndex = value;
+                }
+                else
+                {
+                    PlayerIndex = -1;
+                }
             }
         }
 
-        [ServerRpc(RequireOwnership = false)]
-        public void PlayerCommandServerRpc(int indexInfo, Vector3 posInfo, bool boolInfo)
+        [ServerRpc]
+        public void MoveServerRpc(int unitIndex, Vector3 destination, bool clearQueue = true, bool addToEnd = true)
         {
-            Debug.Log($"RPC!!!{indexInfo}:{posInfo}:{boolInfo}");
+            Debug.Log($"RPC!!! MOVE! {unitIndex}:{destination}");
+            GameManager.GameManagerInstance.GetUnitByIndex(unitIndex).MoveAbility.Move(destination, clearQueue, addToEnd);
+        }
+
+        [ServerRpc]
+        public void LookAtServerRpc(int unitIndex, Vector3 target, bool clearQueue = true, bool addToEnd = true)
+        {
+            Debug.Log($"RPC!!! LOOKAT! {unitIndex}:{target}");
+            GameManager.GameManagerInstance.GetUnitByIndex(unitIndex).MoveAbility.LookAt(target, clearQueue, addToEnd);
         }
     }
 }
