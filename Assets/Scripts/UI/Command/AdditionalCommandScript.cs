@@ -360,12 +360,12 @@ namespace RTS.UI.Command
                         {
                             if (i.Key.AttackAbility != null)
                             {
-                                i.Key.AttackAbility.Attack(attackTarget.gameObject);
+                                i.Key.AttackAbility.AttackServerRpc(attackTarget.Index);
                                 CreateGOToGOUI(i.Key.gameObject, attackTarget.gameObject, Color.red);
                             }
                             else if (i.Key.MoveAbility != null)
                             {
-                                i.Key.MoveAbility.Follow(attackTarget.gameObject, i.Value - attackTarget.transform.position);
+                                i.Key.MoveAbility.FollowServerRpc(attackTarget.Index, i.Value - attackTarget.transform.position);
                             }
                             CreateGOToGOUI(i.Key.gameObject, attackTarget.gameObject, Color.green);
                         }
@@ -435,12 +435,12 @@ namespace RTS.UI.Command
                     {
                         if (i.Key.AttackAbility != null && i.Key.MoveAbility != null)
                         {
-                            i.Key.AttackAbility.AttackAndMove(i.Value);
+                            i.Key.AttackAbility.AttackAndMoveServerRpc(i.Value);
                             CreateGOToVectorUI(i.Key.gameObject, i.Value, Color.red);
                         }
                         else if (i.Key.MoveAbility != null)
                         {
-                            i.Key.MoveAbility.Move(i.Value);
+                            i.Key.MoveAbility.MoveServerRpc(i.Value);
                             CreateGOToVectorUI(i.Key.gameObject, i.Value, Color.green);
                         }
                     }
@@ -503,7 +503,7 @@ namespace RTS.UI.Command
                         {
                             if (i.Key.MoveAbility != null)
                             {
-                                i.Key.MoveAbility.Follow(followTarget.gameObject, i.Value - followTarget.transform.position);
+                                i.Key.MoveAbility.FollowServerRpc(followTarget.Index, i.Value - followTarget.transform.position);
                             }
                             CreateGOToGOUI(i.Key.gameObject, followTarget.gameObject, Color.green);
                         }
@@ -573,7 +573,7 @@ namespace RTS.UI.Command
                     {
                         if (i.Key.MoveAbility != null)
                         {
-                            i.Key.MoveAbility.Move(i.Value);
+                            i.Key.MoveAbility.MoveServerRpc(i.Value);
                         }
                         CreateGOToVectorUI(i.Key.gameObject, i.Value, Color.green);
                     }
@@ -625,7 +625,7 @@ namespace RTS.UI.Command
                         {
                             if (i.GetComponent<UnitBaseScript>().MoveAbility != null)
                             {
-                                i.GetComponent<UnitBaseScript>().MoveAbility.LookAtTarget(lookAtTarget.gameObject);
+                                i.GetComponent<UnitBaseScript>().MoveAbility.LookAtTargetServerRpc(lookAtTarget.Index);
                             }
                             CreateGOToGOUI(i, lookAtTarget.gameObject, Color.yellow);
                         }
@@ -695,7 +695,7 @@ namespace RTS.UI.Command
                     {
                         if (i.Key.MoveAbility != null)
                         {
-                            i.Key.MoveAbility.LookAt(i.Value);
+                            i.Key.MoveAbility.LookAtServerRpc(i.Value);
                         }
                         CreateGOToVectorUI(i.Key.gameObject, i.Value, Color.yellow);
                     }
@@ -918,7 +918,7 @@ namespace RTS.UI.Command
             {
                 if (i.GetComponent<UnitBaseScript>() != null && i.GetComponent<UnitBaseScript>().AttackAbility != null)
                 {
-                    i.GetComponent<UnitBaseScript>().AttackAbility.SetAggressive();
+                    i.GetComponent<UnitBaseScript>().AttackAbility.SetAggressiveServerRpc();
                 }
             }
         }
@@ -933,7 +933,7 @@ namespace RTS.UI.Command
             {
                 if (i.GetComponent<UnitBaseScript>() != null && i.GetComponent<UnitBaseScript>().AttackAbility != null)
                 {
-                    i.GetComponent<UnitBaseScript>().AttackAbility.SetNeutral();
+                    i.GetComponent<UnitBaseScript>().AttackAbility.SetNeutralServerRpc();
                 }
             }
         }
@@ -948,7 +948,7 @@ namespace RTS.UI.Command
             {
                 if (i.GetComponent<UnitBaseScript>() != null && i.GetComponent<UnitBaseScript>().AttackAbility != null)
                 {
-                    i.GetComponent<UnitBaseScript>().AttackAbility.SetPassive();
+                    i.GetComponent<UnitBaseScript>().AttackAbility.SetPassiveServerRpc();
                 }
             }
         }

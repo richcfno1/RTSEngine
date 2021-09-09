@@ -1,8 +1,11 @@
+using MLAPI;
 using System.Linq;
 using System.Collections.Generic;
 using RTS.RTSGameObject.Subsystem;
 using UnityEngine;
 using System;
+using MLAPI.Messaging;
+using RTS.RTSGameObject;
 
 namespace RTS.Ability.CommonAbility
 {
@@ -17,15 +20,14 @@ namespace RTS.Ability.CommonAbility
 
         private void Start()
         {
-            SetAggressive();
+            if (NetworkManager.Singleton != null && NetworkManager.Singleton.IsServer)
+            {
+                SetAggressiveServerRpc();
+            }
         }
 
-        public override bool CanUseAbility()
-        {
-            return base.CanUseAbility();
-        }
-
-        public void SetPassive()
+        [ServerRpc(RequireOwnership = false)]
+        public void SetPassiveServerRpc()
         {
             foreach (AttackSubsystemBaseScript i in SupportedBy)
             {
@@ -34,7 +36,9 @@ namespace RTS.Ability.CommonAbility
             }
             Host.CurrentFireControlStatus = RTSGameObject.Unit.UnitBaseScript.FireControlStatus.Passive;
         }
-        public void SetNeutral()
+
+        [ServerRpc(RequireOwnership = false)]
+        public void SetNeutralServerRpc()
         {
             foreach (AttackSubsystemBaseScript i in SupportedBy)
             {
@@ -43,7 +47,9 @@ namespace RTS.Ability.CommonAbility
             }
             Host.CurrentFireControlStatus = RTSGameObject.Unit.UnitBaseScript.FireControlStatus.Neutral;
         }
-        public void SetAggressive()
+
+        [ServerRpc(RequireOwnership = false)]
+        public void SetAggressiveServerRpc()
         {
             foreach (AttackSubsystemBaseScript i in SupportedBy)
             {
@@ -53,12 +59,14 @@ namespace RTS.Ability.CommonAbility
             Host.CurrentFireControlStatus = RTSGameObject.Unit.UnitBaseScript.FireControlStatus.Aggressive;
         }
 
-        public void Attack(GameObject target, bool clearQueue = true, bool addToEnd = true)
+        [ServerRpc(RequireOwnership = false)]
+        public void AttackServerRpc(int targetIndex, bool clearQueue = true, bool addToEnd = true)
         {
-            Host.Attack(target, clearQueue, addToEnd);
+            Host.Attack(GameManager.GameManagerInstance.GetGameObjectByIndex(targetIndex), clearQueue, addToEnd);
         }
 
-        public void AttackAndMove(Vector3 destination, bool clearQueue = true, bool addToEnd = true)
+        [ServerRpc(RequireOwnership = false)]
+        public void AttackAndMoveServerRpc(Vector3 destination, bool clearQueue = true, bool addToEnd = true)
         {
             Host.AttackAndMove(destination, clearQueue, addToEnd);
         }
@@ -99,7 +107,8 @@ namespace RTS.Ability.CommonAbility
                 // call follow and head to
                 if (Host.MoveAbility != null)
                 {
-                    Host.MoveAbility.KeepInRangeAndLookAt(target, (transform.position - target.transform.position).normalized,
+                    Host.MoveAbility.KeepInRangeAndLookAtServerRpc(target.GetComponent<RTSGameObjectBaseScript>().Index, 
+                        (transform.position - target.transform.position).normalized,
                         maxLockRange, minSuggestedFireDistance, false, false);
                 }
             }
@@ -113,7 +122,8 @@ namespace RTS.Ability.CommonAbility
                 }
                 if (Host.MoveAbility != null)
                 {
-                    Host.MoveAbility.KeepInRange(target, minLockRange, 0, false, false);
+                    Host.MoveAbility.KeepInRangeServerRpc(target.GetComponent<RTSGameObjectBaseScript>().Index
+                        , minLockRange, 0, false, false);
                 }
             }
         }

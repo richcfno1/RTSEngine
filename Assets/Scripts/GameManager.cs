@@ -140,11 +140,7 @@ namespace RTS
 
 #if UNITY_EDITOR
             NetworkManager.Singleton.StartHost();
-#else
-            NetworkManager.Singleton.StartClient();
 #endif
-
-
 
             if (initDataAsset != null)
             {
@@ -457,6 +453,89 @@ namespace RTS
             return result;
         }
 
+        public void InstantiateUnitClient(GameObject result)
+        {
+            UnitBaseScript unitScript = result.GetComponent<UnitBaseScript>();
+            if (unitScript == null)
+            {
+                return;
+            }
+            UnitLibraryData libraryData = UnitLibrary[unitScript.UnitTypeID];
+            // Init common ability
+            foreach (KeyValuePair<string, List<string>> ability in libraryData.commonAbilities)
+            {
+                Type abilityType;
+                switch (ability.Key)
+                {
+                    case "Attack":
+                        abilityType = Type.GetType("RTS.Ability.CommonAbility.AttackAbilityScript");
+                        break;
+                    case "Move":
+                        abilityType = Type.GetType("RTS.Ability.CommonAbility.MoveAbilityScript");
+                        break;
+                    case "Carrier":
+                        abilityType = Type.GetType("RTS.Ability.CommonAbility.CarrierAbilityScript");
+                        break;
+                    default:
+                        Debug.LogError("Wrong type of common ability: " + ability.Key);
+                        continue;
+                }
+                CommonAbilityBaseScript abilityScript = (CommonAbilityBaseScript)result.AddComponent(abilityType);
+                foreach (string supportedSubsystemAnchor in ability.Value)
+                {
+                    if (supportedSubsystemAnchor != libraryData.baseTypeName)
+                    {
+                        GameObject temp = unitScript.subsyetemAnchors.FirstOrDefault(x => x.anchorName == supportedSubsystemAnchor).subsystem;
+                        if (temp == default)
+                        {
+                            Debug.LogError("Cannot find subsystem: " + supportedSubsystemAnchor);
+                        }
+                        else
+                        {
+                            if (temp.GetComponent<SubsystemBaseScript>().supportedCommonAbility.Contains(
+                                (CommonAbilityBaseScript.CommonAbilityType)Enum.Parse(typeof(CommonAbilityBaseScript.CommonAbilityType), ability.Key)))
+                            {
+                                abilityScript.SupportedBy.Add(temp.GetComponent<SubsystemBaseScript>());
+                            }
+                            else
+                            {
+                                Debug.LogError("Subsystem cannot support common ability: " + ability.Key);
+                            }
+                        }
+                    }
+                }
+                abilityScript.Host = unitScript;
+                switch (ability.Key)
+                {
+                    case "Attack":
+                        unitScript.AttackAbility = (AttackAbilityScript)abilityScript;
+                        break;
+                    case "Move":
+                        unitScript.MoveAbility = (MoveAbilityScript)abilityScript;
+                        break;
+                    case "Carrier":
+                        unitScript.CarrierAbility = (CarrierAbilityScript)abilityScript;
+                        break;
+                    default:
+                        Debug.LogError("Wrong type of common ability: " + ability.Key);
+                        break;
+                }
+            }
+
+            foreach (SpecialAbilityBaseScript speaiclAbility in result.transform.GetComponentsInChildren<SpecialAbilityBaseScript>())
+            {
+                speaiclAbility.Host = unitScript;
+                if (unitScript.SpecialAbilityList.ContainsKey(speaiclAbility.specialAbilityID))
+                {
+                    unitScript.SpecialAbilityList[speaiclAbility.specialAbilityID].Add(speaiclAbility);
+                }
+                else
+                {
+                    unitScript.SpecialAbilityList.Add(speaiclAbility.specialAbilityID, new List<SpecialAbilityBaseScript>() { speaiclAbility });
+                }
+            }
+        }
+
         public List<GameObject> GetGameObjectForPlayer(int index)
         {
             List<GameObject> result = new List<GameObject>();
@@ -486,7 +565,7 @@ namespace RTS
         public void OnGameObjectCreated(GameObject self)
         {
             // Lua
-            if (NetworkManager.Singleton.IsServer)
+            if (NetworkManager.Singleton != null && NetworkManager.Singleton.IsServer)
             {
                 LuaTable selfTable = ScriptSystem.SetRTSGameObjectInfo(self.GetComponent<RTSGameObjectBaseScript>());
                 if (gameObjectLua.TryGetValue(self.GetComponent<RTSGameObjectBaseScript>().typeID, out Dictionary<string, string> matchedLua))
@@ -536,7 +615,7 @@ namespace RTS
         public void OnGameObjectDamaged(GameObject self, GameObject other)
         {
             // Lua
-            if (NetworkManager.Singleton.IsServer)
+            if (NetworkManager.Singleton != null && NetworkManager.Singleton.IsServer)
             {
                 LuaTable selfTable = ScriptSystem.SetRTSGameObjectInfo(self.GetComponent<RTSGameObjectBaseScript>());
                 LuaTable otherTable = ScriptSystem.SetRTSGameObjectInfo(other != null ? other.GetComponent<RTSGameObjectBaseScript>() : null);
@@ -565,7 +644,7 @@ namespace RTS
         public void OnGameObjectRepaired(GameObject self, GameObject other)
         {
             // Lua
-            if (NetworkManager.Singleton.IsServer)
+            if (NetworkManager.Singleton != null && NetworkManager.Singleton.IsServer)
             {
                 LuaTable selfTable = ScriptSystem.SetRTSGameObjectInfo(self.GetComponent<RTSGameObjectBaseScript>());
                 LuaTable otherTable = ScriptSystem.SetRTSGameObjectInfo(other != null ? other.GetComponent<RTSGameObjectBaseScript>() : null);
@@ -594,7 +673,7 @@ namespace RTS
         public void OnGameObjectDestroyed(GameObject self, GameObject other)
         {
             // Lua
-            if (NetworkManager.Singleton.IsServer)
+            if (NetworkManager.Singleton != null && NetworkManager.Singleton.IsServer)
             {
                 LuaTable selfTable = ScriptSystem.SetRTSGameObjectInfo(self.GetComponent<RTSGameObjectBaseScript>());
                 LuaTable otherTable = ScriptSystem.SetRTSGameObjectInfo(other != null ? other.GetComponent<RTSGameObjectBaseScript>() : null);
@@ -637,6 +716,15 @@ namespace RTS
                     enemyUnitsTable[i.Key].Remove(self);
                 }
             }
+        }
+
+        public GameObject GetGameObjectByIndex(int index)
+        {
+            if (allGameObjectsDict.ContainsKey(index))
+            {
+                return allGameObjectsDict[index];
+            }
+            return null;
         }
 
         public ref List<GameObject> GetAllGameObjects()

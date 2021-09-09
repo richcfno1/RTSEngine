@@ -121,7 +121,7 @@ namespace RTS.UI.Command
                                 {
                                     if (i.Key.MoveAbility != null)
                                     {
-                                        i.Key.MoveAbility.Move(i.Value);
+                                        i.Key.MoveAbility.MoveServerRpc(i.Value);
                                     }
                                     CreateGOToVectorUI(i.Key.gameObject, i.Value, Color.green);
                                 }
@@ -166,7 +166,7 @@ namespace RTS.UI.Command
                                 {
                                     if (i.Key.MoveAbility != null)
                                     {
-                                        i.Key.MoveAbility.Follow(followTarget.gameObject, i.Value - followTarget.transform.position);
+                                        i.Key.MoveAbility.FollowServerRpc(followTarget.Index, i.Value - followTarget.transform.position);
                                     }
                                     CreateGOToGOUI(i.Key.gameObject, followTarget.gameObject, Color.green);
                                 }
@@ -186,12 +186,12 @@ namespace RTS.UI.Command
                                 {
                                     if (i.GetComponent<UnitBaseScript>().AttackAbility != null)
                                     {
-                                        i.GetComponent<UnitBaseScript>().AttackAbility.Attack(attackTarget.gameObject);
+                                        i.GetComponent<UnitBaseScript>().AttackAbility.AttackServerRpc(attackTarget.Index);
                                         CreateGOToGOUI(i, attackTarget.gameObject, Color.red);
                                     }
                                     else if (i.GetComponent<UnitBaseScript>().MoveAbility != null)
                                     {
-                                        i.GetComponent<UnitBaseScript>().MoveAbility.Follow(attackTarget.gameObject);
+                                        i.GetComponent<UnitBaseScript>().MoveAbility.FollowServerRpc(attackTarget.Index);
                                         CreateGOToGOUI(i, attackTarget.gameObject, Color.green);
                                     }
                                 }

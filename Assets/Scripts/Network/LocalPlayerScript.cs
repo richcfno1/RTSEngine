@@ -33,12 +33,6 @@ namespace RTS.Network
 
         public override void NetworkStart()
         {
-            SubmitSetIndexRequestServerRpc();
-        }
-
-        [ServerRpc]
-        void SubmitSetIndexRequestServerRpc(ServerRpcParams rpcParams = default)
-        {
             if (int.TryParse(RTSNetworkManager.requiredlayerIndexText, out int value))
             {
                 PlayerIndex = value;
@@ -49,16 +43,10 @@ namespace RTS.Network
             }
         }
 
-        // Start is called before the first frame update
-        void Start()
+        [ServerRpc(RequireOwnership = false)]
+        public void PlayerCommandServerRpc(int indexInfo, Vector3 posInfo, bool boolInfo)
         {
-
-        }
-
-        // Update is called once per frame
-        void Update()
-        {
-
+            Debug.Log($"RPC!!!{indexInfo}:{posInfo}:{boolInfo}");
         }
     }
 }

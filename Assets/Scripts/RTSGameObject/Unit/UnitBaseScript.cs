@@ -202,19 +202,14 @@ namespace RTS.RTSGameObject.Unit
 
         private LineRenderer debugLineRender;
 
-        void Awake()
+        void Start()
         {
+            OnCreatedAction();
             if (displayDebugPath)
             {
                 debugLineRender = gameObject.AddComponent<LineRenderer>();
                 debugLineRender.startWidth = debugLineRender.endWidth = 5;
             }
-        }
-
-        void Start()
-        {
-            OnCreatedAction();
-
             Vector3 min = NavigationCollider.center - NavigationCollider.size * 0.5f;
             Vector3 max = NavigationCollider.center + NavigationCollider.size * 0.5f;
             agentDetectRayStartOffset.Add(Vector3.zero);
@@ -300,9 +295,12 @@ namespace RTS.RTSGameObject.Unit
         protected override void OnCreatedAction()
         {
             base.OnCreatedAction();
-            AttackPowerRatio = 1;
-            DefencePowerRatio = 1;
-            MovePowerRatio = 1;
+            if (NetworkManager.Singleton.IsServer)
+            {
+                AttackPowerRatio = 1;
+                DefencePowerRatio = 1;
+                MovePowerRatio = 1;
+            }
         }
 
         protected override void OnDestroyedAction()

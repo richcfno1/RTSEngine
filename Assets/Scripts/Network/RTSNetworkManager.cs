@@ -55,21 +55,5 @@ namespace RTS.Network
 
             GUILayout.EndArea();
         }
-
-        static void SubmitNewPosition()
-        {
-            //if (GUILayout.Button(NetworkManager.Singleton.IsServer ? "Move" : "Request Position Change"))
-            //{
-            //    if (NetworkManager.Singleton.ConnectedClients.TryGetValue(NetworkManager.Singleton.LocalClientId,
-            //        out var networkedClient))
-            //    {
-            //        var player = networkedClient.PlayerObject.GetComponent<HelloWorldPlayer>();
-            //        if (player)
-            //        {
-            //            player.Move();
-            //        }
-            //    }
-            //}
-        }
     }
 }

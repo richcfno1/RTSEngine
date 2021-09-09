@@ -93,26 +93,30 @@ namespace RTS.RTSGameObject
         private NetworkVariable<GameObject> networkLastDamagedBy = new NetworkVariable<GameObject>();
         private NetworkVariable<GameObject> networkLastRepairedBy = new NetworkVariable<GameObject>();
 
-        private void OnNetworkInstantiate()
-        {
-            if (NetworkManager.Singleton != null && !NetworkManager.Singleton.IsServer)
-            {
-                OnCreatedAction();
-            }
-        }
+        // both client and server will run it
+        //void OnNetworkInstantiate()
+        //{
+        //    OnCreatedAction();
+        //    if (NetworkManager.Singleton != null && !NetworkManager.Singleton.IsServer)
+        //    {
+        //        GameManager.GameManagerInstance.InstantiateUnitClient(gameObject);
+        //    }
+        //}
 
+        // called by Despawn, for client to clear info in game manager
         void OnDestroy()
         {
-            if (NetworkManager.Singleton != null && !NetworkManager.Singleton.IsServer)
-            {
-                OnDestroyedAction();
-            }
+            GameManager.GameManagerInstance.OnGameObjectDestroyed(gameObject, LastDamagedBy);
         }
 
         protected virtual void OnCreatedAction()
         {
             GameManager.GameManagerInstance.OnGameObjectCreated(gameObject);
-            if (NetworkManager.Singleton.IsServer)
+            if (NetworkManager.Singleton != null && !NetworkManager.Singleton.IsServer)
+            {
+                GameManager.GameManagerInstance.InstantiateUnitClient(gameObject);
+            }
+            else if (NetworkManager.Singleton.IsServer)
             {
                 HP = maxHP;
                 gameObject.GetComponent<NetworkObject>().Spawn();
@@ -121,7 +125,6 @@ namespace RTS.RTSGameObject
 
         protected virtual void OnDestroyedAction()
         {
-            GameManager.GameManagerInstance.OnGameObjectDestroyed(gameObject, LastDamagedBy);
             if (NetworkManager.Singleton.IsServer)
             {
                 if (onDestroyedEffect != null)
