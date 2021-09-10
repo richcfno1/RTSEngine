@@ -4923,6 +4923,8 @@ GameObject:
   - component: {fileID: 1346170924753124618}
   - component: {fileID: 1346170924753124619}
   - component: {fileID: 1270299357043665751}
+  - component: {fileID: -3233748594472809746}
+  - component: {fileID: 7165371273278674611}
   m_Layer: 0
   m_Name: Cruiser1
   m_TagString: Ship
@@ -5123,6 +5125,71 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &-3233748594472809746
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2193224993948778588}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  NetworkInstanceId: 0
+  PrefabHash: 8759601722652479639
+  PrefabHashGenerator: Cruiser1
+  AlwaysReplicateAsRoot: 0
+  DontDestroyWithOwner: 0
+--- !u!114 &7165371273278674611
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2193224993948778588}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e96cb6065543e43c4a752faaa1468eb1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  FixedSendsPerSecond: 30
+  AssumeSyncedSends: 1
+  InterpolatePosition: 1
+  SnapDistance: 10
+  InterpolateServer: 1
+  MinMeters: 0
+  MinDegrees: 0
+  ExtrapolatePosition: 0
+  MaxSendsToExtrapolate: 5
+  Channel: 
+  EnableRange: 0
+  EnableNonProvokedResendChecks: 0
+  DistanceSendrate:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 20
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 500
+      value: 20
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &2286014113197846733
 GameObject:
   m_ObjectHideFlags: 0
@@ -34579,13 +34646,13 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 97c5f402184ee374b91bf00be89e1b89, type: 3}
---- !u!1 &1748747694016577347 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 4153258078447466168, guid: 97c5f402184ee374b91bf00be89e1b89, type: 3}
-  m_PrefabInstance: {fileID: 2443091697878813179}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &1748747694016577345 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4153258078447466170, guid: 97c5f402184ee374b91bf00be89e1b89, type: 3}
+  m_PrefabInstance: {fileID: 2443091697878813179}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1748747694016577347 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4153258078447466168, guid: 97c5f402184ee374b91bf00be89e1b89, type: 3}
   m_PrefabInstance: {fileID: 2443091697878813179}
   m_PrefabAsset: {fileID: 0}

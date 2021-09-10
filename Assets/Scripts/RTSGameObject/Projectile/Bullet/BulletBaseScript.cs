@@ -1,4 +1,4 @@
-using System.Collections;
+using MLAPI;
 using System.Collections.Generic;
 using UnityEngine;
 using RTS.RTSGameObject;
@@ -55,17 +55,26 @@ namespace RTS.RTSGameObject.Projectile.Bullet
                 {
                     if (hit.collider != other && hit.collider.GetComponent<SubsystemBaseScript>() != null)
                     {
-                        hit.collider.GetComponent<SubsystemBaseScript>().CreateDamage(damage, attackPowerReduce, defencePowerReduce, movePowerReduce, createdBy);
+                        if (NetworkManager.Singleton.IsServer)
+                        {
+                            hit.collider.GetComponent<SubsystemBaseScript>().CreateDamage(damage, attackPowerReduce, defencePowerReduce, movePowerReduce, createdBy);
+                        }
                         Instantiate(hitEffect, transform.position, new Quaternion());
                         Destroy(gameObject);
                         return;
                     }
                 }
-                other.GetComponent<RTSGameObjectBaseScript>().CreateDamage(damage, attackPowerReduce, defencePowerReduce, movePowerReduce, createdBy);
+                if (NetworkManager.Singleton.IsServer)
+                {
+                    other.GetComponent<RTSGameObjectBaseScript>().CreateDamage(damage, attackPowerReduce, defencePowerReduce, movePowerReduce, createdBy);
+                }
             }
             else if (other.GetComponent<RTSGameObjectBaseScript>() != null)
             {
-                other.GetComponent<RTSGameObjectBaseScript>().CreateDamage(damage, attackPowerReduce, defencePowerReduce, movePowerReduce, createdBy);
+                if (NetworkManager.Singleton.IsServer)
+                {
+                    other.GetComponent<RTSGameObjectBaseScript>().CreateDamage(damage, attackPowerReduce, defencePowerReduce, movePowerReduce, createdBy);
+                }
             }
             if (hitEffect != null)
             {

@@ -5,6 +5,7 @@ using UnityEngine;
 using System.Linq;
 using RTS.RTSGameObject.Projectile.Bullet;
 using RTS.Helper;
+using MLAPI.Messaging;
 
 namespace RTS.RTSGameObject.Subsystem
 {
@@ -35,6 +36,8 @@ namespace RTS.RTSGameObject.Subsystem
         {
             if (!NetworkManager.Singleton.IsServer)
             {
+                // Aim only (play animation only)
+                RotateTurret();
                 return;
             }
             if (HP <= 0)
@@ -94,8 +97,10 @@ namespace RTS.RTSGameObject.Subsystem
             }
         }
 
-        protected virtual void Fire(int index)
+        [ClientRpc]
+        private void FireClientRpc(int index, int seed)
         {
+            Random.InitState(seed);
             GameObject temp = Instantiate(bullet, bulletStartPosition[index].position, turretBarrels.rotation);
             BulletBaseScript tempScript = temp.GetComponent<BulletBaseScript>();
             tempScript.moveDirection = turretBarrels.forward + turretBarrels.right * Random.Range(-allowedRandomAngle, allowedRandomAngle) +
@@ -103,6 +108,19 @@ namespace RTS.RTSGameObject.Subsystem
             tempScript.toIgnore.Add(GetComponent<Collider>());
             tempScript.toIgnore.Add(Host.GetComponent<Collider>());
             tempScript.createdBy = Host.gameObject;
+        }
+
+        protected virtual void Fire(int index)
+        {
+            SetSeed();
+            GameObject temp = Instantiate(bullet, bulletStartPosition[index].position, turretBarrels.rotation);
+            BulletBaseScript tempScript = temp.GetComponent<BulletBaseScript>();
+            tempScript.moveDirection = turretBarrels.forward + turretBarrels.right * Random.Range(-allowedRandomAngle, allowedRandomAngle) +
+                turretBarrels.up * Random.Range(-allowedRandomAngle, allowedRandomAngle);
+            tempScript.toIgnore.Add(GetComponent<Collider>());
+            tempScript.toIgnore.Add(Host.GetComponent<Collider>());
+            tempScript.createdBy = Host.gameObject;
+            FireClientRpc(index, GameManager.GameManagerInstance.FrameCount + Index);
         }
 
         // Try to find a target by the order, compare angleY first, then check obstacles

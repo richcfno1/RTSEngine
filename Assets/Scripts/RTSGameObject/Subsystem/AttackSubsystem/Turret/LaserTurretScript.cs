@@ -1,4 +1,5 @@
 using MLAPI;
+using MLAPI.Messaging;
 using RTS.Helper;
 using System.Collections;
 using System.Collections.Generic;
@@ -100,6 +101,16 @@ namespace RTS.RTSGameObject.Subsystem
             }
         }
 
+        [ClientRpc]
+        private void FireClientRpc(int laserIndex, int targetIndex)
+        {
+            laserRenderer.enabled = true;
+            laserRenderer.SetPositions(new Vector3[] { laserStartPosition[laserIndex].position, 
+                GameManager.GameManagerInstance.GetGameObjectByIndex(targetIndex).transform.position });
+            StopAllCoroutines();
+            StartCoroutine(HideLaser(laserAppearTime));
+        }
+
         protected virtual void Fire(int laserIndex, GameObject hit)
         {
             laserRenderer.enabled = true;
@@ -107,7 +118,9 @@ namespace RTS.RTSGameObject.Subsystem
             hit.GetComponent<RTSGameObjectBaseScript>().CreateDamage(damage, attackPowerReduce, defencePowerReduce, movePowerReduce, Host.gameObject);
             StopAllCoroutines();
             StartCoroutine(HideLaser(laserAppearTime));
+            FireClientRpc(laserIndex, hit.GetComponent<RTSGameObjectBaseScript>().Index);
         }
+
         private IEnumerator HideLaser(float waitTime)
         {
             yield return new WaitForSeconds(waitTime);
