@@ -141,7 +141,7 @@ namespace RTS
             GameObjectLibrary = JsonConvert.DeserializeObject<Dictionary<string, string>>(gameObjectLibraryAsset.text);
 
 #if UNITY_EDITOR
-#else
+//#else
             NetworkManager.Singleton.StartHost();
 #endif
 
@@ -485,6 +485,14 @@ namespace RTS
             }
             UnitLibraryData libraryData = UnitLibrary[unitScript.UnitTypeID];
 
+            foreach (UnitBaseScript.AnchorData i in unitScript.subsyetemAnchors)
+            {
+                if (i.anchor.GetComponentInChildren<SubsystemBaseScript>() != null)
+                {
+                    i.subsystem = i.anchor.GetComponentInChildren<SubsystemBaseScript>().gameObject;
+                }
+            }
+
             // Init common ability
             foreach (KeyValuePair<string, List<string>> ability in libraryData.commonAbilities)
             {
@@ -509,18 +517,17 @@ namespace RTS
                 {
                     if (supportedSubsystemAnchor != libraryData.baseTypeName)
                     {
-                        GameObject temp = unitScript.subsyetemAnchors.FirstOrDefault(x => x.anchorName == supportedSubsystemAnchor).anchor;
-                        temp = temp.GetComponentInChildren<SubsystemBaseScript>().gameObject;
-                        if (temp == default)
+                        GameObject tempSubsystem = unitScript.subsyetemAnchors.FirstOrDefault(x => x.anchorName == supportedSubsystemAnchor).subsystem;
+                        if (tempSubsystem == default)
                         {
                             Debug.LogError("Cannot find subsystem: " + supportedSubsystemAnchor);
                         }
                         else
                         {
-                            if (temp.GetComponent<SubsystemBaseScript>().supportedCommonAbility.Contains(
+                            if (tempSubsystem.GetComponent<SubsystemBaseScript>().supportedCommonAbility.Contains(
                                 (CommonAbilityBaseScript.CommonAbilityType)Enum.Parse(typeof(CommonAbilityBaseScript.CommonAbilityType), ability.Key)))
                             {
-                                abilityScript.SupportedBy.Add(temp.GetComponent<SubsystemBaseScript>());
+                                abilityScript.SupportedBy.Add(tempSubsystem.GetComponent<SubsystemBaseScript>());
                             }
                             else
                             {

@@ -157,7 +157,11 @@ namespace RTS.RTSGameObject.Unit
             set { networkVisibleTo = value; }
         }
 
-        public FireControlStatus CurrentFireControlStatus { get; set; } = FireControlStatus.Passive;
+        public FireControlStatus CurrentFireControlStatus
+        {
+            get { return networkFireControlStatus.Value; }
+            set { networkFireControlStatus.Value = value; }
+        }
         public LinkedList<UnitAction> ActionQueue { get; protected set; } = new LinkedList<UnitAction>();
 
         public MoveAbilityScript MoveAbility { get; set; } = null;
@@ -200,6 +204,7 @@ namespace RTS.RTSGameObject.Unit
         private NetworkVariable<float> networkDefencePower = new NetworkVariable<float>(0);
         private NetworkVariable<float> networkMovePower = new NetworkVariable<float>(0);
         private NetworkList<int> networkVisibleTo = new NetworkList<int>();
+        private NetworkVariable<FireControlStatus> networkFireControlStatus = new NetworkVariable<FireControlStatus>(FireControlStatus.Passive);
 
         private LineRenderer debugLineRender;
 

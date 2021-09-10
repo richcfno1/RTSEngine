@@ -1,3 +1,5 @@
+using MLAPI;
+using RTS.Network;
 using RTS.RTSGameObject;
 using System.Collections.Generic;
 using UnityEngine;
@@ -22,9 +24,16 @@ namespace RTS.Ability.SpecialAbility
             }
         }
 
-        public virtual void UseAbility(GameObject target, bool clearQueue = true, bool addToEnd = true)
+        public virtual void UseAbility(int targetIndex, bool clearQueue = true, bool addToEnd = true)
         {
-            Host.UseSelectTargetSpecialAbility(this, target, clearQueue, addToEnd);
+            if (NetworkManager.Singleton != null && NetworkManager.Singleton.IsServer)
+            {
+                Host.UseSelectTargetSpecialAbility(this, GameManager.GameManagerInstance.GetGameObjectByIndex(targetIndex), clearQueue, addToEnd);
+            }
+            else
+            {
+                LocalPlayerScript.LocalPlayer.UseAbilityServerRpc(supportedBy.Index, targetIndex, clearQueue, addToEnd);
+            }
         }
     }
 }

@@ -1,6 +1,7 @@
 using MLAPI;
 using MLAPI.Messaging;
 using MLAPI.NetworkVariable;
+using RTS.Ability.SpecialAbility;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -56,6 +57,38 @@ namespace RTS.Network
             }
         }
 
+        // Attack Ability RPC
+        [ServerRpc]
+        public void SetPassiveServerRpc(int unitIndex)
+        {
+            GameManager.GameManagerInstance.GetUnitByIndex(unitIndex).AttackAbility.SetPassive();
+        }
+
+        [ServerRpc]
+        public void SetNeutralServerRpc(int unitIndex)
+        {
+            GameManager.GameManagerInstance.GetUnitByIndex(unitIndex).AttackAbility.SetNeutral();
+        }
+
+        [ServerRpc]
+        public void SetAggressiveServerRpc(int unitIndex)
+        {
+            GameManager.GameManagerInstance.GetUnitByIndex(unitIndex).AttackAbility.SetAggressive();
+        }
+
+        [ServerRpc]
+        public void AttackServerRpc(int unitIndex, int targetIndex, bool clearQueue = true, bool addToEnd = true)
+        {
+            GameManager.GameManagerInstance.GetUnitByIndex(unitIndex).AttackAbility.Attack(targetIndex, clearQueue, addToEnd);
+        }
+
+        [ServerRpc]
+        public void AttackAndMoveServerRpc(int unitIndex, Vector3 destination, bool clearQueue = true, bool addToEnd = true)
+        {
+            GameManager.GameManagerInstance.GetUnitByIndex(unitIndex).AttackAbility.AttackAndMove(destination, clearQueue, addToEnd);
+        }
+
+        // Move Ability RPC
         [ServerRpc]
         public void MoveServerRpc(int unitIndex, Vector3 destination, bool clearQueue = true, bool addToEnd = true)
         {
@@ -100,6 +133,40 @@ namespace RTS.Network
         {
             GameManager.GameManagerInstance.GetUnitByIndex(unitIndex).MoveAbility.KeepInRangeAndLookAt(targetIndex, 
                 offset, upperBound, lowerBound, clearQueue, addToEnd);
+        }
+
+        // Special Ability RPC
+        [ServerRpc]
+        public void UseAbilityServerRpc(int subsystemIndex, bool clearQueue = true, bool addToEnd = true)
+        {
+            NoSelectionSpecialAbilityScript ability = GameManager.GameManagerInstance.GetGameObjectByIndex(subsystemIndex).
+                GetComponent<NoSelectionSpecialAbilityScript>();
+            if (ability != null)
+            {
+                ability.UseAbility(clearQueue, addToEnd);
+            }
+        }
+
+        [ServerRpc]
+        public void UseAbilityServerRpc(int subsystemIndex, Vector3 target, bool clearQueue = true, bool addToEnd = true)
+        {
+            SelectSpaceSpecialAbilityScript ability = GameManager.GameManagerInstance.GetGameObjectByIndex(subsystemIndex).
+                GetComponent<SelectSpaceSpecialAbilityScript>();
+            if (ability != null)
+            {
+                ability.UseAbility(target, clearQueue, addToEnd);
+            }
+        }
+
+        [ServerRpc]
+        public void UseAbilityServerRpc(int subsystemIndex, int targetIndex, bool clearQueue = true, bool addToEnd = true)
+        {
+            SelectTargetSpecialAbilityScript ability = GameManager.GameManagerInstance.GetGameObjectByIndex(subsystemIndex).
+                GetComponent<SelectTargetSpecialAbilityScript>();
+            if (ability != null)
+            {
+                ability.UseAbility(targetIndex, clearQueue, addToEnd);
+            }
         }
     }
 }

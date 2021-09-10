@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using MLAPI;
 using UnityEngine;
 using RTS.RTSGameObject.Unit;
 
@@ -13,12 +12,15 @@ namespace RTS.RTSGameObject.Subsystem
         void Start()
         {
             OnCreatedAction();
-            timer = 0;
         }
 
         // Update is called once per frame
         void FixedUpdate()
         {
+            if (!NetworkManager.Singleton.IsServer)
+            {
+                return;
+            }
             if (HP <= 0)
             {
                 OnDestroyedAction();
@@ -27,20 +29,24 @@ namespace RTS.RTSGameObject.Subsystem
             {
                 OnSubsystemRepairedAction();
             }
-            if (timer < coolDown)
+            if (Timer < coolDown)
             {
-                timer += Time.fixedDeltaTime;
+                Timer += Time.fixedDeltaTime;
             }
         }
 
         public override bool Use(GameObject target)
         {
-            if (timer < coolDown)
+            if (!NetworkManager.Singleton.IsServer)
+            {
+                return false;
+            }
+            if (Timer < coolDown)
             {
                 return false;
             }
             target.GetComponent<UnitBaseScript>().CreateDamage(0, attackPowerReduceAmount, 0, 0, Host.gameObject);
-            timer = 0;
+            Timer = 0;
             return true;
         }
     }

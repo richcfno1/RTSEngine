@@ -6,6 +6,7 @@ using UnityEngine;
 using System;
 using MLAPI.Messaging;
 using RTS.RTSGameObject;
+using RTS.Network;
 
 namespace RTS.Ability.CommonAbility
 {
@@ -22,53 +23,83 @@ namespace RTS.Ability.CommonAbility
         {
             if (NetworkManager.Singleton != null && NetworkManager.Singleton.IsServer)
             {
-                SetAggressiveServerRpc();
+                SetNeutral();
             }
         }
 
-        [ServerRpc(RequireOwnership = false)]
-        public void SetPassiveServerRpc()
+        public void SetPassive()
         {
-            foreach (AttackSubsystemBaseScript i in SupportedBy)
+            if (NetworkManager.Singleton != null && NetworkManager.Singleton.IsServer)
             {
-                i.AllowAutoFire = false;
-                i.SetTarget(null);
+                foreach (AttackSubsystemBaseScript i in SupportedBy)
+                {
+                    i.AllowAutoFire = false;
+                    i.SetTarget(null);
+                }
+                Host.CurrentFireControlStatus = RTSGameObject.Unit.UnitBaseScript.FireControlStatus.Passive;
             }
-            Host.CurrentFireControlStatus = RTSGameObject.Unit.UnitBaseScript.FireControlStatus.Passive;
-        }
-
-        [ServerRpc(RequireOwnership = false)]
-        public void SetNeutralServerRpc()
-        {
-            foreach (AttackSubsystemBaseScript i in SupportedBy)
+            else
             {
-                i.AllowAutoFire = true;
-                i.SetTarget(new List<object>());
+                LocalPlayerScript.LocalPlayer.SetPassiveServerRpc(Host.Index);
             }
-            Host.CurrentFireControlStatus = RTSGameObject.Unit.UnitBaseScript.FireControlStatus.Neutral;
         }
 
-        [ServerRpc(RequireOwnership = false)]
-        public void SetAggressiveServerRpc()
+        public void SetNeutral()
         {
-            foreach (AttackSubsystemBaseScript i in SupportedBy)
+            if (NetworkManager.Singleton != null && NetworkManager.Singleton.IsServer)
             {
-                i.AllowAutoFire = true;
-                i.SetTarget(new List<object>());
+                foreach (AttackSubsystemBaseScript i in SupportedBy)
+                {
+                    i.AllowAutoFire = true;
+                    i.SetTarget(new List<object>());
+                }
+                Host.CurrentFireControlStatus = RTSGameObject.Unit.UnitBaseScript.FireControlStatus.Neutral;
             }
-            Host.CurrentFireControlStatus = RTSGameObject.Unit.UnitBaseScript.FireControlStatus.Aggressive;
+            else
+            {
+                LocalPlayerScript.LocalPlayer.SetNeutralServerRpc(Host.Index);
+            }
         }
 
-        [ServerRpc(RequireOwnership = false)]
-        public void AttackServerRpc(int targetIndex, bool clearQueue = true, bool addToEnd = true)
+        public void SetAggressive()
         {
-            Host.Attack(GameManager.GameManagerInstance.GetGameObjectByIndex(targetIndex), clearQueue, addToEnd);
+            if (NetworkManager.Singleton != null && NetworkManager.Singleton.IsServer)
+            {
+                foreach (AttackSubsystemBaseScript i in SupportedBy)
+                {
+                    i.AllowAutoFire = true;
+                    i.SetTarget(new List<object>());
+                }
+                Host.CurrentFireControlStatus = RTSGameObject.Unit.UnitBaseScript.FireControlStatus.Aggressive;
+            }
+            else
+            {
+                LocalPlayerScript.LocalPlayer.SetAggressiveServerRpc(Host.Index);
+            }
         }
 
-        [ServerRpc(RequireOwnership = false)]
-        public void AttackAndMoveServerRpc(Vector3 destination, bool clearQueue = true, bool addToEnd = true)
+        public void Attack(int targetIndex, bool clearQueue = true, bool addToEnd = true)
         {
-            Host.AttackAndMove(destination, clearQueue, addToEnd);
+            if (NetworkManager.Singleton != null && NetworkManager.Singleton.IsServer)
+            {
+                Host.Attack(GameManager.GameManagerInstance.GetGameObjectByIndex(targetIndex), clearQueue, addToEnd);
+            }
+            else
+            {
+                LocalPlayerScript.LocalPlayer.AttackServerRpc(Host.Index, targetIndex, addToEnd);
+            }
+        }
+
+        public void AttackAndMove(Vector3 destination, bool clearQueue = true, bool addToEnd = true)
+        {
+            if (NetworkManager.Singleton != null && NetworkManager.Singleton.IsServer)
+            {
+                Host.AttackAndMove(destination, clearQueue, addToEnd);
+            }
+            else
+            {
+                LocalPlayerScript.LocalPlayer.AttackAndMoveServerRpc(Host.Index, destination, clearQueue, addToEnd);
+            }
         }
 
         public void HandleAttackStop()

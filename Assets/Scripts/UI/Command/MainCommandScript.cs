@@ -186,7 +186,7 @@ namespace RTS.UI.Command
                                 {
                                     if (i.GetComponent<UnitBaseScript>().AttackAbility != null)
                                     {
-                                        i.GetComponent<UnitBaseScript>().AttackAbility.AttackServerRpc(attackTarget.Index);
+                                        i.GetComponent<UnitBaseScript>().AttackAbility.Attack(attackTarget.Index);
                                         CreateGOToGOUI(i, attackTarget.gameObject, Color.red);
                                     }
                                     else if (i.GetComponent<UnitBaseScript>().MoveAbility != null)

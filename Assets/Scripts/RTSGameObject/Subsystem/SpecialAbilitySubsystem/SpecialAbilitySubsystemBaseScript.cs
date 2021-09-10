@@ -1,5 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
+using MLAPI;
+using MLAPI.NetworkVariable;
 using UnityEngine;
 
 namespace RTS.RTSGameObject.Subsystem
@@ -8,7 +8,13 @@ namespace RTS.RTSGameObject.Subsystem
     {
         public float coolDown;
 
-        protected float timer;
+        protected float Timer
+        {
+            get { return networkCoolDown.Value; }
+            set { networkCoolDown.Value = value; }
+        }
+
+        private NetworkVariable<float> networkCoolDown = new NetworkVariable<float>(0);
 
         public virtual bool Use()
         {
@@ -27,7 +33,7 @@ namespace RTS.RTSGameObject.Subsystem
         // 1 = ready
         public virtual float GetCoolDownPercent()
         {
-            return timer / coolDown;
+            return Timer / coolDown;
         }
     }
 }

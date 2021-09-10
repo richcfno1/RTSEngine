@@ -1,4 +1,6 @@
-﻿using RTS.RTSGameObject;
+﻿using MLAPI;
+using RTS.Network;
+using RTS.RTSGameObject;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -18,7 +20,14 @@ namespace RTS.Ability.SpecialAbility
 
         public virtual void UseAbility(Vector3 target, bool clearQueue = true, bool addToEnd = true)
         {
-            Host.UseSelectSpaceSpecialAbility(this, target, clearQueue, addToEnd);
+            if (NetworkManager.Singleton != null && NetworkManager.Singleton.IsServer)
+            {
+                Host.UseSelectSpaceSpecialAbility(this, target, clearQueue, addToEnd);
+            }
+            else
+            {
+                LocalPlayerScript.LocalPlayer.UseAbilityServerRpc(supportedBy.Index, target, clearQueue, addToEnd);
+            }
         }
     }
 }

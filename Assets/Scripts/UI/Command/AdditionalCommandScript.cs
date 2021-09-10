@@ -360,7 +360,7 @@ namespace RTS.UI.Command
                         {
                             if (i.Key.AttackAbility != null)
                             {
-                                i.Key.AttackAbility.AttackServerRpc(attackTarget.Index);
+                                i.Key.AttackAbility.Attack(attackTarget.Index);
                                 CreateGOToGOUI(i.Key.gameObject, attackTarget.gameObject, Color.red);
                             }
                             else if (i.Key.MoveAbility != null)
@@ -435,7 +435,7 @@ namespace RTS.UI.Command
                     {
                         if (i.Key.AttackAbility != null && i.Key.MoveAbility != null)
                         {
-                            i.Key.AttackAbility.AttackAndMoveServerRpc(i.Value);
+                            i.Key.AttackAbility.AttackAndMove(i.Value);
                             CreateGOToVectorUI(i.Key.gameObject, i.Value, Color.red);
                         }
                         else if (i.Key.MoveAbility != null)
@@ -495,7 +495,7 @@ namespace RTS.UI.Command
                     }
                     ClearAllTargetDisplayUI();
                     Vector3 destination = followTarget.transform.position + followTarget.radius * 2 *
-                        (SelectControlScript.SelectionControlInstance.FindCenter() - followTarget.transform.position);
+                        (SelectControlScript.SelectionControlInstance.FindCenter() - followTarget.transform.position).normalized;
                     foreach (KeyValuePair<UnitBaseScript, Vector3> i in FindDestination(allAgents, destination, destination -
                         SelectControlScript.SelectionControlInstance.FindCenter(), true))
                     {
@@ -815,7 +815,7 @@ namespace RTS.UI.Command
                     foreach (SpecialAbilityBaseScript i in abilities)
                     {
                         SelectTargetSpecialAbilityScript temp = (SelectTargetSpecialAbilityScript)i;
-                        temp.UseAbility(target.gameObject);
+                        temp.UseAbility(target.Index);
                     }
                 }
                 InputManager.InputManagerInstance.CurrentCommandActionState = InputManager.CommandActionState.NoAction;
@@ -918,7 +918,7 @@ namespace RTS.UI.Command
             {
                 if (i.GetComponent<UnitBaseScript>() != null && i.GetComponent<UnitBaseScript>().AttackAbility != null)
                 {
-                    i.GetComponent<UnitBaseScript>().AttackAbility.SetAggressiveServerRpc();
+                    i.GetComponent<UnitBaseScript>().AttackAbility.SetAggressive();
                 }
             }
         }
@@ -933,7 +933,7 @@ namespace RTS.UI.Command
             {
                 if (i.GetComponent<UnitBaseScript>() != null && i.GetComponent<UnitBaseScript>().AttackAbility != null)
                 {
-                    i.GetComponent<UnitBaseScript>().AttackAbility.SetNeutralServerRpc();
+                    i.GetComponent<UnitBaseScript>().AttackAbility.SetNeutral();
                 }
             }
         }
@@ -948,7 +948,7 @@ namespace RTS.UI.Command
             {
                 if (i.GetComponent<UnitBaseScript>() != null && i.GetComponent<UnitBaseScript>().AttackAbility != null)
                 {
-                    i.GetComponent<UnitBaseScript>().AttackAbility.SetPassiveServerRpc();
+                    i.GetComponent<UnitBaseScript>().AttackAbility.SetPassive();
                 }
             }
         }

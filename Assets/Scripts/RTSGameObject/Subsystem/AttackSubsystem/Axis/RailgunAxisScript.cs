@@ -1,4 +1,4 @@
-using System.Collections;
+using MLAPI;
 using System.Collections.Generic;
 using UnityEngine;
 using RTS.RTSGameObject.Projectile.Bullet;
@@ -29,6 +29,10 @@ namespace RTS.RTSGameObject.Subsystem
         // Update is called once per frame
         void Update()
         {
+            if (!NetworkManager.Singleton.IsServer)
+            {
+                return;
+            }
             if (HP <= 0)
             {
                 OnDestroyedAction();
