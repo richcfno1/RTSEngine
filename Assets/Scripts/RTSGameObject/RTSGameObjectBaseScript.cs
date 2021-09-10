@@ -136,6 +136,10 @@ namespace RTS.RTSGameObject
         private NetworkVariable<int> networkLastDamagedBy = new NetworkVariable<int>(-1);
         private NetworkVariable<int> networkLastRepairedBy = new NetworkVariable<int>(-1);
 
+        protected NetworkVariable<int> networkStartDelayCounter = new NetworkVariable<int>(new NetworkVariableSettings
+        {
+            SendTickrate = -1
+        });
         protected NetworkVariable<ulong> networkStartParentID = new NetworkVariable<ulong>(new NetworkVariableSettings
         {
             SendTickrate = -1
@@ -144,16 +148,19 @@ namespace RTS.RTSGameObject
         {
             SendTickrate = -1
         });
-
+        // some RTSGO must init after some others
+        protected int delayCounter = 0;
         // client must destory RTSGO inside other RTSGO to sync with server
         // to achieve this, destroy this RTSGO, but do not call on destroy event
         private bool isClientClearPrefabDestroy = false;
 
-        public void ServerInit(ulong parentID, string directParentName)
+        public void ServerInit(int delayCounter, ulong parentID, string directParentName)
         {
+            networkStartDelayCounter.Value = delayCounter;
             networkStartParentID.Value = parentID;
             networkStartDirectParentName.Value = directParentName;
         }
+
         // called by Despawn, for client to clear info in game manager
         void OnDestroy()
         {
@@ -166,18 +173,11 @@ namespace RTS.RTSGameObject
             }
         }
 
-        protected virtual void OnCreatedAction()
+        protected virtual void NetworkInitSync()
         {
-            if (Index == -1)
+            if (NetworkManager.Singleton != null && !NetworkManager.Singleton.IsServer && delayCounter >= networkStartDelayCounter.Value)
             {
-                isClientClearPrefabDestroy = true;
-                Destroy(gameObject);
-                return;
-            }
-
-            // Sync
-            if (NetworkManager.Singleton != null && !NetworkManager.Singleton.IsServer)
-            {
+                delayCounter = -1;
                 Debug.Log("WOW1!");
                 foreach (GameObject i in GameManager.GameManagerInstance.GetAllUnits())
                 {
@@ -189,6 +189,7 @@ namespace RTS.RTSGameObject
                             if (j.gameObject.name == networkStartDirectParentName.Value)
                             {
                                 transform.SetParent(j);
+                                i.GetComponent<RTSGameObjectBaseScript>().delayCounter++;
                                 return;
                             }
                         }
@@ -196,6 +197,18 @@ namespace RTS.RTSGameObject
                 }
                 transform.SetParent(GameManager.GameManagerInstance.masterObject);
             }
+        }
+
+        protected virtual void OnCreatedAction()
+        {
+            if (Index == -1)
+            {
+                isClientClearPrefabDestroy = true;
+                Destroy(gameObject);
+                return;
+            }
+
+            NetworkInitSync();
 
             GameManager.GameManagerInstance.OnGameObjectCreated(gameObject);
             if (NetworkManager.Singleton != null && NetworkManager.Singleton.IsServer)

@@ -332,6 +332,7 @@ namespace RTS
             }
 
             UnitBaseScript unitScript = result.GetComponent<UnitBaseScript>();
+            int subsystemCounter = 0;
             if (unitScript != null)
             {
                 unitScript.UnitTypeID = unitType;
@@ -379,6 +380,7 @@ namespace RTS
                     }
                     if (anchorData.subsystem != null)
                     {
+                        subsystemCounter++;
                         SetBelongAndIndex(anchorData.subsystem, belongTo);
                     }
                 }
@@ -460,14 +462,14 @@ namespace RTS
 
             // Client Spawn
             result.GetComponent<NetworkObject>().Spawn();
-            result.GetComponent<RTSGameObjectBaseScript>().ServerInit(0, "");
+            result.GetComponent<RTSGameObjectBaseScript>().ServerInit(subsystemCounter, 0, "");
             if (unitScript != null)
             {
                 foreach (UnitBaseScript.AnchorData anchorData in unitScript.subsyetemAnchors)
                 {
                     SubsystemBaseScript subsystemScript = anchorData.subsystem.GetComponent<SubsystemBaseScript>();
                     subsystemScript.GetComponent<NetworkObject>().Spawn();
-                    subsystemScript.ServerInit(result.GetComponent<NetworkObject>().NetworkObjectId, anchorData.anchorName);
+                    subsystemScript.ServerInit(0, result.GetComponent<NetworkObject>().NetworkObjectId, anchorData.anchorName);
                 }
             }
 
@@ -507,7 +509,8 @@ namespace RTS
                 {
                     if (supportedSubsystemAnchor != libraryData.baseTypeName)
                     {
-                        GameObject temp = unitScript.subsyetemAnchors.FirstOrDefault(x => x.anchorName == supportedSubsystemAnchor).subsystem;
+                        GameObject temp = unitScript.subsyetemAnchors.FirstOrDefault(x => x.anchorName == supportedSubsystemAnchor).anchor;
+                        temp = temp.GetComponentInChildren<SubsystemBaseScript>().gameObject;
                         if (temp == default)
                         {
                             Debug.LogError("Cannot find subsystem: " + supportedSubsystemAnchor);

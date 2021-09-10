@@ -12,15 +12,30 @@ namespace RTS.RTSGameObject.Unit
         // Update is called once per frame
         void FixedUpdate()
         {
+            // Vision
+            if (visionArea != null && BelongTo == GameManager.GameManagerInstance.SelfIndex)
+            {
+                visionArea.transform.localScale = new Vector3(visionRange, visionRange, visionRange) * 2;
+            }
+
             if (!NetworkManager.Singleton.IsServer)
             {
+                if (delayCounter != -1)
+                {
+                    NetworkInitSync();
+                }
                 return;
             }
+
             SetSeed();
             if (HP <= 0)
             {
                 OnDestroyedAction();
                 return;
+            }
+            if (lockRotationZ)
+            {
+                thisBody.MoveRotation(Quaternion.Euler(thisBody.rotation.eulerAngles.x, thisBody.rotation.eulerAngles.y, 0));
             }
 
             // Recover

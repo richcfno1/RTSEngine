@@ -277,28 +277,11 @@ namespace RTS.RTSGameObject.Unit
             }    
         }
 
-        void FixedUpdate()
+        protected override void NetworkInitSync()
         {
-            // Vision
-            if (visionArea != null && BelongTo == GameManager.GameManagerInstance.SelfIndex)
+            if (NetworkManager.Singleton != null && !NetworkManager.Singleton.IsServer && delayCounter >= networkStartDelayCounter.Value)
             {
-                visionArea.transform.localScale = new Vector3(visionRange, visionRange, visionRange) * 2;
-            }
-            if (NetworkManager.Singleton.IsServer)
-            {
-                if (lockRotationZ)
-                {
-                    thisBody.MoveRotation(Quaternion.Euler(thisBody.rotation.eulerAngles.x, thisBody.rotation.eulerAngles.y, 0));
-                }
-            }
-        }
-
-
-        protected override void OnCreatedAction()
-        {
-            // Sync
-            if (NetworkManager.Singleton != null && !NetworkManager.Singleton.IsServer)
-            {
+                delayCounter = -1;
                 Debug.Log("WOW2!");
                 foreach (GameObject i in GameManager.GameManagerInstance.GetAllUnits())
                 {
@@ -319,6 +302,11 @@ namespace RTS.RTSGameObject.Unit
                 transform.SetParent(GameManager.GameManagerInstance.masterObject);
                 GameManager.GameManagerInstance.InstantiateClientUnit(gameObject);
             }
+        }
+
+        protected override void OnCreatedAction()
+        {
+            NetworkInitSync();
 
             GameManager.GameManagerInstance.OnGameObjectCreated(gameObject);
             if (NetworkManager.Singleton != null && NetworkManager.Singleton.IsServer)
