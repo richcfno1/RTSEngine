@@ -141,7 +141,7 @@ namespace RTS
             GameObjectLibrary = JsonConvert.DeserializeObject<Dictionary<string, string>>(gameObjectLibraryAsset.text);
 
 #if UNITY_EDITOR
-//#else
+#else
             NetworkManager.Singleton.StartHost();
 #endif
 
@@ -467,9 +467,12 @@ namespace RTS
             {
                 foreach (UnitBaseScript.AnchorData anchorData in unitScript.subsyetemAnchors)
                 {
-                    SubsystemBaseScript subsystemScript = anchorData.subsystem.GetComponent<SubsystemBaseScript>();
-                    subsystemScript.GetComponent<NetworkObject>().Spawn();
-                    subsystemScript.ServerInit(0, result.GetComponent<NetworkObject>().NetworkObjectId, anchorData.anchorName);
+                    if (anchorData.subsystem != null)
+                    {
+                        SubsystemBaseScript subsystemScript = anchorData.subsystem.GetComponent<SubsystemBaseScript>();
+                        subsystemScript.GetComponent<NetworkObject>().Spawn();
+                        subsystemScript.ServerInit(0, result.GetComponent<NetworkObject>().NetworkObjectId, anchorData.anchorName);
+                    }
                 }
             }
 

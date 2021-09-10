@@ -20,6 +20,7 @@ namespace RTS.RTSGameObject.Projectile.Bullet
         public List<Collider> toIgnore = new List<Collider>();
 
         private Vector3 lastPosition;
+        private float timer;
 
 
         // Start is called before the first frame update
@@ -85,6 +86,17 @@ namespace RTS.RTSGameObject.Projectile.Bullet
             {
                 OnDestroyedAction();
             }
+        }
+
+        protected override void OnCreatedAction()
+        {
+            base.OnCreatedAction();
+        }
+
+        protected override void OnDestroyedAction()
+        {
+            base.OnDestroyedAction();
+            Destroy(gameObject);
         }
     }
 }

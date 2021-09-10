@@ -54,6 +54,23 @@
         "Carrier": []
       },
       "scripts": {}
+    },
+    {
+      "unitTypeName": "StandardCruiser",
+      "baseTypeName": "Cruiser1",
+      "properties": {},
+      "subsystems": {
+        "TurretAnchor9": "AimlessMissileLauncher1",
+        "TurretAnchor10": "AimlessMissileLauncher1",
+        "TurretAnchor11": "Turret1",
+        "TurretAnchor12": "Turret1",
+        "TurretAnchor13": "Turret1",
+        "TurretAnchor14": "Turret1"
+      },
+      "commonAbilities": {
+        "Move": [ "Cruiser1" ],
+        "Attack": [ "TurretAnchor9", "TurretAnchor10", "TurretAnchor11", "TurretAnchor12", "TurretAnchor13", "TurretAnchor14" ]
+      }
     }
   ],
   "initUnitData": [
@@ -73,12 +90,12 @@
       }
     },
     {
-      "type": "StandardFighter",
+      "type": "StandardCruiser",
       "belongTo": 1,
       "position": {
         "x": 0.0,
         "y": 0.0,
-        "z": 100.0
+        "z": 200.0
       },
       "rotation": {
         "x": 0.0,
@@ -123,6 +140,36 @@
       "position": {
         "x": -20.0,
         "y": 0.0,
+        "z": -50.0
+      },
+      "rotation": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "w": 0.0
+      }
+    },
+    {
+      "type": "StandardFrigate",
+      "belongTo": 0,
+      "position": {
+        "x": -20.0,
+        "y": 30.0,
+        "z": -50.0
+      },
+      "rotation": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "w": 0.0
+      }
+    },
+    {
+      "type": "StandardFrigate",
+      "belongTo": 0,
+      "position": {
+        "x": -20.0,
+        "y": 30.0,
         "z": -50.0
       },
       "rotation": {

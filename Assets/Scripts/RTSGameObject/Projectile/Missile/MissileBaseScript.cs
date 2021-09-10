@@ -1,9 +1,12 @@
+using MLAPI;
+using MLAPI.NetworkVariable;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using RTS.RTSGameObject;
 using RTS.Helper;
 using System.Linq;
+using MLAPI.Messaging;
 
 namespace RTS.RTSGameObject.Projectile.Missile
 {
@@ -53,40 +56,43 @@ namespace RTS.RTSGameObject.Projectile.Missile
         private float estimatedMaxSpeed;
 
         private LineRenderer debugLineRender;
+        private NetworkVariable<float> timer = new NetworkVariable<float>(0);
 
         // Start is called before the first frame update
         void Start()
         {
             OnCreatedAction();
-
-            thisBody = GetComponent<Rigidbody>();
-            foreach (Collider i in GetComponentsInChildren<Collider>())
-            {
-                i.enabled = false;
-            }
-            StartCoroutine(EnableCollider(timeBeforeEnableCollider));
-
-            Vector3 min = NavigationCollider.center - NavigationCollider.size * 0.5f;
-            Vector3 max = NavigationCollider.center + NavigationCollider.size * 0.5f;
-            agentCorners.Add(Vector3.zero);
-            agentCorners.Add(new Vector3(min.x, min.y, min.z));
-            agentCorners.Add(new Vector3(min.x, min.y, max.z));
-            agentCorners.Add(new Vector3(min.x, max.y, min.z));
-            agentCorners.Add(new Vector3(min.x, max.y, max.z));
-            agentCorners.Add(new Vector3(max.x, min.y, min.z));
-            agentCorners.Add(new Vector3(max.x, min.y, max.z));
-            agentCorners.Add(new Vector3(max.x, max.y, min.z));
-            agentCorners.Add(new Vector3(max.x, max.y, max.z));
-
-            toIgnore = GetComponentsInChildren<Collider>().ToList();
-            toIgnore.AddRange(createdBy.GetComponentsInChildren<Collider>());
-            toIgnore.AddRange(target.GetComponentsInChildren<Collider>());
-            estimatedMaxSpeed = ((maxForce * forceMultiplier / thisBody.drag) - Time.fixedDeltaTime * maxForce * forceMultiplier) / thisBody.mass;
-
             if (displayDebugPath)
             {
                 debugLineRender = gameObject.AddComponent<LineRenderer>();
                 debugLineRender.startWidth = debugLineRender.endWidth = 2;
+            }
+
+            if (NetworkManager.Singleton.IsServer)
+            {
+                thisBody = GetComponent<Rigidbody>();
+                foreach (Collider i in GetComponentsInChildren<Collider>())
+                {
+                    i.enabled = false;
+                }
+                StartCoroutine(EnableCollider(timeBeforeEnableCollider));
+
+                Vector3 min = NavigationCollider.center - NavigationCollider.size * 0.5f;
+                Vector3 max = NavigationCollider.center + NavigationCollider.size * 0.5f;
+                agentCorners.Add(Vector3.zero);
+                agentCorners.Add(new Vector3(min.x, min.y, min.z));
+                agentCorners.Add(new Vector3(min.x, min.y, max.z));
+                agentCorners.Add(new Vector3(min.x, max.y, min.z));
+                agentCorners.Add(new Vector3(min.x, max.y, max.z));
+                agentCorners.Add(new Vector3(max.x, min.y, min.z));
+                agentCorners.Add(new Vector3(max.x, min.y, max.z));
+                agentCorners.Add(new Vector3(max.x, max.y, min.z));
+                agentCorners.Add(new Vector3(max.x, max.y, max.z));
+
+                toIgnore = GetComponentsInChildren<Collider>().ToList();
+                toIgnore.AddRange(createdBy.GetComponentsInChildren<Collider>());
+                toIgnore.AddRange(target.GetComponentsInChildren<Collider>());
+                estimatedMaxSpeed = ((maxForce * forceMultiplier / thisBody.drag) - Time.fixedDeltaTime * maxForce * forceMultiplier) / thisBody.mass;
             }
         }
 
@@ -102,27 +108,6 @@ namespace RTS.RTSGameObject.Projectile.Missile
         // Update is called once per frame
         void FixedUpdate()
         {
-            SetSeed();
-            timer += Time.fixedDeltaTime;
-            // Run out of time or lose target
-            if (timer >= maxTime || target == null)
-            {
-                OnDestroyedAction();
-                return;
-            }
-            // Been damaged, then boom immediately (?)
-            if (HP <= 0)
-            {
-                Instantiate(interruptEffect, transform.position, new Quaternion());
-                OnDestroyedAction();
-                return;
-            }
-            finalPosition = target.GetComponent<Collider>().ClosestPoint(thisBody.position);
-            if (MoveToFinalPosition())
-            {
-                Explosion();
-            }
-
             if (displayDebugPath)
             {
                 Vector3[] array = new Vector3[moveBeacons.Count + 1];
@@ -133,6 +118,30 @@ namespace RTS.RTSGameObject.Projectile.Missile
                     array[i + 1] = moveBeacons[i];
                 }
                 debugLineRender.SetPositions(array);
+            }
+            if (!NetworkManager.Singleton.IsServer)
+            {
+                return;
+            }
+            SetSeed();
+            timer.Value += Time.fixedDeltaTime;
+            // Run out of time or lose target
+            if (timer.Value >= maxTime || target == null)
+            {
+                OnDestroyedAction();
+                return;
+            }
+            // destroyed by others
+            if (HP <= 0)
+            {
+                Instantiate(interruptEffect, transform.position, new Quaternion());
+                OnDestroyedAction();
+                return;
+            }
+            finalPosition = target.GetComponent<Collider>().ClosestPoint(thisBody.position);
+            if (MoveToFinalPosition())
+            {
+                Explosion();
             }
         }
 
@@ -146,8 +155,8 @@ namespace RTS.RTSGameObject.Projectile.Missile
                     i.GetComponent<RTSGameObjectBaseScript>().CreateDamage(damage, attackPowerReduce, defencePowerReduce, movePowerReduce, createdBy);
                 }
             }
-            timer = maxTime;
             Instantiate(explosionEffect, transform.position, new Quaternion());
+            OnDestroyedAction();
         }
 
         // Physical movement
@@ -268,6 +277,51 @@ namespace RTS.RTSGameObject.Projectile.Missile
                 }
             }
             moveBeacons = result;
+        }
+        void OnDestroy()
+        {
+            if (NetworkManager.Singleton != null && !NetworkManager.Singleton.IsServer)
+            {
+                if (timer.Value >= maxTime)
+                {
+                    if (onDestroyedEffect != null)
+                    {
+                        Instantiate(onDestroyedEffect, transform.position, new Quaternion());
+                    }
+                }
+                else if (HP <= 0)
+                {
+                    if (interruptEffect != null)
+                    {
+                        Instantiate(interruptEffect, transform.position, new Quaternion());
+                    }
+                }
+                else
+                {
+                    if (explosionEffect != null)
+                    {
+                        Instantiate(explosionEffect, transform.position, new Quaternion());
+                    }
+                }
+            }
+        }
+
+        protected override void OnCreatedAction()
+        {
+            if (NetworkManager.Singleton.IsServer)
+            {
+                base.OnCreatedAction();
+                gameObject.GetComponent<NetworkObject>().Spawn();
+            }
+        }
+
+        protected override void OnDestroyedAction()
+        {
+            if (NetworkManager.Singleton.IsServer)
+            {
+                base.OnDestroyedAction();
+                gameObject.GetComponent<NetworkObject>().Despawn(true);
+            }
         }
     }
 }

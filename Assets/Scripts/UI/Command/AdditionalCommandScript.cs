@@ -71,7 +71,7 @@ namespace RTS.UI.Command
                 passiveButtonEnabledCover.enabled = false;
                 foreach (GameObject i in SelectControlScript.SelectionControlInstance.GetAllGameObjectsAsList())
                 {
-                    if (i.GetComponent<UnitBaseScript>() != null)
+                    if (i != null && i.GetComponent<UnitBaseScript>() != null)
                     {
                         switch (i.GetComponent<UnitBaseScript>().CurrentFireControlStatus)
                         {

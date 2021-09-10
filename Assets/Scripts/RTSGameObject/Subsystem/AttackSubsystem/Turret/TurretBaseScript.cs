@@ -47,31 +47,19 @@ namespace RTS.RTSGameObject.Subsystem
             get { return networkAiming.Value; }
             set { networkAiming.Value = value; }
         }
-        protected bool AtRest
-        {
-            get { return networkAtRest.Value; }
-            set { networkAtRest.Value = value; }
-        }
 
         private NetworkVariable<Vector3> networkAimPoint = new NetworkVariable<Vector3>();
         private NetworkVariable<bool> networkAiming = new NetworkVariable<bool>(false);
-        private NetworkVariable<bool> networkAtRest = new NetworkVariable<bool>(false);
 
         protected void SetAimpoint(Vector3 position)
         {
             Aiming = true;
             AimPoint = position;
-            AtRest = false;
         }
 
         protected void SetIdle(bool idle)
         {
             Aiming = !idle;
-
-            if (Aiming)
-            {
-                AtRest = false;
-            }
         }
 
         protected void RotateTurret()
@@ -81,9 +69,9 @@ namespace RTS.RTSGameObject.Subsystem
                 RotateBase();
                 RotateBarrels();
             }
-            else if (!AtRest)
+            else
             {
-                AtRest = RotateToIdle();
+                RotateToIdle();
             }
         }
 

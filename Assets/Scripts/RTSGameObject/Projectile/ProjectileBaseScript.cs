@@ -23,7 +23,6 @@ namespace RTS.RTSGameObject.Projectile
         [HideInInspector]
         public GameObject createdBy;
 
-        protected float timer;
         protected Rigidbody thisBody;
 
         void OnDestroy()
@@ -38,7 +37,6 @@ namespace RTS.RTSGameObject.Projectile
 
         protected override void OnDestroyedAction()
         {
-            Destroy(gameObject);
             if (onDestroyedEffect != null)
             {
                 Instantiate(onDestroyedEffect, transform.position, new Quaternion());
