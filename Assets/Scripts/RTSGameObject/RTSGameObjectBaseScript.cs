@@ -154,14 +154,6 @@ namespace RTS.RTSGameObject
         // to achieve this, destroy this RTSGO, but do not call on destroy event
         private bool isClientClearPrefabDestroy = false;
 
-        public void ServerInit(int delayCounter, ulong parentID, string directParentName)
-        {
-            networkStartDelayCounter.Value = delayCounter;
-            networkStartParentID.Value = parentID;
-            networkStartDirectParentName.Value = directParentName;
-        }
-
-        // called by Despawn, for client to clear info in game manager
         void OnDestroy()
         {
             if (!isClientClearPrefabDestroy)
@@ -169,16 +161,28 @@ namespace RTS.RTSGameObject
                 if (NetworkManager.Singleton != null && !NetworkManager.Singleton.IsServer)
                 {
                     GameManager.GameManagerInstance.OnGameObjectDestroyed(gameObject, LastDamagedBy);
+                    if (onDestroyedEffect != null)
+                    {
+                        Instantiate(onDestroyedEffect, transform.position, new Quaternion());
+                    }
                 }
             }
         }
 
-        protected virtual void NetworkInitSync()
+        public void ServerInit(int delayCounter, ulong parentID, string directParentName)
+        {
+            networkStartDelayCounter.Value = delayCounter;
+            networkStartParentID.Value = parentID;
+            networkStartDirectParentName.Value = directParentName;
+        }
+
+        // Cannot called by RPC because it must be called at first frame of gameobject in client,
+        // but RPC cannot be called for later connected client
+        public virtual void NetworkInitSync()
         {
             if (NetworkManager.Singleton != null && !NetworkManager.Singleton.IsServer && delayCounter >= networkStartDelayCounter.Value)
             {
                 delayCounter = -1;
-                Debug.Log("WOW1!");
                 foreach (GameObject i in GameManager.GameManagerInstance.GetAllUnits())
                 {
                     if (i.GetComponent<NetworkObject>() != null && i.GetComponent<NetworkObject>().NetworkObjectId ==
@@ -228,8 +232,7 @@ namespace RTS.RTSGameObject
             }
             if (NetworkManager.Singleton.IsServer)
             {
-                gameObject.GetComponent<NetworkObject>().Despawn();
-                Destroy(gameObject);
+                gameObject.GetComponent<NetworkObject>().Despawn(true);
             }
         }
 

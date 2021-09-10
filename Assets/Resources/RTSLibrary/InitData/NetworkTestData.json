@@ -59,11 +59,11 @@
   "initUnitData": [
     {
       "type": "StandardFighter",
-      "belongTo": 0,
+      "belongTo": 1,
       "position": {
-        "x": 0.0,
+        "x": 5.0,
         "y": 0.0,
-        "z": 0.0
+        "z": 100.0
       },
       "rotation": {
         "x": 0.0,
@@ -74,11 +74,11 @@
     },
     {
       "type": "StandardFighter",
-      "belongTo": 0,
+      "belongTo": 1,
       "position": {
         "x": 0.0,
         "y": 0.0,
-        "z": 0.0
+        "z": 100.0
       },
       "rotation": {
         "x": 0.0,
@@ -89,11 +89,11 @@
     },
     {
       "type": "StandardFighter",
-      "belongTo": 0,
+      "belongTo": 1,
       "position": {
-        "x": 0.0,
+        "x": -5.0,
         "y": 0.0,
-        "z": 0.0
+        "z": 100.0
       },
       "rotation": {
         "x": 0.0,
@@ -106,9 +106,9 @@
       "type": "StandardFrigate",
       "belongTo": 0,
       "position": {
-        "x": 0.0,
+        "x": 20.0,
         "y": 0.0,
-        "z": 0.0
+        "z": -50.0
       },
       "rotation": {
         "x": 0.0,
@@ -121,9 +121,9 @@
       "type": "StandardFrigate",
       "belongTo": 0,
       "position": {
-        "x": 0.0,
+        "x": -20.0,
         "y": 0.0,
-        "z": 0.0
+        "z": -50.0
       },
       "rotation": {
         "x": 0.0,

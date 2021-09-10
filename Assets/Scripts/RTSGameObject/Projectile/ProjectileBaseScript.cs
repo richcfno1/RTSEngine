@@ -26,6 +26,11 @@ namespace RTS.RTSGameObject.Projectile
         protected float timer;
         protected Rigidbody thisBody;
 
+        void OnDestroy()
+        {
+            Debug.Log("Projectile OnDestroy Placeholder");
+        }
+
         protected override void OnCreatedAction()
         {
             HP = maxHP;

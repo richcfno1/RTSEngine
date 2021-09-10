@@ -282,12 +282,11 @@ namespace RTS.RTSGameObject.Unit
             }    
         }
 
-        protected override void NetworkInitSync()
+        public override void NetworkInitSync()
         {
             if (NetworkManager.Singleton != null && !NetworkManager.Singleton.IsServer && delayCounter >= networkStartDelayCounter.Value)
             {
                 delayCounter = -1;
-                Debug.Log("WOW2!");
                 foreach (GameObject i in GameManager.GameManagerInstance.GetAllUnits())
                 {
                     if (i.GetComponent<NetworkObject>() != null && i.GetComponent<NetworkObject>().NetworkObjectId ==
@@ -333,6 +332,10 @@ namespace RTS.RTSGameObject.Unit
                     // Unit must do it for every subsystem. OnDestroyedAction() of subsystem is used when HP <= 0, 
                     // but subsystem will only be destroyed when unit is destroyed
                     GameManager.GameManagerInstance.OnGameObjectDestroyed(i.subsystem, LastDamagedBy);
+                    if (NetworkManager.Singleton.IsServer)
+                    {
+                        i.subsystem.GetComponent<NetworkObject>().Despawn(true);
+                    }
                 }
             }
             base.OnDestroyedAction();

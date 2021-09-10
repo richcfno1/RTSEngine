@@ -401,7 +401,7 @@ namespace RTS.UI.Command
                 SortedDictionary<string, List<SpecialAbilityBaseScript>> result = new SortedDictionary<string, List<SpecialAbilityBaseScript>>();
                 foreach (GameObject i in SelectedGameObjects[MainSelectedType])
                 {
-                    if (i.GetComponent<UnitBaseScript>() == null)
+                    if (i == null || i.GetComponent<UnitBaseScript>() == null)
                     {
                         return new SortedDictionary<string, List<SpecialAbilityBaseScript>>();
                     }

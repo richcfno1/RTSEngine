@@ -141,7 +141,7 @@ namespace RTS
             GameObjectLibrary = JsonConvert.DeserializeObject<Dictionary<string, string>>(gameObjectLibraryAsset.text);
 
 #if UNITY_EDITOR
-//#else
+#else
             NetworkManager.Singleton.StartHost();
 #endif
 
