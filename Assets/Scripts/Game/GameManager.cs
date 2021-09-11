@@ -141,7 +141,7 @@ namespace RTS.Game
             GameObjectLibrary = JsonConvert.DeserializeObject<Dictionary<string, string>>(gameObjectLibraryAsset.text);
 
 #if UNITY_EDITOR
-#else
+//#else
             NetworkManager.Singleton.StartHost();
 #endif
 
@@ -392,13 +392,13 @@ namespace RTS.Game
                     switch (ability.Key)
                     {
                         case "Attack":
-                            abilityType = Type.GetType("RTS.Ability.CommonAbility.AttackAbilityScript");
+                            abilityType = Type.GetType("RTS.Game.Ability.CommonAbility.AttackAbilityScript");
                             break;
                         case "Move":
-                            abilityType = Type.GetType("RTS.Ability.CommonAbility.MoveAbilityScript");
+                            abilityType = Type.GetType("RTS.Game.Ability.CommonAbility.MoveAbilityScript");
                             break;
                         case "Carrier":
-                            abilityType = Type.GetType("RTS.Ability.CommonAbility.CarrierAbilityScript");
+                            abilityType = Type.GetType("RTS.Game.Ability.CommonAbility.CarrierAbilityScript");
                             break;
                         default:
                             Debug.LogError("Wrong type of common ability: " + ability.Key);
