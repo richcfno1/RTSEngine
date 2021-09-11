@@ -27,10 +27,13 @@ namespace RTS.Game
             Enemy
         }
 
-        public struct PlayerData
+        public struct PlayerSlotData
         {
             public int index;
             public string name;
+            public float initialMoney;
+            public SerializableVector3 playerStartPosition;
+            public SerializableQuaternion playerStartRotation;
         }
 
         public struct UnitLibraryData
@@ -46,30 +49,57 @@ namespace RTS.Game
             public Dictionary<string, string> scripts;
         }
 
-        public struct UnitData
+        public struct UnitInitSpawnData
         {
             public string type;
             public int belongTo;
-            public Dictionary<string, string> specialLuaTags;  // "" -> tag for unit "subsystem anchor name" -> tag for subsystem
+            public Dictionary<string, string> specialLuaTags;  // "" -> tag for unit & "subsystem anchor name" -> tag for subsystem
             public SerializableVector3 position;
             public SerializableQuaternion rotation;
         }
 
-        public struct GameInitData
+        // Basic rule of this game, includes map defined unit and some lua may used
+        public struct MapData
         {
+            public int maxPlayerNumber;  // exclude player 0, also must == initPlayerData.size() + 1
             public float mapRadius;
-            public List<PlayerData> initPlayerData;
+            public List<PlayerSlotData> mapPlayerSlot;
 
             // Important notes for lua:
             // Global lua is called by game manager with two entry keys: Start and Update (similar to Unity Start and Update)
             // All RTSGO and combined controllable unit have 4 entry keys: OnCreated OnDamaged OnRepaired OnDestroyed
             // Obviously there will be more than those 6 keys in future
-
             public Dictionary<string, string> initGlobalLua;
             public Dictionary<string, Dictionary<string, string>> initRTSGameObjectLua;
 
             public List<UnitLibraryData> initUnitLibraryData;
-            public List<UnitData> initUnitData;
+            public List<UnitInitSpawnData> initUnitData;
+        }
+
+        // Player name and deck info
+        public struct AdditionalPlayerData
+        {
+            public Dictionary<int, string> playerNameInfo;
+            public List<UnitLibraryData> playerUnitLibraryData;
+            public List<UnitInitSpawnData> playerUnitData;  // Note: position and rotation are relative to player start position
+        }
+
+
+        public struct GameInitData
+        {
+            public int maxPlayerNumber;  // exclude player 0, also must == initPlayerData.size() - 1
+            public float mapRadius;
+            public List<PlayerSlotData> initPlayerData;
+
+            // Important notes for lua:
+            // Global lua is called by game manager with two entry keys: Start and Update (similar to Unity Start and Update)
+            // All RTSGO and combined controllable unit have 4 entry keys: OnCreated OnDamaged OnRepaired OnDestroyed
+            // Obviously there will be more than those 6 keys in future
+            public Dictionary<string, string> initGlobalLua;
+            public Dictionary<string, Dictionary<string, string>> initRTSGameObjectLua;
+
+            public List<UnitLibraryData> initUnitLibraryData;
+            public List<UnitInitSpawnData> initUnitData;
         }
 
         private class Player
@@ -84,17 +114,17 @@ namespace RTS.Game
         public ScriptSystem ScriptSystem { get; private set; }
         public MaterialsManager MaterialsManager { get; private set; }
 
-        [Header("Game Global Setting")] 
+        [Header("Game Global Setting")]
+        [Tooltip("Master object")]
+        public Transform masterObject;
         [Tooltip("RTS game object library.")]
         public TextAsset gameObjectLibraryAsset;
         [Tooltip("The time gap between each vision checking.")]
         public float visionProcessGap;
 
-        [Header("Specific Game Rules")]
-        [Tooltip("Init game setting.")]
+        [Header("Debug Setting")]
+        [Tooltip("Init game setting, only used for debug test.")]
         public TextAsset initDataAsset;
-        [Tooltip("Master object")]
-        public Transform masterObject;
 
         public int SelfIndex 
         { 
@@ -266,7 +296,7 @@ namespace RTS.Game
             MapRadius = data.mapRadius;
 
             // Player
-            foreach (PlayerData i in data.initPlayerData)
+            foreach (PlayerSlotData i in data.initPlayerData)
             {
                 allPlayers.Add(i.index, new Player()
                 {
@@ -289,7 +319,7 @@ namespace RTS.Game
             if (NetworkManager.Singleton.IsServer)
             {
                 // Instantiate units
-                foreach (UnitData i in data.initUnitData)
+                foreach (UnitInitSpawnData i in data.initUnitData)
                 {
                     if (UnitLibrary.ContainsKey(i.type))
                     {

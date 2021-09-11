@@ -1,17 +1,54 @@
 {
-  "mapRadius" : 10000.0,
+  "maxPlayerNumber": 2, 
+  "mapRadius": 10000.0,
   "initPlayerData": [
     {
       "index": 0,
-      "name": "Nature"
+      "name": "Nature",
+      "initialMoney": 10000.0,
+      "playerStartPosition": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "playerStartRotation": {
+        "x": 0.0,
+        "y": 1.0,
+        "z": 0.0,
+        "w": 0.0
+      }
     },
     {
       "index": 1,
-      "name": "RC"
+      "name": "RC",
+      "initialMoney": 10000.0,
+      "playerStartPosition": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": -500.0
+      },
+      "playerStartRotation": {
+        "x": 0.0,
+        "y": 1.0,
+        "z": 0.0,
+        "w": 0.0
+      }
     },
     {
       "index": 2,
-      "name": "Enemy1"
+      "name": "Enemy1",
+      "initialMoney": 10000.0,
+      "playerStartPosition": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 500.0
+      },
+      "playerStartRotation": {
+        "x": 0.0,
+        "y": 1.0,
+        "z": 0.0,
+        "w": 0.0
+      }
     }
   ],
   "initGlobalLua": {
