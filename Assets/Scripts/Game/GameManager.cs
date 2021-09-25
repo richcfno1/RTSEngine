@@ -61,8 +61,10 @@ namespace RTS.Game
         // Basic rule of this game, includes map defined unit and some lua may used
         public struct MapData
         {
-            public int maxPlayerNumber;  // exclude player 0, also must == initPlayerData.size() + 1
+            public string mapName;
             public float mapRadius;
+            public bool usePlayerDeck;
+            public int maxPlayerNumber;  // exclude player 0, also must == initPlayerData.size() - 1
             public List<PlayerSlotData> mapPlayerSlot;
 
             // Important notes for lua:

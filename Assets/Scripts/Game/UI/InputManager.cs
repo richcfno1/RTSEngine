@@ -1,6 +1,8 @@
 using RTS.Game.RTSGameObject;
 using RTS.Game.UI.Command;
 using RTS.Game.UI.TacticalView;
+using RTS.Menu;
+using RTS.Menu.Profile;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -136,6 +138,7 @@ namespace RTS.Game.UI
         void Awake()
         {
             InputManagerInstance = this;
+            SetHotkey(MenuManager.MenuManagerInstance.CurrentProfile);
         }
 
         // Start is called before the first frame update
@@ -243,6 +246,11 @@ namespace RTS.Game.UI
                     }
                     break;
             }
+        }
+
+        public void SetHotkey(PlayerProfile profile)
+        {
+            Debug.LogError("NOT IMPLEMENTED");
         }
 
         public static RTSGameObjectBaseScript SingleSelectionHelper()
