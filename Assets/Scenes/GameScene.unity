@@ -4660,6 +4660,7 @@ MonoBehaviour:
     NetworkTransport: {fileID: 1039314917}
     RegisteredScenes:
     - MultiplayerScene
+    - GameScene
     AllowRuntimeSceneChanges: 0
     NetworkPrefabs:
     - Prefab: {fileID: 1924526070251487409, guid: 14206b023dc213d4fbb1ef75b44084c8, type: 3}
@@ -6045,10 +6046,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f994e19ebfa1fbb43ab2c26fbbf82789, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  masterObject: {fileID: 1423009701}
   gameObjectLibraryAsset: {fileID: 4900000, guid: 5ec89fe72628a7c40a36c1707bbc0df1, type: 3}
   visionProcessGap: 0.5
   initDataAsset: {fileID: 4900000, guid: 02b906b789ff88d4a93136eb04964b77, type: 3}
-  masterObject: {fileID: 1423009701}
 --- !u!4 &1353037987
 Transform:
   m_ObjectHideFlags: 0

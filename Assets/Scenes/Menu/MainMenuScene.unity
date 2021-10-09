@@ -649,8 +649,9 @@ MonoBehaviour:
     NetworkTransport: {fileID: 381191650}
     RegisteredScenes:
     - MainMenuScene
-    - LobbyMenuScene
-    - MultiplayerScene
+    - SkirmishMenuScene
+    - MultiplayerMenuScene
+    - GameScene
     AllowRuntimeSceneChanges: 0
     NetworkPrefabs: []
     PlayerPrefabHash:
