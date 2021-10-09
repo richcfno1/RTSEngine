@@ -1,0 +1,7 @@
+To test the game, load multiplayer scene.
+
+In current version, the single player mode is built on a multiplayer scene without 
+other connected player, so there is not a "singleplayer scene".
+
+The menu and many other features are under development and is a part of branch Dev-Menu, 
+including: map selection, player profile, decks, and more...

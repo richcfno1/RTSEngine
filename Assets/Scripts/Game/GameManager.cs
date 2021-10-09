@@ -125,6 +125,7 @@ namespace RTS.Game
         [Header("Debug Setting")]
         [Tooltip("Init game setting, only used for debug test.")]
         public TextAsset initDataAsset;
+        public bool hostInEditor;
 
         public int SelfIndex 
         { 
@@ -171,8 +172,15 @@ namespace RTS.Game
             GameObjectLibrary = JsonConvert.DeserializeObject<Dictionary<string, string>>(gameObjectLibraryAsset.text);
 
 #if UNITY_EDITOR
-//#else
-            NetworkManager.Singleton.StartHost();
+            if (hostInEditor)
+            {
+                NetworkManager.Singleton.StartHost();
+            }
+#else
+            if (!hostInEditor)
+            {
+                NetworkManager.Singleton.StartHost();
+            }
 #endif
 
             if (initDataAsset != null)
