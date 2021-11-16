@@ -138,7 +138,10 @@ namespace RTS.Game.UI
         void Awake()
         {
             InputManagerInstance = this;
-            SetHotkey(MenuManager.MenuManagerInstance.CurrentProfile);
+            if (MenuManager.MenuManagerInstance != null && MenuManager.MenuManagerInstance.CurrentProfile != null)
+            {
+                SetHotkey(MenuManager.MenuManagerInstance.CurrentProfile);
+            }
         }
 
         // Start is called before the first frame update
@@ -195,6 +198,7 @@ namespace RTS.Game.UI
                     }
                 }
             }
+
 
             if (CurrentMousePosition == MousePosition.None)
             {
